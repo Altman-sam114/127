@@ -82,6 +82,37 @@ AITRANS 可复用项与不照搬项：
 - 可复用：main 直推、云端重验证、未加密结果包、Agent C 下载复判、云端失败后在 main 追加修复 commit。
 - 不照搬：漫画探针、GGUF/模型 Release、`test/1.png`、`smalldata_test` 分支、大数据/密钥/密码包和项目专属输出。
 
+## 0.2 v6.0 现代战争迁移兼容层
+
+v6.0 当前只完成“迁移审计 + 玩家可见显示名兼容层”，没有改变底层规则权威、JSON raw value 或默认剧本加载。
+
+当前兼容策略：
+
+```text
+旧源码 / 旧 JSON 兼容名
+  Faction.germany / Faction.allies
+  GamePhase.germanAI / GamePhase.alliedPlayer
+  Division.name
+  ProductionKind.panzerDivision / motorizedDivision
+  MapDisplayLayer.province / initialTheater / dynamicTheater
+        |
+        v
+玩家可见显示层
+  Red Operational Group / Blue Joint Task Force
+  AI Command / Player Command
+  operationalDisplayName
+  Armored Task Force / Mechanized Task Force / Logistics Package
+  Sector / Baseline / Operational / Contact / Brigade
+```
+
+必须注意：
+
+- `Faction.displayName` 现在是现代作战显示名；旧名保存在 `legacyDisplayName`，只作兼容说明或迁移审计使用。
+- `GamePhase.displayName` 现在是通用回合显示名；旧名保存在 `legacyDisplayName`。
+- `Division.operationalDisplayName` 只替换 UI 显示，不改 `Division.name` 编码字段。
+- `Faction.opponent`、`GamePhase.germanAI/alliedPlayer`、默认阿登 JSON、`RegionDataSet.toRegions()` 的 `.allies` fallback 仍是 v6.1/v6.2 待处理风险。
+- 当前没有新增 ISR / ContactTrack / EW / FireMission / AirTasking / LogisticsNetwork 状态。
+
 ---
 
 ## 1. 核心状态对象
@@ -798,16 +829,18 @@ handleBoardTap(coord)
 - `HUDView`：回合、下一步、新游戏。
 - `MapDisplayLayer` segmented picker：
   - `Hex`
-  - `Province`
-  - `Initial`
-  - `Dynamic`
-  - `Front`
-  - `Deploy`
+  - `Sector`
+  - `Baseline`
+  - `Operational`
+  - `Contact`
+  - `Brigade`
 - `Observer` toggle。
 - `[ INFO ]` 面板，内含：
-  - Unit + Region + Command
-  - Region
+  - Formation + Sector + Command
+  - Sector
   - Log
+  - Sustainment
+  - ROE
   - AI
 - `UnitTooltipView`。
 

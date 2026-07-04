@@ -91,7 +91,7 @@ struct CommandPanelView: View {
         }
 
         guard selectedDivision.faction == playerFaction else {
-            return "Enemy unit selected. Commands disabled."
+            return "Hostile formation selected. Commands disabled."
         }
 
         guard activeFaction == playerFaction, phase == .alliedPlayer else {

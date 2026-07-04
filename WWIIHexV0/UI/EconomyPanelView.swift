@@ -8,7 +8,7 @@ struct EconomyPanelView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Economy")
+            Text("Sustainment")
                 .font(.headline)
 
             ledgerSection(for: gameState.activeFaction)
@@ -35,14 +35,14 @@ struct EconomyPanelView: View {
 
             Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 6) {
                 GridRow {
-                    metric("Manpower", ledger.stockpile.manpower)
-                    metric("Industry", ledger.stockpile.industry)
+                    metric("Personnel", ledger.stockpile.manpower)
+                    metric("Materiel", ledger.stockpile.industry)
                     metric("Supplies", ledger.stockpile.supplies)
                 }
 
                 GridRow {
-                    metric("Income MP", ledger.lastIncome.manpower)
-                    metric("Income IC", ledger.lastIncome.industry)
+                    metric("Income PER", ledger.lastIncome.manpower)
+                    metric("Income MAT", ledger.lastIncome.industry)
                     metric("Upkeep", ledger.lastUpkeep.supplies)
                 }
             }
@@ -51,7 +51,7 @@ struct EconomyPanelView: View {
 
     private var productionControls: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Production")
+            Text("Force Packages")
                 .font(.subheadline.weight(.semibold))
 
             ForEach(ProductionKind.allCases) { kind in
@@ -115,7 +115,7 @@ struct EconomyPanelView: View {
     }
 
     private func resourceSummary(_ resources: EconomyResources) -> String {
-        "MP \(resources.manpower), IC \(resources.industry), SUP \(resources.supplies)"
+        "PER \(resources.manpower), MAT \(resources.industry), SUP \(resources.supplies)"
     }
 
     private func iconName(for kind: ProductionKind) -> String {

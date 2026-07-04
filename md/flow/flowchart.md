@@ -62,6 +62,27 @@ flowchart TD
     classDef ok fill:#ccfbf1,stroke:#0f766e,color:#042f2e
 ```
 
+## 0.2 v6.0 现代战争迁移兼容层
+
+这张图描述当前 v6.0 已落地的显示兼容层。它只改变玩家可见术语，不改变 JSON raw value、命令管线、战斗规则或默认剧本。
+
+```mermaid
+flowchart LR
+    LEGACY["旧源码 / 旧 JSON 兼容名<br/>Faction.germany/allies<br/>GamePhase.germanAI/alliedPlayer<br/>Division.name<br/>ProductionKind.panzerDivision<br/>MapDisplayLayer.province"]:::legacy
+    DISPLAY["现代显示层<br/>Red / Blue Force<br/>AI Command / Player Command<br/>operationalDisplayName<br/>Armored / Mechanized Task Force<br/>Sector / Operational / Brigade"]:::display
+    RULES["规则权威不变<br/>Command / ZoneDirective<br/>WarCommandExecutor<br/>RuleEngine"]:::rules
+    RISK["v6.1-v6.2 待迁移<br/>ROE 替换 Faction.opponent<br/>中立不再 fallback allies<br/>grey_tide_2030 默认数据"]:::risk
+
+    LEGACY --> DISPLAY
+    LEGACY --> RULES
+    RULES --> RISK
+
+    classDef legacy fill:#fef3c7,stroke:#d97706,color:#1f1600
+    classDef display fill:#e0f2fe,stroke:#0284c7,color:#082f49
+    classDef rules fill:#ccfbf1,stroke:#0f766e,color:#042f2e
+    classDef risk fill:#fee2e2,stroke:#b91c1c,color:#111827
+```
+
 ## 1. 总主线：从地图数据到游戏行动
 
 这张图看全局。左上是地图数据怎么进入游戏；中间是 hex、region、theater、front、deploy 的分层关系；右侧是玩家/AI 命令如何统一进入规则系统；底部是 UI 和日志怎么读取结果。

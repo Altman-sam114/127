@@ -1,6 +1,6 @@
-# WWIIHexV0 — iOS / macOS 二战 AI 战略战棋游戏
+# Modern Command Agent — iOS / macOS AI 战略战棋迁移工程
 
-> **当前状态：v0.5 元帅决策链分支 `v0.5-marshal-decision-chain`。默认战争 AI 已加入“元帅 -> 模拟 LLM JSON -> decoder -> compiler -> ZoneDirective”决策链；下游仍收口到 `WarCommandExecutor -> RuleEngine`。统治者层只作为后续上游预留，当前 v0.5 主链路不调用 `RulerAgent`，也不恢复 Cabinet / Minister。历史测试基线曾达到 v0.37 Probe 18/0、Stage Regression 69/0、Full 226/0；当前工作流默认不跑 Xcode / XCTest / 模拟器测试，只按 `md/test/test.md` 做轻量检查。**
+> **当前状态：v6.0 现代战争迁移审计与兼容显示层。工程底座仍来自 WWIIHexV0，默认数据和大量源码兼容名仍是二战时期语义；本阶段先把主 UI 显示名迁移为 Blue / Red、现代任务编组、Sustainment 和 C2 图层，并记录 v6.1-v6.10 的规则与剧本迁移清单。默认战争 AI 仍是“元帅 -> 模拟 LLM JSON -> decoder -> compiler -> ZoneDirective”，下游仍收口到 `WarCommandExecutor -> RuleEngine`。历史测试基线曾达到 v0.37 Probe 18/0、Stage Regression 69/0、Full 226/0；当前工作流默认不跑 Xcode / XCTest / 模拟器测试，只按 `md/test/test.md` 做轻量检查，重验证看 GitHub Actions artifact。**
 
 ---
 
@@ -12,7 +12,9 @@
 
 ## 项目定位
 
-一款 iOS / macOS 回合制二战策略游戏，目标结合战棋（六角格操作感）、大战略（省份占领、补给、前线）与角色扮演（LLM 驱动的将领 AI）。
+一款正在从 WWIIHexV0 迁移而来的 iOS / macOS 回合制现代战争 AI Agent 策略游戏。目标是在保留 hex 战术权威、region 战略聚合、动态战区、前线、部署和统一规则管线的基础上，迁移到现代联合作战：合成营/任务编组、无人系统、侦察 contact、电子战、精确火力、后勤和可审计 AI Agent 指挥链。
+
+当前 v6.0 只完成迁移入口和兼容显示层，仍不是发布级现代战争剧本。默认阿登 JSON、`Faction.germany/allies`、`GamePhase.germanAI/alliedPlayer`、`Division` 源码名和若干二战测试 fixture 仍按兼容层保留，后续按 `md/prompt/v6.0-现代战争迁移/v6.0_audit_and_contract.md` 继续拆分到 v6.1-v6.10。
 
 **核心参考：**
 - 《统一指挥2》：六角格战棋、补给、攻击（战术层参照）
@@ -21,7 +23,7 @@
 - 《世界征服者4》：移动端轻量化策略体验
 
 **核心创新：本地部署 LLM 驱动游戏 AI**
-- 将领、元帅已进入当前指挥链；国家统治者、部长只作为后续方向预留
+- 指挥官、元帅/联合司令部已进入当前指挥链；国家指挥层只作为后续方向预留
 - agent 根据视野、战况摘要、性格和历史背景输出结构化 JSON 命令
 - 游戏规则系统负责校验并执行，LLM 不直接绕过规则修改状态
 

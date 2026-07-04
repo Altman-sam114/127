@@ -95,7 +95,7 @@ struct RootGameView: View {
             renderState: BoardSceneAdapter.renderState(from: container),
             onHexTapped: container.handleBoardTap
         )
-        .accessibilityLabel("Ardennes V0 hex board")
+        .accessibilityLabel("Modern command hex operations board")
     }
 
     private func infoOverlay(isLandscape: Bool, size: CGSize) -> some View {
@@ -219,12 +219,12 @@ struct RootGameView: View {
 }
 
 private enum CompactInfoPanel: String, CaseIterable, Identifiable {
-    case unit = "Unit"
-    case region = "Region"
-    case general = "General"
+    case unit = "Formation"
+    case region = "Sector"
+    case general = "Command"
     case log = "Log"
-    case economy = "Economy"
-    case diplomacy = "Diplomacy"
+    case economy = "Sustainment"
+    case diplomacy = "ROE"
     case agent = "AI"
 
     var id: String {

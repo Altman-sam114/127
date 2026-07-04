@@ -7,7 +7,7 @@ struct UnitInspectorView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Unit Details")
+            Text("Formation Details")
                 .font(.headline)
 
             if let division {
@@ -25,10 +25,10 @@ struct UnitInspectorView: View {
 
     private func unitDetails(_ division: Division) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(division.name)
+            Text(division.operationalDisplayName)
                 .font(.subheadline.weight(.semibold))
 
-            LabeledContent("Faction") {
+            LabeledContent("Side") {
                 Text(division.faction.displayName)
             }
 
@@ -45,11 +45,11 @@ struct UnitInspectorView: View {
                     Text(strategicState.regionId?.rawValue ?? "None")
                 }
 
-                LabeledContent("Dynamic Theater") {
+                LabeledContent("Operational Zone") {
                     Text(strategicState.dynamicTheaterId?.rawValue ?? "None")
                 }
 
-                LabeledContent("FrontZone") {
+                LabeledContent("Brigade Sector") {
                     Text(strategicState.frontZoneId?.rawValue ?? "None")
                 }
 
@@ -83,7 +83,7 @@ struct UnitInspectorView: View {
                 Text(division.inspectorStatusText)
             }
 
-            LabeledContent("Components") {
+            LabeledContent("Composition") {
                 Text(componentSummary(for: division))
                     .multilineTextAlignment(.trailing)
             }
@@ -138,7 +138,7 @@ private extension ComponentType {
         case .tank:
             return "ARM"
         case .motorizedInfantry:
-            return "MOT"
+            return "MECH"
         case .infantry:
             return "INF"
         case .artillery:
@@ -168,7 +168,7 @@ private extension UnitDeploymentRole {
         case .depthUnit:
             return "DEPTH"
         case .garrisonUnit:
-            return "GARRISON"
+            return "SECURITY"
         }
     }
 }

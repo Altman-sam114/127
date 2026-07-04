@@ -17,15 +17,15 @@ enum MapDisplayLayer: String, Codable, Equatable, CaseIterable, Identifiable {
         case .hex:
             return "Hex"
         case .province:
-            return "Province"
+            return "Sector"
         case .initialTheater:
-            return "Initial"
+            return "Baseline"
         case .dynamicTheater:
-            return "Dynamic"
+            return "Operational"
         case .frontLine:
-            return "Front"
+            return "Contact"
         case .deployment:
-            return "Deploy"
+            return "Brigade"
         }
     }
 }

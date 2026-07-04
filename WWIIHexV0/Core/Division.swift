@@ -330,6 +330,34 @@ struct Division: Identifiable, Codable, Equatable {
 }
 
 extension Division {
+    var operationalDisplayName: String {
+        name.modernFormationDisplayName
+    }
+}
+
+private extension String {
+    var modernFormationDisplayName: String {
+        var value = self
+        let replacements: [(String, String)] = [
+            ("Panzer Division", "Armored Task Force"),
+            ("Motorized Division", "Mechanized Task Force"),
+            ("Infantry Division", "Infantry Task Force"),
+            ("Artillery Division", "Fires Battery"),
+            ("Artillery Group", "Fires Battery"),
+            ("Anti-Tank Battalion", "Anti-Armor Team"),
+            ("Allied Artillery", "Blue Fires"),
+            ("Allied Fires", "Blue Fires"),
+            ("Bastogne Garrison", "Objective Security Detachment")
+        ]
+
+        for replacement in replacements {
+            value = value.replacingOccurrences(of: replacement.0, with: replacement.1)
+        }
+        return value
+    }
+}
+
+extension Division {
     static func panzer(id: String, name: String, faction: Faction, coord: HexCoord) -> Division {
         Division(
             id: id,

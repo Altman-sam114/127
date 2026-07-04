@@ -14,7 +14,7 @@ struct HUDView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("Ardennes V0")
+                Text("Modern Command Agent")
                     .font(.headline)
 
                 Spacer()
@@ -35,7 +35,7 @@ struct HUDView: View {
             Grid(alignment: .leading, horizontalSpacing: 14, verticalSpacing: 8) {
                 GridRow {
                     metric("Turn", "\(gameState.turn) / \(gameState.maxTurns)")
-                    metric("Faction", gameState.activeFaction.displayName)
+                    metric("Side", gameState.activeFaction.shortDisplayName)
                 }
 
                 GridRow {
@@ -44,12 +44,12 @@ struct HUDView: View {
                 }
 
                 GridRow {
-                    metric("Manpower", "\(activeLedger.stockpile.manpower)")
-                    metric("Industry", "\(activeLedger.stockpile.industry)")
+                    metric("Personnel", "\(activeLedger.stockpile.manpower)")
+                    metric("Materiel", "\(activeLedger.stockpile.industry)")
                 }
 
                 GridRow {
-                    metric("Supplies", "\(activeLedger.stockpile.supplies)")
+                    metric("Sustainment", "\(activeLedger.stockpile.supplies)")
                     metric("Queue", "\(activeLedger.productionQueue.count)")
                 }
             }
@@ -77,7 +77,7 @@ struct HUDView: View {
         guard let winner = gameState.victoryState.winner else {
             return "Ongoing"
         }
-        return "\(winner.displayName) Victory"
+        return "\(winner.shortDisplayName) Secured"
     }
 
     private var activeLedger: FactionEconomyLedger {

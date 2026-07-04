@@ -6,13 +6,13 @@ struct UnitTooltipView: View {
     var body: some View {
         if let division {
             VStack(alignment: .leading, spacing: 6) {
-                Text(division.name)
+                Text(division.operationalDisplayName)
                     .font(.subheadline.weight(.semibold))
                     .lineLimit(2)
 
                 Grid(alignment: .leading, horizontalSpacing: 10, verticalSpacing: 4) {
                     GridRow {
-                        label("Type")
+                        label("Role")
                         value(division.tooltipTypeCode)
                     }
                     GridRow {
@@ -42,7 +42,7 @@ struct UnitTooltipView: View {
             }
             .padding(10)
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("\(division.name), \(division.tooltipTypeCode), strength \(division.strength) of \(division.maxStrength)")
+            .accessibilityLabel("\(division.operationalDisplayName), \(division.tooltipTypeCode), strength \(division.strength) of \(division.maxStrength)")
         }
     }
 
@@ -69,7 +69,7 @@ private extension Division {
             return "ARM"
         }
         if components.contains(where: { $0.type == .motorizedInfantry && $0.weight >= 0.40 }) {
-            return "MOT"
+            return "MECH"
         }
         return "INF"
     }

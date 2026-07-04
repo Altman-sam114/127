@@ -58,7 +58,7 @@ final class UnitNode: SKNode {
     }
 
     /// v0.21: NATO APP-6 兵牌内部图形。
-    /// armor=椭圆、motorized=单斜线、infantry=X、artillery=圆。
+    /// armor=椭圆、mechanized=单斜线、infantry=X、artillery=圆。
     private func addNATOSymbol(for division: Division, width: CGFloat, height: CGFloat) {
         let lineColor = SKColor(white: 0.97, alpha: 0.95)
         let lineWidth = max(1.5, min(width, height) * 0.08)
@@ -82,7 +82,7 @@ final class UnitNode: SKNode {
             ellipse.zPosition = 1
             addChild(ellipse)
         } else {
-            // 步兵系：斜线。motorized 单斜线（\），infantry 双斜线（X）
+            // 步兵系：斜线。mechanized 单斜线（\），infantry 双斜线（X）
             let isMotorized = division.components.contains { $0.type == .motorizedInfantry && $0.weight >= 0.40 }
             let halfW = width / 2 - inset
             let halfH = height / 2 - inset
@@ -183,7 +183,7 @@ private extension Division {
             return "ARM"
         }
         if components.contains(where: { $0.type == .motorizedInfantry && $0.weight >= 0.40 }) {
-            return "MOT"
+            return "MECH"
         }
         return "INF"
     }
