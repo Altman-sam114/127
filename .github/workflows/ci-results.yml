@@ -29,6 +29,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - name: Prepare Metadata
         shell: bash
@@ -86,7 +88,7 @@ jobs:
             {
               echo "## Static checks failed"
               echo
-              echo "- git diff-tree --check exit: ${DIFF_EXIT}"
+              echo "- git diff check exit: ${DIFF_EXIT}"
               echo "- plutil exit: ${PLUTIL_EXIT}"
               echo "- xmllint main scheme exit: ${XML_MAIN_EXIT}"
               echo "- xmllint probes scheme exit: ${XML_PROBES_EXIT}"
