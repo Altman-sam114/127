@@ -110,7 +110,7 @@ v6.0 当前只完成“迁移审计 + 玩家可见显示名兼容层”，没有
 - `Faction.displayName` 现在是现代作战显示名；旧名保存在 `legacyDisplayName`，只作兼容说明或迁移审计使用。
 - `GamePhase.displayName` 现在是通用回合显示名；旧名保存在 `legacyDisplayName`。
 - `Division.operationalDisplayName` 只替换 UI 显示，不改 `Division.name` 编码字段。
-- `Faction.opponent`、`GamePhase.germanAI/alliedPlayer`、默认阿登 JSON 仍是 v6.1/v6.2 待处理风险。
+- `Faction.opponent`、`GamePhase.germanAI/alliedPlayer`、旧阿登 fallback JSON 仍是后续迁移风险。
 - 当前没有新增 ISR / ContactTrack / EW / FireMission / AirTasking / LogisticsNetwork 状态。
 
 ## 0.3 v6.1 作战方与 ROE 兼容层
@@ -154,9 +154,37 @@ owner/controller 都缺省 -> neutral
 仍未完成：
 
 - `GamePhase` raw value 尚未重命名，当前只用 helper 把 red 映射到 AI phase、blue 映射到 player phase。
-- 默认数据仍是阿登，不是 `grey_tide_2030`。
+- v6.2 已切入 `grey_tide_2030` 默认剧本种子，但不是最终发布级地图。
 - `Faction.opponent` 仍保留为旧接口 fallback。
 - FireMission / ISR / EW / restricted fire zone 尚未进入命令系统。
+
+## 0.4 v6.2 灰潮行动默认剧本种子
+
+v6.2 第一批实现把默认新局入口切到现代虚构剧本 `grey_tide_2030`，但它仍是发布前种子，不是最终 100-220 hex 规模地图。
+
+当前新增默认资源：
+
+```text
+WWIIHexV0/Data/grey_tide_2030_scenario.json
+WWIIHexV0/Data/grey_tide_2030_regions.json
+```
+
+规模与内容：
+
+- 60 个 hex，10 个 region / operational zone。
+- Blue Force / Red Force / Neutral 三方数据值。
+- 关键点：East Airport、Harbor Terminal、Radar Ridge、River Bridge、Industrial Hub、Comms Center、Northern Pass。
+- 仍复用旧 `unit_templates.json` 和旧 `ComponentType`，只在默认剧本显示名上使用现代任务编组。
+
+默认启动顺序现在是：
+
+```text
+grey_tide_2030_scenario + grey_tide_2030_regions
+  -> 失败时回退 ardennes_v0_scenario + ardennes_v02_regions
+  -> 再失败时回退 GameState.initial() + 旧 region 叠加
+```
+
+MapEditor 默认资源桥也切到 `grey_tide_2030`，导出时默认写 `blueForce` / `redForce` / `neutral`，不再把现代地图导回 `allies/germany`。
 
 ---
 
@@ -565,12 +593,12 @@ AppContainer.bootstrap()
 
 ```text
 loadGameState(
-  scenarioName: "ardennes_v0_scenario",
-  regionName: "ardennes_v02_regions"
+  scenarioName: "grey_tide_2030_scenario",
+  regionName: "grey_tide_2030_regions"
 )
 ```
 
-如果失败，才 fallback 到老的 `GameState.initial()` + v0.2 region 叠加路径。
+如果失败，先 fallback 到 `ardennes_v0_scenario` + `ardennes_v02_regions`，再 fallback 到老的 `GameState.initial()` + v0.2 region 叠加路径。
 
 ### 2.2 loadGameState 的完整链条
 
@@ -581,7 +609,7 @@ loadScenarioDefinition(named:)
 loadRegionDataSet(named:)
   -> makeMapState(from: scenario)
      - ScenarioTileDefinition -> HexTile
-     - tile.controller 字符串转 Faction；"neutral" 转 nil
+     - tile.controller 字符串通过 Faction.dataValue 转 Faction
      - tile.regionId 写入 HexTile.regionId
      - supply source / objective 写入 MapState
   -> apply(regionData, to: map)
@@ -778,8 +806,8 @@ supplySources / objectives:
 默认读写路径：
 
 ```text
-WWIIHexV0/Data/ardennes_v0_scenario.json
-WWIIHexV0/Data/ardennes_v02_regions.json
+WWIIHexV0/Data/grey_tide_2030_scenario.json
+WWIIHexV0/Data/grey_tide_2030_regions.json
 ```
 
 流程：

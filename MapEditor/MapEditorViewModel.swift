@@ -10,14 +10,14 @@ final class MapEditorViewModel: ObservableObject {
     @Published var paintRoad: Bool = false
     @Published var paintController: Faction? = nil
     @Published var paintSupply: Bool = false
-    @Published var supplyFaction: Faction = .germany
+    @Published var supplyFaction: Faction = .blueForce
     @Published var selectedRegionId: RegionId?
     @Published var selectedTheaterId: TheaterId?
     @Published var eraseRegionMembership: Bool = false
     @Published var selectedUnitTemplateId: String = "infantry_division"
-    @Published var selectedUnitFaction: Faction = .germany
+    @Published var selectedUnitFaction: Faction = .blueForce
     @Published var selectedUnitHP: Int = 10
-    @Published var selectedUnitFacing: HexDirection = .west
+    @Published var selectedUnitFacing: HexDirection = .east
     @Published var eraseUnits: Bool = false
     @Published var pendingRegionHexes: Set<HexCoord> = []
     @Published var pendingTheaterRegions: Set<RegionId> = []
@@ -435,7 +435,17 @@ final class MapEditorViewModel: ObservableObject {
     private func stampUnit(at coord: HexCoord) {
         document.initialUnits.removeAll { $0.coord == coord }
         let nextIndex = document.initialUnits.count + 1
-        let factionPrefix = selectedUnitFaction == .germany ? "ger" : "all"
+        let factionPrefix: String
+        switch selectedUnitFaction.alignment {
+        case .red:
+            factionPrefix = "red"
+        case .blue:
+            factionPrefix = "blue"
+        case .green:
+            factionPrefix = "green"
+        case .neutral:
+            factionPrefix = "neutral"
+        }
         let id = "\(factionPrefix)_editor_\(nextIndex)"
         document.initialUnits.append(
             MapEditorUnitDraft(

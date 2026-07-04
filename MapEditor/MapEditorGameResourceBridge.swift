@@ -15,8 +15,8 @@ enum MapEditorGameResourceBridgeError: Error, CustomStringConvertible {
 }
 
 enum MapEditorGameResourceBridge {
-    static let scenarioResourceName = "ardennes_v0_scenario"
-    static let regionResourceName = "ardennes_v02_regions"
+    static let scenarioResourceName = "grey_tide_2030_scenario"
+    static let regionResourceName = "grey_tide_2030_regions"
 
     static var gameDataDirectory: URL {
         URL(fileURLWithPath: #filePath)
@@ -71,7 +71,7 @@ enum MapEditorGameResourceBridge {
                 cityName: tile.cityName,
                 fortressName: tile.fortressName,
                 isSupplySource: tile.isSupplySource,
-                supplyFaction: tile.supplyFaction.flatMap(Faction.init(rawValue:)),
+                supplyFaction: Faction.dataValue(tile.supplyFaction),
                 objectiveId: tile.objectiveId,
                 regionId: regionMapping[coord] ?? tile.regionId.map { RegionId($0) }
             )

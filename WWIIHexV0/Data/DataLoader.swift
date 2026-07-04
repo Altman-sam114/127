@@ -17,6 +17,13 @@ struct DataLoader {
 
     func loadInitialGameState() -> GameState {
         if let state = try? loadGameState(
+            scenarioName: "grey_tide_2030_scenario",
+            regionName: "grey_tide_2030_regions"
+        ) {
+            return state
+        }
+
+        if let state = try? loadGameState(
             scenarioName: "ardennes_v0_scenario",
             regionName: "ardennes_v02_regions"
         ) {

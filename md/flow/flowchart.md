@@ -95,7 +95,7 @@ flowchart LR
     ROE["ROE helper<br/>defaultROEStatus<br/>isHostile(to:)"]:::rules
     REGION["RegionDataSet fallback<br/>nil owner/controller -> neutral"]:::rules
     PIPE["命令与规则管线不变<br/>Command / ZoneDirective<br/>WarCommandExecutor / RuleEngine"]:::command
-    TODO["后续 v6.2+<br/>grey_tide_2030<br/>ISR / EW / FireMission<br/>通用 phase raw value"]:::risk
+    TODO["后续 v6.3+<br/>现代 unit template<br/>ISR / EW / FireMission<br/>通用 phase raw value"]:::risk
 
     DATA --> FACTION --> ALIGN --> ROE --> PIPE
     DATA --> REGION --> PIPE
@@ -105,6 +105,32 @@ flowchart LR
     classDef state fill:#e0f2fe,stroke:#0284c7,color:#082f49
     classDef rules fill:#ccfbf1,stroke:#0f766e,color:#042f2e
     classDef command fill:#fae8ff,stroke:#a21caf,color:#2a0a2f
+    classDef risk fill:#fee2e2,stroke:#b91c1c,color:#111827
+```
+
+## 0.4 v6.2 灰潮行动默认剧本种子
+
+这张图描述当前 v6.2 第一批实现。默认新局优先加载现代剧本种子，旧阿登资源只保留作 fallback / 历史兼容。
+
+```mermaid
+flowchart LR
+    ENTRY["DataLoader.loadInitialGameState"]:::data
+    GREY["grey_tide_2030_scenario<br/>grey_tide_2030_regions"]:::data
+    MAP["60 hex / 10 region<br/>Blue / Red / Neutral"]:::state
+    EDITOR["MapEditor 默认资源桥<br/>读写 grey_tide_2030"]:::state
+    PIPE["既有运行链<br/>Hex -> Region -> Theater<br/>FrontLine / WarDeployment"]:::rules
+    FALLBACK["失败回退<br/>ardennes_v0 + ardennes_v02<br/>GameState.initial"]:::legacy
+    TODO["后续 v6.3+<br/>现代 unit template<br/>ISR / EW / FireMission<br/>100-220 hex 发布地图"]:::risk
+
+    ENTRY --> GREY --> MAP --> PIPE
+    GREY --> EDITOR
+    ENTRY --> FALLBACK
+    PIPE --> TODO
+
+    classDef data fill:#f8f9fb,stroke:#6b7280,color:#111827
+    classDef state fill:#e0f2fe,stroke:#0284c7,color:#082f49
+    classDef rules fill:#ccfbf1,stroke:#0f766e,color:#042f2e
+    classDef legacy fill:#fef3c7,stroke:#d97706,color:#1f1600
     classDef risk fill:#fee2e2,stroke:#b91c1c,color:#111827
 ```
 
@@ -363,7 +389,7 @@ flowchart TD
     REG["省份 JSON<br/>RegionDataSet<br/>保存 hexToRegion、省份、边、初始 theaterId"]:::data
     NEI["自动推导省份邻接<br/>真实 hex 邻接 -> Region.neighbors / RegionEdge<br/>避免手写邻接出错"]:::derived
     BRIDGE["默认资源桥<br/>MapEditorGameResourceBridge<br/>读取或覆盖项目默认地图资源"]:::loader
-    FILES["项目默认数据文件<br/>WWIIHexV0/Data<br/>ardennes_v0_scenario.json + ardennes_v02_regions.json"]:::data
+    FILES["项目默认数据文件<br/>WWIIHexV0/Data<br/>grey_tide_2030_scenario.json + grey_tide_2030_regions.json"]:::data
     LOAD["游戏启动加载<br/>DataLoader.loadGameState<br/>DEBUG 下优先读源码 JSON"]:::loader
     MAP["地图状态<br/>MapState<br/>tiles + hexToRegion + RegionGraph"]:::state
     THEATER["战区状态<br/>TheaterState<br/>捕获 initialSnapshot，并 seed hexToTheater"]:::state

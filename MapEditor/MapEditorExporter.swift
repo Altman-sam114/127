@@ -104,9 +104,20 @@ enum MapEditorExporter {
                 objectiveId: hex.objectiveId
             )
         }
+        let controlledFactions: [Faction] = document.sortedHexes.compactMap(\.controller)
+        let supplyFactions: [Faction] = document.sortedHexes.compactMap(\.supplyFaction)
+        let unitFactions: [Faction] = document.initialUnits.map(\.faction)
+        var documentFactions = Set<Faction>()
+        documentFactions.formUnion(controlledFactions)
+        documentFactions.formUnion(supplyFactions)
+        documentFactions.formUnion(unitFactions)
+        documentFactions.formUnion([.blueForce, .redForce, .neutral])
+        let exportedFactions = documentFactions
+            .sorted { $0.rawValue < $1.rawValue }
+            .map(\.rawValue)
 
         return ScenarioDefinition(
-            schemaVersion: 1,
+            schemaVersion: 2,
             id: document.id,
             displayName: document.displayName,
             map: ScenarioMapDefinition(
@@ -131,12 +142,12 @@ enum MapEditorExporter {
                     )
                 }
             ),
-            factions: Faction.allCases.map(\.rawValue),
+            factions: exportedFactions,
             maxTurns: 12,
             initialTurn: 1,
             initialPhase: GamePhase.alliedPlayer.rawValue,
-            playerFaction: Faction.allies.rawValue,
-            aiFaction: Faction.germany.rawValue,
+            playerFaction: Faction.blueForce.rawValue,
+            aiFaction: Faction.redForce.rawValue,
             keyLocations: keyLocations,
             objectives: objectives,
             initialUnits: document.initialUnits.map { unit in
