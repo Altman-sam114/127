@@ -83,7 +83,7 @@ final class UnitNode: SKNode {
             addChild(ellipse)
         } else {
             // 步兵系：斜线。mechanized 单斜线（\），infantry 双斜线（X）
-            let isMotorized = division.components.contains { $0.type == .motorizedInfantry && $0.weight >= 0.40 }
+            let isMechanized = division.isMechanized
             let halfW = width / 2 - inset
             let halfH = height / 2 - inset
 
@@ -97,7 +97,7 @@ final class UnitNode: SKNode {
             slash1.zPosition = 1
             addChild(slash1)
 
-            if !isMotorized {
+            if !isMechanized {
                 // 步兵：第二条斜线（/）成 X
                 let slash2 = SKShapeNode()
                 let path2 = CGMutablePath()
@@ -182,10 +182,10 @@ private extension Division {
         if isArmor {
             return "ARM"
         }
-        if components.contains(where: { $0.type == .motorizedInfantry && $0.weight >= 0.40 }) {
+        if isMechanized {
             return "MECH"
         }
-        return "INF"
+        return dominantComponentType?.displayCode ?? "INF"
     }
 
     var markerReadinessText: String {

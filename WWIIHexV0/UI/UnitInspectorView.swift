@@ -132,21 +132,6 @@ private extension RetreatMode {
     }
 }
 
-private extension ComponentType {
-    var displayCode: String {
-        switch self {
-        case .tank:
-            return "ARM"
-        case .motorizedInfantry:
-            return "MECH"
-        case .infantry:
-            return "INF"
-        case .artillery:
-            return "ART"
-        }
-    }
-}
-
 private extension SupplyState {
     var displayName: String {
         switch self {

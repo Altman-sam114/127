@@ -95,7 +95,7 @@ flowchart LR
     ROE["ROE helper<br/>defaultROEStatus<br/>isHostile(to:)"]:::rules
     REGION["RegionDataSet fallback<br/>nil owner/controller -> neutral"]:::rules
     PIPE["命令与规则管线不变<br/>Command / ZoneDirective<br/>WarCommandExecutor / RuleEngine"]:::command
-    TODO["后续 v6.3+<br/>现代 unit template<br/>ISR / EW / FireMission<br/>通用 phase raw value"]:::risk
+    TODO["后续 v6.4+<br/>ISR / EW / FireMission<br/>通用 phase raw value"]:::risk
 
     DATA --> FACTION --> ALIGN --> ROE --> PIPE
     DATA --> REGION --> PIPE
@@ -120,7 +120,7 @@ flowchart LR
     EDITOR["MapEditor 默认资源桥<br/>读写 grey_tide_2030"]:::state
     PIPE["既有运行链<br/>Hex -> Region -> Theater<br/>FrontLine / WarDeployment"]:::rules
     FALLBACK["失败回退<br/>ardennes_v0 + ardennes_v02<br/>GameState.initial"]:::legacy
-    TODO["后续 v6.3+<br/>现代 unit template<br/>ISR / EW / FireMission<br/>100-220 hex 发布地图"]:::risk
+    TODO["后续 v6.4+<br/>ISR / EW / FireMission<br/>100-220 hex 发布地图"]:::risk
 
     ENTRY --> GREY --> MAP --> PIPE
     GREY --> EDITOR
@@ -130,6 +130,35 @@ flowchart LR
     classDef data fill:#f8f9fb,stroke:#6b7280,color:#111827
     classDef state fill:#e0f2fe,stroke:#0284c7,color:#082f49
     classDef rules fill:#ccfbf1,stroke:#0f766e,color:#042f2e
+    classDef legacy fill:#fef3c7,stroke:#d97706,color:#1f1600
+    classDef risk fill:#fee2e2,stroke:#b91c1c,color:#111827
+```
+
+## 0.5 v6.3 现代单位、移动、战斗和后勤基础
+
+这张图描述当前 v6.3 第一批实现。默认现代剧本使用现代合成作战模板；旧阿登数据集仍固定使用 legacy 模板，避免旧测试和 fallback 语义被现代模板覆盖。
+
+```mermaid
+flowchart LR
+    ENTRY["DataLoader.loadInitialGameState<br/>默认新局"]:::data
+    GREY["grey_tide_2030_scenario<br/>现代 templateId"]:::data
+    MODERN["modern_unit_templates.json<br/>armor / mech / recon / fires<br/>AD / engineer / logistics / UAV / EW"]:::state
+    DIV["Division.components<br/>源码名保留 Division<br/>组件语义现代化"]:::state
+    RULES["既有规则管线不变<br/>WarCommandExecutor<br/>RuleEngine"]:::command
+    MODIFIERS["v6.3 首版 modifiers<br/>terrain movement<br/>combat multiplier<br/>supply degradation<br/>reinforcement cost"]:::rules
+    UI["玩家可见显示<br/>task force / battery / detachment<br/>tacticDisplayName"]:::display
+    LEGACY["loadArdennesDataSet<br/>unit_templates.json<br/>旧 id / fixture 兼容"]:::legacy
+    TODO["后续 v6.4+<br/>ContactTrack / SensorCoverage<br/>EWEffect / FireMission / AirTasking"]:::risk
+
+    ENTRY --> GREY --> MODERN --> DIV --> RULES --> MODIFIERS --> UI
+    ENTRY --> LEGACY
+    RULES --> TODO
+
+    classDef data fill:#f8f9fb,stroke:#6b7280,color:#111827
+    classDef state fill:#e0f2fe,stroke:#0284c7,color:#082f49
+    classDef rules fill:#ccfbf1,stroke:#0f766e,color:#042f2e
+    classDef command fill:#fae8ff,stroke:#a21caf,color:#2a0a2f
+    classDef display fill:#e0f2fe,stroke:#0284c7,color:#082f49
     classDef legacy fill:#fef3c7,stroke:#d97706,color:#1f1600
     classDef risk fill:#fee2e2,stroke:#b91c1c,color:#111827
 ```

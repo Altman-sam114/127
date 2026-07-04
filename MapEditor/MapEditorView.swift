@@ -149,10 +149,15 @@ struct MapEditorView: View {
                 }
             }
             Picker("模板", selection: $viewModel.selectedUnitTemplateId) {
-                Text("步兵师").tag("infantry_division")
-                Text("装甲师").tag("panzer_division")
-                Text("摩托化师").tag("motorized_division")
-                Text("重炮主力").tag("artillery_division")
+                Text("机械化任务编组").tag("mechanized_task_force")
+                Text("装甲任务编组").tag("armored_task_force")
+                Text("侦察屏卫").tag("recon_screen")
+                Text("火力分队").tag("fires_battery")
+                Text("防空分队").tag("air_defense_detachment")
+                Text("轻步兵小队").tag("light_infantry_team")
+                Text("安全分队").tag("security_detachment")
+                Text("工程分队").tag("engineer_detachment")
+                Text("后勤分队").tag("logistics_element")
             }
             Stepper("兵力 \(viewModel.selectedUnitHP)", value: $viewModel.selectedUnitHP, in: 1...20)
             Picker("朝向", selection: $viewModel.selectedUnitFacing) {

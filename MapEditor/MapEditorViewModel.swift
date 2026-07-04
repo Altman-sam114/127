@@ -14,7 +14,7 @@ final class MapEditorViewModel: ObservableObject {
     @Published var selectedRegionId: RegionId?
     @Published var selectedTheaterId: TheaterId?
     @Published var eraseRegionMembership: Bool = false
-    @Published var selectedUnitTemplateId: String = "infantry_division"
+    @Published var selectedUnitTemplateId: String = "mechanized_task_force"
     @Published var selectedUnitFaction: Faction = .blueForce
     @Published var selectedUnitHP: Int = 10
     @Published var selectedUnitFacing: HexDirection = .east
@@ -36,7 +36,7 @@ final class MapEditorViewModel: ObservableObject {
 
     @Published var newRegionText: String = "新省份"
     @Published var newTheaterText: String = "新战区"
-    @Published var newUnitNameText: String = "师"
+    @Published var newUnitNameText: String = "任务编组"
 
     init(document: MapEditorDocument = .new(width: 8, height: 6)) {
         self.document = document

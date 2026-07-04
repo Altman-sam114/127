@@ -63,15 +63,18 @@ struct UnitTooltipView: View {
 private extension Division {
     var tooltipTypeCode: String {
         if isArtillery {
-            return "ART"
+            return "FIRES"
+        }
+        if hasAirDefenseSupport {
+            return "AD"
         }
         if isArmor {
             return "ARM"
         }
-        if components.contains(where: { $0.type == .motorizedInfantry && $0.weight >= 0.40 }) {
+        if isMechanized {
             return "MECH"
         }
-        return "INF"
+        return dominantComponentType?.displayCode ?? "INF"
     }
 }
 

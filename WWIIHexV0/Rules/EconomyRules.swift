@@ -265,20 +265,21 @@ struct EconomyRules {
     }
 
     private func reinforcementCostPerStrength(for division: Division) -> EconomyResources {
-        let armorWeight = division.components
-            .filter { $0.type == .tank }
-            .reduce(0.0) { $0 + $1.weight }
-        let motorizedWeight = division.components
-            .filter { $0.type == .motorizedInfantry }
-            .reduce(0.0) { $0 + $1.weight }
-        let artilleryWeight = division.components
-            .filter { $0.type == .artillery }
-            .reduce(0.0) { $0 + $1.weight }
+        let armorWeight = division.componentWeight(where: \.isArmorFamily)
+        let mobilityWeight = division.componentWeight {
+            $0.isMechanizedFamily || $0.isLogisticsFamily
+        }
+        let firesWeight = division.componentWeight {
+            $0.isFiresFamily || $0.isAirDefenseFamily || $0.isUnmannedFamily
+        }
+        let sustainmentWeight = division.componentWeight {
+            $0.isEngineerFamily || $0.isLogisticsFamily
+        }
 
         return EconomyResources(
             manpower: max(4, Int((8 + 6 * (1 - armorWeight)).rounded())),
-            industry: max(1, Int((1 + armorWeight * 5 + motorizedWeight * 2 + artilleryWeight * 3).rounded())),
-            supplies: 1
+            industry: max(1, Int((1 + armorWeight * 5 + mobilityWeight * 2 + firesWeight * 3).rounded())),
+            supplies: max(1, Int((1 + sustainmentWeight * 2 + firesWeight).rounded()))
         )
     }
 

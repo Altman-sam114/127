@@ -14,8 +14,9 @@
   "aiFaction": "redForce",
   "dataNotes": [
     "v6.2 seed scenario for the modern migration.",
-    "Uses existing terrain and unit template schema while replacing the default campaign identity.",
-    "ISR, EW, precision fires, air tasking, and modern unit component schemas are staged for later v6.x work."
+    "Uses existing terrain schema while replacing the default campaign identity.",
+    "v6.3 routes default formations through modern_unit_templates.json for modern components and logistics-aware modifiers.",
+    "ISR, EW, precision fires, air tasking, and contact tracks remain staged for later v6.x work."
   ],
   "map": {
     "width": 10,
@@ -105,16 +106,16 @@
     {"id":"obj_northern_pass","name":"Northern Pass","kind":"supply","coord":{"q":1,"r":4},"points":1}
   ],
   "initialUnits": [
-    {"id":"unit_blue_recon","name":"Blue Recon Screen","faction":"blueForce","templateId":"infantry_division","coord":{"q":1,"r":1},"facing":"east","hp":10,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
-    {"id":"unit_blue_mech_1","name":"Blue Mechanized Task Force","faction":"blueForce","templateId":"motorized_division","coord":{"q":2,"r":1},"facing":"east","hp":10,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
-    {"id":"unit_blue_mech_2","name":"Blue Northern Task Force","faction":"blueForce","templateId":"motorized_division","coord":{"q":1,"r":4},"facing":"east","hp":10,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
-    {"id":"unit_blue_fires","name":"Blue Fires Battery","faction":"blueForce","templateId":"artillery_division","coord":{"q":2,"r":4},"facing":"east","hp":8,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
-    {"id":"unit_blue_security","name":"Blue Security Element","faction":"blueForce","templateId":"infantry_division","coord":{"q":0,"r":2},"facing":"east","hp":9,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
-    {"id":"unit_red_mech_1","name":"Red Mechanized Group","faction":"redForce","templateId":"motorized_division","coord":{"q":8,"r":1},"facing":"west","hp":10,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
-    {"id":"unit_red_mech_2","name":"Red Security Group","faction":"redForce","templateId":"motorized_division","coord":{"q":8,"r":4},"facing":"west","hp":10,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
-    {"id":"unit_red_fires","name":"Red Fires Battery","faction":"redForce","templateId":"artillery_division","coord":{"q":9,"r":4},"facing":"west","hp":8,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
-    {"id":"unit_red_air_defense","name":"Red Air Defense Detachment","faction":"redForce","templateId":"infantry_division","coord":{"q":9,"r":2},"facing":"west","hp":9,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
-    {"id":"unit_red_screen","name":"Red Forward Screen","faction":"redForce","templateId":"infantry_division","coord":{"q":7,"r":4},"facing":"west","hp":9,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null}
+    {"id":"unit_blue_recon","name":"Blue Recon Screen","faction":"blueForce","templateId":"recon_screen","coord":{"q":1,"r":1},"facing":"east","hp":8,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
+    {"id":"unit_blue_mech_1","name":"Blue Mechanized Task Force","faction":"blueForce","templateId":"mechanized_task_force","coord":{"q":2,"r":1},"facing":"east","hp":10,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
+    {"id":"unit_blue_mech_2","name":"Blue Northern Task Force","faction":"blueForce","templateId":"mechanized_task_force","coord":{"q":1,"r":4},"facing":"east","hp":10,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
+    {"id":"unit_blue_fires","name":"Blue Fires Battery","faction":"blueForce","templateId":"fires_battery","coord":{"q":2,"r":4},"facing":"east","hp":8,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
+    {"id":"unit_blue_security","name":"Blue Security Element","faction":"blueForce","templateId":"security_detachment","coord":{"q":0,"r":2},"facing":"east","hp":9,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
+    {"id":"unit_red_mech_1","name":"Red Mechanized Group","faction":"redForce","templateId":"mechanized_task_force","coord":{"q":8,"r":1},"facing":"west","hp":10,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
+    {"id":"unit_red_mech_2","name":"Red Security Group","faction":"redForce","templateId":"mechanized_task_force","coord":{"q":8,"r":4},"facing":"west","hp":10,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
+    {"id":"unit_red_fires","name":"Red Fires Battery","faction":"redForce","templateId":"fires_battery","coord":{"q":9,"r":4},"facing":"west","hp":8,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
+    {"id":"unit_red_air_defense","name":"Red Air Defense Detachment","faction":"redForce","templateId":"air_defense_detachment","coord":{"q":9,"r":2},"facing":"west","hp":8,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
+    {"id":"unit_red_screen","name":"Red Forward Screen","faction":"redForce","templateId":"recon_screen","coord":{"q":7,"r":4},"facing":"west","hp":8,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null}
   ],
   "victoryConditions": []
 }

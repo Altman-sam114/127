@@ -433,14 +433,29 @@ private extension SKColor {
 
 private extension String {
     var mapEditorUnitAbbreviation: String {
-        if localizedStandardContains("panzer") || localizedStandardContains("tank") {
+        if localizedStandardContains("recon") {
+            return "ISR"
+        }
+        if localizedStandardContains("fires") || localizedStandardContains("artillery") {
+            return "FIR"
+        }
+        if localizedStandardContains("air_defense") {
+            return "AD"
+        }
+        if localizedStandardContains("engineer") {
+            return "ENG"
+        }
+        if localizedStandardContains("logistics") {
+            return "LOG"
+        }
+        if localizedStandardContains("armor")
+            || localizedStandardContains("armored")
+            || localizedStandardContains("panzer")
+            || localizedStandardContains("tank") {
             return "ARM"
         }
-        if localizedStandardContains("artillery") {
-            return "ART"
-        }
-        if localizedStandardContains("motorized") {
-            return "MOT"
+        if localizedStandardContains("mechanized") || localizedStandardContains("motorized") {
+            return "MECH"
         }
         return "INF"
     }

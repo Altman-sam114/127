@@ -174,7 +174,7 @@ WWIIHexV0/Data/grey_tide_2030_regions.json
 - 60 个 hex，10 个 region / operational zone。
 - Blue Force / Red Force / Neutral 三方数据值。
 - 关键点：East Airport、Harbor Terminal、Radar Ridge、River Bridge、Industrial Hub、Comms Center、Northern Pass。
-- 仍复用旧 `unit_templates.json` 和旧 `ComponentType`，只在默认剧本显示名上使用现代任务编组。
+- v6.3 起默认单位改用 `modern_unit_templates.json`，旧 `unit_templates.json` 只作阿登数据集和 fallback 兼容。
 
 默认启动顺序现在是：
 
@@ -185,6 +185,53 @@ grey_tide_2030_scenario + grey_tide_2030_regions
 ```
 
 MapEditor 默认资源桥也切到 `grey_tide_2030`，导出时默认写 `blueForce` / `redForce` / `neutral`，不再把现代地图导回 `allies/germany`。
+
+## 0.5 v6.3 现代单位、移动、战斗和后勤基础
+
+v6.3 第一批实现把默认现代剧本从旧二战模板迁到现代合成作战模板，同时保持 hex 权威和统一命令管线不变。
+
+当前默认模板入口：
+
+```text
+DataLoader.loadUnitTemplates()
+  -> 优先 modern_unit_templates.json
+  -> 缺失时 fallback unit_templates.json
+
+DataLoader.loadArdennesDataSet()
+  -> 固定读取 unit_templates.json
+  -> 保持旧阿登数据集和历史测试 fixture 的模板集合不变
+```
+
+`ComponentType` 现在支持现代组件：
+
+```text
+armor / mechanizedInfantry / lightInfantry / recon
+artillery / rocketArtillery / airDefense
+engineer / logistics / uav / loiteringMunition
+specialForces / electronicWarfare
+```
+
+旧 `tank`、`motorizedInfantry`、`infantry`、`artillery` raw value 仍可解码，用于旧 JSON、旧测试和 fallback。玩家默认路径不再通过旧模板 id 生成灰潮单位。
+
+现代规则差异首版：
+
+- 装甲：开阔地强，进入森林、城市、工事、山地仍受机动惩罚。
+- 机械化：道路上有进攻效率，复杂地形机动较装甲轻但仍受限。
+- 轻步兵 / 特战：城市、森林、工事沿用步兵防御加成，山地额外加强。
+- 工程：降低渡河、工事进入/突破相关移动或攻击惩罚。
+- 火力 / 火箭炮 / 巡飞弹：作为 fires family 提高远程火力与补员工业成本。
+- 防空 / 电子战：降低无人系统攻击效果，并提升面对无人系统时的防御。
+- 后勤：在低补给和包围时减轻 attack / movement / defense 衰减，并提高补员补给成本。
+- 侦察 / UAV：提高 vision，默认剧本侦察屏卫使用 ISR 类组件。
+
+战术 raw value 仍保持历史兼容，例如 `blitzkrieg`、`fireCoverage`、`pincerMovement` 继续可被 AI JSON 解码；玩家可见展示名已映射为 `Armored Thrust`、`Suppression`、`Envelopment` 等现代术语。`WarDirectiveRecord.tacticDisplayName` 是当前 UI 展示入口。
+
+仍未完成：
+
+- ISR / ContactTrack / 传感器覆盖 / EW 效果尚未进入状态系统。
+- FireMission / AirTasking / 精确火力命令仍未独立建模。
+- fuel / ammo / readiness / signature / electronicProtection 尚未作为独立字段落库。
+- 现代战役地图仍是 60-hex 种子，未扩到发布级规模。
 
 ---
 

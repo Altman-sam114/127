@@ -146,7 +146,7 @@ struct AgentPanelView: View {
 
     private func directiveSummary(_ directive: WarDirectiveRecord) -> String {
         let type = directive.directiveType?.rawValue ?? "diagnostic"
-        let tactic = directive.tactic?.rawValue ?? directive.category?.rawValue ?? "none"
+        let tactic = directive.tacticDisplayName ?? directive.category?.rawValue ?? "none"
         let executed = directive.commandResults.filter(\.executed).count
         let rejected = directive.commandResults.count - executed
         let targets = directive.targetRegionIds.map(\.rawValue).joined(separator: ", ")

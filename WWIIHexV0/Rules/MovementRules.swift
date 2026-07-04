@@ -81,8 +81,7 @@ struct MovementRules {
                 }
 
                 let nextCost = current.cost
-                    + movementCost(from: fromTile, to: toTile, direction: direction)
-                    + tacticalTerrainPenalty(for: division, entering: toTile)
+                    + tacticalMovementCost(for: division, from: fromTile, to: toTile, direction: direction)
                 guard nextCost <= movementLimit else {
                     continue
                 }
@@ -103,10 +102,46 @@ struct MovementRules {
     }
 
     private func tacticalTerrainPenalty(for division: Division, entering tile: HexTile) -> Int {
-        guard division.isArmor else {
-            return 0
+        if division.isArmor {
+            return tile.baseTerrain.armorSlowdownCost
         }
 
-        return tile.baseTerrain.armorSlowdownCost
+        if division.isMechanized {
+            switch tile.baseTerrain {
+            case .mountain:
+                return 1
+            case .forest,
+                 .fortress:
+                return 1
+            case .plain,
+                 .hill,
+                 .city:
+                return 0
+            }
+        }
+
+        return 0
+    }
+
+    private func tacticalMovementCost(
+        for division: Division,
+        from fromTile: HexTile,
+        to toTile: HexTile,
+        direction: HexDirection
+    ) -> Int {
+        var cost = movementCost(from: fromTile, to: toTile, direction: direction)
+            + tacticalTerrainPenalty(for: division, entering: toTile)
+
+        if division.hasEngineerSupport,
+           hasRiverCrossing(from: fromTile, to: toTile, direction: direction) || toTile.baseTerrain == .fortress {
+            cost -= 1
+        }
+
+        if division.hasLogisticsSupport,
+           division.supplyState != .supplied {
+            cost -= 1
+        }
+
+        return max(1, cost)
     }
 }

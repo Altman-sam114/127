@@ -144,6 +144,7 @@ jq empty WWIIHexV0/Data/ardennes_v02_regions.json
 jq empty WWIIHexV0/Data/general_agents.json
 jq empty WWIIHexV0/Data/terrain_rules.json
 jq empty WWIIHexV0/Data/unit_templates.json
+jq empty WWIIHexV0/Data/modern_unit_templates.json
 ```
 
 ### 4.4 Swift 单文件语法

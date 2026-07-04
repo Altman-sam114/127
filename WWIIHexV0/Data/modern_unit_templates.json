@@ -1,0 +1,192 @@
+{
+  "schemaVersion": 2,
+  "templates": [
+    {
+      "id": "armored_task_force",
+      "displayName": "Armored Task Force",
+      "maxHP": 10,
+      "components": [
+        { "type": "armor", "weight": 0.45 },
+        { "type": "mechanizedInfantry", "weight": 0.25 },
+        { "type": "engineer", "weight": 0.10 },
+        { "type": "artillery", "weight": 0.10 },
+        { "type": "logistics", "weight": 0.10 }
+      ]
+    },
+    {
+      "id": "mechanized_task_force",
+      "displayName": "Mechanized Task Force",
+      "maxHP": 10,
+      "components": [
+        { "type": "mechanizedInfantry", "weight": 0.45 },
+        { "type": "armor", "weight": 0.20 },
+        { "type": "engineer", "weight": 0.10 },
+        { "type": "artillery", "weight": 0.10 },
+        { "type": "logistics", "weight": 0.15 }
+      ]
+    },
+    {
+      "id": "recon_screen",
+      "displayName": "Recon Screen",
+      "maxHP": 8,
+      "components": [
+        { "type": "recon", "weight": 0.45 },
+        { "type": "uav", "weight": 0.20 },
+        { "type": "lightInfantry", "weight": 0.20 },
+        { "type": "electronicWarfare", "weight": 0.15 }
+      ]
+    },
+    {
+      "id": "fires_battery",
+      "displayName": "Fires Battery",
+      "maxHP": 8,
+      "components": [
+        { "type": "artillery", "weight": 0.35 },
+        { "type": "rocketArtillery", "weight": 0.30 },
+        { "type": "loiteringMunition", "weight": 0.15 },
+        { "type": "recon", "weight": 0.10 },
+        { "type": "logistics", "weight": 0.10 }
+      ]
+    },
+    {
+      "id": "air_defense_detachment",
+      "displayName": "Air Defense Detachment",
+      "maxHP": 8,
+      "components": [
+        { "type": "airDefense", "weight": 0.55 },
+        { "type": "electronicWarfare", "weight": 0.15 },
+        { "type": "lightInfantry", "weight": 0.15 },
+        { "type": "logistics", "weight": 0.15 }
+      ]
+    },
+    {
+      "id": "light_infantry_team",
+      "displayName": "Light Infantry Team",
+      "maxHP": 9,
+      "components": [
+        { "type": "lightInfantry", "weight": 0.60 },
+        { "type": "recon", "weight": 0.15 },
+        { "type": "uav", "weight": 0.10 },
+        { "type": "engineer", "weight": 0.10 },
+        { "type": "logistics", "weight": 0.05 }
+      ]
+    },
+    {
+      "id": "security_detachment",
+      "displayName": "Security Detachment",
+      "maxHP": 9,
+      "components": [
+        { "type": "lightInfantry", "weight": 0.50 },
+        { "type": "recon", "weight": 0.20 },
+        { "type": "engineer", "weight": 0.10 },
+        { "type": "airDefense", "weight": 0.10 },
+        { "type": "logistics", "weight": 0.10 }
+      ]
+    },
+    {
+      "id": "engineer_detachment",
+      "displayName": "Engineer Detachment",
+      "maxHP": 8,
+      "components": [
+        { "type": "engineer", "weight": 0.55 },
+        { "type": "lightInfantry", "weight": 0.20 },
+        { "type": "logistics", "weight": 0.15 },
+        { "type": "recon", "weight": 0.10 }
+      ]
+    },
+    {
+      "id": "logistics_element",
+      "displayName": "Logistics Element",
+      "maxHP": 8,
+      "components": [
+        { "type": "logistics", "weight": 0.60 },
+        { "type": "lightInfantry", "weight": 0.20 },
+        { "type": "engineer", "weight": 0.10 },
+        { "type": "airDefense", "weight": 0.10 }
+      ]
+    },
+    {
+      "id": "sof_team",
+      "displayName": "SOF Team",
+      "maxHP": 7,
+      "components": [
+        { "type": "specialForces", "weight": 0.55 },
+        { "type": "uav", "weight": 0.20 },
+        { "type": "electronicWarfare", "weight": 0.15 },
+        { "type": "logistics", "weight": 0.10 }
+      ]
+    },
+    {
+      "id": "panzer_division",
+      "displayName": "Armored Task Force",
+      "maxHP": 10,
+      "components": [
+        { "type": "armor", "weight": 0.45 },
+        { "type": "mechanizedInfantry", "weight": 0.25 },
+        { "type": "engineer", "weight": 0.10 },
+        { "type": "artillery", "weight": 0.10 },
+        { "type": "logistics", "weight": 0.10 }
+      ]
+    },
+    {
+      "id": "motorized_division",
+      "displayName": "Mechanized Task Force",
+      "maxHP": 10,
+      "components": [
+        { "type": "mechanizedInfantry", "weight": 0.45 },
+        { "type": "armor", "weight": 0.20 },
+        { "type": "engineer", "weight": 0.10 },
+        { "type": "artillery", "weight": 0.10 },
+        { "type": "logistics", "weight": 0.15 }
+      ]
+    },
+    {
+      "id": "infantry_division",
+      "displayName": "Light Infantry Team",
+      "maxHP": 9,
+      "components": [
+        { "type": "lightInfantry", "weight": 0.60 },
+        { "type": "recon", "weight": 0.15 },
+        { "type": "uav", "weight": 0.10 },
+        { "type": "engineer", "weight": 0.10 },
+        { "type": "logistics", "weight": 0.05 }
+      ]
+    },
+    {
+      "id": "artillery_division",
+      "displayName": "Fires Battery",
+      "maxHP": 8,
+      "components": [
+        { "type": "artillery", "weight": 0.35 },
+        { "type": "rocketArtillery", "weight": 0.30 },
+        { "type": "loiteringMunition", "weight": 0.15 },
+        { "type": "recon", "weight": 0.10 },
+        { "type": "logistics", "weight": 0.10 }
+      ]
+    },
+    {
+      "id": "anti_tank_division",
+      "displayName": "Anti-Armor Team",
+      "maxHP": 8,
+      "components": [
+        { "type": "lightInfantry", "weight": 0.35 },
+        { "type": "loiteringMunition", "weight": 0.25 },
+        { "type": "recon", "weight": 0.15 },
+        { "type": "engineer", "weight": 0.10 },
+        { "type": "logistics", "weight": 0.15 }
+      ]
+    },
+    {
+      "id": "garrison_division",
+      "displayName": "Security Detachment",
+      "maxHP": 9,
+      "components": [
+        { "type": "lightInfantry", "weight": 0.50 },
+        { "type": "recon", "weight": 0.20 },
+        { "type": "engineer", "weight": 0.10 },
+        { "type": "airDefense", "weight": 0.10 },
+        { "type": "logistics", "weight": 0.10 }
+      ]
+    }
+  ]
+}

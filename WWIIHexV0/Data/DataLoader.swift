@@ -78,7 +78,7 @@ struct DataLoader {
         let dataSet = ScenarioDataSet(
             scenario: try loadScenarioDefinition(),
             terrainRules: try loadTerrainRules(),
-            unitTemplates: try loadUnitTemplates(),
+            unitTemplates: try loadLegacyUnitTemplates(),
             generalAgents: try loadGeneralAgents()
         )
         try validate(dataSet)
@@ -174,6 +174,14 @@ struct DataLoader {
     }
 
     func loadUnitTemplates() throws -> [UnitTemplateDefinition] {
+        do {
+            return try loadJSON(UnitTemplateCatalogDefinition.self, named: "modern_unit_templates").templates
+        } catch {
+            return try loadLegacyUnitTemplates()
+        }
+    }
+
+    func loadLegacyUnitTemplates() throws -> [UnitTemplateDefinition] {
         try loadJSON(UnitTemplateCatalogDefinition.self, named: "unit_templates").templates
     }
 
@@ -477,12 +485,22 @@ struct DataLoader {
             }
 
             let components: [DivisionComponent]
+            let maxHP: Int
             if let template = templates.first(where: { $0.id == definition.templateId }) {
+                maxHP = max(definition.hp, template.maxHP)
                 components = template.components.compactMap { component in
-                    guard let type = ComponentType(rawValue: component.type) else { return nil }
+                    guard let type = ComponentType.dataValue(component.type) else {
+                        errors.append(
+                            DataValidationError(
+                                message: "Unit template \(template.id) contains unknown component type \(component.type)."
+                            )
+                        )
+                        return nil
+                    }
                     return DivisionComponent(type: type, weight: component.weight)
                 }
             } else {
+                maxHP = max(definition.hp, fallbackMaxHP(for: definition.templateId))
                 components = fallbackComponents(for: definition.templateId)
             }
 
@@ -498,7 +516,7 @@ struct DataLoader {
                 coord: HexCoord(q: definition.coord.q, r: definition.coord.r),
                 facing: HexDirection(rawValue: definition.facing) ?? .west,
                 hp: definition.hp,
-                maxHP: 10,
+                maxHP: maxHP,
                 components: components,
                 supplyState: SupplyState(rawValue: definition.supplyState) ?? .supplied,
                 retreatMode: definition.retreatMode.flatMap(RetreatMode.init(rawValue:)) ?? .retreatable
@@ -521,6 +539,20 @@ struct DataLoader {
             return [DivisionComponent(type: .artillery, weight: 1.0)]
         default:
             return [DivisionComponent(type: .infantry, weight: 1.0)]
+        }
+    }
+
+    private func fallbackMaxHP(for templateId: String) -> Int {
+        switch templateId {
+        case "artillery_division",
+             "anti_tank_division",
+             "fires_battery",
+             "air_defense_detachment",
+             "logistics_element",
+             "sof_team":
+            return 8
+        default:
+            return 10
         }
     }
 

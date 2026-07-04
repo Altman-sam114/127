@@ -44,4 +44,8 @@ struct WarDirectiveRecord: Identifiable, Codable, Equatable {
         self.commanderAgentId = commanderAgentId
         self.commandTarget = commandTarget
     }
+
+    var tacticDisplayName: String? {
+        tactic?.displayName
+    }
 }

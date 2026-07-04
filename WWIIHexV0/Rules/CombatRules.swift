@@ -27,6 +27,15 @@ struct CombatRules {
            defenderTile.baseTerrain.supportsInfantryDefenseBonus {
             baseDefense = max(1, Int((Double(baseDefense) * 1.3).rounded()))
         }
+        if let defenderTile = state.map.tile(at: defender.coord),
+           defender.hasLightGroundCore,
+           defenderTile.baseTerrain == .mountain {
+            baseDefense += 1
+        }
+        if defender.hasAirDefenseSupport,
+           attacker.hasUnmannedSupport {
+            baseDefense += 1
+        }
         guard defender.retreatMode == .hold else {
             return baseDefense
         }
@@ -65,6 +74,20 @@ struct CombatRules {
         }
         if attacker.isArmor && defenderTile.baseTerrain.armorSlowdownCost > 0 {
             multiplier -= 0.1
+        }
+        if attacker.isMechanized && defenderTile.hasRoad {
+            multiplier += 0.1
+        }
+        if attacker.hasEngineerSupport,
+           defenderTile.baseTerrain == .city || defenderTile.baseTerrain == .fortress || hasRiverBetween(attacker.coord, defender.coord, in: state) {
+            multiplier += 0.15
+        }
+        if attacker.hasUnmannedSupport {
+            multiplier += 0.05
+        }
+        if defender.hasAirDefenseSupport,
+           attacker.hasUnmannedSupport {
+            multiplier -= 0.2
         }
 
         return max(1, Int((Double(attacker.attack) * multiplier).rounded()))

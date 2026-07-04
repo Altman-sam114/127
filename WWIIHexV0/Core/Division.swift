@@ -5,6 +5,18 @@ enum ComponentType: String, Codable, Equatable, CaseIterable {
     case motorizedInfantry
     case infantry
     case artillery
+    case armor
+    case mechanizedInfantry
+    case lightInfantry
+    case recon
+    case rocketArtillery
+    case airDefense
+    case engineer
+    case logistics
+    case uav
+    case loiteringMunition
+    case specialForces
+    case electronicWarfare
 
     var baseStats: EffectiveStats {
         switch self {
@@ -16,7 +28,154 @@ enum ComponentType: String, Codable, Equatable, CaseIterable {
             return EffectiveStats(attack: 4, defense: 5, movement: 3, range: 1, vision: 2)
         case .artillery:
             return EffectiveStats(attack: 7, defense: 2, movement: 2, range: 2, vision: 2)
+        case .armor:
+            return EffectiveStats(attack: 8, defense: 5, movement: 5, range: 1, vision: 2)
+        case .mechanizedInfantry:
+            return EffectiveStats(attack: 5, defense: 4, movement: 5, range: 1, vision: 3)
+        case .lightInfantry:
+            return EffectiveStats(attack: 4, defense: 5, movement: 3, range: 1, vision: 3)
+        case .recon:
+            return EffectiveStats(attack: 3, defense: 3, movement: 6, range: 1, vision: 5)
+        case .rocketArtillery:
+            return EffectiveStats(attack: 8, defense: 2, movement: 3, range: 3, vision: 2)
+        case .airDefense:
+            return EffectiveStats(attack: 4, defense: 4, movement: 3, range: 2, vision: 4)
+        case .engineer:
+            return EffectiveStats(attack: 4, defense: 5, movement: 3, range: 1, vision: 2)
+        case .logistics:
+            return EffectiveStats(attack: 1, defense: 2, movement: 4, range: 1, vision: 2)
+        case .uav:
+            return EffectiveStats(attack: 2, defense: 1, movement: 6, range: 2, vision: 6)
+        case .loiteringMunition:
+            return EffectiveStats(attack: 7, defense: 1, movement: 5, range: 2, vision: 4)
+        case .specialForces:
+            return EffectiveStats(attack: 6, defense: 5, movement: 4, range: 1, vision: 5)
+        case .electronicWarfare:
+            return EffectiveStats(attack: 2, defense: 3, movement: 3, range: 2, vision: 5)
         }
+    }
+
+    var displayCode: String {
+        switch self {
+        case .tank,
+             .armor:
+            return "ARM"
+        case .motorizedInfantry,
+             .mechanizedInfantry:
+            return "MECH"
+        case .infantry,
+             .lightInfantry:
+            return "INF"
+        case .artillery:
+            return "ART"
+        case .recon,
+             .uav:
+            return "ISR"
+        case .rocketArtillery,
+             .loiteringMunition:
+            return "FIRES"
+        case .airDefense:
+            return "AD"
+        case .engineer:
+            return "ENG"
+        case .logistics:
+            return "LOG"
+        case .specialForces:
+            return "SOF"
+        case .electronicWarfare:
+            return "EW"
+        }
+    }
+
+    var isArmorFamily: Bool {
+        self == .tank || self == .armor
+    }
+
+    var isMechanizedFamily: Bool {
+        self == .motorizedInfantry || self == .mechanizedInfantry
+    }
+
+    var isFiresFamily: Bool {
+        self == .artillery || self == .rocketArtillery || self == .loiteringMunition
+    }
+
+    var isAirDefenseFamily: Bool {
+        self == .airDefense || self == .electronicWarfare
+    }
+
+    var isEngineerFamily: Bool {
+        self == .engineer
+    }
+
+    var isLogisticsFamily: Bool {
+        self == .logistics
+    }
+
+    var isLightGroundFamily: Bool {
+        self == .infantry || self == .lightInfantry || self == .specialForces
+    }
+
+    var isUnmannedFamily: Bool {
+        self == .uav || self == .loiteringMunition
+    }
+
+    static func dataValue(_ value: String?) -> ComponentType? {
+        guard let value else {
+            return nil
+        }
+        let normalized = value
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+            .replacingOccurrences(of: "-", with: "_")
+            .replacingOccurrences(of: " ", with: "_")
+
+        switch normalized {
+        case "tank", "armor", "armour", "armored", "armored_vehicles":
+            return normalized == "tank" ? .tank : .armor
+        case "motorizedinfantry", "motorized_infantry", "mechanizedinfantry", "mechanized_infantry", "mech_infantry":
+            return normalized.hasPrefix("motorized") ? .motorizedInfantry : .mechanizedInfantry
+        case "infantry", "light_infantry", "lightinfantry":
+            return normalized == "infantry" ? .infantry : .lightInfantry
+        case "artillery", "tube_artillery":
+            return .artillery
+        case "rocket_artillery", "rocketartillery", "mlrs":
+            return .rocketArtillery
+        case "air_defense", "airdefense", "shorad", "sam":
+            return .airDefense
+        case "engineer", "engineers", "combat_engineer":
+            return .engineer
+        case "logistics", "sustainment", "supply":
+            return .logistics
+        case "uav", "drone", "uas":
+            return .uav
+        case "loitering_munition", "loiteringmunition":
+            return .loiteringMunition
+        case "special_forces", "specialforces", "sof":
+            return .specialForces
+        case "electronic_warfare", "electronicwarfare", "ew":
+            return .electronicWarfare
+        case "recon", "reconnaissance", "isr":
+            return .recon
+        default:
+            return ComponentType(rawValue: value)
+        }
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let rawValue = try container.decode(String.self)
+        guard let componentType = ComponentType.dataValue(rawValue) else {
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "Unknown component type value: \(rawValue)"
+            )
+        }
+        self = componentType
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(rawValue)
     }
 }
 
@@ -265,18 +424,23 @@ struct Division: Identifiable, Codable, Equatable {
         case .supplied:
             return stats
         case .lowSupply:
+            let attackFactor = hasLogisticsSupport ? 0.85 : 0.75
+            let movementPenalty = hasLogisticsSupport ? 0 : 1
             return EffectiveStats(
-                attack: max(1, Int(Double(stats.attack) * 0.75)),
+                attack: max(1, Int(Double(stats.attack) * attackFactor)),
                 defense: max(1, stats.defense - 1),
-                movement: max(1, stats.movement - 1),
+                movement: max(1, stats.movement - movementPenalty),
                 range: stats.range,
                 vision: stats.vision
             )
         case .encircled:
+            let attackFactor = hasLogisticsSupport ? 0.60 : 0.50
+            let defensePenalty = hasLogisticsSupport ? 1 : 2
+            let movementPenalty = hasLogisticsSupport ? 1 : 2
             return EffectiveStats(
-                attack: max(1, Int(Double(stats.attack) * 0.5)),
-                defense: max(1, stats.defense - 2),
-                movement: max(1, stats.movement - 2),
+                attack: max(1, Int(Double(stats.attack) * attackFactor)),
+                defense: max(1, stats.defense - defensePenalty),
+                movement: max(1, stats.movement - movementPenalty),
                 range: stats.range,
                 vision: stats.vision
             )
@@ -304,11 +468,50 @@ struct Division: Identifiable, Codable, Equatable {
     }
 
     var isArmor: Bool {
-        components.contains { $0.type == .tank && $0.weight >= 0.25 }
+        componentWeight(where: \.isArmorFamily) >= 0.25
+    }
+
+    var isMechanized: Bool {
+        componentWeight(where: \.isMechanizedFamily) >= 0.25
     }
 
     var isArtillery: Bool {
-        components.contains { $0.type == .artillery && $0.weight >= 0.50 }
+        componentWeight(where: \.isFiresFamily) >= 0.45
+    }
+
+    var hasAirDefenseSupport: Bool {
+        componentWeight(where: \.isAirDefenseFamily) >= 0.20
+    }
+
+    var hasEngineerSupport: Bool {
+        componentWeight(where: \.isEngineerFamily) >= 0.08
+    }
+
+    var hasLogisticsSupport: Bool {
+        componentWeight(where: \.isLogisticsFamily) >= 0.10
+    }
+
+    var hasUnmannedSupport: Bool {
+        componentWeight(where: \.isUnmannedFamily) >= 0.10
+    }
+
+    var hasLightGroundCore: Bool {
+        componentWeight(where: \.isLightGroundFamily) >= 0.45
+    }
+
+    var dominantComponentType: ComponentType? {
+        components.sorted { lhs, rhs in
+            if lhs.weight == rhs.weight {
+                return lhs.type.rawValue < rhs.type.rawValue
+            }
+            return lhs.weight > rhs.weight
+        }.first?.type
+    }
+
+    func componentWeight(where predicate: (ComponentType) -> Bool) -> Double {
+        components
+            .filter { predicate($0.type) }
+            .reduce(0.0) { $0 + $1.weight }
     }
 
     private func weightedStat(_ keyPath: KeyPath<EffectiveStats, Int>) -> Int {
