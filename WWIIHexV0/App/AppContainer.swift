@@ -645,12 +645,13 @@ final class AppContainer: ObservableObject {
     }
 
     private func shouldRunAI(for faction: Faction, phase: GamePhase) -> Bool {
-        switch faction {
-        case .germany:
+        if faction.usesAICommandPhase {
             return phase == .germanAI
-        case .allies:
+        }
+        if faction.usesPlayerCommandPhase {
             return observerModeEnabled && phase == .alliedPlayer
         }
+        return false
     }
 
     private func runAISequence(
@@ -699,12 +700,13 @@ final class AppContainer: ObservableObject {
     }
 
     private func shouldRunAIInSnapshot(state: GameState, observerEnabled: Bool) -> Bool {
-        switch state.activeFaction {
-        case .germany:
+        if state.activeFaction.usesAICommandPhase {
             return state.phase == .germanAI
-        case .allies:
+        }
+        if state.activeFaction.usesPlayerCommandPhase {
             return observerEnabled && state.phase == .alliedPlayer
         }
+        return false
     }
 
     private func turnManager(for faction: Faction, state: GameState) -> TurnManager {
@@ -716,14 +718,14 @@ final class AppContainer: ObservableObject {
         switch faction {
         case .germany:
             agent = GameAgent.guderian(from: dataLoader, state: state)
-        case .allies:
+        case .allies, .blueForce, .redForce, .greenForce, .neutral:
             let assignedIds = state.divisions
-                .filter { $0.faction == .allies && !$0.isDestroyed }
+                .filter { $0.faction == faction && !$0.isDestroyed }
                 .map(\.id)
             agent = GameAgent.sample(
-                id: "allied_mock_commander",
-                name: "Allied Mock Commander",
-                faction: .allies,
+                id: "\(faction.rawValue)_mock_commander",
+                name: "\(faction.shortDisplayName) Mock Commander",
+                faction: faction,
                 role: .armyCommander,
                 assignedDivisionIds: assignedIds
             )
@@ -750,8 +752,8 @@ final class AppContainer: ObservableObject {
         let agents: [any ZoneCommanderProviding] = state.warDeploymentState.frontZones.values
             .sorted { $0.id.rawValue < $1.id.rawValue }
             .map { zone in
-                let style: ZoneCommanderAgentConfig.CommandStyle = zone.faction == .germany ? .aggressive : .balanced
-                let factionName = zone.faction == .germany ? "German" : "Allied"
+                let style: ZoneCommanderAgentConfig.CommandStyle = zone.faction.alignment == .red ? .aggressive : .balanced
+                let factionName = zone.faction.shortDisplayName
                 let config = ZoneCommanderAgentConfig(
                     id: "auto_\(zone.id.rawValue)",
                     name: "\(factionName) Commander (\(zone.id.rawValue))",

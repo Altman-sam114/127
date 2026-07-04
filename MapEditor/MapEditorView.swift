@@ -448,9 +448,17 @@ private extension Faction {
     var chineseName: String {
         switch self {
         case .germany:
-            return "德军"
+            return "红方"
         case .allies:
-            return "盟军"
+            return "蓝方"
+        case .blueForce:
+            return "蓝方"
+        case .redForce:
+            return "红方"
+        case .greenForce:
+            return "绿方"
+        case .neutral:
+            return "中立"
         }
     }
 }

@@ -67,7 +67,7 @@ enum MapEditorGameResourceBridge {
                 coord: coord,
                 terrain: terrain,
                 hasRoad: tile.hasRoad,
-                controller: Faction(rawValue: tile.controller),
+                controller: Faction.dataValue(tile.controller),
                 cityName: tile.cityName,
                 fortressName: tile.fortressName,
                 isSupplySource: tile.isSupplySource,
@@ -103,7 +103,7 @@ enum MapEditorGameResourceBridge {
             MapEditorUnitDraft(
                 id: unit.id,
                 name: unit.name,
-                faction: Faction(rawValue: unit.faction) ?? .allies,
+                faction: Faction.dataValue(unit.faction) ?? .allies,
                 templateId: unit.templateId,
                 coord: HexCoord(q: unit.coord.q, r: unit.coord.r),
                 facing: HexDirection(rawValue: unit.facing) ?? .west,

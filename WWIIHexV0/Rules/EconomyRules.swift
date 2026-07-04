@@ -8,7 +8,7 @@ struct EconomyRules {
 
     func makeInitialState(map: MapState, factions: [Faction], turn: Int) -> EconomyState {
         var state = EconomyState(lastResolvedTurn: turn)
-        let uniqueFactions = Set(factions).isEmpty ? Set(Faction.allCases) : Set(factions)
+        let uniqueFactions = Set(factions).isEmpty ? Set(Faction.legacyBelligerents) : Set(factions)
 
         for faction in uniqueFactions {
             let income = income(for: faction, map: map)
@@ -35,7 +35,7 @@ struct EconomyRules {
         }
 
         var next = state
-        let factions = next.divisions.map(\.faction) + Faction.allCases
+        let factions = next.divisions.map(\.faction) + Faction.legacyBelligerents
         next.economyState = makeInitialState(map: next.map, factions: factions, turn: next.turn)
         next.appendEvent(
             "Economy state bootstrapped from controlled cities, factories, supply hubs, and regions.",

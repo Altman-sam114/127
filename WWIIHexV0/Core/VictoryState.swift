@@ -29,11 +29,14 @@ struct VictoryState: Codable, Equatable {
     }
 
     mutating func recordEliminatedDivision(faction: Faction) {
-        switch faction {
-        case .germany:
+        switch faction.alignment {
+        case .red:
             eliminatedGermanDivisions += 1
-        case .allies:
+        case .blue:
             eliminatedAlliedDivisions += 1
+        case .green,
+             .neutral:
+            break
         }
     }
 }

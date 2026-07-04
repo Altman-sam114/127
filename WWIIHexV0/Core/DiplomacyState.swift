@@ -56,6 +56,7 @@ enum DiplomaticStatus: String, Codable, Equatable, CaseIterable {
     case allied
     case coBelligerent
     case neutral
+    case restricted
     case hostile
     case atWar
 
@@ -71,6 +72,8 @@ enum DiplomaticStatus: String, Codable, Equatable, CaseIterable {
             return "Co-belligerent"
         case .neutral:
             return "Neutral"
+        case .restricted:
+            return "Restricted"
         case .hostile:
             return "Hostile"
         case .atWar:
@@ -225,62 +228,75 @@ struct DiplomacyState: Codable, Equatable {
     static func initial(for factions: [Faction], turn: Int) -> DiplomacyState {
         var countries: [CountryProfile] = []
         var blocs: [DiplomaticBloc] = []
+        let uniqueFactions = Set(factions)
+        let redFaction: Faction? = uniqueFactions.contains(.redForce) ? .redForce : (uniqueFactions.contains(.germany) ? .germany : nil)
+        let blueFaction: Faction? = uniqueFactions.contains(.blueForce) ? .blueForce : (uniqueFactions.contains(.allies) ? .allies : nil)
 
-        if factions.contains(.germany) {
+        if let redFaction {
             countries.append(
                 CountryProfile(
-                    id: "germany",
-                    name: "German Reich",
-                    faction: .germany,
-                    blocId: "axis",
-                    rulerAgentId: "ruler_germany",
+                    id: redFaction == .germany ? "germany" : "red_operational_group",
+                    name: redFaction == .germany ? "Red Operational Group" : "Red Operational Group",
+                    faction: redFaction,
+                    blocId: "red_bloc",
+                    rulerAgentId: redFaction == .germany ? "ruler_germany" : "national_command_red",
                     isPrimaryBelligerent: true,
                     warSupport: 82
                 )
             )
-            blocs.append(DiplomaticBloc(id: "axis", name: "Axis", faction: .germany, memberCountryIds: ["germany"]))
+            let memberCountryIds: [CountryId] = [redFaction == .germany ? "germany" : "red_operational_group"]
+            blocs.append(DiplomaticBloc(id: "red_bloc", name: "Red Operational Group", faction: redFaction, memberCountryIds: memberCountryIds))
         }
 
-        if factions.contains(.allies) {
+        if let blueFaction {
             countries.append(
                 CountryProfile(
-                    id: "united_states",
-                    name: "United States",
-                    faction: .allies,
-                    blocId: "allied_coalition",
-                    rulerAgentId: "ruler_allies",
+                    id: blueFaction == .allies ? "united_states" : "blue_joint_task_force",
+                    name: blueFaction == .allies ? "Blue Joint Task Force" : "Blue Joint Task Force",
+                    faction: blueFaction,
+                    blocId: "blue_coalition",
+                    rulerAgentId: blueFaction == .allies ? "ruler_allies" : "national_command_blue",
                     isPrimaryBelligerent: true,
                     warSupport: 78
                 )
             )
-            countries.append(
-                CountryProfile(
-                    id: "united_kingdom",
-                    name: "United Kingdom",
-                    faction: .allies,
-                    blocId: "allied_coalition",
-                    rulerAgentId: "ruler_uk",
-                    warSupport: 74
-                )
-            )
-            countries.append(
-                CountryProfile(
-                    id: "belgium",
-                    name: "Belgium",
-                    faction: .allies,
-                    blocId: "allied_coalition",
-                    rulerAgentId: "ruler_belgium",
-                    warSupport: 68
-                )
-            )
+            let memberCountryIds: [CountryId] = [blueFaction == .allies ? "united_states" : "blue_joint_task_force"]
             blocs.append(
                 DiplomaticBloc(
-                    id: "allied_coalition",
-                    name: "Allied Coalition",
-                    faction: .allies,
-                    memberCountryIds: ["belgium", "united_kingdom", "united_states"]
+                    id: "blue_coalition",
+                    name: "Blue Joint Task Force",
+                    faction: blueFaction,
+                    memberCountryIds: memberCountryIds
                 )
             )
+        }
+
+        if uniqueFactions.contains(.greenForce) {
+            countries.append(
+                CountryProfile(
+                    id: "green_force",
+                    name: "Green Force",
+                    faction: .greenForce,
+                    blocId: "green_bloc",
+                    rulerAgentId: "authority_green",
+                    warSupport: 55
+                )
+            )
+            blocs.append(DiplomaticBloc(id: "green_bloc", name: "Green Force", faction: .greenForce, memberCountryIds: ["green_force"]))
+        }
+
+        if uniqueFactions.contains(.neutral) {
+            countries.append(
+                CountryProfile(
+                    id: "neutral_civilian_authority",
+                    name: "Neutral / Civilian Authority",
+                    faction: .neutral,
+                    blocId: "neutral_civilian",
+                    rulerAgentId: "authority_neutral",
+                    warSupport: 30
+                )
+            )
+            blocs.append(DiplomaticBloc(id: "neutral_civilian", name: "Neutral / Civilian", faction: .neutral, memberCountryIds: ["neutral_civilian_authority"]))
         }
 
         return DiplomacyState(
@@ -292,8 +308,8 @@ struct DiplomacyState: Codable, Equatable {
     }
 
     static func initial(from factionStrings: [String], turn: Int) -> DiplomacyState {
-        let factions = factionStrings.compactMap(Faction.init(rawValue:))
-        return initial(for: factions.isEmpty ? Faction.allCases : factions, turn: turn)
+        let factions = factionStrings.compactMap(Faction.dataValue)
+        return initial(for: factions.isEmpty ? [.germany, .allies] : factions, turn: turn)
     }
 
     var latestRulerRecord: RulerDecisionRecord? {
@@ -352,7 +368,7 @@ struct DiplomacyState: Codable, Equatable {
             for rhsIndex in countries.indices where rhsIndex > lhsIndex {
                 let lhs = countries[lhsIndex]
                 let rhs = countries[rhsIndex]
-                let status: DiplomaticStatus = lhs.faction == rhs.faction ? .allied : .atWar
+                let status = lhs.faction.defaultROEStatus(toward: rhs.faction)
                 relations.append(
                     DiplomaticRelation(
                         firstCountryId: lhs.id,

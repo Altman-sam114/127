@@ -193,7 +193,7 @@ final class MapLayerOverlayNode: SKNode {
     private static func deploymentColor(for bucketId: String) -> SKColor {
         let parts = bucketId.split(separator: "_").map(String.init)
         guard let factionRaw = parts.first,
-              let faction = Faction(rawValue: factionRaw),
+              let faction = Faction.dataValue(factionRaw),
               let role = UnitDeploymentRole(rawValue: parts.dropFirst().joined(separator: "_")) else {
             return SKColor(white: 0.8, alpha: 1)
         }

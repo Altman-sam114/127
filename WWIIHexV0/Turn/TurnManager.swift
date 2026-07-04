@@ -379,10 +379,12 @@ struct TurnManager {
 
     private func isAITurn(faction: Faction, state: GameState) -> Bool {
         switch faction {
-        case .germany:
-            return state.activeFaction == .germany && state.phase == .germanAI
-        case .allies:
-            return state.activeFaction == .allies && state.phase == .alliedPlayer
+        case .germany, .redForce:
+            return state.activeFaction == faction && state.phase == .germanAI
+        case .allies, .blueForce:
+            return state.activeFaction == faction && state.phase == .alliedPlayer
+        case .greenForce, .neutral:
+            return false
         }
     }
 

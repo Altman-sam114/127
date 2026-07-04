@@ -4,7 +4,11 @@ struct StrategicStateBootstrapper {
     func bootstrapIfNeeded(_ state: GameState) -> GameState {
         var next = EconomyRules().bootstrapIfNeeded(state)
         if next.diplomacyState.countries.isEmpty {
-            next.diplomacyState = DiplomacyState.initial(for: Faction.allCases, turn: next.turn)
+            let factions = Set(next.divisions.map(\.faction))
+            next.diplomacyState = DiplomacyState.initial(
+                for: factions.isEmpty ? Faction.legacyBelligerents : Array(factions),
+                turn: next.turn
+            )
             next.appendEvent("Diplomacy state bootstrapped with countries, blocs, and initial war relations.")
         }
 

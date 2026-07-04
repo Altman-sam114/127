@@ -178,6 +178,18 @@ struct CommandExecutor {
             state.activeFaction = .germany
             state.phase = .germanAI
             state.turn += 1
+        case .redForce:
+            state.activeFaction = .blueForce
+            state.phase = .alliedPlayer
+        case .blueForce:
+            state.activeFaction = .redForce
+            state.phase = .germanAI
+            state.turn += 1
+        case .greenForce,
+             .neutral:
+            state.activeFaction = .redForce
+            state.phase = .germanAI
+            state.turn += 1
         }
 
         resetActionsForActiveFaction(in: &state)

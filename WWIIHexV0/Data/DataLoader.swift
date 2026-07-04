@@ -154,11 +154,11 @@ struct DataLoader {
         let phase = GamePhase(rawValue: scenario.initialPhase) ?? .alliedPlayer
         switch phase {
         case .alliedPlayer:
-            return Faction(rawValue: scenario.playerFaction) ?? .allies
+            return Faction.dataValue(scenario.playerFaction) ?? .allies
         case .germanAI:
-            return Faction(rawValue: scenario.aiFaction) ?? .germany
+            return Faction.dataValue(scenario.aiFaction) ?? .germany
         case .resolution:
-            return Faction(rawValue: scenario.playerFaction) ?? .allies
+            return Faction.dataValue(scenario.playerFaction) ?? .allies
         }
     }
 
@@ -370,7 +370,7 @@ struct DataLoader {
                 continue
             }
 
-            let controller = Faction(rawValue: tileDefinition.controller)
+            let controller = Faction.dataValue(tileDefinition.controller)
             let riverEdges = Set(tileDefinition.riverEdges.compactMap(HexDirection.init(rawValue:)))
             let regionId = tileDefinition.regionId.map { RegionId($0) }
             let tile = HexTile(
@@ -388,7 +388,7 @@ struct DataLoader {
 
             if tileDefinition.isSupplySource,
                let supplyFactionString = tileDefinition.supplyFaction,
-               let supplyFaction = Faction(rawValue: supplyFactionString) {
+               let supplyFaction = Faction.dataValue(supplyFactionString) {
                 supplySources.append(
                     SupplySource(
                         id: "supply_\(coord.q)_\(coord.r)",
@@ -464,7 +464,7 @@ struct DataLoader {
         let templates = (try? loadUnitTemplates()) ?? []
         var errors: [DataValidationError] = []
         let divisions = definitions.compactMap { definition -> Division? in
-            guard let faction = Faction(rawValue: definition.faction) else {
+            guard let faction = Faction.dataValue(definition.faction) else {
                 errors.append(DataValidationError(message: "Unknown unit faction \(definition.faction)."))
                 return nil
             }

@@ -71,7 +71,7 @@ struct GameState: Codable, Equatable {
             frontLineState: .empty,
             warDeploymentState: .empty,
             economyState: .empty,
-            diplomacyState: DiplomacyState.initial(for: Faction.allCases, turn: 1),
+            diplomacyState: DiplomacyState.initial(for: Faction.legacyBelligerents, turn: 1),
             divisions: [
                 .panzer(
                     id: "ger_panzer_1",

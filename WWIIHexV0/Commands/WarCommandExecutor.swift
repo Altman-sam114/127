@@ -982,8 +982,8 @@ struct WarCommandExecutor {
                 if lhsIsCurrent != rhsIsCurrent {
                     return !lhsIsCurrent
                 }
-                let lhsEnemyControlled = state.map.tile(at: $0)?.controller == division.faction.opponent
-                let rhsEnemyControlled = state.map.tile(at: $1)?.controller == division.faction.opponent
+                let lhsEnemyControlled = state.map.tile(at: $0)?.controller?.isHostile(to: division.faction) == true
+                let rhsEnemyControlled = state.map.tile(at: $1)?.controller?.isHostile(to: division.faction) == true
                 if lhsEnemyControlled != rhsEnemyControlled {
                     return lhsEnemyControlled
                 }
@@ -1022,8 +1022,8 @@ struct WarCommandExecutor {
                 let lhsDistance = nearestDistance(from: $0, to: targets)
                 let rhsDistance = nearestDistance(from: $1, to: targets)
                 if lhsDistance == rhsDistance {
-                    let lhsEnemyControlled = state.map.tile(at: $0)?.controller == division.faction.opponent
-                    let rhsEnemyControlled = state.map.tile(at: $1)?.controller == division.faction.opponent
+                    let lhsEnemyControlled = state.map.tile(at: $0)?.controller?.isHostile(to: division.faction) == true
+                    let rhsEnemyControlled = state.map.tile(at: $1)?.controller?.isHostile(to: division.faction) == true
                     if lhsEnemyControlled != rhsEnemyControlled {
                         return lhsEnemyControlled
                     }

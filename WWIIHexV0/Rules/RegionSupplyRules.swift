@@ -56,7 +56,7 @@ struct RegionSupplyRules {
     func isSafeRetreatRegion(_ regionId: RegionId, for faction: Faction, in state: GameState) -> Bool {
         guard let region = state.map.region(id: regionId),
               region.isPassable,
-              region.controller != faction.opponent else {
+              !region.controller.isHostile(to: faction) else {
             return false
         }
         return hasSupplyLine(from: regionId, for: faction, in: state)
@@ -83,7 +83,7 @@ struct RegionSupplyRules {
             return false
         }
 
-        if region.controller == faction.opponent {
+        if region.controller.isHostile(to: faction) {
             let friendlyUnitPresent = state.divisions.contains {
                 $0.faction == faction && state.map.region(for: $0.coord) == region.id
             }

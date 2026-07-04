@@ -110,8 +110,53 @@ v6.0 当前只完成“迁移审计 + 玩家可见显示名兼容层”，没有
 - `Faction.displayName` 现在是现代作战显示名；旧名保存在 `legacyDisplayName`，只作兼容说明或迁移审计使用。
 - `GamePhase.displayName` 现在是通用回合显示名；旧名保存在 `legacyDisplayName`。
 - `Division.operationalDisplayName` 只替换 UI 显示，不改 `Division.name` 编码字段。
-- `Faction.opponent`、`GamePhase.germanAI/alliedPlayer`、默认阿登 JSON、`RegionDataSet.toRegions()` 的 `.allies` fallback 仍是 v6.1/v6.2 待处理风险。
+- `Faction.opponent`、`GamePhase.germanAI/alliedPlayer`、默认阿登 JSON 仍是 v6.1/v6.2 待处理风险。
 - 当前没有新增 ISR / ContactTrack / EW / FireMission / AirTasking / LogisticsNetwork 状态。
+
+## 0.3 v6.1 作战方与 ROE 兼容层
+
+v6.1 第一批实现让现代作战方进入底层模型，但仍不切换默认剧本。
+
+当前 `Faction` 支持：
+
+```text
+旧兼容 raw value：
+  germany / allies
+
+现代 raw value：
+  redForce / blueForce / greenForce / neutral
+
+alignment：
+  red / blue / green / neutral
+```
+
+数据加载现在通过 `Faction.dataValue(_:)` 解析旧值和现代 alias，例如 `power_blue -> blueForce`、`civilian -> neutral`。`DiplomacyState` 通过 `defaultROEStatus(toward:)` 建立初始关系，最小状态包含 `allied`、`coBelligerent`、`neutral`、`restricted`、`hostile`、`atWar`。
+
+已替换的核心二元敌我判断：
+
+- `SupplyRules`
+- `RegionSupplyRules`
+- `RegionCombatRules`
+- `AgentContexts`
+- `WarCommandExecutor` 目标排序
+- `FrontLineManager` 前线对手推导
+- `ZoneCommanderAgent` lost objective 摘要
+
+`RegionDataSet.toRegions()` 已修正历史 fallback：
+
+```text
+controller 缺省 -> owner
+owner/controller 都缺省 -> neutral
+```
+
+经济层初始化已收窄：缺省只回退到旧双阵营 `legacyBelligerents`，bootstrap 时按实际单位阵营加旧双阵营 fallback 建账本，避免 `Faction.allCases` 扩容后让 green / neutral 默认进入旧剧本经济循环。
+
+仍未完成：
+
+- `GamePhase` raw value 尚未重命名，当前只用 helper 把 red 映射到 AI phase、blue 映射到 player phase。
+- 默认数据仍是阿登，不是 `grey_tide_2030`。
+- `Faction.opponent` 仍保留为旧接口 fallback。
+- FireMission / ISR / EW / restricted fire zone 尚未进入命令系统。
 
 ---
 

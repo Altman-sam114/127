@@ -264,7 +264,7 @@ struct RegionObjectiveDefinition: Codable, Equatable {
 // MARK: - RegionDataSet → Core 映射
 
 extension RegionDataSet {
-    /// 转 RegionNode 字典。controller 缺省回退 owner。
+    /// 转 RegionNode 字典。controller 缺省回退 owner；owner/controller 都缺省时为 neutral。
     func toRegions() -> [RegionId: RegionNode] {
         var result: [RegionId: RegionNode] = [:]
         for def in regions {
@@ -272,8 +272,8 @@ extension RegionDataSet {
             result[def.id] = RegionNode(
                 id: def.id,
                 name: def.name,
-                owner: def.owner ?? .allies,
-                controller: resolvedController ?? .allies,
+                owner: def.owner ?? .neutral,
+                controller: resolvedController ?? .neutral,
                 terrain: def.terrain,
                 neighbors: def.neighbors,
                 displayHexes: def.displayHexes,

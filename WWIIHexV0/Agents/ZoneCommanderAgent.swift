@@ -893,23 +893,33 @@ struct MarshalAgentConfig: Codable, Equatable, Identifiable {
         let zoneIds = state.warDeploymentState.frontZones.values
             .filter { $0.faction == faction }
             .map(\.id)
-        switch faction {
-        case .germany:
+        switch faction.alignment {
+        case .red:
             return MarshalAgentConfig(
-                id: "marshal_rundstedt",
-                name: "Gerd von Rundstedt",
-                faction: .germany,
-                personality: "Steady operational commander; favors concentration of force, reserves, and controlled breakthroughs.",
+                id: "marshal_red_joint_command",
+                name: "Red Joint Command",
+                faction: faction,
+                personality: "Operational commander; favors concentration of force, reserves, and controlled breakthroughs.",
                 strategicBias: .offensive,
                 theaterGroupZoneIds: zoneIds
             )
-        case .allies:
+        case .blue:
             return MarshalAgentConfig(
-                id: "marshal_eisenhower",
-                name: "Dwight Eisenhower",
-                faction: .allies,
+                id: "marshal_blue_joint_command",
+                name: "Blue Joint Command",
+                faction: faction,
                 personality: "Coalition commander; favors stable fronts, reserves, and coordinated limited counterattacks.",
                 strategicBias: .balanced,
+                theaterGroupZoneIds: zoneIds
+            )
+        case .green,
+             .neutral:
+            return MarshalAgentConfig(
+                id: "marshal_\(faction.rawValue)",
+                name: "\(faction.shortDisplayName) Command",
+                faction: faction,
+                personality: "Restrained command; favors protection, de-escalation, and limited commitments.",
+                strategicBias: .defensive,
                 theaterGroupZoneIds: zoneIds
             )
         }
@@ -986,7 +996,7 @@ struct MarshalBattlefieldSummarizer {
             .map { frontSummary(for: $0, faction: faction, state: state) }
 
         let heldObjectives = objectiveNames(controlledBy: faction, state: state)
-        let lostObjectives = objectiveNames(controlledBy: faction.opponent, state: state)
+        let lostObjectives = hostileObjectiveNames(to: faction, state: state)
         let recentEvents = Array(state.eventLog.suffix(maxRecentEvents)).map(\.message)
 
         return MarshalBattlefieldSummary(
@@ -1051,7 +1061,7 @@ struct MarshalBattlefieldSummarizer {
             garrisonUnitCount: zone.unitsGarrison.count,
             supplyWarningCount: supplyWarnings,
             keyObjectivesHeld: objectiveNames(in: frontRegionIds, controlledBy: faction, state: state),
-            keyObjectivesLost: objectiveNames(in: enemyRegionIds, controlledBy: faction.opponent, state: state),
+            keyObjectivesLost: hostileObjectiveNames(in: enemyRegionIds, to: faction, state: state),
             status: status(for: zone, ratio: ratio, supplyWarnings: supplyWarnings)
         )
     }
@@ -1144,6 +1154,13 @@ struct MarshalBattlefieldSummarizer {
             .sorted()
     }
 
+    private func hostileObjectiveNames(to faction: Faction, state: GameState) -> [String] {
+        state.map.objectives
+            .filter { state.map.tile(at: $0.coord)?.controller?.isHostile(to: faction) == true }
+            .map(\.name)
+            .sorted()
+    }
+
     private func objectiveNames(
         in regionIds: [RegionId],
         controlledBy faction: Faction,
@@ -1153,6 +1170,24 @@ struct MarshalBattlefieldSummarizer {
         return state.map.objectives
             .filter { objective in
                 guard state.map.tile(at: objective.coord)?.controller == faction,
+                      let regionId = state.map.region(for: objective.coord) else {
+                    return false
+                }
+                return regionSet.contains(regionId)
+            }
+            .map(\.name)
+            .sorted()
+    }
+
+    private func hostileObjectiveNames(
+        in regionIds: [RegionId],
+        to faction: Faction,
+        state: GameState
+    ) -> [String] {
+        let regionSet = Set(regionIds)
+        return state.map.objectives
+            .filter { objective in
+                guard state.map.tile(at: objective.coord)?.controller?.isHostile(to: faction) == true,
                       let regionId = state.map.region(for: objective.coord) else {
                     return false
                 }

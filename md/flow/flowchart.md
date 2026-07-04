@@ -83,6 +83,31 @@ flowchart LR
     classDef risk fill:#fee2e2,stroke:#b91c1c,color:#111827
 ```
 
+## 0.3 v6.1 作战方与 ROE 兼容层
+
+这张图描述当前 v6.1 第一批实现。它让现代作战方、neutral fallback 和最小 ROE helper 进入底层，但还没有切换默认现代剧本。
+
+```mermaid
+flowchart LR
+    DATA["JSON / MapEditor 数据值<br/>germany / allies<br/>blueForce / redForce<br/>power_blue / power_red<br/>neutral / civilian"]:::data
+    FACTION["Faction.dataValue<br/>解析旧值和现代 alias"]:::state
+    ALIGN["OperationalSideAlignment<br/>blue / red / green / neutral"]:::state
+    ROE["ROE helper<br/>defaultROEStatus<br/>isHostile(to:)"]:::rules
+    REGION["RegionDataSet fallback<br/>nil owner/controller -> neutral"]:::rules
+    PIPE["命令与规则管线不变<br/>Command / ZoneDirective<br/>WarCommandExecutor / RuleEngine"]:::command
+    TODO["后续 v6.2+<br/>grey_tide_2030<br/>ISR / EW / FireMission<br/>通用 phase raw value"]:::risk
+
+    DATA --> FACTION --> ALIGN --> ROE --> PIPE
+    DATA --> REGION --> PIPE
+    PIPE --> TODO
+
+    classDef data fill:#f8f9fb,stroke:#6b7280,color:#111827
+    classDef state fill:#e0f2fe,stroke:#0284c7,color:#082f49
+    classDef rules fill:#ccfbf1,stroke:#0f766e,color:#042f2e
+    classDef command fill:#fae8ff,stroke:#a21caf,color:#2a0a2f
+    classDef risk fill:#fee2e2,stroke:#b91c1c,color:#111827
+```
+
 ## 1. 总主线：从地图数据到游戏行动
 
 这张图看全局。左上是地图数据怎么进入游戏；中间是 hex、region、theater、front、deploy 的分层关系；右侧是玩家/AI 命令如何统一进入规则系统；底部是 UI 和日志怎么读取结果。

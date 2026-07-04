@@ -337,26 +337,37 @@ extension RulerAgent {
     static func automatic(for faction: Faction, in state: GameState) -> RulerAgent {
         let country = state.diplomacyState.primaryCountry(for: faction)
         let config: RulerAgentConfig
-        switch faction {
-        case .germany:
+        switch faction.alignment {
+        case .red:
             config = RulerAgentConfig(
-                id: country?.rulerAgentId ?? "ruler_germany",
-                name: "German Ruler",
+                id: country?.rulerAgentId ?? "national_command_red",
+                name: "Red National Command",
                 faction: faction,
                 countryId: country?.id,
                 aggression: 82,
                 coalitionDiscipline: 45,
                 riskTolerance: 68
             )
-        case .allies:
+        case .blue:
             config = RulerAgentConfig(
-                id: country?.rulerAgentId ?? "ruler_allies",
-                name: "Allied Supreme Council",
+                id: country?.rulerAgentId ?? "national_command_blue",
+                name: "Blue Joint Command",
                 faction: faction,
                 countryId: country?.id,
                 aggression: 58,
                 coalitionDiscipline: 82,
                 riskTolerance: 48
+            )
+        case .green,
+             .neutral:
+            config = RulerAgentConfig(
+                id: country?.rulerAgentId ?? "authority_\(faction.rawValue)",
+                name: "\(faction.shortDisplayName) Authority",
+                faction: faction,
+                countryId: country?.id,
+                aggression: 20,
+                coalitionDiscipline: 60,
+                riskTolerance: 25
             )
         }
         return RulerAgent(config: config)

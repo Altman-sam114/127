@@ -39,46 +39,66 @@ enum TerrainStyle {
     }
 
     static func unitFillColor(for faction: Faction) -> SKColor {
-        switch faction {
-        case .germany:
+        switch faction.alignment {
+        case .red:
             return SKColor(red: 0.23, green: 0.24, blue: 0.25, alpha: 1)
-        case .allies:
+        case .blue:
             return SKColor(red: 0.12, green: 0.36, blue: 0.68, alpha: 1)
+        case .green:
+            return SKColor(red: 0.18, green: 0.42, blue: 0.30, alpha: 1)
+        case .neutral:
+            return SKColor(red: 0.45, green: 0.45, blue: 0.45, alpha: 1)
         }
     }
 
     static func unitStrokeColor(for faction: Faction) -> SKColor {
-        switch faction {
-        case .germany:
+        switch faction.alignment {
+        case .red:
             return SKColor(red: 0.05, green: 0.05, blue: 0.05, alpha: 1)
-        case .allies:
+        case .blue:
             return SKColor(red: 0.04, green: 0.18, blue: 0.36, alpha: 1)
+        case .green:
+            return SKColor(red: 0.08, green: 0.22, blue: 0.14, alpha: 1)
+        case .neutral:
+            return SKColor(red: 0.20, green: 0.20, blue: 0.20, alpha: 1)
         }
     }
 
     static func deploymentUnitColor(for faction: Faction, role: UnitDeploymentRole) -> SKColor {
-        switch (faction, role) {
-        case (.germany, .frontUnit):
+        switch (faction.alignment, role) {
+        case (.red, .frontUnit):
             return SKColor(red: 0.95, green: 0.22, blue: 0.16, alpha: 1)
-        case (.germany, .depthUnit):
+        case (.red, .depthUnit):
             return SKColor(red: 0.93, green: 0.58, blue: 0.16, alpha: 1)
-        case (.germany, .garrisonUnit):
+        case (.red, .garrisonUnit):
             return SKColor(red: 0.50, green: 0.50, blue: 0.52, alpha: 1)
-        case (.allies, .frontUnit):
+        case (.blue, .frontUnit):
             return SKColor(red: 0.15, green: 0.72, blue: 0.98, alpha: 1)
-        case (.allies, .depthUnit):
+        case (.blue, .depthUnit):
             return SKColor(red: 0.20, green: 0.85, blue: 0.45, alpha: 1)
-        case (.allies, .garrisonUnit):
+        case (.blue, .garrisonUnit):
             return SKColor(red: 0.42, green: 0.38, blue: 0.95, alpha: 1)
+        case (.green, .frontUnit),
+             (.green, .depthUnit),
+             (.green, .garrisonUnit):
+            return SKColor(red: 0.18, green: 0.58, blue: 0.34, alpha: 1)
+        case (.neutral, .frontUnit),
+             (.neutral, .depthUnit),
+             (.neutral, .garrisonUnit):
+            return SKColor(red: 0.50, green: 0.50, blue: 0.50, alpha: 1)
         }
     }
 
     static func controllerColor(for faction: Faction?) -> SKColor {
-        switch faction {
-        case .germany:
+        switch faction?.alignment {
+        case .red:
             return SKColor(red: 0.08, green: 0.08, blue: 0.08, alpha: 1)
-        case .allies:
+        case .blue:
             return SKColor(red: 0.04, green: 0.20, blue: 0.62, alpha: 1)
+        case .green:
+            return SKColor(red: 0.15, green: 0.45, blue: 0.24, alpha: 1)
+        case .neutral:
+            return SKColor(red: 0.45, green: 0.45, blue: 0.45, alpha: 1)
         case nil:
             return SKColor(red: 0.88, green: 0.82, blue: 0.45, alpha: 1)
         }

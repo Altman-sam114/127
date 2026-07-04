@@ -16,7 +16,7 @@ extension GameAgent {
     }
 
     init?(definition: GeneralAgentDefinition) {
-        guard let faction = Faction(rawValue: definition.faction),
+        guard let faction = Faction.dataValue(definition.faction),
               let role = AgentRole(rawValue: definition.role) else {
             return nil
         }

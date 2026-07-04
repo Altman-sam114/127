@@ -1,6 +1,6 @@
 # Modern Command Agent — iOS / macOS AI 战略战棋迁移工程
 
-> **当前状态：v6.0 现代战争迁移审计与兼容显示层。工程底座仍来自 WWIIHexV0，默认数据和大量源码兼容名仍是二战时期语义；本阶段先把主 UI 显示名迁移为 Blue / Red、现代任务编组、Sustainment 和 C2 图层，并记录 v6.1-v6.10 的规则与剧本迁移清单。默认战争 AI 仍是“元帅 -> 模拟 LLM JSON -> decoder -> compiler -> ZoneDirective”，下游仍收口到 `WarCommandExecutor -> RuleEngine`。历史测试基线曾达到 v0.37 Probe 18/0、Stage Regression 69/0、Full 226/0；当前工作流默认不跑 Xcode / XCTest / 模拟器测试，只按 `md/test/test.md` 做轻量检查，重验证看 GitHub Actions artifact。**
+> **当前状态：v6.1 现代作战方 / ROE 兼容层进行中。工程底座仍来自 WWIIHexV0，默认数据和大量源码兼容名仍是二战时期语义；已完成 v6.0 主 UI 显示名迁移，并开始让底层兼容 `blueForce`、`redForce`、`greenForce`、`neutral` 与最小 ROE hostile helper。默认战争 AI 仍是“元帅 -> 模拟 LLM JSON -> decoder -> compiler -> ZoneDirective”，下游仍收口到 `WarCommandExecutor -> RuleEngine`。历史测试基线曾达到 v0.37 Probe 18/0、Stage Regression 69/0、Full 226/0；当前工作流默认不跑 Xcode / XCTest / 模拟器测试，只按 `md/test/test.md` 做轻量检查，重验证看 GitHub Actions artifact。**
 
 ---
 
@@ -14,7 +14,7 @@
 
 一款正在从 WWIIHexV0 迁移而来的 iOS / macOS 回合制现代战争 AI Agent 策略游戏。目标是在保留 hex 战术权威、region 战略聚合、动态战区、前线、部署和统一规则管线的基础上，迁移到现代联合作战：合成营/任务编组、无人系统、侦察 contact、电子战、精确火力、后勤和可审计 AI Agent 指挥链。
 
-当前 v6.0 只完成迁移入口和兼容显示层，仍不是发布级现代战争剧本。默认阿登 JSON、`Faction.germany/allies`、`GamePhase.germanAI/alliedPlayer`、`Division` 源码名和若干二战测试 fixture 仍按兼容层保留，后续按 `md/prompt/v6.0-现代战争迁移/v6.0_audit_and_contract.md` 继续拆分到 v6.1-v6.10。
+当前 v6.1 仍不是发布级现代战争剧本。默认阿登 JSON、`GamePhase.germanAI/alliedPlayer`、`Division` 源码名和若干二战测试 fixture 仍按兼容层保留；`Faction` 已新增现代作战方 case，但旧 `germany/allies` raw value 继续兼容。后续按 `md/prompt/v6.0-现代战争迁移/v6.1_sides_roe_progress.md` 继续拆分到 v6.2-v6.10。
 
 **核心参考：**
 - 《统一指挥2》：六角格战棋、补给、攻击（战术层参照）
