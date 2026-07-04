@@ -1,0 +1,208 @@
+name: WWIIHexV0 CI Results
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  ci-results:
+    name: Build And Package CI Results
+    runs-on: macos-latest
+    timeout-minutes: 45
+    env:
+      PROJECT_NAME: WWIIHexV0
+      CI_VERSION: cloud-flow-v1
+      XCODE_PROJECT: WWIIHexV0.xcodeproj
+      XCODE_SCHEME: WWIIHexV0
+      XCODE_DESTINATION: generic/platform=iOS
+      RESULT_BUNDLE_PATH: ci-results/WWIIHexV0.xcresult
+      BUILD_LOG_PATH: ci-results/xcodebuild.log
+      JUNIT_PATH: ci-results/junit.xml
+      FAILURE_SUMMARY_PATH: ci-results/ci-failure-summary.md
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare Metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ci-results
+          SHORT_SHA="${GITHUB_SHA::7}"
+          BRANCH_SLUG="${GITHUB_REF_NAME//\//-}"
+          ARTIFACT_NAME="${PROJECT_NAME}-ci-${CI_VERSION}-${BRANCH_SLUG}-${SHORT_SHA}-run${GITHUB_RUN_ID}-attempt${GITHUB_RUN_ATTEMPT}"
+          echo "SHORT_SHA=${SHORT_SHA}" >> "${GITHUB_ENV}"
+          echo "BRANCH_SLUG=${BRANCH_SLUG}" >> "${GITHUB_ENV}"
+          echo "ARTIFACT_NAME=${ARTIFACT_NAME}" >> "${GITHUB_ENV}"
+
+      - name: Run Static Checks And Xcode Build
+        shell: bash
+        run: |
+          set +e
+          FAIL=0
+          FAILURE_COUNT=0
+          STATIC_CHECKS_OUTCOME="success"
+          BUILD_OUTCOME="success"
+          TEST_OUTCOME="skipped"
+
+          {
+            echo "# CI failure summary"
+            echo
+            echo "- project: ${PROJECT_NAME}"
+            echo "- branch: ${GITHUB_REF_NAME}"
+            echo "- commit: ${GITHUB_SHA}"
+            echo "- run: ${GITHUB_RUN_ID}"
+            echo "- attempt: ${GITHUB_RUN_ATTEMPT}"
+            echo
+          } > "${FAILURE_SUMMARY_PATH}"
+
+          if git rev-parse --verify HEAD^ >/dev/null 2>&1; then
+            git diff --check HEAD^ HEAD > ci-results/git-diff-check.log 2>&1
+          else
+            git diff-tree --check --no-commit-id --root -r HEAD > ci-results/git-diff-check.log 2>&1
+          fi
+          DIFF_EXIT=$?
+
+          plutil -lint "${XCODE_PROJECT}/project.pbxproj" > ci-results/plutil.log 2>&1
+          PLUTIL_EXIT=$?
+
+          : > ci-results/xmllint.log
+          xmllint --noout "${XCODE_PROJECT}/xcshareddata/xcschemes/WWIIHexV0.xcscheme" >> ci-results/xmllint.log 2>&1
+          XML_MAIN_EXIT=$?
+          xmllint --noout "${XCODE_PROJECT}/xcshareddata/xcschemes/WWIIHexV0Probes.xcscheme" >> ci-results/xmllint.log 2>&1
+          XML_PROBES_EXIT=$?
+
+          if [ "${DIFF_EXIT}" -ne 0 ] || [ "${PLUTIL_EXIT}" -ne 0 ] || [ "${XML_MAIN_EXIT}" -ne 0 ] || [ "${XML_PROBES_EXIT}" -ne 0 ]; then
+            STATIC_CHECKS_OUTCOME="failure"
+            FAIL=1
+            FAILURE_COUNT=$((FAILURE_COUNT + 1))
+            {
+              echo "## Static checks failed"
+              echo
+              echo "- git diff-tree --check exit: ${DIFF_EXIT}"
+              echo "- plutil exit: ${PLUTIL_EXIT}"
+              echo "- xmllint main scheme exit: ${XML_MAIN_EXIT}"
+              echo "- xmllint probes scheme exit: ${XML_PROBES_EXIT}"
+              echo
+            } >> "${FAILURE_SUMMARY_PATH}"
+          fi
+
+          set -o pipefail
+          xcodebuild \
+            -project "${XCODE_PROJECT}" \
+            -scheme "${XCODE_SCHEME}" \
+            -configuration Debug \
+            -destination "${XCODE_DESTINATION}" \
+            -derivedDataPath .derivedData-ci \
+            -resultBundlePath "${RESULT_BUNDLE_PATH}" \
+            CODE_SIGNING_ALLOWED=NO \
+            build 2>&1 | tee "${BUILD_LOG_PATH}"
+          BUILD_EXIT=${PIPESTATUS[0]}
+          set +o pipefail
+
+          if [ "${BUILD_EXIT}" -ne 0 ]; then
+            BUILD_OUTCOME="failure"
+            FAIL=1
+            FAILURE_COUNT=$((FAILURE_COUNT + 1))
+            {
+              echo "## Xcode build failed"
+              echo
+              echo "- xcodebuild exit: ${BUILD_EXIT}"
+              echo "- log: ${BUILD_LOG_PATH}"
+              echo "- result bundle: ${RESULT_BUNDLE_PATH}"
+              echo
+            } >> "${FAILURE_SUMMARY_PATH}"
+          fi
+
+          if [ "${FAIL}" -eq 0 ]; then
+            echo "No CI failures detected." >> "${FAILURE_SUMMARY_PATH}"
+          fi
+
+          {
+            echo '<?xml version="1.0" encoding="UTF-8"?>'
+            echo "<testsuite name=\"WWIIHexV0 CI\" tests=\"3\" failures=\"${FAILURE_COUNT}\">"
+            echo "  <testcase classname=\"ci.static\" name=\"git-plutil-xmllint\">"
+            if [ "${STATIC_CHECKS_OUTCOME}" = "failure" ]; then
+              echo "    <failure message=\"static checks failed\">See ci-results/git-diff-check.log, plutil.log and xmllint.log.</failure>"
+            fi
+            echo "  </testcase>"
+            echo "  <testcase classname=\"ci.build\" name=\"xcodebuild-build\">"
+            if [ "${BUILD_OUTCOME}" = "failure" ]; then
+              echo "    <failure message=\"xcodebuild failed\">See ci-results/xcodebuild.log.</failure>"
+            fi
+            echo "  </testcase>"
+            echo "  <testcase classname=\"ci.tests\" name=\"xctest\">"
+            echo "    <skipped message=\"XCTest is not run by the default cloud-flow policy.\" />"
+            echo "  </testcase>"
+            echo "</testsuite>"
+          } > "${JUNIT_PATH}"
+
+          echo "STATIC_CHECKS_OUTCOME=${STATIC_CHECKS_OUTCOME}" >> "${GITHUB_ENV}"
+          echo "BUILD_OUTCOME=${BUILD_OUTCOME}" >> "${GITHUB_ENV}"
+          echo "TEST_OUTCOME=${TEST_OUTCOME}" >> "${GITHUB_ENV}"
+          echo "CI_FAILED=${FAIL}" >> "${GITHUB_ENV}"
+
+      - name: Write Artifact Manifest
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import os
+          from datetime import datetime, timezone
+
+          manifest = {
+              "version": os.environ["CI_VERSION"],
+              "branch": os.environ["GITHUB_REF_NAME"],
+              "commitSha": os.environ["GITHUB_SHA"],
+              "shortSha": os.environ.get("SHORT_SHA", os.environ["GITHUB_SHA"][:7]),
+              "runId": os.environ["GITHUB_RUN_ID"],
+              "runAttempt": os.environ["GITHUB_RUN_ATTEMPT"],
+              "workflowName": os.environ["GITHUB_WORKFLOW"],
+              "createdAt": datetime.now(timezone.utc).isoformat(),
+              "projectName": os.environ["PROJECT_NAME"],
+              "scheme": os.environ["XCODE_SCHEME"],
+              "destination": os.environ["XCODE_DESTINATION"],
+              "resultBundlePath": os.environ["RESULT_BUNDLE_PATH"],
+              "junitPath": os.environ["JUNIT_PATH"],
+              "buildLogPath": os.environ["BUILD_LOG_PATH"],
+              "failureSummaryPath": os.environ["FAILURE_SUMMARY_PATH"],
+              "staticChecksOutcome": os.environ.get("STATIC_CHECKS_OUTCOME", "failure"),
+              "buildOutcome": os.environ.get("BUILD_OUTCOME", "failure"),
+              "testOutcome": os.environ.get("TEST_OUTCOME", "skipped"),
+              "projectSpecificReports": [
+                  "ci-results/git-diff-check.log",
+                  "ci-results/plutil.log",
+                  "ci-results/xmllint.log"
+              ]
+          }
+
+          with open("ci-results/ci-artifact-manifest.json", "w", encoding="utf-8") as f:
+              json.dump(manifest, f, ensure_ascii=False, indent=2)
+              f.write("\n")
+          PY
+
+      - name: Upload CI Results Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: ci-results
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Fail Workflow If Checks Failed
+        if: always()
+        shell: bash
+        run: |
+          if [ "${CI_FAILED:-1}" != "0" ]; then
+            exit 1
+          fi

@@ -4,6 +4,12 @@
 
 ---
 
+## 协作与云端验证
+
+当前协作流程固定为 `main` 直推：Agent B 在本机只跑轻量检查，commit 后 push 到 `origin/main` 触发 GitHub Actions；Agent C 通过未加密 CI 结果包核对 `ci-artifact-manifest.json`、`junit.xml`、`xcodebuild.log` 和失败摘要。详细规则见 `AGENTS.md`、`md/test/test.md`、`md/prompt/README.md`。
+
+---
+
 ## 项目定位
 
 一款 iOS / macOS 回合制二战策略游戏，目标结合战棋（六角格操作感）、大战略（省份占领、补给、前线）与角色扮演（LLM 驱动的将领 AI）。

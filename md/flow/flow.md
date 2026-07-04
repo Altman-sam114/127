@@ -43,6 +43,45 @@ MapEditor / JSON 数据
 - v0.5 默认战争 AI 上游是 `MarshalAgent -> TheaterDirective JSON -> TheaterDirectiveDecoder -> TheaterDirectiveCompiler`，下游执行收口到 `ZoneDirective -> WarCommandExecutor -> RuleEngine`。
 - 统治者层只作为后续方向预留；当前 v0.5 主链路不调用 `RulerAgent`，也不写统治者决策记录。
 
+## 0.1 云端协作与验证闭环
+
+本项目的协作制度已升级为 `main` 直推和 GitHub Actions 云端结果包验收。该流程只改变协作和验证骨架，不改变战斗、地图、经济、AI 或 UI 业务语义。
+
+当前默认协作链路：
+
+```text
+人工提出目标
+  -> Agent A 读取 AGENTS / update_log / flow / test / prompt，写版本化提示词
+  -> Agent B 基于最新 origin/main 切到 main 小步实现
+  -> Agent B 本机只跑 md/test/test.md 允许的轻量检查
+  -> Agent B commit 并 push 到 origin/main
+  -> GitHub Actions 运行 .github/workflows/ci-results.yml
+  -> Actions 上传未加密 CI 结果包
+  -> Agent C gh auth login 后下载 artifact
+  -> Agent C 核对 manifest / junit / xcodebuild.log / failure summary
+      -> 有问题：退回 Agent B 在 main 上追加修复 commit 并重新 push
+      -> 无问题：确认 origin/main 最新 run 通过并同步核心文档
+```
+
+分支边界：
+
+- `main` 是当前唯一上传、提交、推送和云端验证分支。
+- 暂不把 `smalldata_test`、`develop`、`codeb/...`、候选分支或 PR 合并流写入默认流程。
+- 既有历史分支只作为历史状态记录，不参与本轮默认协作制度。
+
+云端结果包：
+
+- workflow：`.github/workflows/ci-results.yml`
+- 触发：`push` 到 `main` 或手动 `workflow_dispatch`
+- artifact：`WWIIHexV0-ci-cloud-flow-v1-main-<short_sha>-run<run_id>-attempt<run_attempt>`
+- 必含：`ci-artifact-manifest.json`、`ci-failure-summary.md`、`junit.xml`、`xcodebuild.log`、`git-diff-check.log`、`plutil.log`、`xmllint.log`，以及可生成时的 `WWIIHexV0.xcresult`
+- Agent C 缓存：`/private/tmp/wwiihexv0-c-review-<run_id>/`
+
+AITRANS 可复用项与不照搬项：
+
+- 可复用：main 直推、云端重验证、未加密结果包、Agent C 下载复判、云端失败后在 main 追加修复 commit。
+- 不照搬：漫画探针、GGUF/模型 Release、`test/1.png`、`smalldata_test` 分支、大数据/密钥/密码包和项目专属输出。
+
 ---
 
 ## 1. 核心状态对象
