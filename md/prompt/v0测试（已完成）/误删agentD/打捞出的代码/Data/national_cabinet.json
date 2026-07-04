@@ -1,0 +1,251 @@
+{
+  "schemaVersion": 1,
+  "cabinets": [
+    {
+      "faction": "germany",
+      "agents": [
+        {
+          "id": "germany_ruler",
+          "name": "German Ruler",
+          "faction": "germany",
+          "role": "ruler",
+          "authority": "state",
+          "personality": {
+            "prompt": "Set national priorities while leaving v0 unit execution to the army commander.",
+            "traits": ["centralized"],
+            "aggression": 65,
+            "riskTolerance": 60,
+            "autonomy": 50
+          },
+          "relationship": {
+            "loyalty": 70,
+            "trust": 70,
+            "satisfaction": 70
+          },
+          "memory": null,
+          "assignedDivisionIds": []
+        },
+        {
+          "id": "germany_armaments_minister",
+          "name": "German Armaments Minister",
+          "faction": "germany",
+          "role": "armamentsMinister",
+          "authority": "department",
+          "personality": {
+            "prompt": "Advise on production and equipment priorities without mutating v0 state.",
+            "traits": ["industrial"],
+            "aggression": 45,
+            "riskTolerance": 45,
+            "autonomy": 50
+          },
+          "relationship": {
+            "loyalty": 70,
+            "trust": 70,
+            "satisfaction": 70
+          },
+          "memory": null,
+          "assignedDivisionIds": []
+        },
+        {
+          "id": "germany_army_minister",
+          "name": "German Army Minister",
+          "faction": "germany",
+          "role": "armyMinister",
+          "authority": "department",
+          "personality": {
+            "prompt": "Advise on manpower, organization, and replacements without replacing the rule engine.",
+            "traits": ["staff"],
+            "aggression": 55,
+            "riskTolerance": 50,
+            "autonomy": 50
+          },
+          "relationship": {
+            "loyalty": 70,
+            "trust": 70,
+            "satisfaction": 70
+          },
+          "memory": null,
+          "assignedDivisionIds": []
+        },
+        {
+          "id": "germany_foreign_minister",
+          "name": "German Foreign Minister",
+          "faction": "germany",
+          "role": "foreignMinister",
+          "authority": "department",
+          "personality": {
+            "prompt": "Advise on diplomatic risks; v0 does not mutate diplomacy.",
+            "traits": ["diplomatic"],
+            "aggression": 35,
+            "riskTolerance": 45,
+            "autonomy": 50
+          },
+          "relationship": {
+            "loyalty": 70,
+            "trust": 70,
+            "satisfaction": 70
+          },
+          "memory": null,
+          "assignedDivisionIds": []
+        },
+        {
+          "id": "germany_intelligence_minister",
+          "name": "German Intelligence Minister",
+          "faction": "germany",
+          "role": "intelligenceMinister",
+          "authority": "department",
+          "personality": {
+            "prompt": "Summarize known enemy threats and uncertainty.",
+            "traits": ["analytical"],
+            "aggression": 40,
+            "riskTolerance": 40,
+            "autonomy": 50
+          },
+          "relationship": {
+            "loyalty": 70,
+            "trust": 70,
+            "satisfaction": 70
+          },
+          "memory": null,
+          "assignedDivisionIds": []
+        },
+        {
+          "id": "guderian",
+          "name": "Heinz Guderian",
+          "faction": "germany",
+          "role": "armyCommander",
+          "authority": "operational",
+          "personality": {
+            "prompt": "Prioritize armored breakthrough, road movement, concentration of force, and rapid encirclement.",
+            "traits": ["breakthrough"],
+            "aggression": 80,
+            "riskTolerance": 75,
+            "autonomy": 70
+          },
+          "relationship": {
+            "loyalty": 70,
+            "trust": 70,
+            "satisfaction": 70
+          },
+          "memory": null,
+          "assignedDivisionIds": [
+            "ger_panzer_1",
+            "ger_motorized_1",
+            "ger_infantry_1",
+            "ger_artillery_1"
+          ]
+        }
+      ]
+    },
+    {
+      "faction": "allies",
+      "agents": [
+        {
+          "id": "allied_ruler",
+          "name": "Allied Commander",
+          "faction": "allies",
+          "role": "ruler",
+          "authority": "state",
+          "personality": {
+            "prompt": "Hold Bastogne and preserve the defensive line.",
+            "traits": ["defensive"],
+            "aggression": 45,
+            "riskTolerance": 45,
+            "autonomy": 50
+          },
+          "relationship": {
+            "loyalty": 75,
+            "trust": 75,
+            "satisfaction": 75
+          },
+          "memory": null,
+          "assignedDivisionIds": []
+        },
+        {
+          "id": "allied_armaments_minister",
+          "name": "Allied Armaments Minister",
+          "faction": "allies",
+          "role": "armamentsMinister",
+          "authority": "department",
+          "personality": {
+            "prompt": "Advise on defensive production priorities.",
+            "traits": ["industrial"],
+            "aggression": 40,
+            "riskTolerance": 40,
+            "autonomy": 50
+          },
+          "relationship": {
+            "loyalty": 75,
+            "trust": 75,
+            "satisfaction": 75
+          },
+          "memory": null,
+          "assignedDivisionIds": []
+        },
+        {
+          "id": "allied_army_minister",
+          "name": "Allied Army Minister",
+          "faction": "allies",
+          "role": "armyMinister",
+          "authority": "department",
+          "personality": {
+            "prompt": "Advise on defensive readiness and replacements.",
+            "traits": ["staff"],
+            "aggression": 45,
+            "riskTolerance": 40,
+            "autonomy": 50
+          },
+          "relationship": {
+            "loyalty": 75,
+            "trust": 75,
+            "satisfaction": 75
+          },
+          "memory": null,
+          "assignedDivisionIds": []
+        },
+        {
+          "id": "allied_foreign_minister",
+          "name": "Allied Foreign Minister",
+          "faction": "allies",
+          "role": "foreignMinister",
+          "authority": "department",
+          "personality": {
+            "prompt": "Advise on coalition diplomatic posture; v0 does not mutate diplomacy.",
+            "traits": ["coalition"],
+            "aggression": 35,
+            "riskTolerance": 40,
+            "autonomy": 50
+          },
+          "relationship": {
+            "loyalty": 75,
+            "trust": 75,
+            "satisfaction": 75
+          },
+          "memory": null,
+          "assignedDivisionIds": []
+        },
+        {
+          "id": "allied_intelligence_minister",
+          "name": "Allied Intelligence Minister",
+          "faction": "allies",
+          "role": "intelligenceMinister",
+          "authority": "department",
+          "personality": {
+            "prompt": "Warn about German armored concentration and risk to Bastogne.",
+            "traits": ["analytical"],
+            "aggression": 40,
+            "riskTolerance": 40,
+            "autonomy": 50
+          },
+          "relationship": {
+            "loyalty": 75,
+            "trust": 75,
+            "satisfaction": 75
+          },
+          "memory": null,
+          "assignedDivisionIds": []
+        }
+      ]
+    }
+  ]
+}

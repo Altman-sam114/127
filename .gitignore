@@ -1,0 +1,56 @@
+# Xcode
+#
+# gitignore contributors: fastlane team
+
+## User-specific
+*.xcuserstate
+xcuserdata/
+
+## Build results
+build/
+DerivedData/
+TestResults.xcresult/
+.worktrees/
+
+## Local Codex session exports
+md/**/rollout-*.jsonl
+
+## Bundle results
+*.itembundle
+
+## Various settings
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xccheckout
+*.moved-aside
+*.xcuserstate
+*.xcscmblueprint
+
+## Other
+.DS_Store
+*.swp
+*.lock
+*.dat
+*.tmp
+*.log
+
+## Swift Package Manager
+.build/
+.swiftpm/
+
+## Carthage
+Carthage/Build/
+
+## Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+## Code coverage
+*.gcov
+*.gcda
+*.gcno
+
+MapEditor/tiled-master

@@ -1,0 +1,1953 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		010000000000000000000001 /* WWIIHexV0App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000001 /* WWIIHexV0App.swift */; };
+		010000000000000000000002 /* AppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000002 /* AppContainer.swift */; };
+		010000000000000000000003 /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000003 /* GameState.swift */; };
+		010000000000000000000004 /* Faction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000004 /* Faction.swift */; };
+		010000000000000000000005 /* GamePhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000005 /* GamePhase.swift */; };
+		010000000000000000000006 /* GameLogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000006 /* GameLogEntry.swift */; };
+		010000000000000000000007 /* RootGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000007 /* RootGameView.swift */; };
+		010000000000000000000008 /* HUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000008 /* HUDView.swift */; };
+		010000000000000000000009 /* UnitInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000009 /* UnitInspectorView.swift */; };
+		01000000000000000000000A /* EventLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000A /* EventLogView.swift */; };
+		01000000000000000000000B /* BoardScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000B /* BoardScene.swift */; };
+		01000000000000000000000C /* BoardSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000C /* BoardSceneView.swift */; };
+		01000000000000000000000D /* RuleEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000D /* RuleEngine.swift */; };
+		01000000000000000000000E /* Command.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000E /* Command.swift */; };
+		01000000000000000000000F /* DecisionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000F /* DecisionProvider.swift */; };
+		010000000000000000000010 /* DataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000010 /* DataLoader.swift */; };
+		010000000000000000000011 /* GameStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000011 /* GameStateTests.swift */; };
+		010000000000000000000012 /* ScenarioDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000014 /* ScenarioDefinition.swift */; };
+		010000000000000000000013 /* ardennes_v0_scenario.json in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000015 /* ardennes_v0_scenario.json */; };
+		010000000000000000000014 /* terrain_rules.json in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000016 /* terrain_rules.json */; };
+		010000000000000000000015 /* unit_templates.json in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000017 /* unit_templates.json */; };
+		010000000000000000000016 /* general_agents.json in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000018 /* general_agents.json */; };
+		010000000000000000000017 /* ScenarioDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000019 /* ScenarioDataTests.swift */; };
+		010000000000000000000018 /* HexDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001A /* HexDirection.swift */; };
+		010000000000000000000019 /* HexCoord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001B /* HexCoord.swift */; };
+		01000000000000000000001A /* Terrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001C /* Terrain.swift */; };
+		01000000000000000000001B /* SupplyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001D /* SupplyState.swift */; };
+		01000000000000000000001C /* Division.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001E /* Division.swift */; };
+		01000000000000000000001D /* MapState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001F /* MapState.swift */; };
+		01000000000000000000001E /* VictoryState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000020 /* VictoryState.swift */; };
+		01000000000000000000001F /* CommandValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000021 /* CommandValidation.swift */; };
+		010000000000000000000020 /* CommandResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000022 /* CommandResult.swift */; };
+		010000000000000000000021 /* MovementRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000023 /* MovementRules.swift */; };
+		010000000000000000000022 /* CombatRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000024 /* CombatRules.swift */; };
+		010000000000000000000023 /* SupplyRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000025 /* SupplyRules.swift */; };
+		010000000000000000000024 /* VictoryRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000026 /* VictoryRules.swift */; };
+		010000000000000000000025 /* CommandValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000027 /* CommandValidator.swift */; };
+		010000000000000000000026 /* CommandExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000028 /* CommandExecutor.swift */; };
+		010000000000000000000027 /* RuleEngineCoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000029 /* RuleEngineCoreTests.swift */; };
+		010000000000000000000028 /* GameCommandHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002A /* GameCommandHandling.swift */; };
+		010000000000000000000029 /* HexLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002B /* HexLayout.swift */; };
+		01000000000000000000002A /* TerrainStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002C /* TerrainStyle.swift */; };
+		01000000000000000000002B /* HexNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002D /* HexNode.swift */; };
+		01000000000000000000002C /* UnitNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002E /* UnitNode.swift */; };
+		01000000000000000000002D /* BoardSceneAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002F /* BoardSceneAdapter.swift */; };
+		01000000000000000000002E /* CommandPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000030 /* CommandPanelView.swift */; };
+		01000000000000000000002F /* AgentPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000031 /* AgentPanelView.swift */; };
+		010000000000000000000030 /* HexLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000032 /* HexLayoutTests.swift */; };
+		010000000000000000000031 /* BoardInteractionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000033 /* BoardInteractionTests.swift */; };
+		010000000000000000000032 /* GameAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000034 /* GameAgent.swift */; };
+		010000000000000000000033 /* AgentConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000035 /* AgentConfiguration.swift */; };
+		010000000000000000000034 /* AgentDecision.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000036 /* AgentDecision.swift */; };
+		010000000000000000000035 /* AgentContexts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000037 /* AgentContexts.swift */; };
+		010000000000000000000036 /* AgentDecisionParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000038 /* AgentDecisionParser.swift */; };
+		010000000000000000000037 /* AgentCommandMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000039 /* AgentCommandMapper.swift */; };
+		010000000000000000000038 /* AgentDecisionRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003A /* AgentDecisionRecord.swift */; };
+		010000000000000000000039 /* MockAIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003B /* MockAIClient.swift */; };
+		01000000000000000000003A /* LLMClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003C /* LLMClient.swift */; };
+		01000000000000000000003B /* LocalLLMDecisionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003D /* LocalLLMDecisionProvider.swift */; };
+		01000000000000000000003C /* AgentPromptBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003E /* AgentPromptBuilder.swift */; };
+		01000000000000000000003D /* TurnManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003F /* TurnManager.swift */; };
+		01000000000000000000003E /* AgentPipelineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000040 /* AgentPipelineTests.swift */; };
+		01000000000000000000003F /* Region.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000041 /* Region.swift */; };
+		010000000000000000000040 /* RegionGraphTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000042 /* RegionGraphTests.swift */; };
+		010000000000000000000041 /* RegionDataSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000043 /* RegionDataSet.swift */; };
+		010000000000000000000042 /* ardennes_v02_regions.json in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000044 /* ardennes_v02_regions.json */; };
+		010000000000000000000043 /* ArdennesV02DataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000045 /* ArdennesV02DataTests.swift */; };
+		010000000000000000000044 /* RegionPathfinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000046 /* RegionPathfinder.swift */; };
+		010000000000000000000045 /* RegionMovementRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000047 /* RegionMovementRules.swift */; };
+		010000000000000000000046 /* RegionCombatRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000048 /* RegionCombatRules.swift */; };
+		010000000000000000000047 /* RegionOccupationRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000049 /* RegionOccupationRules.swift */; };
+		010000000000000000000048 /* RegionSupplyRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004A /* RegionSupplyRules.swift */; };
+		010000000000000000000049 /* RegionVisibilityRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004B /* RegionVisibilityRules.swift */; };
+		01000000000000000000004A /* RegionVictoryRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004C /* RegionVictoryRules.swift */; };
+		01000000000000000000004B /* RegionRuleSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004D /* RegionRuleSystem.swift */; };
+		01000000000000000000004C /* RegionMovementRulesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004E /* RegionMovementRulesTests.swift */; };
+		01000000000000000000004D /* RegionCombatRulesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004F /* RegionCombatRulesTests.swift */; };
+		01000000000000000000004E /* RegionSupplyRulesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000050 /* RegionSupplyRulesTests.swift */; };
+		01000000000000000000004F /* RegionOccupationRulesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000051 /* RegionOccupationRulesTests.swift */; };
+		010000000000000000000050 /* RegionVisibilityRulesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000052 /* RegionVisibilityRulesTests.swift */; };
+		010000000000000000000051 /* RegionVictoryRulesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000053 /* RegionVictoryRulesTests.swift */; };
+		010000000000000000000052 /* RegionRuleSystemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000054 /* RegionRuleSystemTests.swift */; };
+		010000000000000000000053 /* RegionRuleTestFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000055 /* RegionRuleTestFixtures.swift */; };
+		010000000000000000000054 /* RegionCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000056 /* RegionCommand.swift */; };
+		010000000000000000000055 /* CommandIntentAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000057 /* CommandIntentAdapter.swift */; };
+		010000000000000000000056 /* RegionCommandValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000058 /* RegionCommandValidator.swift */; };
+		010000000000000000000057 /* CommandIntentAdapterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000059 /* CommandIntentAdapterTests.swift */; };
+		010000000000000000000058 /* CommandRegionMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000005A /* CommandRegionMigrationTests.swift */; };
+		010000000000000000000059 /* AgentOrderParsingV2Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000005B /* AgentOrderParsingV2Tests.swift */; };
+		01000000000000000000005A /* CommandValidationRegionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000005C /* CommandValidationRegionTests.swift */; };
+		01000000000000000000005B /* AgentRegionCommandPipelineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000005D /* AgentRegionCommandPipelineTests.swift */; };
+		01000000000000000000005C /* MapDisplayAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000005E /* MapDisplayAdapter.swift */; };
+		01000000000000000000005D /* RegionOverlayNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000005F /* RegionOverlayNode.swift */; };
+		01000000000000000000005E /* RegionInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000060 /* RegionInspectorView.swift */; };
+		01000000000000000000005F /* MapDisplayAdapterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000061 /* MapDisplayAdapterTests.swift */; };
+		010000000000000000000060 /* BoardSceneAdapterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000062 /* BoardSceneAdapterTests.swift */; };
+		010000000000000000000061 /* UnitDisplayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000063 /* UnitDisplayTests.swift */; };
+		010000000000000000000062 /* VisibilityDisplayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000064 /* VisibilityDisplayTests.swift */; };
+		010000000000000000000063 /* InfoPanelToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000065 /* InfoPanelToggle.swift */; };
+		010000000000000000000064 /* UnitTooltipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000066 /* UnitTooltipView.swift */; };
+		010000000000000000000065 /* NewGameButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000067 /* NewGameButton.swift */; };
+		010000000000000000000066 /* Theater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000068 /* Theater.swift */; };
+		010000000000000000000067 /* TheaterSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000069 /* TheaterSystem.swift */; };
+		010000000000000000000068 /* TheaterSystemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000006A /* TheaterSystemTests.swift */; };
+		010000000000000000000069 /* FrontLineId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000006B /* FrontLineId.swift */; };
+		01000000000000000000006A /* FrontLineTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000006C /* FrontLineTypes.swift */; };
+		01000000000000000000006B /* FrontSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000006D /* FrontSegment.swift */; };
+		01000000000000000000006C /* FrontLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000006E /* FrontLine.swift */; };
+		01000000000000000000006D /* RegionFrontState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000006F /* RegionFrontState.swift */; };
+		01000000000000000000006E /* FrontLineState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000070 /* FrontLineState.swift */; };
+		01000000000000000000006F /* FrontLineManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000071 /* FrontLineManager.swift */; };
+		010000000000000000000070 /* FrontLineTestFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000072 /* FrontLineTestFixtures.swift */; };
+		010000000000000000000071 /* FrontLineCreationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000073 /* FrontLineCreationTests.swift */; };
+		010000000000000000000072 /* FrontLineUpdateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000074 /* FrontLineUpdateTests.swift */; };
+		010000000000000000000073 /* EncirclementDetectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000075 /* EncirclementDetectionTests.swift */; };
+		010000000000000000000074 /* MultiEnemyFrontTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000076 /* MultiEnemyFrontTests.swift */; };
+		010000000000000000000075 /* FrontLinePerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000077 /* FrontLinePerformanceTests.swift */; };
+		010000000000000000000076 /* FrontZoneId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000078 /* FrontZoneId.swift */; };
+		010000000000000000000077 /* WarDeploymentTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000079 /* WarDeploymentTypes.swift */; };
+		010000000000000000000078 /* FrontZoneSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000007A /* FrontZoneSegment.swift */; };
+		010000000000000000000079 /* FrontZone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000007B /* FrontZone.swift */; };
+		01000000000000000000007A /* WarDeploymentState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000007C /* WarDeploymentState.swift */; };
+		01000000000000000000007B /* WarDeploymentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000007D /* WarDeploymentManager.swift */; };
+		01000000000000000000007C /* WarDeploymentTestFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000007E /* WarDeploymentTestFixtures.swift */; };
+		01000000000000000000007D /* WarDeploymentFrontLineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000007F /* WarDeploymentFrontLineTests.swift */; };
+		01000000000000000000007E /* WarDeploymentSegmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000080 /* WarDeploymentSegmentTests.swift */; };
+		01000000000000000000007F /* WarDeploymentDeploymentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000081 /* WarDeploymentDeploymentTests.swift */; };
+		010000000000000000000080 /* WarEvolutionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000082 /* WarEvolutionTests.swift */; };
+		010000000000000000000081 /* Integration/WarSystemsIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000083 /* Integration/WarSystemsIntegrationTests.swift */; };
+		010000000000000000000084 /* WWIIHexV0ProbeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000084 /* WWIIHexV0ProbeTests.swift */; };
+		010000000000000000000085 /* MapEditorDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000086 /* MapEditorDocument.swift */; };
+		010000000000000000000086 /* MapEditorHexMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000087 /* MapEditorHexMath.swift */; };
+		010000000000000000000087 /* MapEditorExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000088 /* MapEditorExporter.swift */; };
+		010000000000000000000088 /* MapEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000089 /* MapEditorViewModel.swift */; };
+		010000000000000000000089 /* MapEditorCanvasScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000008A /* MapEditorCanvasScene.swift */; };
+		01000000000000000000008A /* MapEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000008B /* MapEditorView.swift */; };
+		01000000000000000000008B /* MapEditorOutputTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000008C /* MapEditorOutputTests.swift */; };
+		0100000000000000000000D4 /* MapEditorGameResourceBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000008D /* MapEditorGameResourceBridge.swift */; };
+		0100000000000000000000D5 /* MapEditorMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000008E /* MapEditorMacApp.swift */; };
+		0100000000000000000000D6 /* MapEditorDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000086 /* MapEditorDocument.swift */; };
+		0100000000000000000000D7 /* MapEditorHexMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000087 /* MapEditorHexMath.swift */; };
+		0100000000000000000000D8 /* MapEditorExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000088 /* MapEditorExporter.swift */; };
+		0100000000000000000000D9 /* MapEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000089 /* MapEditorViewModel.swift */; };
+		0100000000000000000000DA /* MapEditorCanvasScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000008A /* MapEditorCanvasScene.swift */; };
+		0100000000000000000000DB /* MapEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000008B /* MapEditorView.swift */; };
+		0100000000000000000000DC /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000003 /* GameState.swift */; };
+		0100000000000000000000DD /* Faction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000004 /* Faction.swift */; };
+		0100000000000000000000DE /* GamePhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000005 /* GamePhase.swift */; };
+		0100000000000000000000DF /* GameLogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000006 /* GameLogEntry.swift */; };
+		0100000000000000000000E0 /* HexDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001A /* HexDirection.swift */; };
+		0100000000000000000000E1 /* HexCoord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001B /* HexCoord.swift */; };
+		0100000000000000000000E2 /* Terrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001C /* Terrain.swift */; };
+		0100000000000000000000E3 /* SupplyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001D /* SupplyState.swift */; };
+		0100000000000000000000E4 /* Division.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001E /* Division.swift */; };
+		0100000000000000000000E5 /* MapState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001F /* MapState.swift */; };
+		0100000000000000000000E6 /* VictoryState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000020 /* VictoryState.swift */; };
+		0100000000000000000000E7 /* Theater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000068 /* Theater.swift */; };
+		0100000000000000000000E8 /* FrontLineId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000006B /* FrontLineId.swift */; };
+		0100000000000000000000E9 /* FrontLineTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000006C /* FrontLineTypes.swift */; };
+		0100000000000000000000EA /* FrontSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000006D /* FrontSegment.swift */; };
+		0100000000000000000000EB /* FrontLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000006E /* FrontLine.swift */; };
+		0100000000000000000000EC /* RegionFrontState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000006F /* RegionFrontState.swift */; };
+		0100000000000000000000ED /* FrontLineState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000070 /* FrontLineState.swift */; };
+		0100000000000000000000EE /* FrontZoneId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000078 /* FrontZoneId.swift */; };
+		0100000000000000000000EF /* WarDeploymentTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000079 /* WarDeploymentTypes.swift */; };
+		0100000000000000000000F0 /* FrontZoneSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000007A /* FrontZoneSegment.swift */; };
+		0100000000000000000000F1 /* FrontZone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000007B /* FrontZone.swift */; };
+		0100000000000000000000F2 /* WarDeploymentState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000007C /* WarDeploymentState.swift */; };
+		0100000000000000000000F3 /* TerrainStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002C /* TerrainStyle.swift */; };
+		0100000000000000000000F4 /* RuleEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000D /* RuleEngine.swift */; };
+		0100000000000000000000F5 /* MovementRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000023 /* MovementRules.swift */; };
+		0100000000000000000000F6 /* CombatRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000024 /* CombatRules.swift */; };
+		0100000000000000000000F7 /* SupplyRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000025 /* SupplyRules.swift */; };
+		0100000000000000000000F8 /* VictoryRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000026 /* VictoryRules.swift */; };
+		0100000000000000000000F9 /* CommandValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000027 /* CommandValidator.swift */; };
+		0100000000000000000000FA /* CommandExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000028 /* CommandExecutor.swift */; };
+		0100000000000000000000FB /* Command.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000E /* Command.swift */; };
+		0100000000000000000000FC /* CommandValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000021 /* CommandValidation.swift */; };
+		0100000000000000000000FD /* CommandResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000022 /* CommandResult.swift */; };
+		0100000000000000000000FE /* GameCommandHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002A /* GameCommandHandling.swift */; };
+		0100000000000000000000FF /* RegionCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000056 /* RegionCommand.swift */; };
+		010000000000000000000100 /* CommandIntentAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000057 /* CommandIntentAdapter.swift */; };
+		010000000000000000000101 /* DecisionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000F /* DecisionProvider.swift */; };
+		010000000000000000000102 /* DataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000010 /* DataLoader.swift */; };
+		010000000000000000000103 /* ScenarioDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000014 /* ScenarioDefinition.swift */; };
+		010000000000000000000104 /* RegionDataSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000043 /* RegionDataSet.swift */; };
+		010000000000000000000105 /* GameAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000034 /* GameAgent.swift */; };
+		010000000000000000000106 /* AgentConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000035 /* AgentConfiguration.swift */; };
+		010000000000000000000107 /* AgentDecision.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000036 /* AgentDecision.swift */; };
+		010000000000000000000108 /* AgentContexts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000037 /* AgentContexts.swift */; };
+		010000000000000000000109 /* AgentDecisionParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000038 /* AgentDecisionParser.swift */; };
+		01000000000000000000010A /* AgentCommandMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000039 /* AgentCommandMapper.swift */; };
+		01000000000000000000010B /* AgentDecisionRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003A /* AgentDecisionRecord.swift */; };
+		01000000000000000000010C /* MockAIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003B /* MockAIClient.swift */; };
+		01000000000000000000010D /* LLMClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003C /* LLMClient.swift */; };
+		01000000000000000000010E /* LocalLLMDecisionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003D /* LocalLLMDecisionProvider.swift */; };
+		01000000000000000000010F /* AgentPromptBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003E /* AgentPromptBuilder.swift */; };
+		010000000000000000000110 /* TurnManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003F /* TurnManager.swift */; };
+		010000000000000000000111 /* Region.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000041 /* Region.swift */; };
+		010000000000000000000112 /* RegionPathfinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000046 /* RegionPathfinder.swift */; };
+		010000000000000000000113 /* RegionMovementRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000047 /* RegionMovementRules.swift */; };
+		010000000000000000000114 /* RegionCombatRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000048 /* RegionCombatRules.swift */; };
+		010000000000000000000115 /* RegionOccupationRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000049 /* RegionOccupationRules.swift */; };
+		010000000000000000000116 /* RegionSupplyRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004A /* RegionSupplyRules.swift */; };
+		010000000000000000000117 /* RegionVisibilityRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004B /* RegionVisibilityRules.swift */; };
+		010000000000000000000118 /* RegionVictoryRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004C /* RegionVictoryRules.swift */; };
+		010000000000000000000119 /* RegionRuleSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004D /* RegionRuleSystem.swift */; };
+		01000000000000000000011A /* RegionCommandValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000058 /* RegionCommandValidator.swift */; };
+		01000000000000000000011B /* TheaterSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000069 /* TheaterSystem.swift */; };
+		01000000000000000000011C /* FrontLineManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000071 /* FrontLineManager.swift */; };
+		01000000000000000000011D /* WarDeploymentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000007D /* WarDeploymentManager.swift */; };
+		01000000000000000000011E /* MapEditorGameResourceBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000008D /* MapEditorGameResourceBridge.swift */; };
+		01000000000000000000011F /* WarDirective.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000090 /* WarDirective.swift */; };
+		010000000000000000000120 /* WarCommandExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000091 /* WarCommandExecutor.swift */; };
+		010000000000000000000121 /* MockAICommander.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000092 /* MockAICommander.swift */; };
+		010000000000000000000122 /* CommandSystemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000093 /* CommandSystemTests.swift */; };
+		010000000000000000000123 /* WarDirective.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000090 /* WarDirective.swift */; };
+		010000000000000000000124 /* WarCommandExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000091 /* WarCommandExecutor.swift */; };
+		010000000000000000000125 /* MockAICommander.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000092 /* MockAICommander.swift */; };
+		010000000000000000000126 /* WarPipelineMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000094 /* WarPipelineMode.swift */; };
+		010000000000000000000127 /* MapDisplayLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000095 /* MapDisplayLayer.swift */; };
+		010000000000000000000128 /* WarDirectiveRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000096 /* WarDirectiveRecord.swift */; };
+		010000000000000000000129 /* StrategicStateBootstrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000097 /* StrategicStateBootstrapper.swift */; };
+		01000000000000000000012A /* MapLayerOverlayCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000098 /* MapLayerOverlayCalculator.swift */; };
+		01000000000000000000012B /* MapLayerOverlayNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000099 /* MapLayerOverlayNode.swift */; };
+		01000000000000000000012C /* ObserverModeIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000009A /* ObserverModeIntegrationTests.swift */; };
+		01000000000000000000012D /* LayeredMapUIStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000009B /* LayeredMapUIStateTests.swift */; };
+		01000000000000000000012E /* WarPipelineMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000094 /* WarPipelineMode.swift */; };
+		01000000000000000000012F /* WarDirectiveRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000096 /* WarDirectiveRecord.swift */; };
+		010000000000000000000130 /* Stage035CampaignSimulationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000009C /* Stage035CampaignSimulationTests.swift */; };
+		010000000000000000000131 /* StrategicStateSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000009D /* StrategicStateSynchronizer.swift */; };
+		010000000000000000000132 /* StrategicStateSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000009D /* StrategicStateSynchronizer.swift */; };
+		010000000000000000000148 /* OccupationRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000148 /* OccupationRules.swift */; };
+		010000000000000000000149 /* OccupationRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000148 /* OccupationRules.swift */; };
+		01000000000000000000014A /* Stage0355DynamicTheaterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000149 /* Stage0355DynamicTheaterTests.swift */; };
+		01000000000000000000014B /* ZoneCommanderAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000014B /* ZoneCommanderAgent.swift */; };
+		01000000000000000000014C /* ZoneCommanderAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000014B /* ZoneCommanderAgent.swift */; };
+		0C000000000000000000000B /* PlatformStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0000000000000000000009 /* PlatformStyles.swift */; };
+		0C0000000000000000000100 /* WWIIHexV0MacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0000000000000000000008 /* WWIIHexV0MacApp.swift */; };
+		0C0000000000000000000101 /* AppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000002 /* AppContainer.swift */; };
+		0C0000000000000000000102 /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000003 /* GameState.swift */; };
+		0C0000000000000000000103 /* Faction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000004 /* Faction.swift */; };
+		0C0000000000000000000104 /* GamePhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000005 /* GamePhase.swift */; };
+		0C0000000000000000000105 /* GameLogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000006 /* GameLogEntry.swift */; };
+		0C0000000000000000000106 /* WarPipelineMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000094 /* WarPipelineMode.swift */; };
+		0C0000000000000000000107 /* MapDisplayLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000095 /* MapDisplayLayer.swift */; };
+		0C0000000000000000000108 /* WarDirectiveRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000096 /* WarDirectiveRecord.swift */; };
+		0C0000000000000000000109 /* StrategicStateBootstrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000097 /* StrategicStateBootstrapper.swift */; };
+		0C000000000000000000010A /* HexDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001A /* HexDirection.swift */; };
+		0C000000000000000000010B /* HexCoord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001B /* HexCoord.swift */; };
+		0C000000000000000000010C /* Terrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001C /* Terrain.swift */; };
+		0C000000000000000000010D /* SupplyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001D /* SupplyState.swift */; };
+		0C000000000000000000010E /* Division.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001E /* Division.swift */; };
+		0C000000000000000000010F /* MapState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001F /* MapState.swift */; };
+		0C0000000000000000000110 /* VictoryState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000020 /* VictoryState.swift */; };
+		0C0000000000000000000111 /* Region.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000041 /* Region.swift */; };
+		0C0000000000000000000112 /* Theater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000068 /* Theater.swift */; };
+		0C0000000000000000000113 /* FrontLineId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000006B /* FrontLineId.swift */; };
+		0C0000000000000000000114 /* FrontLineTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000006C /* FrontLineTypes.swift */; };
+		0C0000000000000000000115 /* FrontSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000006D /* FrontSegment.swift */; };
+		0C0000000000000000000116 /* FrontLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000006E /* FrontLine.swift */; };
+		0C0000000000000000000117 /* RegionFrontState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000006F /* RegionFrontState.swift */; };
+		0C0000000000000000000118 /* FrontLineState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000070 /* FrontLineState.swift */; };
+		0C0000000000000000000119 /* FrontZoneId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000078 /* FrontZoneId.swift */; };
+		0C000000000000000000011A /* WarDeploymentTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000079 /* WarDeploymentTypes.swift */; };
+		0C000000000000000000011B /* FrontZoneSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000007A /* FrontZoneSegment.swift */; };
+		0C000000000000000000011C /* FrontZone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000007B /* FrontZone.swift */; };
+		0C000000000000000000011D /* WarDeploymentState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000007C /* WarDeploymentState.swift */; };
+		0C000000000000000000011E /* RootGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000007 /* RootGameView.swift */; };
+		0C000000000000000000011F /* HUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000008 /* HUDView.swift */; };
+		0C0000000000000000000120 /* UnitInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000009 /* UnitInspectorView.swift */; };
+		0C0000000000000000000121 /* RegionInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000060 /* RegionInspectorView.swift */; };
+		0C0000000000000000000122 /* InfoPanelToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000065 /* InfoPanelToggle.swift */; };
+		0C0000000000000000000123 /* UnitTooltipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000066 /* UnitTooltipView.swift */; };
+		0C0000000000000000000124 /* NewGameButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000067 /* NewGameButton.swift */; };
+		0C0000000000000000000125 /* EventLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000A /* EventLogView.swift */; };
+		0C0000000000000000000126 /* CommandPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000030 /* CommandPanelView.swift */; };
+		0C0000000000000000000127 /* AgentPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000031 /* AgentPanelView.swift */; };
+		0C0000000000000000000128 /* PlatformStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0000000000000000000009 /* PlatformStyles.swift */; };
+		0C0000000000000000000129 /* BoardScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000B /* BoardScene.swift */; };
+		0C000000000000000000012A /* BoardSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000C /* BoardSceneView.swift */; };
+		0C000000000000000000012B /* HexLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002B /* HexLayout.swift */; };
+		0C000000000000000000012C /* TerrainStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002C /* TerrainStyle.swift */; };
+		0C000000000000000000012D /* HexNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002D /* HexNode.swift */; };
+		0C000000000000000000012E /* UnitNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002E /* UnitNode.swift */; };
+		0C000000000000000000012F /* BoardSceneAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002F /* BoardSceneAdapter.swift */; };
+		0C0000000000000000000130 /* MapDisplayAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000005E /* MapDisplayAdapter.swift */; };
+		0C0000000000000000000131 /* MapLayerOverlayCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000098 /* MapLayerOverlayCalculator.swift */; };
+		0C0000000000000000000132 /* MapLayerOverlayNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000099 /* MapLayerOverlayNode.swift */; };
+		0C0000000000000000000133 /* RegionOverlayNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000005F /* RegionOverlayNode.swift */; };
+		0C0000000000000000000134 /* RuleEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000D /* RuleEngine.swift */; };
+		0C0000000000000000000135 /* MovementRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000023 /* MovementRules.swift */; };
+		0C0000000000000000000136 /* CombatRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000024 /* CombatRules.swift */; };
+		0C0000000000000000000137 /* SupplyRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000025 /* SupplyRules.swift */; };
+		0C0000000000000000000138 /* VictoryRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000026 /* VictoryRules.swift */; };
+		0C0000000000000000000139 /* CommandValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000027 /* CommandValidator.swift */; };
+		0C000000000000000000013A /* CommandExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000028 /* CommandExecutor.swift */; };
+		0C000000000000000000013B /* RegionPathfinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000046 /* RegionPathfinder.swift */; };
+		0C000000000000000000013C /* RegionMovementRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000047 /* RegionMovementRules.swift */; };
+		0C000000000000000000013D /* RegionCombatRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000048 /* RegionCombatRules.swift */; };
+		0C000000000000000000013E /* RegionOccupationRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000049 /* RegionOccupationRules.swift */; };
+		0C000000000000000000013F /* OccupationRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000148 /* OccupationRules.swift */; };
+		0C0000000000000000000140 /* RegionSupplyRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004A /* RegionSupplyRules.swift */; };
+		0C0000000000000000000141 /* RegionVisibilityRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004B /* RegionVisibilityRules.swift */; };
+		0C0000000000000000000142 /* RegionVictoryRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004C /* RegionVictoryRules.swift */; };
+		0C0000000000000000000143 /* RegionRuleSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004D /* RegionRuleSystem.swift */; };
+		0C0000000000000000000144 /* RegionCommandValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000058 /* RegionCommandValidator.swift */; };
+		0C0000000000000000000145 /* TheaterSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000069 /* TheaterSystem.swift */; };
+		0C0000000000000000000146 /* FrontLineManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000071 /* FrontLineManager.swift */; };
+		0C0000000000000000000147 /* WarDeploymentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000007D /* WarDeploymentManager.swift */; };
+		0C0000000000000000000148 /* StrategicStateSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000009D /* StrategicStateSynchronizer.swift */; };
+		0C0000000000000000000149 /* Command.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000E /* Command.swift */; };
+		0C000000000000000000014A /* CommandValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000021 /* CommandValidation.swift */; };
+		0C000000000000000000014B /* CommandResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000022 /* CommandResult.swift */; };
+		0C000000000000000000014C /* GameCommandHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002A /* GameCommandHandling.swift */; };
+		0C000000000000000000014D /* RegionCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000056 /* RegionCommand.swift */; };
+		0C000000000000000000014E /* CommandIntentAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000057 /* CommandIntentAdapter.swift */; };
+		0C000000000000000000014F /* WarDirective.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000090 /* WarDirective.swift */; };
+		0C0000000000000000000150 /* WarCommandExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000091 /* WarCommandExecutor.swift */; };
+		0C0000000000000000000151 /* DecisionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000F /* DecisionProvider.swift */; };
+		0C0000000000000000000152 /* GameAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000034 /* GameAgent.swift */; };
+		0C0000000000000000000153 /* AgentConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000035 /* AgentConfiguration.swift */; };
+		0C0000000000000000000154 /* AgentDecision.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000036 /* AgentDecision.swift */; };
+		0C0000000000000000000155 /* AgentContexts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000037 /* AgentContexts.swift */; };
+		0C0000000000000000000156 /* AgentDecisionParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000038 /* AgentDecisionParser.swift */; };
+		0C0000000000000000000157 /* AgentCommandMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000039 /* AgentCommandMapper.swift */; };
+		0C0000000000000000000158 /* AgentDecisionRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003A /* AgentDecisionRecord.swift */; };
+		0C0000000000000000000159 /* MockAIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003B /* MockAIClient.swift */; };
+		0C000000000000000000015A /* LLMClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003C /* LLMClient.swift */; };
+		0C000000000000000000015B /* LocalLLMDecisionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003D /* LocalLLMDecisionProvider.swift */; };
+		0C000000000000000000015C /* AgentPromptBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003E /* AgentPromptBuilder.swift */; };
+		0C000000000000000000015D /* MockAICommander.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000092 /* MockAICommander.swift */; };
+		0C000000000000000000015E /* ZoneCommanderAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000014B /* ZoneCommanderAgent.swift */; };
+		0C000000000000000000015F /* DataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000010 /* DataLoader.swift */; };
+		0C0000000000000000000160 /* ScenarioDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000014 /* ScenarioDefinition.swift */; };
+		0C0000000000000000000161 /* RegionDataSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000043 /* RegionDataSet.swift */; };
+		0C0000000000000000000162 /* TurnManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003F /* TurnManager.swift */; };
+		0C0000000000000000000163 /* ardennes_v0_scenario.json in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000015 /* ardennes_v0_scenario.json */; };
+		0C0000000000000000000164 /* terrain_rules.json in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000016 /* terrain_rules.json */; };
+		0C0000000000000000000165 /* unit_templates.json in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000017 /* unit_templates.json */; };
+		0C0000000000000000000166 /* general_agents.json in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000018 /* general_agents.json */; };
+		0C0000000000000000000167 /* ardennes_v02_regions.json in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000044 /* ardennes_v02_regions.json */; };
+		0D0000000000000000000101 /* GeneralRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000001 /* GeneralRegistry.swift */; };
+		0D0000000000000000000102 /* RulerAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000002 /* RulerAgent.swift */; };
+		0D0000000000000000000103 /* DiplomacyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000003 /* DiplomacyState.swift */; };
+		0D0000000000000000000104 /* EconomyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000004 /* EconomyState.swift */; };
+		0D0000000000000000000105 /* GeneralAssignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000005 /* GeneralAssignment.swift */; };
+		0D0000000000000000000106 /* PlayerCommandState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000006 /* PlayerCommandState.swift */; };
+		0D0000000000000000000107 /* EconomyRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000007 /* EconomyRules.swift */; };
+		0D0000000000000000000108 /* EconomyPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000008 /* EconomyPanelView.swift */; };
+		0D0000000000000000000109 /* DiplomacyPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000009 /* DiplomacyPanelView.swift */; };
+		0D0000000000000000000201 /* GeneralRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000001 /* GeneralRegistry.swift */; };
+		0D0000000000000000000202 /* RulerAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000002 /* RulerAgent.swift */; };
+		0D0000000000000000000203 /* DiplomacyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000003 /* DiplomacyState.swift */; };
+		0D0000000000000000000204 /* EconomyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000004 /* EconomyState.swift */; };
+		0D0000000000000000000205 /* GeneralAssignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000005 /* GeneralAssignment.swift */; };
+		0D0000000000000000000206 /* PlayerCommandState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000006 /* PlayerCommandState.swift */; };
+		0D0000000000000000000207 /* EconomyRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000007 /* EconomyRules.swift */; };
+		0D0000000000000000000301 /* GeneralRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000001 /* GeneralRegistry.swift */; };
+		0D0000000000000000000302 /* RulerAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000002 /* RulerAgent.swift */; };
+		0D0000000000000000000303 /* DiplomacyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000003 /* DiplomacyState.swift */; };
+		0D0000000000000000000304 /* EconomyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000004 /* EconomyState.swift */; };
+		0D0000000000000000000305 /* GeneralAssignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000005 /* GeneralAssignment.swift */; };
+		0D0000000000000000000306 /* PlayerCommandState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000006 /* PlayerCommandState.swift */; };
+		0D0000000000000000000307 /* EconomyRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000007 /* EconomyRules.swift */; };
+		0D0000000000000000000308 /* EconomyPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000008 /* EconomyPanelView.swift */; };
+		0D0000000000000000000309 /* DiplomacyPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000009 /* DiplomacyPanelView.swift */; };
+		0D000000000000000000010A /* generals.json in Resources */ = {isa = PBXBuildFile; fileRef = 0D000000000000000000000A /* generals.json */; };
+		0D000000000000000000030A /* generals.json in Resources */ = {isa = PBXBuildFile; fileRef = 0D000000000000000000000A /* generals.json */; };
+		0D000000000000000000010B /* GeneralCommandPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D000000000000000000000B /* GeneralCommandPanelView.swift */; };
+		0D000000000000000000030B /* GeneralCommandPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D000000000000000000000B /* GeneralCommandPanelView.swift */; };
+		0D000000000000000000010C /* GeneralProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D000000000000000000000C /* GeneralProfileView.swift */; };
+		0D000000000000000000030C /* GeneralProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D000000000000000000000C /* GeneralProfileView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		030000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 040000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 050000000000000000000001;
+			remoteInfo = WWIIHexV0;
+		};
+		030000000000000000000002 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 040000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 050000000000000000000001;
+			remoteInfo = WWIIHexV0;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		020000000000000000000001 /* WWIIHexV0App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WWIIHexV0App.swift; sourceTree = "<group>"; };
+		020000000000000000000002 /* AppContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
+		020000000000000000000003 /* GameState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameState.swift; sourceTree = "<group>"; };
+		020000000000000000000004 /* Faction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Faction.swift; sourceTree = "<group>"; };
+		020000000000000000000005 /* GamePhase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamePhase.swift; sourceTree = "<group>"; };
+		020000000000000000000006 /* GameLogEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLogEntry.swift; sourceTree = "<group>"; };
+		020000000000000000000007 /* RootGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootGameView.swift; sourceTree = "<group>"; };
+		020000000000000000000008 /* HUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDView.swift; sourceTree = "<group>"; };
+		020000000000000000000009 /* UnitInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitInspectorView.swift; sourceTree = "<group>"; };
+		02000000000000000000000A /* EventLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventLogView.swift; sourceTree = "<group>"; };
+		02000000000000000000000B /* BoardScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardScene.swift; sourceTree = "<group>"; };
+		02000000000000000000000C /* BoardSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardSceneView.swift; sourceTree = "<group>"; };
+		02000000000000000000000D /* RuleEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleEngine.swift; sourceTree = "<group>"; };
+		02000000000000000000000E /* Command.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Command.swift; sourceTree = "<group>"; };
+		02000000000000000000000F /* DecisionProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecisionProvider.swift; sourceTree = "<group>"; };
+		020000000000000000000010 /* DataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataLoader.swift; sourceTree = "<group>"; };
+		020000000000000000000011 /* GameStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStateTests.swift; sourceTree = "<group>"; };
+		020000000000000000000012 /* WWIIHexV0.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WWIIHexV0.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		020000000000000000000013 /* WWIIHexV0Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WWIIHexV0Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		020000000000000000000014 /* ScenarioDefinition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenarioDefinition.swift; sourceTree = "<group>"; };
+		020000000000000000000015 /* ardennes_v0_scenario.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ardennes_v0_scenario.json; sourceTree = "<group>"; };
+		020000000000000000000016 /* terrain_rules.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = terrain_rules.json; sourceTree = "<group>"; };
+		020000000000000000000017 /* unit_templates.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = unit_templates.json; sourceTree = "<group>"; };
+		020000000000000000000018 /* general_agents.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = general_agents.json; sourceTree = "<group>"; };
+		020000000000000000000019 /* ScenarioDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenarioDataTests.swift; sourceTree = "<group>"; };
+		02000000000000000000001A /* HexDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexDirection.swift; sourceTree = "<group>"; };
+		02000000000000000000001B /* HexCoord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexCoord.swift; sourceTree = "<group>"; };
+		02000000000000000000001C /* Terrain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Terrain.swift; sourceTree = "<group>"; };
+		02000000000000000000001D /* SupplyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplyState.swift; sourceTree = "<group>"; };
+		02000000000000000000001E /* Division.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Division.swift; sourceTree = "<group>"; };
+		02000000000000000000001F /* MapState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapState.swift; sourceTree = "<group>"; };
+		020000000000000000000020 /* VictoryState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VictoryState.swift; sourceTree = "<group>"; };
+		020000000000000000000021 /* CommandValidation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandValidation.swift; sourceTree = "<group>"; };
+		020000000000000000000022 /* CommandResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandResult.swift; sourceTree = "<group>"; };
+		020000000000000000000023 /* MovementRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovementRules.swift; sourceTree = "<group>"; };
+		020000000000000000000024 /* CombatRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombatRules.swift; sourceTree = "<group>"; };
+		020000000000000000000025 /* SupplyRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupplyRules.swift; sourceTree = "<group>"; };
+		020000000000000000000026 /* VictoryRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VictoryRules.swift; sourceTree = "<group>"; };
+		020000000000000000000027 /* CommandValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandValidator.swift; sourceTree = "<group>"; };
+		020000000000000000000028 /* CommandExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandExecutor.swift; sourceTree = "<group>"; };
+		020000000000000000000029 /* RuleEngineCoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleEngineCoreTests.swift; sourceTree = "<group>"; };
+		02000000000000000000002A /* GameCommandHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCommandHandling.swift; sourceTree = "<group>"; };
+		02000000000000000000002B /* HexLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexLayout.swift; sourceTree = "<group>"; };
+		02000000000000000000002C /* TerrainStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerrainStyle.swift; sourceTree = "<group>"; };
+		02000000000000000000002D /* HexNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexNode.swift; sourceTree = "<group>"; };
+		02000000000000000000002E /* UnitNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitNode.swift; sourceTree = "<group>"; };
+		02000000000000000000002F /* BoardSceneAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardSceneAdapter.swift; sourceTree = "<group>"; };
+		020000000000000000000030 /* CommandPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandPanelView.swift; sourceTree = "<group>"; };
+		020000000000000000000031 /* AgentPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentPanelView.swift; sourceTree = "<group>"; };
+		020000000000000000000032 /* HexLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexLayoutTests.swift; sourceTree = "<group>"; };
+		020000000000000000000033 /* BoardInteractionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardInteractionTests.swift; sourceTree = "<group>"; };
+		020000000000000000000034 /* GameAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameAgent.swift; sourceTree = "<group>"; };
+		020000000000000000000035 /* AgentConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentConfiguration.swift; sourceTree = "<group>"; };
+		020000000000000000000036 /* AgentDecision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDecision.swift; sourceTree = "<group>"; };
+		020000000000000000000037 /* AgentContexts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentContexts.swift; sourceTree = "<group>"; };
+		020000000000000000000038 /* AgentDecisionParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDecisionParser.swift; sourceTree = "<group>"; };
+		020000000000000000000039 /* AgentCommandMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentCommandMapper.swift; sourceTree = "<group>"; };
+		02000000000000000000003A /* AgentDecisionRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDecisionRecord.swift; sourceTree = "<group>"; };
+		02000000000000000000003B /* MockAIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAIClient.swift; sourceTree = "<group>"; };
+		02000000000000000000003C /* LLMClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMClient.swift; sourceTree = "<group>"; };
+		02000000000000000000003D /* LocalLLMDecisionProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalLLMDecisionProvider.swift; sourceTree = "<group>"; };
+		02000000000000000000003E /* AgentPromptBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentPromptBuilder.swift; sourceTree = "<group>"; };
+		02000000000000000000003F /* TurnManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TurnManager.swift; sourceTree = "<group>"; };
+		020000000000000000000040 /* AgentPipelineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentPipelineTests.swift; sourceTree = "<group>"; };
+		020000000000000000000041 /* Region.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Region.swift; sourceTree = "<group>"; };
+		020000000000000000000042 /* RegionGraphTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionGraphTests.swift; sourceTree = "<group>"; };
+		020000000000000000000043 /* RegionDataSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionDataSet.swift; sourceTree = "<group>"; };
+		020000000000000000000044 /* ardennes_v02_regions.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ardennes_v02_regions.json; sourceTree = "<group>"; };
+		020000000000000000000045 /* ArdennesV02DataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArdennesV02DataTests.swift; sourceTree = "<group>"; };
+		020000000000000000000046 /* RegionPathfinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionPathfinder.swift; sourceTree = "<group>"; };
+		020000000000000000000047 /* RegionMovementRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionMovementRules.swift; sourceTree = "<group>"; };
+		020000000000000000000048 /* RegionCombatRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionCombatRules.swift; sourceTree = "<group>"; };
+		020000000000000000000049 /* RegionOccupationRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionOccupationRules.swift; sourceTree = "<group>"; };
+		02000000000000000000004A /* RegionSupplyRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionSupplyRules.swift; sourceTree = "<group>"; };
+		02000000000000000000004B /* RegionVisibilityRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionVisibilityRules.swift; sourceTree = "<group>"; };
+		02000000000000000000004C /* RegionVictoryRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionVictoryRules.swift; sourceTree = "<group>"; };
+		02000000000000000000004D /* RegionRuleSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionRuleSystem.swift; sourceTree = "<group>"; };
+		02000000000000000000004E /* RegionMovementRulesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionMovementRulesTests.swift; sourceTree = "<group>"; };
+		02000000000000000000004F /* RegionCombatRulesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionCombatRulesTests.swift; sourceTree = "<group>"; };
+		020000000000000000000050 /* RegionSupplyRulesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionSupplyRulesTests.swift; sourceTree = "<group>"; };
+		020000000000000000000051 /* RegionOccupationRulesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionOccupationRulesTests.swift; sourceTree = "<group>"; };
+		020000000000000000000052 /* RegionVisibilityRulesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionVisibilityRulesTests.swift; sourceTree = "<group>"; };
+		020000000000000000000053 /* RegionVictoryRulesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionVictoryRulesTests.swift; sourceTree = "<group>"; };
+		020000000000000000000054 /* RegionRuleSystemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionRuleSystemTests.swift; sourceTree = "<group>"; };
+		020000000000000000000055 /* RegionRuleTestFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionRuleTestFixtures.swift; sourceTree = "<group>"; };
+		020000000000000000000056 /* RegionCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionCommand.swift; sourceTree = "<group>"; };
+		020000000000000000000057 /* CommandIntentAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandIntentAdapter.swift; sourceTree = "<group>"; };
+		020000000000000000000058 /* RegionCommandValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionCommandValidator.swift; sourceTree = "<group>"; };
+		020000000000000000000059 /* CommandIntentAdapterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandIntentAdapterTests.swift; sourceTree = "<group>"; };
+		02000000000000000000005A /* CommandRegionMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandRegionMigrationTests.swift; sourceTree = "<group>"; };
+		02000000000000000000005B /* AgentOrderParsingV2Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentOrderParsingV2Tests.swift; sourceTree = "<group>"; };
+		02000000000000000000005C /* CommandValidationRegionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandValidationRegionTests.swift; sourceTree = "<group>"; };
+		02000000000000000000005D /* AgentRegionCommandPipelineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentRegionCommandPipelineTests.swift; sourceTree = "<group>"; };
+		02000000000000000000005E /* MapDisplayAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapDisplayAdapter.swift; sourceTree = "<group>"; };
+		02000000000000000000005F /* RegionOverlayNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionOverlayNode.swift; sourceTree = "<group>"; };
+		020000000000000000000060 /* RegionInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionInspectorView.swift; sourceTree = "<group>"; };
+		020000000000000000000061 /* MapDisplayAdapterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapDisplayAdapterTests.swift; sourceTree = "<group>"; };
+		020000000000000000000062 /* BoardSceneAdapterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardSceneAdapterTests.swift; sourceTree = "<group>"; };
+		020000000000000000000063 /* UnitDisplayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitDisplayTests.swift; sourceTree = "<group>"; };
+		020000000000000000000064 /* VisibilityDisplayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisibilityDisplayTests.swift; sourceTree = "<group>"; };
+		020000000000000000000065 /* InfoPanelToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoPanelToggle.swift; sourceTree = "<group>"; };
+		020000000000000000000066 /* UnitTooltipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitTooltipView.swift; sourceTree = "<group>"; };
+		020000000000000000000067 /* NewGameButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGameButton.swift; sourceTree = "<group>"; };
+		020000000000000000000068 /* Theater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theater.swift; sourceTree = "<group>"; };
+		020000000000000000000069 /* TheaterSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TheaterSystem.swift; sourceTree = "<group>"; };
+		02000000000000000000006A /* TheaterSystemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TheaterSystemTests.swift; sourceTree = "<group>"; };
+		02000000000000000000006B /* FrontLineId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrontLineId.swift; sourceTree = "<group>"; };
+		02000000000000000000006C /* FrontLineTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrontLineTypes.swift; sourceTree = "<group>"; };
+		02000000000000000000006D /* FrontSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrontSegment.swift; sourceTree = "<group>"; };
+		02000000000000000000006E /* FrontLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrontLine.swift; sourceTree = "<group>"; };
+		02000000000000000000006F /* RegionFrontState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionFrontState.swift; sourceTree = "<group>"; };
+		020000000000000000000070 /* FrontLineState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrontLineState.swift; sourceTree = "<group>"; };
+		020000000000000000000071 /* FrontLineManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrontLineManager.swift; sourceTree = "<group>"; };
+		020000000000000000000072 /* FrontLineTestFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrontLineTestFixtures.swift; sourceTree = "<group>"; };
+		020000000000000000000073 /* FrontLineCreationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrontLineCreationTests.swift; sourceTree = "<group>"; };
+		020000000000000000000074 /* FrontLineUpdateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrontLineUpdateTests.swift; sourceTree = "<group>"; };
+		020000000000000000000075 /* EncirclementDetectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncirclementDetectionTests.swift; sourceTree = "<group>"; };
+		020000000000000000000076 /* MultiEnemyFrontTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiEnemyFrontTests.swift; sourceTree = "<group>"; };
+		020000000000000000000077 /* FrontLinePerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrontLinePerformanceTests.swift; sourceTree = "<group>"; };
+		020000000000000000000078 /* FrontZoneId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrontZoneId.swift; sourceTree = "<group>"; };
+		020000000000000000000079 /* WarDeploymentTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarDeploymentTypes.swift; sourceTree = "<group>"; };
+		02000000000000000000007A /* FrontZoneSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrontZoneSegment.swift; sourceTree = "<group>"; };
+		02000000000000000000007B /* FrontZone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrontZone.swift; sourceTree = "<group>"; };
+		02000000000000000000007C /* WarDeploymentState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarDeploymentState.swift; sourceTree = "<group>"; };
+		02000000000000000000007D /* WarDeploymentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarDeploymentManager.swift; sourceTree = "<group>"; };
+		02000000000000000000007E /* WarDeploymentTestFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarDeploymentTestFixtures.swift; sourceTree = "<group>"; };
+		02000000000000000000007F /* WarDeploymentFrontLineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarDeploymentFrontLineTests.swift; sourceTree = "<group>"; };
+		020000000000000000000080 /* WarDeploymentSegmentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarDeploymentSegmentTests.swift; sourceTree = "<group>"; };
+		020000000000000000000081 /* WarDeploymentDeploymentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarDeploymentDeploymentTests.swift; sourceTree = "<group>"; };
+		020000000000000000000082 /* WarEvolutionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarEvolutionTests.swift; sourceTree = "<group>"; };
+		020000000000000000000083 /* Integration/WarSystemsIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Integration/WarSystemsIntegrationTests.swift; sourceTree = "<group>"; };
+		020000000000000000000084 /* WWIIHexV0ProbeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WWIIHexV0ProbeTests.swift; sourceTree = "<group>"; };
+		020000000000000000000085 /* WWIIHexV0Probes.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WWIIHexV0Probes.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		020000000000000000000086 /* MapEditorDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapEditorDocument.swift; sourceTree = "<group>"; };
+		020000000000000000000087 /* MapEditorHexMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapEditorHexMath.swift; sourceTree = "<group>"; };
+		020000000000000000000088 /* MapEditorExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapEditorExporter.swift; sourceTree = "<group>"; };
+		020000000000000000000089 /* MapEditorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapEditorViewModel.swift; sourceTree = "<group>"; };
+		02000000000000000000008A /* MapEditorCanvasScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapEditorCanvasScene.swift; sourceTree = "<group>"; };
+		02000000000000000000008B /* MapEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapEditorView.swift; sourceTree = "<group>"; };
+		02000000000000000000008C /* MapEditorOutputTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapEditorOutputTests.swift; sourceTree = "<group>"; };
+		02000000000000000000008D /* MapEditorGameResourceBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapEditorGameResourceBridge.swift; sourceTree = "<group>"; };
+		02000000000000000000008E /* MapEditorMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapEditorMacApp.swift; sourceTree = "<group>"; };
+		02000000000000000000008F /* MapEditorMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MapEditorMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		020000000000000000000090 /* WarDirective.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarDirective.swift; sourceTree = "<group>"; };
+		020000000000000000000091 /* WarCommandExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarCommandExecutor.swift; sourceTree = "<group>"; };
+		020000000000000000000092 /* MockAICommander.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAICommander.swift; sourceTree = "<group>"; };
+		020000000000000000000093 /* CommandSystemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandSystemTests.swift; sourceTree = "<group>"; };
+		020000000000000000000094 /* WarPipelineMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarPipelineMode.swift; sourceTree = "<group>"; };
+		020000000000000000000095 /* MapDisplayLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapDisplayLayer.swift; sourceTree = "<group>"; };
+		020000000000000000000096 /* WarDirectiveRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarDirectiveRecord.swift; sourceTree = "<group>"; };
+		020000000000000000000097 /* StrategicStateBootstrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrategicStateBootstrapper.swift; sourceTree = "<group>"; };
+		020000000000000000000098 /* MapLayerOverlayCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapLayerOverlayCalculator.swift; sourceTree = "<group>"; };
+		020000000000000000000099 /* MapLayerOverlayNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapLayerOverlayNode.swift; sourceTree = "<group>"; };
+		02000000000000000000009A /* ObserverModeIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObserverModeIntegrationTests.swift; sourceTree = "<group>"; };
+		02000000000000000000009B /* LayeredMapUIStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayeredMapUIStateTests.swift; sourceTree = "<group>"; };
+		02000000000000000000009C /* Stage035CampaignSimulationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stage035CampaignSimulationTests.swift; sourceTree = "<group>"; };
+		02000000000000000000009D /* StrategicStateSynchronizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrategicStateSynchronizer.swift; sourceTree = "<group>"; };
+		020000000000000000000148 /* OccupationRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OccupationRules.swift; sourceTree = "<group>"; };
+		020000000000000000000149 /* Stage0355DynamicTheaterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stage0355DynamicTheaterTests.swift; sourceTree = "<group>"; };
+		02000000000000000000014B /* ZoneCommanderAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoneCommanderAgent.swift; sourceTree = "<group>"; };
+		0C0000000000000000000008 /* WWIIHexV0MacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WWIIHexV0MacApp.swift; sourceTree = "<group>"; };
+		0C0000000000000000000009 /* PlatformStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformStyles.swift; sourceTree = "<group>"; };
+		0C000000000000000000000A /* WWIIHexV0Mac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WWIIHexV0Mac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0D0000000000000000000001 /* GeneralRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralRegistry.swift; sourceTree = "<group>"; };
+		0D0000000000000000000002 /* RulerAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RulerAgent.swift; sourceTree = "<group>"; };
+		0D0000000000000000000003 /* DiplomacyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiplomacyState.swift; sourceTree = "<group>"; };
+		0D0000000000000000000004 /* EconomyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EconomyState.swift; sourceTree = "<group>"; };
+		0D0000000000000000000005 /* GeneralAssignment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralAssignment.swift; sourceTree = "<group>"; };
+		0D0000000000000000000006 /* PlayerCommandState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerCommandState.swift; sourceTree = "<group>"; };
+		0D0000000000000000000007 /* EconomyRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EconomyRules.swift; sourceTree = "<group>"; };
+		0D0000000000000000000008 /* EconomyPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EconomyPanelView.swift; sourceTree = "<group>"; };
+		0D0000000000000000000009 /* DiplomacyPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiplomacyPanelView.swift; sourceTree = "<group>"; };
+		0D000000000000000000000A /* generals.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = generals.json; sourceTree = "<group>"; };
+		0D000000000000000000000B /* GeneralCommandPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralCommandPanelView.swift; sourceTree = "<group>"; };
+		0D000000000000000000000C /* GeneralProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralProfileView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		060000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		060000000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		060000000000000000000003 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		060000000000000000000004 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0C0000000000000000000003 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		070000000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				070000000000000000000002 /* WWIIHexV0 */,
+				07000000000000000000000F /* MapEditor */,
+				07000000000000000000000C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		070000000000000000000002 /* WWIIHexV0 */ = {
+			isa = PBXGroup;
+			children = (
+				070000000000000000000003 /* App */,
+				070000000000000000000004 /* Core */,
+				070000000000000000000005 /* UI */,
+				070000000000000000000006 /* SpriteKit */,
+				070000000000000000000007 /* Rules */,
+				070000000000000000000008 /* Commands */,
+				070000000000000000000009 /* Agents */,
+				07000000000000000000000A /* Data */,
+				07000000000000000000000B /* Tests */,
+				07000000000000000000000D /* Turn */,
+				07000000000000000000000E /* Probes */,
+			);
+			path = WWIIHexV0;
+			sourceTree = "<group>";
+		};
+		070000000000000000000003 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000001 /* WWIIHexV0App.swift */,
+				0C0000000000000000000008 /* WWIIHexV0MacApp.swift */,
+				020000000000000000000002 /* AppContainer.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		070000000000000000000004 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000003 /* GameState.swift */,
+				020000000000000000000004 /* Faction.swift */,
+				020000000000000000000005 /* GamePhase.swift */,
+				020000000000000000000006 /* GameLogEntry.swift */,
+				020000000000000000000094 /* WarPipelineMode.swift */,
+				020000000000000000000095 /* MapDisplayLayer.swift */,
+				020000000000000000000096 /* WarDirectiveRecord.swift */,
+				0D0000000000000000000003 /* DiplomacyState.swift */,
+				0D0000000000000000000004 /* EconomyState.swift */,
+				0D0000000000000000000005 /* GeneralAssignment.swift */,
+				0D0000000000000000000006 /* PlayerCommandState.swift */,
+				020000000000000000000097 /* StrategicStateBootstrapper.swift */,
+				02000000000000000000001A /* HexDirection.swift */,
+				02000000000000000000001B /* HexCoord.swift */,
+				02000000000000000000001C /* Terrain.swift */,
+				02000000000000000000001D /* SupplyState.swift */,
+				02000000000000000000001E /* Division.swift */,
+				02000000000000000000001F /* MapState.swift */,
+				020000000000000000000020 /* VictoryState.swift */,
+				020000000000000000000041 /* Region.swift */,
+				020000000000000000000068 /* Theater.swift */,
+				02000000000000000000006B /* FrontLineId.swift */,
+				02000000000000000000006C /* FrontLineTypes.swift */,
+				02000000000000000000006D /* FrontSegment.swift */,
+				02000000000000000000006E /* FrontLine.swift */,
+				02000000000000000000006F /* RegionFrontState.swift */,
+				020000000000000000000070 /* FrontLineState.swift */,
+				020000000000000000000078 /* FrontZoneId.swift */,
+				020000000000000000000079 /* WarDeploymentTypes.swift */,
+				02000000000000000000007A /* FrontZoneSegment.swift */,
+				02000000000000000000007B /* FrontZone.swift */,
+				02000000000000000000007C /* WarDeploymentState.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		070000000000000000000005 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000007 /* RootGameView.swift */,
+				0D0000000000000000000008 /* EconomyPanelView.swift */,
+				0D0000000000000000000009 /* DiplomacyPanelView.swift */,
+				0C0000000000000000000009 /* PlatformStyles.swift */,
+				020000000000000000000008 /* HUDView.swift */,
+				020000000000000000000009 /* UnitInspectorView.swift */,
+				020000000000000000000060 /* RegionInspectorView.swift */,
+				020000000000000000000065 /* InfoPanelToggle.swift */,
+				020000000000000000000066 /* UnitTooltipView.swift */,
+				020000000000000000000067 /* NewGameButton.swift */,
+				02000000000000000000000A /* EventLogView.swift */,
+				020000000000000000000030 /* CommandPanelView.swift */,
+				0D000000000000000000000B /* GeneralCommandPanelView.swift */,
+				0D000000000000000000000C /* GeneralProfileView.swift */,
+				020000000000000000000031 /* AgentPanelView.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		070000000000000000000006 /* SpriteKit */ = {
+			isa = PBXGroup;
+			children = (
+				02000000000000000000000B /* BoardScene.swift */,
+				02000000000000000000000C /* BoardSceneView.swift */,
+				02000000000000000000002B /* HexLayout.swift */,
+				02000000000000000000002C /* TerrainStyle.swift */,
+				02000000000000000000002D /* HexNode.swift */,
+				02000000000000000000002E /* UnitNode.swift */,
+				02000000000000000000002F /* BoardSceneAdapter.swift */,
+				02000000000000000000005E /* MapDisplayAdapter.swift */,
+				020000000000000000000098 /* MapLayerOverlayCalculator.swift */,
+				020000000000000000000099 /* MapLayerOverlayNode.swift */,
+				02000000000000000000005F /* RegionOverlayNode.swift */,
+			);
+			path = SpriteKit;
+			sourceTree = "<group>";
+		};
+		070000000000000000000007 /* Rules */ = {
+			isa = PBXGroup;
+			children = (
+				02000000000000000000000D /* RuleEngine.swift */,
+				0D0000000000000000000007 /* EconomyRules.swift */,
+				020000000000000000000023 /* MovementRules.swift */,
+				020000000000000000000024 /* CombatRules.swift */,
+				020000000000000000000025 /* SupplyRules.swift */,
+				020000000000000000000026 /* VictoryRules.swift */,
+				020000000000000000000027 /* CommandValidator.swift */,
+				020000000000000000000028 /* CommandExecutor.swift */,
+				020000000000000000000046 /* RegionPathfinder.swift */,
+				020000000000000000000047 /* RegionMovementRules.swift */,
+				020000000000000000000048 /* RegionCombatRules.swift */,
+				020000000000000000000049 /* RegionOccupationRules.swift */,
+				020000000000000000000148 /* OccupationRules.swift */,
+				02000000000000000000004A /* RegionSupplyRules.swift */,
+				02000000000000000000004B /* RegionVisibilityRules.swift */,
+				02000000000000000000004C /* RegionVictoryRules.swift */,
+				02000000000000000000004D /* RegionRuleSystem.swift */,
+				020000000000000000000058 /* RegionCommandValidator.swift */,
+				020000000000000000000069 /* TheaterSystem.swift */,
+				020000000000000000000071 /* FrontLineManager.swift */,
+				02000000000000000000007D /* WarDeploymentManager.swift */,
+				02000000000000000000009D /* StrategicStateSynchronizer.swift */,
+			);
+			path = Rules;
+			sourceTree = "<group>";
+		};
+		070000000000000000000008 /* Commands */ = {
+			isa = PBXGroup;
+			children = (
+				02000000000000000000000E /* Command.swift */,
+				020000000000000000000021 /* CommandValidation.swift */,
+				020000000000000000000022 /* CommandResult.swift */,
+				02000000000000000000002A /* GameCommandHandling.swift */,
+				020000000000000000000056 /* RegionCommand.swift */,
+				020000000000000000000057 /* CommandIntentAdapter.swift */,
+				020000000000000000000090 /* WarDirective.swift */,
+				020000000000000000000091 /* WarCommandExecutor.swift */,
+			);
+			path = Commands;
+			sourceTree = "<group>";
+		};
+		070000000000000000000009 /* Agents */ = {
+			isa = PBXGroup;
+			children = (
+				02000000000000000000000F /* DecisionProvider.swift */,
+				0D0000000000000000000001 /* GeneralRegistry.swift */,
+				0D0000000000000000000002 /* RulerAgent.swift */,
+				020000000000000000000034 /* GameAgent.swift */,
+				020000000000000000000035 /* AgentConfiguration.swift */,
+				020000000000000000000036 /* AgentDecision.swift */,
+				020000000000000000000037 /* AgentContexts.swift */,
+				020000000000000000000038 /* AgentDecisionParser.swift */,
+				020000000000000000000039 /* AgentCommandMapper.swift */,
+				02000000000000000000003A /* AgentDecisionRecord.swift */,
+				02000000000000000000003B /* MockAIClient.swift */,
+				02000000000000000000003C /* LLMClient.swift */,
+				02000000000000000000003D /* LocalLLMDecisionProvider.swift */,
+				02000000000000000000003E /* AgentPromptBuilder.swift */,
+				020000000000000000000092 /* MockAICommander.swift */,
+				02000000000000000000014B /* ZoneCommanderAgent.swift */,
+			);
+			path = Agents;
+			sourceTree = "<group>";
+		};
+		07000000000000000000000A /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000010 /* DataLoader.swift */,
+				020000000000000000000014 /* ScenarioDefinition.swift */,
+				020000000000000000000015 /* ardennes_v0_scenario.json */,
+				020000000000000000000016 /* terrain_rules.json */,
+				020000000000000000000017 /* unit_templates.json */,
+				020000000000000000000018 /* general_agents.json */,
+				0D000000000000000000000A /* generals.json */,
+				020000000000000000000043 /* RegionDataSet.swift */,
+				020000000000000000000044 /* ardennes_v02_regions.json */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		07000000000000000000000B /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000011 /* GameStateTests.swift */,
+				020000000000000000000019 /* ScenarioDataTests.swift */,
+				020000000000000000000029 /* RuleEngineCoreTests.swift */,
+				020000000000000000000032 /* HexLayoutTests.swift */,
+				020000000000000000000033 /* BoardInteractionTests.swift */,
+				020000000000000000000040 /* AgentPipelineTests.swift */,
+				020000000000000000000042 /* RegionGraphTests.swift */,
+				020000000000000000000045 /* ArdennesV02DataTests.swift */,
+				02000000000000000000004E /* RegionMovementRulesTests.swift */,
+				02000000000000000000004F /* RegionCombatRulesTests.swift */,
+				020000000000000000000050 /* RegionSupplyRulesTests.swift */,
+				020000000000000000000051 /* RegionOccupationRulesTests.swift */,
+				020000000000000000000052 /* RegionVisibilityRulesTests.swift */,
+				020000000000000000000053 /* RegionVictoryRulesTests.swift */,
+				020000000000000000000054 /* RegionRuleSystemTests.swift */,
+				020000000000000000000055 /* RegionRuleTestFixtures.swift */,
+				020000000000000000000059 /* CommandIntentAdapterTests.swift */,
+				02000000000000000000005A /* CommandRegionMigrationTests.swift */,
+				02000000000000000000005B /* AgentOrderParsingV2Tests.swift */,
+				02000000000000000000005C /* CommandValidationRegionTests.swift */,
+				02000000000000000000005D /* AgentRegionCommandPipelineTests.swift */,
+				020000000000000000000061 /* MapDisplayAdapterTests.swift */,
+				020000000000000000000062 /* BoardSceneAdapterTests.swift */,
+				020000000000000000000063 /* UnitDisplayTests.swift */,
+				020000000000000000000064 /* VisibilityDisplayTests.swift */,
+				02000000000000000000006A /* TheaterSystemTests.swift */,
+				020000000000000000000072 /* FrontLineTestFixtures.swift */,
+				020000000000000000000073 /* FrontLineCreationTests.swift */,
+				020000000000000000000074 /* FrontLineUpdateTests.swift */,
+				020000000000000000000075 /* EncirclementDetectionTests.swift */,
+				020000000000000000000076 /* MultiEnemyFrontTests.swift */,
+				020000000000000000000077 /* FrontLinePerformanceTests.swift */,
+				02000000000000000000007E /* WarDeploymentTestFixtures.swift */,
+				02000000000000000000007F /* WarDeploymentFrontLineTests.swift */,
+				020000000000000000000080 /* WarDeploymentSegmentTests.swift */,
+				020000000000000000000081 /* WarDeploymentDeploymentTests.swift */,
+				020000000000000000000082 /* WarEvolutionTests.swift */,
+				020000000000000000000083 /* Integration/WarSystemsIntegrationTests.swift */,
+				02000000000000000000008C /* MapEditorOutputTests.swift */,
+				020000000000000000000093 /* CommandSystemTests.swift */,
+				02000000000000000000009A /* ObserverModeIntegrationTests.swift */,
+				02000000000000000000009B /* LayeredMapUIStateTests.swift */,
+				02000000000000000000009C /* Stage035CampaignSimulationTests.swift */,
+				020000000000000000000149 /* Stage0355DynamicTheaterTests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		07000000000000000000000C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000012 /* WWIIHexV0.app */,
+				020000000000000000000013 /* WWIIHexV0Tests.xctest */,
+				020000000000000000000085 /* WWIIHexV0Probes.xctest */,
+				02000000000000000000008F /* MapEditorMac.app */,
+				0C000000000000000000000A /* WWIIHexV0Mac.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		07000000000000000000000D /* Turn */ = {
+			isa = PBXGroup;
+			children = (
+				02000000000000000000003F /* TurnManager.swift */,
+			);
+			path = Turn;
+			sourceTree = "<group>";
+		};
+		07000000000000000000000E /* Probes */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000084 /* WWIIHexV0ProbeTests.swift */,
+			);
+			path = Probes;
+			sourceTree = "<group>";
+		};
+		07000000000000000000000F /* MapEditor */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000086 /* MapEditorDocument.swift */,
+				020000000000000000000087 /* MapEditorHexMath.swift */,
+				020000000000000000000088 /* MapEditorExporter.swift */,
+				020000000000000000000089 /* MapEditorViewModel.swift */,
+				02000000000000000000008A /* MapEditorCanvasScene.swift */,
+				02000000000000000000008B /* MapEditorView.swift */,
+				02000000000000000000008D /* MapEditorGameResourceBridge.swift */,
+				02000000000000000000008E /* MapEditorMacApp.swift */,
+			);
+			path = MapEditor;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		050000000000000000000001 /* WWIIHexV0 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 090000000000000000000002 /* Build configuration list for PBXNativeTarget "WWIIHexV0" */;
+			buildPhases = (
+				080000000000000000000001 /* Sources */,
+				060000000000000000000001 /* Frameworks */,
+				080000000000000000000002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WWIIHexV0;
+			productName = WWIIHexV0;
+			productReference = 020000000000000000000012 /* WWIIHexV0.app */;
+			productType = "com.apple.product-type.application";
+		};
+		050000000000000000000002 /* WWIIHexV0Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 090000000000000000000003 /* Build configuration list for PBXNativeTarget "WWIIHexV0Tests" */;
+			buildPhases = (
+				080000000000000000000003 /* Sources */,
+				060000000000000000000002 /* Frameworks */,
+				080000000000000000000004 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0A0000000000000000000001 /* PBXTargetDependency */,
+			);
+			name = WWIIHexV0Tests;
+			productName = WWIIHexV0Tests;
+			productReference = 020000000000000000000013 /* WWIIHexV0Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		050000000000000000000003 /* WWIIHexV0Probes */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 090000000000000000000004 /* Build configuration list for PBXNativeTarget "WWIIHexV0Probes" */;
+			buildPhases = (
+				080000000000000000000006 /* Sources */,
+				060000000000000000000003 /* Frameworks */,
+				080000000000000000000005 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0A0000000000000000000002 /* PBXTargetDependency */,
+			);
+			name = WWIIHexV0Probes;
+			productName = WWIIHexV0Probes;
+			productReference = 020000000000000000000085 /* WWIIHexV0Probes.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		050000000000000000000004 /* MapEditorMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 090000000000000000000005 /* Build configuration list for PBXNativeTarget "MapEditorMac" */;
+			buildPhases = (
+				080000000000000000000007 /* Sources */,
+				060000000000000000000004 /* Frameworks */,
+				080000000000000000000008 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MapEditorMac;
+			productName = MapEditorMac;
+			productReference = 02000000000000000000008F /* MapEditorMac.app */;
+			productType = "com.apple.product-type.application";
+		};
+		0C0000000000000000000001 /* WWIIHexV0Mac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0C0000000000000000000005 /* Build configuration list for PBXNativeTarget "WWIIHexV0Mac" */;
+			buildPhases = (
+				0C0000000000000000000002 /* Sources */,
+				0C0000000000000000000003 /* Frameworks */,
+				0C0000000000000000000004 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WWIIHexV0Mac;
+			productName = WWIIHexV0Mac;
+			productReference = 0C000000000000000000000A /* WWIIHexV0Mac.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		040000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					050000000000000000000001 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					050000000000000000000002 = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = 050000000000000000000001;
+					};
+					050000000000000000000003 = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = 050000000000000000000001;
+					};
+					050000000000000000000004 = {
+						CreatedOnToolsVersion = 17.0;
+					};
+					0C0000000000000000000001 = {
+						CreatedOnToolsVersion = 17.0;
+					};
+				};
+			};
+			buildConfigurationList = 090000000000000000000001 /* Build configuration list for PBXProject "WWIIHexV0" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 070000000000000000000001;
+			productRefGroup = 07000000000000000000000C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				050000000000000000000001 /* WWIIHexV0 */,
+				050000000000000000000002 /* WWIIHexV0Tests */,
+				050000000000000000000003 /* WWIIHexV0Probes */,
+				050000000000000000000004 /* MapEditorMac */,
+				0C0000000000000000000001 /* WWIIHexV0Mac */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		080000000000000000000002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				010000000000000000000013 /* ardennes_v0_scenario.json in Resources */,
+				010000000000000000000014 /* terrain_rules.json in Resources */,
+				010000000000000000000015 /* unit_templates.json in Resources */,
+				010000000000000000000016 /* general_agents.json in Resources */,
+				0D000000000000000000010A /* generals.json in Resources */,
+				010000000000000000000042 /* ardennes_v02_regions.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		080000000000000000000004 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		080000000000000000000005 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		080000000000000000000008 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0C0000000000000000000004 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0C0000000000000000000163 /* ardennes_v0_scenario.json in Resources */,
+				0C0000000000000000000164 /* terrain_rules.json in Resources */,
+				0C0000000000000000000165 /* unit_templates.json in Resources */,
+				0C0000000000000000000166 /* general_agents.json in Resources */,
+				0D000000000000000000030A /* generals.json in Resources */,
+				0C0000000000000000000167 /* ardennes_v02_regions.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		080000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				010000000000000000000001 /* WWIIHexV0App.swift in Sources */,
+				010000000000000000000002 /* AppContainer.swift in Sources */,
+				010000000000000000000003 /* GameState.swift in Sources */,
+				010000000000000000000004 /* Faction.swift in Sources */,
+				010000000000000000000005 /* GamePhase.swift in Sources */,
+				010000000000000000000006 /* GameLogEntry.swift in Sources */,
+				010000000000000000000126 /* WarPipelineMode.swift in Sources */,
+				0D0000000000000000000103 /* DiplomacyState.swift in Sources */,
+				0D0000000000000000000104 /* EconomyState.swift in Sources */,
+				0D0000000000000000000105 /* GeneralAssignment.swift in Sources */,
+				0D0000000000000000000106 /* PlayerCommandState.swift in Sources */,
+				0D0000000000000000000107 /* EconomyRules.swift in Sources */,
+				0D0000000000000000000101 /* GeneralRegistry.swift in Sources */,
+				0D0000000000000000000102 /* RulerAgent.swift in Sources */,
+				0D0000000000000000000108 /* EconomyPanelView.swift in Sources */,
+				0D0000000000000000000109 /* DiplomacyPanelView.swift in Sources */,
+				0D000000000000000000010B /* GeneralCommandPanelView.swift in Sources */,
+				0D000000000000000000010C /* GeneralProfileView.swift in Sources */,
+				010000000000000000000127 /* MapDisplayLayer.swift in Sources */,
+				010000000000000000000128 /* WarDirectiveRecord.swift in Sources */,
+				010000000000000000000129 /* StrategicStateBootstrapper.swift in Sources */,
+				010000000000000000000018 /* HexDirection.swift in Sources */,
+				010000000000000000000019 /* HexCoord.swift in Sources */,
+				01000000000000000000001A /* Terrain.swift in Sources */,
+				01000000000000000000001B /* SupplyState.swift in Sources */,
+				01000000000000000000001C /* Division.swift in Sources */,
+				01000000000000000000001D /* MapState.swift in Sources */,
+				01000000000000000000001E /* VictoryState.swift in Sources */,
+				010000000000000000000066 /* Theater.swift in Sources */,
+				010000000000000000000069 /* FrontLineId.swift in Sources */,
+				01000000000000000000006A /* FrontLineTypes.swift in Sources */,
+				01000000000000000000006B /* FrontSegment.swift in Sources */,
+				01000000000000000000006C /* FrontLine.swift in Sources */,
+				01000000000000000000006D /* RegionFrontState.swift in Sources */,
+				01000000000000000000006E /* FrontLineState.swift in Sources */,
+				010000000000000000000076 /* FrontZoneId.swift in Sources */,
+				010000000000000000000077 /* WarDeploymentTypes.swift in Sources */,
+				010000000000000000000078 /* FrontZoneSegment.swift in Sources */,
+				010000000000000000000079 /* FrontZone.swift in Sources */,
+				01000000000000000000007A /* WarDeploymentState.swift in Sources */,
+				010000000000000000000007 /* RootGameView.swift in Sources */,
+				0C000000000000000000000B /* PlatformStyles.swift in Sources */,
+				010000000000000000000008 /* HUDView.swift in Sources */,
+				010000000000000000000009 /* UnitInspectorView.swift in Sources */,
+				01000000000000000000005E /* RegionInspectorView.swift in Sources */,
+				010000000000000000000063 /* InfoPanelToggle.swift in Sources */,
+				010000000000000000000064 /* UnitTooltipView.swift in Sources */,
+				010000000000000000000065 /* NewGameButton.swift in Sources */,
+				01000000000000000000000A /* EventLogView.swift in Sources */,
+				01000000000000000000002E /* CommandPanelView.swift in Sources */,
+				01000000000000000000002F /* AgentPanelView.swift in Sources */,
+				01000000000000000000000B /* BoardScene.swift in Sources */,
+				01000000000000000000000C /* BoardSceneView.swift in Sources */,
+				010000000000000000000029 /* HexLayout.swift in Sources */,
+				01000000000000000000002A /* TerrainStyle.swift in Sources */,
+				01000000000000000000002B /* HexNode.swift in Sources */,
+				01000000000000000000002C /* UnitNode.swift in Sources */,
+				01000000000000000000002D /* BoardSceneAdapter.swift in Sources */,
+				01000000000000000000005C /* MapDisplayAdapter.swift in Sources */,
+				01000000000000000000012A /* MapLayerOverlayCalculator.swift in Sources */,
+				01000000000000000000012B /* MapLayerOverlayNode.swift in Sources */,
+				01000000000000000000005D /* RegionOverlayNode.swift in Sources */,
+				01000000000000000000000D /* RuleEngine.swift in Sources */,
+				010000000000000000000021 /* MovementRules.swift in Sources */,
+				010000000000000000000022 /* CombatRules.swift in Sources */,
+				010000000000000000000023 /* SupplyRules.swift in Sources */,
+				010000000000000000000024 /* VictoryRules.swift in Sources */,
+				010000000000000000000025 /* CommandValidator.swift in Sources */,
+				010000000000000000000026 /* CommandExecutor.swift in Sources */,
+				01000000000000000000000E /* Command.swift in Sources */,
+				01000000000000000000001F /* CommandValidation.swift in Sources */,
+				010000000000000000000020 /* CommandResult.swift in Sources */,
+				010000000000000000000028 /* GameCommandHandling.swift in Sources */,
+				010000000000000000000054 /* RegionCommand.swift in Sources */,
+				010000000000000000000055 /* CommandIntentAdapter.swift in Sources */,
+				01000000000000000000011F /* WarDirective.swift in Sources */,
+				010000000000000000000120 /* WarCommandExecutor.swift in Sources */,
+				01000000000000000000000F /* DecisionProvider.swift in Sources */,
+				010000000000000000000010 /* DataLoader.swift in Sources */,
+				010000000000000000000012 /* ScenarioDefinition.swift in Sources */,
+				010000000000000000000041 /* RegionDataSet.swift in Sources */,
+				010000000000000000000032 /* GameAgent.swift in Sources */,
+				010000000000000000000033 /* AgentConfiguration.swift in Sources */,
+				010000000000000000000034 /* AgentDecision.swift in Sources */,
+				010000000000000000000035 /* AgentContexts.swift in Sources */,
+				010000000000000000000036 /* AgentDecisionParser.swift in Sources */,
+				010000000000000000000037 /* AgentCommandMapper.swift in Sources */,
+				010000000000000000000038 /* AgentDecisionRecord.swift in Sources */,
+				010000000000000000000039 /* MockAIClient.swift in Sources */,
+				010000000000000000000121 /* MockAICommander.swift in Sources */,
+				01000000000000000000014B /* ZoneCommanderAgent.swift in Sources */,
+				01000000000000000000003A /* LLMClient.swift in Sources */,
+				01000000000000000000003B /* LocalLLMDecisionProvider.swift in Sources */,
+				01000000000000000000003C /* AgentPromptBuilder.swift in Sources */,
+				01000000000000000000003D /* TurnManager.swift in Sources */,
+				01000000000000000000003F /* Region.swift in Sources */,
+				010000000000000000000044 /* RegionPathfinder.swift in Sources */,
+				010000000000000000000045 /* RegionMovementRules.swift in Sources */,
+				010000000000000000000046 /* RegionCombatRules.swift in Sources */,
+				010000000000000000000047 /* RegionOccupationRules.swift in Sources */,
+				010000000000000000000148 /* OccupationRules.swift in Sources */,
+				010000000000000000000048 /* RegionSupplyRules.swift in Sources */,
+				010000000000000000000049 /* RegionVisibilityRules.swift in Sources */,
+				01000000000000000000004A /* RegionVictoryRules.swift in Sources */,
+				01000000000000000000004B /* RegionRuleSystem.swift in Sources */,
+				010000000000000000000056 /* RegionCommandValidator.swift in Sources */,
+				010000000000000000000067 /* TheaterSystem.swift in Sources */,
+				01000000000000000000006F /* FrontLineManager.swift in Sources */,
+				01000000000000000000007B /* WarDeploymentManager.swift in Sources */,
+				010000000000000000000131 /* StrategicStateSynchronizer.swift in Sources */,
+				010000000000000000000085 /* MapEditorDocument.swift in Sources */,
+				010000000000000000000086 /* MapEditorHexMath.swift in Sources */,
+				010000000000000000000087 /* MapEditorExporter.swift in Sources */,
+				010000000000000000000088 /* MapEditorViewModel.swift in Sources */,
+				010000000000000000000089 /* MapEditorCanvasScene.swift in Sources */,
+				01000000000000000000008A /* MapEditorView.swift in Sources */,
+				01000000000000000000011E /* MapEditorGameResourceBridge.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		080000000000000000000003 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				010000000000000000000011 /* GameStateTests.swift in Sources */,
+				010000000000000000000017 /* ScenarioDataTests.swift in Sources */,
+				010000000000000000000027 /* RuleEngineCoreTests.swift in Sources */,
+				010000000000000000000030 /* HexLayoutTests.swift in Sources */,
+				010000000000000000000031 /* BoardInteractionTests.swift in Sources */,
+				01000000000000000000003E /* AgentPipelineTests.swift in Sources */,
+				010000000000000000000040 /* RegionGraphTests.swift in Sources */,
+				010000000000000000000043 /* ArdennesV02DataTests.swift in Sources */,
+				01000000000000000000004C /* RegionMovementRulesTests.swift in Sources */,
+				01000000000000000000004D /* RegionCombatRulesTests.swift in Sources */,
+				01000000000000000000004E /* RegionSupplyRulesTests.swift in Sources */,
+				01000000000000000000004F /* RegionOccupationRulesTests.swift in Sources */,
+				010000000000000000000050 /* RegionVisibilityRulesTests.swift in Sources */,
+				010000000000000000000051 /* RegionVictoryRulesTests.swift in Sources */,
+				010000000000000000000052 /* RegionRuleSystemTests.swift in Sources */,
+				010000000000000000000053 /* RegionRuleTestFixtures.swift in Sources */,
+				010000000000000000000057 /* CommandIntentAdapterTests.swift in Sources */,
+				010000000000000000000058 /* CommandRegionMigrationTests.swift in Sources */,
+				010000000000000000000059 /* AgentOrderParsingV2Tests.swift in Sources */,
+				01000000000000000000005A /* CommandValidationRegionTests.swift in Sources */,
+				01000000000000000000005B /* AgentRegionCommandPipelineTests.swift in Sources */,
+				01000000000000000000005F /* MapDisplayAdapterTests.swift in Sources */,
+				010000000000000000000060 /* BoardSceneAdapterTests.swift in Sources */,
+				010000000000000000000061 /* UnitDisplayTests.swift in Sources */,
+				010000000000000000000062 /* VisibilityDisplayTests.swift in Sources */,
+				010000000000000000000068 /* TheaterSystemTests.swift in Sources */,
+				010000000000000000000070 /* FrontLineTestFixtures.swift in Sources */,
+				010000000000000000000071 /* FrontLineCreationTests.swift in Sources */,
+				010000000000000000000072 /* FrontLineUpdateTests.swift in Sources */,
+				010000000000000000000073 /* EncirclementDetectionTests.swift in Sources */,
+				010000000000000000000074 /* MultiEnemyFrontTests.swift in Sources */,
+				010000000000000000000075 /* FrontLinePerformanceTests.swift in Sources */,
+				01000000000000000000007C /* WarDeploymentTestFixtures.swift in Sources */,
+				01000000000000000000007D /* WarDeploymentFrontLineTests.swift in Sources */,
+				01000000000000000000007E /* WarDeploymentSegmentTests.swift in Sources */,
+				01000000000000000000007F /* WarDeploymentDeploymentTests.swift in Sources */,
+				010000000000000000000080 /* WarEvolutionTests.swift in Sources */,
+				010000000000000000000081 /* Integration/WarSystemsIntegrationTests.swift in Sources */,
+				01000000000000000000008B /* MapEditorOutputTests.swift in Sources */,
+				010000000000000000000122 /* CommandSystemTests.swift in Sources */,
+				01000000000000000000012C /* ObserverModeIntegrationTests.swift in Sources */,
+				01000000000000000000012D /* LayeredMapUIStateTests.swift in Sources */,
+				01000000000000000000014A /* Stage0355DynamicTheaterTests.swift in Sources */,
+				010000000000000000000130 /* Stage035CampaignSimulationTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		080000000000000000000006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				010000000000000000000084 /* WWIIHexV0ProbeTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		080000000000000000000007 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0100000000000000000000D5 /* MapEditorMacApp.swift in Sources */,
+				0100000000000000000000D6 /* MapEditorDocument.swift in Sources */,
+				0100000000000000000000D7 /* MapEditorHexMath.swift in Sources */,
+				0100000000000000000000D8 /* MapEditorExporter.swift in Sources */,
+				0100000000000000000000D9 /* MapEditorViewModel.swift in Sources */,
+				0100000000000000000000DA /* MapEditorCanvasScene.swift in Sources */,
+				0100000000000000000000DB /* MapEditorView.swift in Sources */,
+				0100000000000000000000D4 /* MapEditorGameResourceBridge.swift in Sources */,
+				0100000000000000000000DC /* GameState.swift in Sources */,
+				0100000000000000000000DD /* Faction.swift in Sources */,
+				0100000000000000000000DE /* GamePhase.swift in Sources */,
+				0100000000000000000000DF /* GameLogEntry.swift in Sources */,
+				01000000000000000000012E /* WarPipelineMode.swift in Sources */,
+				0D0000000000000000000203 /* DiplomacyState.swift in Sources */,
+				0D0000000000000000000204 /* EconomyState.swift in Sources */,
+				0D0000000000000000000205 /* GeneralAssignment.swift in Sources */,
+				0D0000000000000000000206 /* PlayerCommandState.swift in Sources */,
+				0D0000000000000000000207 /* EconomyRules.swift in Sources */,
+				0D0000000000000000000201 /* GeneralRegistry.swift in Sources */,
+				0D0000000000000000000202 /* RulerAgent.swift in Sources */,
+				01000000000000000000012F /* WarDirectiveRecord.swift in Sources */,
+				0100000000000000000000E0 /* HexDirection.swift in Sources */,
+				0100000000000000000000E1 /* HexCoord.swift in Sources */,
+				0100000000000000000000E2 /* Terrain.swift in Sources */,
+				0100000000000000000000E3 /* SupplyState.swift in Sources */,
+				0100000000000000000000E4 /* Division.swift in Sources */,
+				0100000000000000000000E5 /* MapState.swift in Sources */,
+				0100000000000000000000E6 /* VictoryState.swift in Sources */,
+				0100000000000000000000E7 /* Theater.swift in Sources */,
+				0100000000000000000000E8 /* FrontLineId.swift in Sources */,
+				0100000000000000000000E9 /* FrontLineTypes.swift in Sources */,
+				0100000000000000000000EA /* FrontSegment.swift in Sources */,
+				0100000000000000000000EB /* FrontLine.swift in Sources */,
+				0100000000000000000000EC /* RegionFrontState.swift in Sources */,
+				0100000000000000000000ED /* FrontLineState.swift in Sources */,
+				0100000000000000000000EE /* FrontZoneId.swift in Sources */,
+				0100000000000000000000EF /* WarDeploymentTypes.swift in Sources */,
+				0100000000000000000000F0 /* FrontZoneSegment.swift in Sources */,
+				0100000000000000000000F1 /* FrontZone.swift in Sources */,
+				0100000000000000000000F2 /* WarDeploymentState.swift in Sources */,
+				0100000000000000000000F3 /* TerrainStyle.swift in Sources */,
+				0100000000000000000000F4 /* RuleEngine.swift in Sources */,
+				0100000000000000000000F5 /* MovementRules.swift in Sources */,
+				0100000000000000000000F6 /* CombatRules.swift in Sources */,
+				0100000000000000000000F7 /* SupplyRules.swift in Sources */,
+				0100000000000000000000F8 /* VictoryRules.swift in Sources */,
+				0100000000000000000000F9 /* CommandValidator.swift in Sources */,
+				0100000000000000000000FA /* CommandExecutor.swift in Sources */,
+				0100000000000000000000FB /* Command.swift in Sources */,
+				0100000000000000000000FC /* CommandValidation.swift in Sources */,
+				0100000000000000000000FD /* CommandResult.swift in Sources */,
+				0100000000000000000000FE /* GameCommandHandling.swift in Sources */,
+				0100000000000000000000FF /* RegionCommand.swift in Sources */,
+				010000000000000000000100 /* CommandIntentAdapter.swift in Sources */,
+				010000000000000000000123 /* WarDirective.swift in Sources */,
+				010000000000000000000124 /* WarCommandExecutor.swift in Sources */,
+				010000000000000000000101 /* DecisionProvider.swift in Sources */,
+				010000000000000000000102 /* DataLoader.swift in Sources */,
+				010000000000000000000103 /* ScenarioDefinition.swift in Sources */,
+				010000000000000000000104 /* RegionDataSet.swift in Sources */,
+				010000000000000000000105 /* GameAgent.swift in Sources */,
+				010000000000000000000106 /* AgentConfiguration.swift in Sources */,
+				010000000000000000000107 /* AgentDecision.swift in Sources */,
+				010000000000000000000108 /* AgentContexts.swift in Sources */,
+				010000000000000000000109 /* AgentDecisionParser.swift in Sources */,
+				01000000000000000000010A /* AgentCommandMapper.swift in Sources */,
+				01000000000000000000010B /* AgentDecisionRecord.swift in Sources */,
+				01000000000000000000010C /* MockAIClient.swift in Sources */,
+				010000000000000000000125 /* MockAICommander.swift in Sources */,
+				01000000000000000000014C /* ZoneCommanderAgent.swift in Sources */,
+				01000000000000000000010D /* LLMClient.swift in Sources */,
+				01000000000000000000010E /* LocalLLMDecisionProvider.swift in Sources */,
+				01000000000000000000010F /* AgentPromptBuilder.swift in Sources */,
+				010000000000000000000110 /* TurnManager.swift in Sources */,
+				010000000000000000000111 /* Region.swift in Sources */,
+				010000000000000000000112 /* RegionPathfinder.swift in Sources */,
+				010000000000000000000113 /* RegionMovementRules.swift in Sources */,
+				010000000000000000000114 /* RegionCombatRules.swift in Sources */,
+				010000000000000000000115 /* RegionOccupationRules.swift in Sources */,
+				010000000000000000000149 /* OccupationRules.swift in Sources */,
+				010000000000000000000116 /* RegionSupplyRules.swift in Sources */,
+				010000000000000000000117 /* RegionVisibilityRules.swift in Sources */,
+				010000000000000000000118 /* RegionVictoryRules.swift in Sources */,
+				010000000000000000000119 /* RegionRuleSystem.swift in Sources */,
+				01000000000000000000011A /* RegionCommandValidator.swift in Sources */,
+				01000000000000000000011B /* TheaterSystem.swift in Sources */,
+				01000000000000000000011C /* FrontLineManager.swift in Sources */,
+				01000000000000000000011D /* WarDeploymentManager.swift in Sources */,
+				010000000000000000000132 /* StrategicStateSynchronizer.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0C0000000000000000000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0C0000000000000000000100 /* WWIIHexV0MacApp.swift in Sources */,
+				0C0000000000000000000101 /* AppContainer.swift in Sources */,
+				0C0000000000000000000102 /* GameState.swift in Sources */,
+				0C0000000000000000000103 /* Faction.swift in Sources */,
+				0C0000000000000000000104 /* GamePhase.swift in Sources */,
+				0C0000000000000000000105 /* GameLogEntry.swift in Sources */,
+				0C0000000000000000000106 /* WarPipelineMode.swift in Sources */,
+				0D0000000000000000000303 /* DiplomacyState.swift in Sources */,
+				0D0000000000000000000304 /* EconomyState.swift in Sources */,
+				0D0000000000000000000305 /* GeneralAssignment.swift in Sources */,
+				0D0000000000000000000306 /* PlayerCommandState.swift in Sources */,
+				0D0000000000000000000307 /* EconomyRules.swift in Sources */,
+				0D0000000000000000000301 /* GeneralRegistry.swift in Sources */,
+				0D0000000000000000000302 /* RulerAgent.swift in Sources */,
+				0D0000000000000000000308 /* EconomyPanelView.swift in Sources */,
+				0D0000000000000000000309 /* DiplomacyPanelView.swift in Sources */,
+				0D000000000000000000030B /* GeneralCommandPanelView.swift in Sources */,
+				0D000000000000000000030C /* GeneralProfileView.swift in Sources */,
+				0C0000000000000000000107 /* MapDisplayLayer.swift in Sources */,
+				0C0000000000000000000108 /* WarDirectiveRecord.swift in Sources */,
+				0C0000000000000000000109 /* StrategicStateBootstrapper.swift in Sources */,
+				0C000000000000000000010A /* HexDirection.swift in Sources */,
+				0C000000000000000000010B /* HexCoord.swift in Sources */,
+				0C000000000000000000010C /* Terrain.swift in Sources */,
+				0C000000000000000000010D /* SupplyState.swift in Sources */,
+				0C000000000000000000010E /* Division.swift in Sources */,
+				0C000000000000000000010F /* MapState.swift in Sources */,
+				0C0000000000000000000110 /* VictoryState.swift in Sources */,
+				0C0000000000000000000111 /* Region.swift in Sources */,
+				0C0000000000000000000112 /* Theater.swift in Sources */,
+				0C0000000000000000000113 /* FrontLineId.swift in Sources */,
+				0C0000000000000000000114 /* FrontLineTypes.swift in Sources */,
+				0C0000000000000000000115 /* FrontSegment.swift in Sources */,
+				0C0000000000000000000116 /* FrontLine.swift in Sources */,
+				0C0000000000000000000117 /* RegionFrontState.swift in Sources */,
+				0C0000000000000000000118 /* FrontLineState.swift in Sources */,
+				0C0000000000000000000119 /* FrontZoneId.swift in Sources */,
+				0C000000000000000000011A /* WarDeploymentTypes.swift in Sources */,
+				0C000000000000000000011B /* FrontZoneSegment.swift in Sources */,
+				0C000000000000000000011C /* FrontZone.swift in Sources */,
+				0C000000000000000000011D /* WarDeploymentState.swift in Sources */,
+				0C000000000000000000011E /* RootGameView.swift in Sources */,
+				0C000000000000000000011F /* HUDView.swift in Sources */,
+				0C0000000000000000000120 /* UnitInspectorView.swift in Sources */,
+				0C0000000000000000000121 /* RegionInspectorView.swift in Sources */,
+				0C0000000000000000000122 /* InfoPanelToggle.swift in Sources */,
+				0C0000000000000000000123 /* UnitTooltipView.swift in Sources */,
+				0C0000000000000000000124 /* NewGameButton.swift in Sources */,
+				0C0000000000000000000125 /* EventLogView.swift in Sources */,
+				0C0000000000000000000126 /* CommandPanelView.swift in Sources */,
+				0C0000000000000000000127 /* AgentPanelView.swift in Sources */,
+				0C0000000000000000000128 /* PlatformStyles.swift in Sources */,
+				0C0000000000000000000129 /* BoardScene.swift in Sources */,
+				0C000000000000000000012A /* BoardSceneView.swift in Sources */,
+				0C000000000000000000012B /* HexLayout.swift in Sources */,
+				0C000000000000000000012C /* TerrainStyle.swift in Sources */,
+				0C000000000000000000012D /* HexNode.swift in Sources */,
+				0C000000000000000000012E /* UnitNode.swift in Sources */,
+				0C000000000000000000012F /* BoardSceneAdapter.swift in Sources */,
+				0C0000000000000000000130 /* MapDisplayAdapter.swift in Sources */,
+				0C0000000000000000000131 /* MapLayerOverlayCalculator.swift in Sources */,
+				0C0000000000000000000132 /* MapLayerOverlayNode.swift in Sources */,
+				0C0000000000000000000133 /* RegionOverlayNode.swift in Sources */,
+				0C0000000000000000000134 /* RuleEngine.swift in Sources */,
+				0C0000000000000000000135 /* MovementRules.swift in Sources */,
+				0C0000000000000000000136 /* CombatRules.swift in Sources */,
+				0C0000000000000000000137 /* SupplyRules.swift in Sources */,
+				0C0000000000000000000138 /* VictoryRules.swift in Sources */,
+				0C0000000000000000000139 /* CommandValidator.swift in Sources */,
+				0C000000000000000000013A /* CommandExecutor.swift in Sources */,
+				0C000000000000000000013B /* RegionPathfinder.swift in Sources */,
+				0C000000000000000000013C /* RegionMovementRules.swift in Sources */,
+				0C000000000000000000013D /* RegionCombatRules.swift in Sources */,
+				0C000000000000000000013E /* RegionOccupationRules.swift in Sources */,
+				0C000000000000000000013F /* OccupationRules.swift in Sources */,
+				0C0000000000000000000140 /* RegionSupplyRules.swift in Sources */,
+				0C0000000000000000000141 /* RegionVisibilityRules.swift in Sources */,
+				0C0000000000000000000142 /* RegionVictoryRules.swift in Sources */,
+				0C0000000000000000000143 /* RegionRuleSystem.swift in Sources */,
+				0C0000000000000000000144 /* RegionCommandValidator.swift in Sources */,
+				0C0000000000000000000145 /* TheaterSystem.swift in Sources */,
+				0C0000000000000000000146 /* FrontLineManager.swift in Sources */,
+				0C0000000000000000000147 /* WarDeploymentManager.swift in Sources */,
+				0C0000000000000000000148 /* StrategicStateSynchronizer.swift in Sources */,
+				0C0000000000000000000149 /* Command.swift in Sources */,
+				0C000000000000000000014A /* CommandValidation.swift in Sources */,
+				0C000000000000000000014B /* CommandResult.swift in Sources */,
+				0C000000000000000000014C /* GameCommandHandling.swift in Sources */,
+				0C000000000000000000014D /* RegionCommand.swift in Sources */,
+				0C000000000000000000014E /* CommandIntentAdapter.swift in Sources */,
+				0C000000000000000000014F /* WarDirective.swift in Sources */,
+				0C0000000000000000000150 /* WarCommandExecutor.swift in Sources */,
+				0C0000000000000000000151 /* DecisionProvider.swift in Sources */,
+				0C0000000000000000000152 /* GameAgent.swift in Sources */,
+				0C0000000000000000000153 /* AgentConfiguration.swift in Sources */,
+				0C0000000000000000000154 /* AgentDecision.swift in Sources */,
+				0C0000000000000000000155 /* AgentContexts.swift in Sources */,
+				0C0000000000000000000156 /* AgentDecisionParser.swift in Sources */,
+				0C0000000000000000000157 /* AgentCommandMapper.swift in Sources */,
+				0C0000000000000000000158 /* AgentDecisionRecord.swift in Sources */,
+				0C0000000000000000000159 /* MockAIClient.swift in Sources */,
+				0C000000000000000000015A /* LLMClient.swift in Sources */,
+				0C000000000000000000015B /* LocalLLMDecisionProvider.swift in Sources */,
+				0C000000000000000000015C /* AgentPromptBuilder.swift in Sources */,
+				0C000000000000000000015D /* MockAICommander.swift in Sources */,
+				0C000000000000000000015E /* ZoneCommanderAgent.swift in Sources */,
+				0C000000000000000000015F /* DataLoader.swift in Sources */,
+				0C0000000000000000000160 /* ScenarioDefinition.swift in Sources */,
+				0C0000000000000000000161 /* RegionDataSet.swift in Sources */,
+				0C0000000000000000000162 /* TurnManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0A0000000000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 050000000000000000000001 /* WWIIHexV0 */;
+			targetProxy = 030000000000000000000001 /* PBXContainerItemProxy */;
+		};
+		0A0000000000000000000002 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 050000000000000000000001 /* WWIIHexV0 */;
+			targetProxy = 030000000000000000000002 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0B0000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		0B0000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0B0000000000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = C9YV46L3GA;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "WWII Hex V0";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.WWIIHexV0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		0B0000000000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = C9YV46L3GA;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "WWII Hex V0";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.WWIIHexV0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		0B0000000000000000000005 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.WWIIHexV0Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WWIIHexV0.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WWIIHexV0";
+			};
+			name = Debug;
+		};
+		0B0000000000000000000006 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.WWIIHexV0Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WWIIHexV0.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WWIIHexV0";
+			};
+			name = Release;
+		};
+		0B0000000000000000000007 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.WWIIHexV0Probes;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WWIIHexV0.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WWIIHexV0";
+			};
+			name = Debug;
+		};
+		0B0000000000000000000008 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.WWIIHexV0Probes;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WWIIHexV0.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WWIIHexV0";
+			};
+			name = Release;
+		};
+		0B0000000000000000000009 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = MapEditor;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.341;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MapEditorMac;
+				PRODUCT_NAME = MapEditorMac;
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		0B000000000000000000000A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = MapEditor;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.341;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MapEditorMac;
+				PRODUCT_NAME = MapEditorMac;
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		0C0000000000000000000006 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "WWII Hex V1.1 Mac";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.WWIIHexV0Mac;
+				PRODUCT_NAME = WWIIHexV0Mac;
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		0C0000000000000000000007 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "WWII Hex V1.1 Mac";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.WWIIHexV0Mac;
+				PRODUCT_NAME = WWIIHexV0Mac;
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		090000000000000000000001 /* Build configuration list for PBXProject "WWIIHexV0" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0B0000000000000000000001 /* Debug */,
+				0B0000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		090000000000000000000002 /* Build configuration list for PBXNativeTarget "WWIIHexV0" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0B0000000000000000000003 /* Debug */,
+				0B0000000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		090000000000000000000003 /* Build configuration list for PBXNativeTarget "WWIIHexV0Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0B0000000000000000000005 /* Debug */,
+				0B0000000000000000000006 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		090000000000000000000004 /* Build configuration list for PBXNativeTarget "WWIIHexV0Probes" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0B0000000000000000000007 /* Debug */,
+				0B0000000000000000000008 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		090000000000000000000005 /* Build configuration list for PBXNativeTarget "MapEditorMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0B0000000000000000000009 /* Debug */,
+				0B000000000000000000000A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0C0000000000000000000005 /* Build configuration list for PBXNativeTarget "WWIIHexV0Mac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0C0000000000000000000006 /* Debug */,
+				0C0000000000000000000007 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 040000000000000000000001 /* Project object */;
+}

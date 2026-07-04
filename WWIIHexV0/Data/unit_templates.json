@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "templates": [
+    {
+      "id": "panzer_division",
+      "displayName": "Panzer Division",
+      "maxHP": 10,
+      "components": [
+        {
+          "type": "tank",
+          "weight": 0.55
+        },
+        {
+          "type": "motorizedInfantry",
+          "weight": 0.25
+        },
+        {
+          "type": "infantry",
+          "weight": 0.05
+        },
+        {
+          "type": "artillery",
+          "weight": 0.15
+        }
+      ]
+    },
+    {
+      "id": "motorized_division",
+      "displayName": "Motorized Division",
+      "maxHP": 10,
+      "components": [
+        {
+          "type": "tank",
+          "weight": 0.15
+        },
+        {
+          "type": "motorizedInfantry",
+          "weight": 0.55
+        },
+        {
+          "type": "infantry",
+          "weight": 0.15
+        },
+        {
+          "type": "artillery",
+          "weight": 0.15
+        }
+      ]
+    },
+    {
+      "id": "infantry_division",
+      "displayName": "Infantry Division",
+      "maxHP": 10,
+      "components": [
+        {
+          "type": "tank",
+          "weight": 0.0
+        },
+        {
+          "type": "motorizedInfantry",
+          "weight": 0.1
+        },
+        {
+          "type": "infantry",
+          "weight": 0.7
+        },
+        {
+          "type": "artillery",
+          "weight": 0.2
+        }
+      ]
+    },
+    {
+      "id": "artillery_division",
+      "displayName": "Artillery Division",
+      "maxHP": 8,
+      "components": [
+        {
+          "type": "tank",
+          "weight": 0.0
+        },
+        {
+          "type": "motorizedInfantry",
+          "weight": 0.1
+        },
+        {
+          "type": "infantry",
+          "weight": 0.3
+        },
+        {
+          "type": "artillery",
+          "weight": 0.6
+        }
+      ]
+    },
+    {
+      "id": "anti_tank_division",
+      "displayName": "Anti-Tank Division",
+      "maxHP": 8,
+      "components": [
+        {
+          "type": "tank",
+          "weight": 0.0
+        },
+        {
+          "type": "motorizedInfantry",
+          "weight": 0.1
+        },
+        {
+          "type": "infantry",
+          "weight": 0.55
+        },
+        {
+          "type": "artillery",
+          "weight": 0.35
+        }
+      ]
+    },
+    {
+      "id": "garrison_division",
+      "displayName": "Garrison Division",
+      "maxHP": 9,
+      "components": [
+        {
+          "type": "tank",
+          "weight": 0.0
+        },
+        {
+          "type": "motorizedInfantry",
+          "weight": 0.0
+        },
+        {
+          "type": "infantry",
+          "weight": 0.85
+        },
+        {
+          "type": "artillery",
+          "weight": 0.15
+        }
+      ]
+    }
+  ]
+}

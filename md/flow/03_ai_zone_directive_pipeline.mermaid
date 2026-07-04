@@ -1,0 +1,51 @@
+flowchart TD
+    START["AppContainer.advanceOrRunAI<br/>或命令后 runAIIfNeeded"]:::input
+    CHECK{"当前 faction 应由 AI 控制?"}:::decision
+    STOP["不运行 AI"]:::stop
+    REFRESH["StrategicStateBootstrapper.refreshRuntimeState<br/>重新聚合/刷新 theater/front/deploy"]:::rules
+    TM["TurnManager.runAITurn<br/>pipelineMode = marshalDirective / zoneDirective"]:::rules
+    MARSHAL["MarshalAgent<br/>读取降维战场摘要"]:::ai
+    SUMMARY["MarshalBattlefieldSummarizer<br/>front/deploy/目标/补给摘要"]:::ai
+    LLM["SimulatedMarshalLLMClient<br/>输出 fenced TheaterDirective JSON"]:::ai
+    DECODER["TheaterDirectiveDecoder<br/>提取 JSON 并校验 schema/zone/region/tactic"]:::command
+    COMPILER["TheaterDirectiveCompiler<br/>TheaterDirective -> ZoneDirective"]:::command
+    POOL["TheaterCommanderPool<br/>遍历当前 faction 的 FrontZone"]:::ai
+    ZONE{"FrontZone 有 frontSegments?"}:::decision
+    SKIP["该 zone 不出 directive"]:::stop
+    AGENT["ZoneCommanderAgent<br/>读取 unitsFront / unitsDepth / visibleEnemy / pressure / supply"]:::ai
+    CLS["BinaryTacticClassifier<br/>strength ratio + mobile + artillery + depth + pressure"]:::ai
+    ATK["高级进攻战术<br/>standard / blitzkrieg / spearhead / breakthrough / pincer / fire / feint / guerrilla"]:::command
+    DEF["高级防御战术<br/>hold / elastic / depth / lastStand"]:::command
+    ENV["DirectiveEnvelope<br/>directives[]"]:::command
+    WCE["WarCommandExecutor.execute"]:::command
+    BOTTOM["底层 Command<br/>attack / move / hold / allowRetreat"]:::command
+    RE["RuleEngine<br/>统一校验执行"]:::rules
+    RECORD["WarDirectiveRecord<br/>category / tactic / target / diagnostics"]:::ui
+    END["RuleEngine.execute(.endTurn)<br/>切换 activeFaction / phase"]:::rules
+
+    START --> CHECK
+    CHECK -->|否| STOP
+    CHECK -->|是| REFRESH --> TM --> MARSHAL --> SUMMARY --> LLM --> DECODER --> COMPILER --> ENV
+    TM -.显式 zoneDirective 或元帅失败 fallback.-> POOL --> ZONE
+    ZONE -->|否| SKIP
+    ZONE -->|是| AGENT --> CLS
+    CLS -->|优势、机动、炮兵或牵制窗口| ATK
+    CLS -->|劣势、压力、补给风险或无预备队| DEF
+    ATK --> ENV
+    DEF --> ENV
+    ENV --> WCE --> BOTTOM --> RE --> RECORD --> END
+
+    LEGACY["Legacy Agent D<br/>只在 legacyAgentOrder 显式分支"]:::legacy
+    TM -.不走默认.-> LEGACY
+
+    MANUAL["手写合法 ZoneDirective<br/>可指定 tactic/focus/convergence"]:::input
+    MANUAL --> WCE
+
+    classDef input fill:#fef3c7,stroke:#d97706,color:#1f1600
+    classDef decision fill:#fff7ed,stroke:#ea580c,color:#1f1300
+    classDef stop fill:#fee2e2,stroke:#b91c1c,color:#111827
+    classDef rules fill:#ccfbf1,stroke:#0f766e,color:#042f2e
+    classDef ai fill:#e0e7ff,stroke:#4f46e5,color:#111827
+    classDef command fill:#fae8ff,stroke:#a21caf,color:#2a0a2f
+    classDef ui fill:#e5e7eb,stroke:#4b5563,color:#111827
+    classDef legacy fill:#f3f4f6,stroke:#6b7280,stroke-dasharray:5 5,color:#111827

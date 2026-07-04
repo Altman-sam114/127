@@ -1,0 +1,235 @@
+import Foundation
+
+enum AgentRole: String, Codable, Equatable, CaseIterable {
+    case ruler
+    case fieldMarshal
+    case armamentsMinister
+    case armyMinister
+    case foreignMinister
+    case intelligenceMinister
+    case armyCommander
+
+    var displayName: String {
+        switch self {
+        case .ruler:
+            return "Ruler"
+        case .fieldMarshal:
+            return "Field Marshal"
+        case .armamentsMinister:
+            return "Armaments Minister"
+        case .armyMinister:
+            return "Army Minister"
+        case .foreignMinister:
+            return "Foreign Minister"
+        case .intelligenceMinister:
+            return "Intelligence Minister"
+        case .armyCommander:
+            return "Army Commander"
+        }
+    }
+
+    var defaultDirectiveDomains: [DirectiveDomain] {
+        switch self {
+        case .ruler:
+            return DirectiveDomain.allCases
+        case .fieldMarshal:
+            return [.operations, .logistics]
+        case .armamentsMinister:
+            return [.production, .research]
+        case .armyMinister:
+            return [.army, .logistics]
+        case .foreignMinister:
+            return [.diplomacy]
+        case .intelligenceMinister:
+            return [.intelligence]
+        case .armyCommander:
+            return [.operations]
+        }
+    }
+}
+
+enum AgentAuthorityLevel: String, Codable, Equatable, CaseIterable {
+    case state
+    case theater
+    case department
+    case operational
+
+    var rank: Int {
+        switch self {
+        case .state:
+            return 400
+        case .theater:
+            return 300
+        case .department:
+            return 200
+        case .operational:
+            return 100
+        }
+    }
+
+    var displayName: String {
+        rawValue.capitalized
+    }
+}
+
+struct AgentPersonality: Codable, Equatable {
+    var prompt: String
+    var traits: [String]
+    var aggression: Int
+    var riskTolerance: Int
+    var autonomy: Int
+}
+
+struct AgentRelationship: Codable, Equatable {
+    var loyalty: Int
+    var trust: Int
+    var satisfaction: Int
+}
+
+struct AgentMemory: Codable, Equatable {
+    var shortTermBattleNotes: [String]
+    var longTermTendencies: [String]
+    var recentDirectiveIds: [String]
+
+    static var empty: AgentMemory {
+        AgentMemory(shortTermBattleNotes: [], longTermTendencies: [], recentDirectiveIds: [])
+    }
+}
+
+struct GameAgent: Identifiable, Codable, Equatable {
+    let id: String
+    var name: String
+    var faction: Faction
+    var role: AgentRole
+    var authority: AgentAuthorityLevel
+    var personality: AgentPersonality
+    var relationship: AgentRelationship
+    var memory: AgentMemory
+    var assignedDivisionIds: [String]
+
+    var canIssueUnitCommands: Bool {
+        role == .armyCommander
+    }
+
+    var canProposeStrategicDirectives: Bool {
+        true
+    }
+
+    var allowedDirectiveDomains: [DirectiveDomain] {
+        role.defaultDirectiveDomains
+    }
+}
+
+struct NationalCabinet: Identifiable, Codable, Equatable {
+    var id: String {
+        faction.rawValue
+    }
+
+    var faction: Faction
+    var agents: [GameAgent]
+
+    func agent(id: String) -> GameAgent? {
+        agents.first { $0.id == id }
+    }
+
+    func firstAgent(role: AgentRole) -> GameAgent? {
+        agents.first { $0.role == role }
+    }
+
+    var ruler: GameAgent? {
+        firstAgent(role: .ruler)
+    }
+
+    var ministers: [GameAgent] {
+        agents.filter {
+            [.armamentsMinister, .armyMinister, .foreignMinister, .intelligenceMinister].contains($0.role)
+        }
+    }
+}
+
+struct CabinetState: Codable, Equatable {
+    var cabinets: [NationalCabinet]
+
+    func cabinet(for faction: Faction) -> NationalCabinet? {
+        cabinets.first { $0.faction == faction }
+    }
+
+    func agent(id: String) -> GameAgent? {
+        cabinets.lazy.compactMap { $0.agent(id: id) }.first
+    }
+
+    func authorityRank(for agentId: String) -> Int {
+        agent(id: agentId)?.authority.rank ?? 0
+    }
+
+    static var empty: CabinetState {
+        CabinetState(cabinets: [])
+    }
+
+    static func sample() -> CabinetState {
+        CabinetState(cabinets: [
+            NationalCabinet(faction: .germany, agents: [
+                GameAgent.sample(
+                    id: "germany_ruler",
+                    name: "German Ruler",
+                    faction: .germany,
+                    role: .ruler,
+                    authority: .state
+                ),
+                GameAgent.sample(
+                    id: "germany_armaments_minister",
+                    name: "Armaments Minister",
+                    faction: .germany,
+                    role: .armamentsMinister,
+                    authority: .department
+                ),
+                GameAgent.sample(
+                    id: "guderian",
+                    name: "Heinz Guderian",
+                    faction: .germany,
+                    role: .armyCommander,
+                    authority: .operational,
+                    assignedDivisionIds: ["ger_panzer_1", "ger_motorized_1", "ger_infantry_1", "ger_artillery_1"]
+                )
+            ]),
+            NationalCabinet(faction: .allies, agents: [
+                GameAgent.sample(
+                    id: "allied_ruler",
+                    name: "Allied Commander",
+                    faction: .allies,
+                    role: .ruler,
+                    authority: .state
+                )
+            ])
+        ])
+    }
+}
+
+extension GameAgent {
+    static func sample(
+        id: String,
+        name: String,
+        faction: Faction,
+        role: AgentRole,
+        authority: AgentAuthorityLevel,
+        assignedDivisionIds: [String] = []
+    ) -> GameAgent {
+        GameAgent(
+            id: id,
+            name: name,
+            faction: faction,
+            role: role,
+            authority: authority,
+            personality: AgentPersonality(
+                prompt: "Follow role responsibilities and keep recommendations structured.",
+                traits: ["disciplined"],
+                aggression: 50,
+                riskTolerance: 50,
+                autonomy: 50
+            ),
+            relationship: AgentRelationship(loyalty: 70, trust: 70, satisfaction: 70),
+            memory: .empty,
+            assignedDivisionIds: assignedDivisionIds
+        )
+    }
+}

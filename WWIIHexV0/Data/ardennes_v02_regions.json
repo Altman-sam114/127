@@ -1,0 +1,1066 @@
+{
+  "displayName" : "MapEditor Scenario Regions",
+  "edges" : [
+    {
+      "from" : "region_10",
+      "hasRiverCrossing" : false,
+      "hasRoad" : true,
+      "movementCostModifier" : 0,
+      "to" : "region_4"
+    },
+    {
+      "from" : "region_10",
+      "hasRiverCrossing" : false,
+      "hasRoad" : false,
+      "movementCostModifier" : 0,
+      "to" : "region_5"
+    },
+    {
+      "from" : "region_10",
+      "hasRiverCrossing" : false,
+      "hasRoad" : true,
+      "movementCostModifier" : 0,
+      "to" : "region_6"
+    },
+    {
+      "from" : "region_10",
+      "hasRiverCrossing" : false,
+      "hasRoad" : false,
+      "movementCostModifier" : 0,
+      "to" : "region_7"
+    },
+    {
+      "from" : "region_1",
+      "hasRiverCrossing" : false,
+      "hasRoad" : true,
+      "movementCostModifier" : 0,
+      "to" : "region_2"
+    },
+    {
+      "from" : "region_1",
+      "hasRiverCrossing" : false,
+      "hasRoad" : false,
+      "movementCostModifier" : 0,
+      "to" : "region_4"
+    },
+    {
+      "from" : "region_1",
+      "hasRiverCrossing" : false,
+      "hasRoad" : true,
+      "movementCostModifier" : 0,
+      "to" : "region_5"
+    },
+    {
+      "from" : "region_2",
+      "hasRiverCrossing" : false,
+      "hasRoad" : true,
+      "movementCostModifier" : 0,
+      "to" : "region_3"
+    },
+    {
+      "from" : "region_2",
+      "hasRiverCrossing" : false,
+      "hasRoad" : true,
+      "movementCostModifier" : 0,
+      "to" : "region_5"
+    },
+    {
+      "from" : "region_3",
+      "hasRiverCrossing" : false,
+      "hasRoad" : false,
+      "movementCostModifier" : 0,
+      "to" : "region_5"
+    },
+    {
+      "from" : "region_3",
+      "hasRiverCrossing" : false,
+      "hasRoad" : false,
+      "movementCostModifier" : 0,
+      "to" : "region_7"
+    },
+    {
+      "from" : "region_3",
+      "hasRiverCrossing" : false,
+      "hasRoad" : true,
+      "movementCostModifier" : 0,
+      "to" : "region_8"
+    },
+    {
+      "from" : "region_4",
+      "hasRiverCrossing" : false,
+      "hasRoad" : true,
+      "movementCostModifier" : 0,
+      "to" : "region_5"
+    },
+    {
+      "from" : "region_5",
+      "hasRiverCrossing" : false,
+      "hasRoad" : true,
+      "movementCostModifier" : 0,
+      "to" : "region_7"
+    },
+    {
+      "from" : "region_6",
+      "hasRiverCrossing" : false,
+      "hasRoad" : true,
+      "movementCostModifier" : 0,
+      "to" : "region_7"
+    },
+    {
+      "from" : "region_6",
+      "hasRiverCrossing" : false,
+      "hasRoad" : true,
+      "movementCostModifier" : 0,
+      "to" : "region_9"
+    },
+    {
+      "from" : "region_7",
+      "hasRiverCrossing" : false,
+      "hasRoad" : false,
+      "movementCostModifier" : 0,
+      "to" : "region_8"
+    },
+    {
+      "from" : "region_7",
+      "hasRiverCrossing" : false,
+      "hasRoad" : false,
+      "movementCostModifier" : 0,
+      "to" : "region_9"
+    },
+    {
+      "from" : "region_8",
+      "hasRiverCrossing" : false,
+      "hasRoad" : true,
+      "movementCostModifier" : 0,
+      "to" : "region_9"
+    }
+  ],
+  "hexToRegion" : {
+    "-1,0" : "region_1",
+    "-1,1" : "region_1",
+    "-1,2" : "region_2",
+    "-1,3" : "region_2",
+    "-1,4" : "region_2",
+    "-1,5" : "region_2",
+    "-1,6" : "region_2",
+    "-1,7" : "region_2",
+    "-2,2" : "region_2",
+    "-2,3" : "region_2",
+    "-2,4" : "region_2",
+    "-2,5" : "region_2",
+    "-2,6" : "region_2",
+    "-2,7" : "region_2",
+    "-3,4" : "region_2",
+    "-3,5" : "region_2",
+    "-3,6" : "region_2",
+    "-3,7" : "region_2",
+    "-4,6" : "region_2",
+    "-4,7" : "region_2",
+    "0,-1" : "region_1",
+    "0,0" : "region_1",
+    "0,1" : "region_1",
+    "0,2" : "region_5",
+    "0,3" : "region_5",
+    "0,4" : "region_3",
+    "0,5" : "region_3",
+    "0,6" : "region_3",
+    "0,7" : "region_3",
+    "1,-1" : "region_1",
+    "1,0" : "region_1",
+    "1,1" : "region_5",
+    "1,2" : "region_5",
+    "1,3" : "region_5",
+    "1,4" : "region_3",
+    "1,5" : "region_3",
+    "1,6" : "region_3",
+    "1,7" : "region_3",
+    "10,-1" : "region_6",
+    "10,0" : "region_6",
+    "2,-1" : "region_1",
+    "2,0" : "region_5",
+    "2,1" : "region_5",
+    "2,2" : "region_5",
+    "2,3" : "region_5",
+    "2,4" : "region_3",
+    "2,5" : "region_3",
+    "2,6" : "region_8",
+    "2,7" : "region_8",
+    "3,-1" : "region_4",
+    "3,0" : "region_4",
+    "3,1" : "region_5",
+    "3,2" : "region_5",
+    "3,3" : "region_5",
+    "3,4" : "region_7",
+    "3,5" : "region_8",
+    "3,6" : "region_8",
+    "3,7" : "region_8",
+    "4,-1" : "region_4",
+    "4,0" : "region_4",
+    "4,1" : "region_5",
+    "4,2" : "region_7",
+    "4,3" : "region_7",
+    "4,4" : "region_7",
+    "4,5" : "region_8",
+    "4,6" : "region_8",
+    "4,7" : "region_8",
+    "5,-1" : "region_4",
+    "5,0" : "region_10",
+    "5,1" : "region_10",
+    "5,2" : "region_7",
+    "5,3" : "region_7",
+    "5,4" : "region_7",
+    "5,5" : "region_9",
+    "5,6" : "region_9",
+    "5,7" : "region_9",
+    "6,-1" : "region_10",
+    "6,0" : "region_10",
+    "6,1" : "region_10",
+    "6,2" : "region_6",
+    "6,3" : "region_6",
+    "6,4" : "region_7",
+    "6,5" : "region_9",
+    "6,6" : "region_9",
+    "6,7" : "region_9",
+    "7,-1" : "region_10",
+    "7,0" : "region_10",
+    "7,1" : "region_6",
+    "7,2" : "region_6",
+    "7,3" : "region_6",
+    "7,4" : "region_6",
+    "7,5" : "region_9",
+    "7,6" : "region_9",
+    "8,-1" : "region_6",
+    "8,0" : "region_6",
+    "8,1" : "region_6",
+    "8,2" : "region_6",
+    "8,3" : "region_6",
+    "8,4" : "region_6",
+    "9,-1" : "region_6",
+    "9,0" : "region_6",
+    "9,1" : "region_6",
+    "9,2" : "region_6"
+  },
+  "objectives" : [
+
+  ],
+  "regions" : [
+    {
+      "city" : {
+        "isCapital" : false,
+        "name" : "City 0,0",
+        "victoryPoints" : 0
+      },
+      "coreOf" : [
+
+      ],
+      "displayHexes" : [
+        {
+          "q" : 0,
+          "r" : -1
+        },
+        {
+          "q" : 1,
+          "r" : -1
+        },
+        {
+          "q" : 2,
+          "r" : -1
+        },
+        {
+          "q" : -1,
+          "r" : 0
+        },
+        {
+          "q" : 0,
+          "r" : 0
+        },
+        {
+          "q" : 1,
+          "r" : 0
+        },
+        {
+          "q" : -1,
+          "r" : 1
+        },
+        {
+          "q" : 0,
+          "r" : 1
+        }
+      ],
+      "factories" : 0,
+      "id" : "region_1",
+      "infrastructure" : 0,
+      "isPassable" : true,
+      "name" : "新省份1",
+      "neighbors" : [
+        "region_2",
+        "region_4",
+        "region_5"
+      ],
+      "representativeHex" : {
+        "q" : 0,
+        "r" : 0
+      },
+      "resources" : [
+
+      ],
+      "supplyValue" : 0,
+      "terrain" : "plain",
+      "assignedGeneralId" : "general_montgomery",
+      "theaterId" : "theater_1"
+    },
+    {
+      "coreOf" : [
+
+      ],
+      "displayHexes" : [
+        {
+          "q" : 6,
+          "r" : -1
+        },
+        {
+          "q" : 7,
+          "r" : -1
+        },
+        {
+          "q" : 5,
+          "r" : 0
+        },
+        {
+          "q" : 6,
+          "r" : 0
+        },
+        {
+          "q" : 7,
+          "r" : 0
+        },
+        {
+          "q" : 5,
+          "r" : 1
+        },
+        {
+          "q" : 6,
+          "r" : 1
+        }
+      ],
+      "factories" : 0,
+      "id" : "region_10",
+      "infrastructure" : 0,
+      "isPassable" : true,
+      "name" : "新省份10",
+      "neighbors" : [
+        "region_4",
+        "region_5",
+        "region_6",
+        "region_7"
+      ],
+      "representativeHex" : {
+        "q" : 6,
+        "r" : 0
+      },
+      "resources" : [
+
+      ],
+      "supplyValue" : 0,
+      "terrain" : "plain",
+      "theaterId" : "theater_3"
+    },
+    {
+      "city" : {
+        "isCapital" : false,
+        "name" : "City -2,3",
+        "victoryPoints" : 0
+      },
+      "coreOf" : [
+
+      ],
+      "displayHexes" : [
+        {
+          "q" : -2,
+          "r" : 2
+        },
+        {
+          "q" : -1,
+          "r" : 2
+        },
+        {
+          "q" : -2,
+          "r" : 3
+        },
+        {
+          "q" : -1,
+          "r" : 3
+        },
+        {
+          "q" : -3,
+          "r" : 4
+        },
+        {
+          "q" : -2,
+          "r" : 4
+        },
+        {
+          "q" : -1,
+          "r" : 4
+        },
+        {
+          "q" : -3,
+          "r" : 5
+        },
+        {
+          "q" : -2,
+          "r" : 5
+        },
+        {
+          "q" : -1,
+          "r" : 5
+        },
+        {
+          "q" : -4,
+          "r" : 6
+        },
+        {
+          "q" : -3,
+          "r" : 6
+        },
+        {
+          "q" : -2,
+          "r" : 6
+        },
+        {
+          "q" : -1,
+          "r" : 6
+        },
+        {
+          "q" : -4,
+          "r" : 7
+        },
+        {
+          "q" : -3,
+          "r" : 7
+        },
+        {
+          "q" : -2,
+          "r" : 7
+        },
+        {
+          "q" : -1,
+          "r" : 7
+        }
+      ],
+      "factories" : 0,
+      "id" : "region_2",
+      "infrastructure" : 0,
+      "isPassable" : true,
+      "name" : "新省份2",
+      "neighbors" : [
+        "region_1",
+        "region_3",
+        "region_5"
+      ],
+      "representativeHex" : {
+        "q" : -2,
+        "r" : 5
+      },
+      "resources" : [
+
+      ],
+      "supplyValue" : 0,
+      "terrain" : "plain",
+      "assignedGeneralId" : "general_weygand",
+      "theaterId" : "theater_2"
+    },
+    {
+      "city" : {
+        "isCapital" : false,
+        "name" : "City 1,6",
+        "victoryPoints" : 0
+      },
+      "coreOf" : [
+
+      ],
+      "displayHexes" : [
+        {
+          "q" : 0,
+          "r" : 4
+        },
+        {
+          "q" : 1,
+          "r" : 4
+        },
+        {
+          "q" : 2,
+          "r" : 4
+        },
+        {
+          "q" : 0,
+          "r" : 5
+        },
+        {
+          "q" : 1,
+          "r" : 5
+        },
+        {
+          "q" : 2,
+          "r" : 5
+        },
+        {
+          "q" : 0,
+          "r" : 6
+        },
+        {
+          "q" : 1,
+          "r" : 6
+        },
+        {
+          "q" : 0,
+          "r" : 7
+        },
+        {
+          "q" : 1,
+          "r" : 7
+        }
+      ],
+      "factories" : 0,
+      "id" : "region_3",
+      "infrastructure" : 0,
+      "isPassable" : true,
+      "name" : "新省份3",
+      "neighbors" : [
+        "region_2",
+        "region_5",
+        "region_7",
+        "region_8"
+      ],
+      "representativeHex" : {
+        "q" : 1,
+        "r" : 5
+      },
+      "resources" : [
+
+      ],
+      "supplyValue" : 0,
+      "terrain" : "plain",
+      "theaterId" : "theater_2"
+    },
+    {
+      "city" : {
+        "isCapital" : false,
+        "name" : "City 4,0",
+        "victoryPoints" : 0
+      },
+      "coreOf" : [
+
+      ],
+      "displayHexes" : [
+        {
+          "q" : 3,
+          "r" : -1
+        },
+        {
+          "q" : 4,
+          "r" : -1
+        },
+        {
+          "q" : 5,
+          "r" : -1
+        },
+        {
+          "q" : 3,
+          "r" : 0
+        },
+        {
+          "q" : 4,
+          "r" : 0
+        }
+      ],
+      "factories" : 0,
+      "id" : "region_4",
+      "infrastructure" : 0,
+      "isPassable" : true,
+      "name" : "新省份4",
+      "neighbors" : [
+        "region_1",
+        "region_10",
+        "region_5"
+      ],
+      "representativeHex" : {
+        "q" : 4,
+        "r" : -1
+      },
+      "resources" : [
+
+      ],
+      "supplyValue" : 0,
+      "terrain" : "plain",
+      "theaterId" : "theater_1"
+    },
+    {
+      "city" : {
+        "isCapital" : false,
+        "name" : "City 2,0",
+        "victoryPoints" : 0
+      },
+      "coreOf" : [
+
+      ],
+      "displayHexes" : [
+        {
+          "q" : 2,
+          "r" : 0
+        },
+        {
+          "q" : 1,
+          "r" : 1
+        },
+        {
+          "q" : 2,
+          "r" : 1
+        },
+        {
+          "q" : 3,
+          "r" : 1
+        },
+        {
+          "q" : 4,
+          "r" : 1
+        },
+        {
+          "q" : 0,
+          "r" : 2
+        },
+        {
+          "q" : 1,
+          "r" : 2
+        },
+        {
+          "q" : 2,
+          "r" : 2
+        },
+        {
+          "q" : 3,
+          "r" : 2
+        },
+        {
+          "q" : 0,
+          "r" : 3
+        },
+        {
+          "q" : 1,
+          "r" : 3
+        },
+        {
+          "q" : 2,
+          "r" : 3
+        },
+        {
+          "q" : 3,
+          "r" : 3
+        }
+      ],
+      "factories" : 0,
+      "id" : "region_5",
+      "infrastructure" : 0,
+      "isPassable" : true,
+      "name" : "新省份5",
+      "neighbors" : [
+        "region_1",
+        "region_10",
+        "region_2",
+        "region_3",
+        "region_4",
+        "region_7"
+      ],
+      "representativeHex" : {
+        "q" : 2,
+        "r" : 2
+      },
+      "resources" : [
+
+      ],
+      "supplyValue" : 0,
+      "terrain" : "plain",
+      "theaterId" : "theater_1"
+    },
+    {
+      "city" : {
+        "isCapital" : false,
+        "name" : "City 6,3",
+        "victoryPoints" : 0
+      },
+      "coreOf" : [
+
+      ],
+      "displayHexes" : [
+        {
+          "q" : 8,
+          "r" : -1
+        },
+        {
+          "q" : 9,
+          "r" : -1
+        },
+        {
+          "q" : 10,
+          "r" : -1
+        },
+        {
+          "q" : 8,
+          "r" : 0
+        },
+        {
+          "q" : 9,
+          "r" : 0
+        },
+        {
+          "q" : 10,
+          "r" : 0
+        },
+        {
+          "q" : 7,
+          "r" : 1
+        },
+        {
+          "q" : 8,
+          "r" : 1
+        },
+        {
+          "q" : 9,
+          "r" : 1
+        },
+        {
+          "q" : 6,
+          "r" : 2
+        },
+        {
+          "q" : 7,
+          "r" : 2
+        },
+        {
+          "q" : 8,
+          "r" : 2
+        },
+        {
+          "q" : 9,
+          "r" : 2
+        },
+        {
+          "q" : 6,
+          "r" : 3
+        },
+        {
+          "q" : 7,
+          "r" : 3
+        },
+        {
+          "q" : 8,
+          "r" : 3
+        },
+        {
+          "q" : 7,
+          "r" : 4
+        },
+        {
+          "q" : 8,
+          "r" : 4
+        }
+      ],
+      "factories" : 0,
+      "id" : "region_6",
+      "infrastructure" : 0,
+      "isPassable" : true,
+      "name" : "新省份6",
+      "neighbors" : [
+        "region_10",
+        "region_7",
+        "region_9"
+      ],
+      "representativeHex" : {
+        "q" : 8,
+        "r" : 1
+      },
+      "resources" : [
+
+      ],
+      "supplyValue" : 0,
+      "terrain" : "plain",
+      "assignedGeneralId" : "general_guderian",
+      "theaterId" : "theater_3"
+    },
+    {
+      "city" : {
+        "isCapital" : false,
+        "name" : "City 4,3",
+        "victoryPoints" : 0
+      },
+      "coreOf" : [
+
+      ],
+      "displayHexes" : [
+        {
+          "q" : 4,
+          "r" : 2
+        },
+        {
+          "q" : 5,
+          "r" : 2
+        },
+        {
+          "q" : 4,
+          "r" : 3
+        },
+        {
+          "q" : 5,
+          "r" : 3
+        },
+        {
+          "q" : 3,
+          "r" : 4
+        },
+        {
+          "q" : 4,
+          "r" : 4
+        },
+        {
+          "q" : 5,
+          "r" : 4
+        },
+        {
+          "q" : 6,
+          "r" : 4
+        }
+      ],
+      "factories" : 0,
+      "id" : "region_7",
+      "infrastructure" : 0,
+      "isPassable" : true,
+      "name" : "新省份7",
+      "neighbors" : [
+        "region_10",
+        "region_3",
+        "region_5",
+        "region_6",
+        "region_8",
+        "region_9"
+      ],
+      "representativeHex" : {
+        "q" : 4,
+        "r" : 3
+      },
+      "resources" : [
+
+      ],
+      "supplyValue" : 0,
+      "terrain" : "plain",
+      "theaterId" : "theater_3"
+    },
+    {
+      "coreOf" : [
+
+      ],
+      "displayHexes" : [
+        {
+          "q" : 3,
+          "r" : 5
+        },
+        {
+          "q" : 4,
+          "r" : 5
+        },
+        {
+          "q" : 2,
+          "r" : 6
+        },
+        {
+          "q" : 3,
+          "r" : 6
+        },
+        {
+          "q" : 4,
+          "r" : 6
+        },
+        {
+          "q" : 2,
+          "r" : 7
+        },
+        {
+          "q" : 3,
+          "r" : 7
+        },
+        {
+          "q" : 4,
+          "r" : 7
+        }
+      ],
+      "factories" : 0,
+      "id" : "region_8",
+      "infrastructure" : 0,
+      "isPassable" : true,
+      "name" : "新省份8",
+      "neighbors" : [
+        "region_3",
+        "region_7",
+        "region_9"
+      ],
+      "representativeHex" : {
+        "q" : 3,
+        "r" : 6
+      },
+      "resources" : [
+
+      ],
+      "supplyValue" : 0,
+      "terrain" : "plain",
+      "assignedGeneralId" : "general_leeb",
+      "theaterId" : "theater_4"
+    },
+    {
+      "coreOf" : [
+
+      ],
+      "displayHexes" : [
+        {
+          "q" : 5,
+          "r" : 5
+        },
+        {
+          "q" : 6,
+          "r" : 5
+        },
+        {
+          "q" : 7,
+          "r" : 5
+        },
+        {
+          "q" : 5,
+          "r" : 6
+        },
+        {
+          "q" : 6,
+          "r" : 6
+        },
+        {
+          "q" : 7,
+          "r" : 6
+        },
+        {
+          "q" : 5,
+          "r" : 7
+        },
+        {
+          "q" : 6,
+          "r" : 7
+        }
+      ],
+      "factories" : 0,
+      "id" : "region_9",
+      "infrastructure" : 0,
+      "isPassable" : true,
+      "name" : "新省份9",
+      "neighbors" : [
+        "region_6",
+        "region_7",
+        "region_8"
+      ],
+      "representativeHex" : {
+        "q" : 6,
+        "r" : 6
+      },
+      "resources" : [
+
+      ],
+      "supplyValue" : 0,
+      "terrain" : "plain",
+      "theaterId" : "theater_4"
+    }
+  ],
+  "scenarioId" : "mapeditor_scenario",
+  "schemaVersion" : 2,
+  "supplySources" : [
+    {
+      "faction" : "allies",
+      "id" : "supply_0_0",
+      "regionId" : "region_1"
+    },
+    {
+      "faction" : "allies",
+      "id" : "supply_2_0",
+      "regionId" : "region_5"
+    },
+    {
+      "faction" : "allies",
+      "id" : "supply_4_0",
+      "regionId" : "region_4"
+    },
+    {
+      "faction" : "germany",
+      "id" : "supply_5_0",
+      "regionId" : "region_10"
+    },
+    {
+      "faction" : "germany",
+      "id" : "supply_8_0",
+      "regionId" : "region_6"
+    },
+    {
+      "faction" : "allies",
+      "id" : "supply_-2_3",
+      "regionId" : "region_2"
+    },
+    {
+      "faction" : "allies",
+      "id" : "supply_0_3",
+      "regionId" : "region_5"
+    },
+    {
+      "faction" : "allies",
+      "id" : "supply_3_3",
+      "regionId" : "region_5"
+    },
+    {
+      "faction" : "germany",
+      "id" : "supply_4_3",
+      "regionId" : "region_7"
+    },
+    {
+      "faction" : "germany",
+      "id" : "supply_6_3",
+      "regionId" : "region_6"
+    },
+    {
+      "faction" : "germany",
+      "id" : "supply_8_3",
+      "regionId" : "region_6"
+    },
+    {
+      "faction" : "allies",
+      "id" : "supply_-3_6",
+      "regionId" : "region_2"
+    },
+    {
+      "faction" : "allies",
+      "id" : "supply_-1_6",
+      "regionId" : "region_2"
+    },
+    {
+      "faction" : "allies",
+      "id" : "supply_1_6",
+      "regionId" : "region_3"
+    },
+    {
+      "faction" : "germany",
+      "id" : "supply_2_6",
+      "regionId" : "region_8"
+    },
+    {
+      "faction" : "germany",
+      "id" : "supply_4_6",
+      "regionId" : "region_8"
+    },
+    {
+      "faction" : "germany",
+      "id" : "supply_6_6",
+      "regionId" : "region_9"
+    }
+  ]
+}

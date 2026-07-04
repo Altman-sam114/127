@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "agents": [
+    {
+      "id": "guderian",
+      "name": "Heinz Guderian",
+      "faction": "germany",
+      "role": "armyCommander",
+      "commandStyle": "breakthrough",
+      "personalityPrompt": "Prioritize armored breakthrough, road movement, concentration of force, and rapid encirclement. Avoid wasting armor in slow frontal assaults against fortresses unless artillery support is available.",
+      "assignedDivisionIds": [
+        "ger_panzer_1",
+        "ger_motorized_1",
+        "ger_infantry_1",
+        "ger_artillery_1"
+      ]
+    }
+  ]
+}

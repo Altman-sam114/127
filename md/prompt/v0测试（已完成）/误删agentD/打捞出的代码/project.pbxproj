@@ -1,0 +1,132 @@
+		01000000000000000000002F /* AgentPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000031 /* AgentPanelView.swift */; };
+		010000000000000000000030 /* HexLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000032 /* HexLayoutTests.swift */; };
+		010000000000000000000031 /* BoardInteractionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000033 /* BoardInteractionTests.swift */; };
+		010000000000000000000032 /* GameAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000034 /* GameAgent.swift */; };
+		010000000000000000000033 /* StrategicDirective.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000035 /* StrategicDirective.swift */; };
+		010000000000000000000034 /* AgentContexts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000036 /* AgentContexts.swift */; };
+		010000000000000000000035 /* MinisterDecisionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000037 /* MinisterDecisionProvider.swift */; };
+		010000000000000000000036 /* RulerDirectiveFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000038 /* RulerDirectiveFactory.swift */; };
+		010000000000000000000037 /* AgentDecision.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000039 /* AgentDecision.swift */; };
+		010000000000000000000038 /* AgentCommandMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003A /* AgentCommandMapper.swift */; };
+		010000000000000000000039 /* AgentConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003B /* AgentConfiguration.swift */; };
+		01000000000000000000003A /* AgentDecisionParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003C /* AgentDecisionParser.swift */; };
+		01000000000000000000003B /* AgentDecisionRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003D /* AgentDecisionRecord.swift */; };
+		01000000000000000000003C /* AgentPromptBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003E /* AgentPromptBuilder.swift */; };
+		01000000000000000000003D /* LLMClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003F /* LLMClient.swift */; };
+		01000000000000000000003E /* LocalLLMDecisionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000040 /* LocalLLMDecisionProvider.swift */; };
+		01000000000000000000003F /* MockAIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000041 /* MockAIClient.swift */; };
+		010000000000000000000040 /* CabinetDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000042 /* CabinetDefinition.swift */; };
+		010000000000000000000041 /* national_cabinet.json in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000043 /* national_cabinet.json */; };
+		010000000000000000000042 /* TurnManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000044 /* TurnManager.swift */; };
+		010000000000000000000043 /* AgentPipelineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000045 /* AgentPipelineTests.swift */; };
+/* End PBXBuildFile section */
+		020000000000000000000031 /* AgentPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentPanelView.swift; sourceTree = "<group>"; };
+		020000000000000000000032 /* HexLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexLayoutTests.swift; sourceTree = "<group>"; };
+		020000000000000000000033 /* BoardInteractionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardInteractionTests.swift; sourceTree = "<group>"; };
+		020000000000000000000034 /* GameAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameAgent.swift; sourceTree = "<group>"; };
+		020000000000000000000035 /* StrategicDirective.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrategicDirective.swift; sourceTree = "<group>"; };
+		020000000000000000000036 /* AgentContexts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentContexts.swift; sourceTree = "<group>"; };
+		020000000000000000000037 /* MinisterDecisionProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinisterDecisionProvider.swift; sourceTree = "<group>"; };
+		020000000000000000000038 /* RulerDirectiveFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RulerDirectiveFactory.swift; sourceTree = "<group>"; };
+		020000000000000000000039 /* AgentDecision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDecision.swift; sourceTree = "<group>"; };
+		02000000000000000000003A /* AgentCommandMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentCommandMapper.swift; sourceTree = "<group>"; };
+		02000000000000000000003B /* AgentConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentConfiguration.swift; sourceTree = "<group>"; };
+		02000000000000000000003C /* AgentDecisionParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDecisionParser.swift; sourceTree = "<group>"; };
+		02000000000000000000003D /* AgentDecisionRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDecisionRecord.swift; sourceTree = "<group>"; };
+		02000000000000000000003E /* AgentPromptBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentPromptBuilder.swift; sourceTree = "<group>"; };
+		02000000000000000000003F /* LLMClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMClient.swift; sourceTree = "<group>"; };
+		020000000000000000000040 /* LocalLLMDecisionProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalLLMDecisionProvider.swift; sourceTree = "<group>"; };
+		020000000000000000000041 /* MockAIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAIClient.swift; sourceTree = "<group>"; };
+		020000000000000000000042 /* CabinetDefinition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CabinetDefinition.swift; sourceTree = "<group>"; };
+		020000000000000000000043 /* national_cabinet.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = national_cabinet.json; sourceTree = "<group>"; };
+		020000000000000000000044 /* TurnManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TurnManager.swift; sourceTree = "<group>"; };
+		020000000000000000000045 /* AgentPipelineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentPipelineTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+				070000000000000000000008 /* Commands */,
+				070000000000000000000009 /* Agents */,
+				07000000000000000000000D /* Turn */,
+				07000000000000000000000A /* Data */,
+				07000000000000000000000B /* Tests */,
+			);
+		070000000000000000000009 /* Agents */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000034 /* GameAgent.swift */,
+				020000000000000000000035 /* StrategicDirective.swift */,
+				020000000000000000000036 /* AgentContexts.swift */,
+				020000000000000000000037 /* MinisterDecisionProvider.swift */,
+				020000000000000000000038 /* RulerDirectiveFactory.swift */,
+				02000000000000000000000F /* DecisionProvider.swift */,
+				020000000000000000000039 /* AgentDecision.swift */,
+				02000000000000000000003A /* AgentCommandMapper.swift */,
+				02000000000000000000003B /* AgentConfiguration.swift */,
+				02000000000000000000003C /* AgentDecisionParser.swift */,
+				02000000000000000000003D /* AgentDecisionRecord.swift */,
+				02000000000000000000003E /* AgentPromptBuilder.swift */,
+				02000000000000000000003F /* LLMClient.swift */,
+				020000000000000000000040 /* LocalLLMDecisionProvider.swift */,
+				020000000000000000000041 /* MockAIClient.swift */,
+			);
+			path = Agents;
+			sourceTree = "<group>";
+		};
+		07000000000000000000000D /* Turn */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000044 /* TurnManager.swift */,
+			);
+			path = Turn;
+			sourceTree = "<group>";
+		};
+		07000000000000000000000A /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000010 /* DataLoader.swift */,
+				020000000000000000000014 /* ScenarioDefinition.swift */,
+				020000000000000000000042 /* CabinetDefinition.swift */,
+				020000000000000000000015 /* ardennes_v0_scenario.json */,
+				020000000000000000000016 /* terrain_rules.json */,
+				020000000000000000000017 /* unit_templates.json */,
+				020000000000000000000018 /* general_agents.json */,
+				020000000000000000000043 /* national_cabinet.json */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+				020000000000000000000029 /* RuleEngineCoreTests.swift */,
+				020000000000000000000032 /* HexLayoutTests.swift */,
+				020000000000000000000033 /* BoardInteractionTests.swift */,
+				020000000000000000000045 /* AgentPipelineTests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+				010000000000000000000014 /* terrain_rules.json in Resources */,
+				010000000000000000000015 /* unit_templates.json in Resources */,
+				010000000000000000000016 /* general_agents.json in Resources */,
+				010000000000000000000041 /* national_cabinet.json in Resources */,
+			);
+				010000000000000000000028 /* GameCommandHandling.swift in Sources */,
+				010000000000000000000032 /* GameAgent.swift in Sources */,
+				010000000000000000000033 /* StrategicDirective.swift in Sources */,
+				010000000000000000000034 /* AgentContexts.swift in Sources */,
+				010000000000000000000035 /* MinisterDecisionProvider.swift in Sources */,
+				010000000000000000000036 /* RulerDirectiveFactory.swift in Sources */,
+				01000000000000000000000F /* DecisionProvider.swift in Sources */,
+				010000000000000000000037 /* AgentDecision.swift in Sources */,
+				010000000000000000000038 /* AgentCommandMapper.swift in Sources */,
+				010000000000000000000039 /* AgentConfiguration.swift in Sources */,
+				01000000000000000000003A /* AgentDecisionParser.swift in Sources */,
+				01000000000000000000003B /* AgentDecisionRecord.swift in Sources */,
+				01000000000000000000003C /* AgentPromptBuilder.swift in Sources */,
+				01000000000000000000003D /* LLMClient.swift in Sources */,
+				01000000000000000000003E /* LocalLLMDecisionProvider.swift in Sources */,
+				01000000000000000000003F /* MockAIClient.swift in Sources */,
+				010000000000000000000042 /* TurnManager.swift in Sources */,
+				010000000000000000000010 /* DataLoader.swift in Sources */,
+				010000000000000000000012 /* ScenarioDefinition.swift in Sources */,
+				010000000000000000000040 /* CabinetDefinition.swift in Sources */,
+			);
+				010000000000000000000027 /* RuleEngineCoreTests.swift in Sources */,
+				010000000000000000000030 /* HexLayoutTests.swift in Sources */,
+				010000000000000000000031 /* BoardInteractionTests.swift in Sources */,
+				010000000000000000000043 /* AgentPipelineTests.swift in Sources */,
+			);

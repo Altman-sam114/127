@@ -1,0 +1,42 @@
+flowchart TD
+    A["Command.move<br/>玩家或 WarCommandExecutor 生成"]:::command
+    B["CommandValidator.validateMove"]:::rules
+    C{"是否合法?"}:::decision
+    R["CommandResult rejected<br/>state 不变"]:::stop
+    M["CommandExecutor.executeMove<br/>更新 Division.coord / facing / hasActed"]:::rules
+    O{"OccupationRules.canOccupy?"}:::decision
+    NO["只移动<br/>不改 controller"]:::state
+    HC["目标 HexTile.controller = division.faction"]:::authority
+    SA{"是否需要动态战区推进?"}:::decision
+    ET["TheaterSystem.expandDynamicTheater<br/>只改目标 hex 的 hexToTheater"]:::authority
+    AF["WarDeploymentManager.advanceHex<br/>只改目标 hex 的 hexToFrontZone"]:::authority
+    SS["StrategicStateSynchronizer"]:::rules
+    RO["RegionOccupationRules.aggregateControl<br/>从 hex controller 加权聚合 region controller"]:::derived
+    TU["TheaterSystem.updateTheaters(force)<br/>刷新 ratio / unitIds / neighbor theaters"]:::derived
+    FU["FrontLineManager.update<br/>按 dirty region 重新扫描动态 hex 接触"]:::derived
+    DU["WarDeploymentManager.update<br/>刷新 FRONT / DEPTH / GARRISON"]:::derived
+    UI["UI overlay / inspector / log 刷新"]:::ui
+
+    A --> B --> C
+    C -->|否| R
+    C -->|是| M --> O
+    O -->|否| NO --> UI
+    O -->|是| HC --> SA
+    SA -->|目标已属己方动态 theater| SS
+    SA -->|敌方 zone 或敌控 hex| ET --> AF --> SS
+    SS --> RO --> TU --> FU --> DU --> UI
+
+    WARN1["禁止：占一个 hex 就改整个 regionToTheater"]:::warn
+    WARN2["禁止：只改 region controller 不改 hex controller"]:::warn
+    ET -.守住.-> WARN1
+    HC -.守住.-> WARN2
+
+    classDef command fill:#fae8ff,stroke:#a21caf,color:#2a0a2f
+    classDef rules fill:#ccfbf1,stroke:#0f766e,color:#042f2e
+    classDef decision fill:#fff7ed,stroke:#ea580c,color:#1f1300
+    classDef stop fill:#fee2e2,stroke:#b91c1c,color:#111827
+    classDef state fill:#ede9fe,stroke:#7c3aed,color:#1f143d
+    classDef authority fill:#fee2e2,stroke:#dc2626,color:#111827
+    classDef derived fill:#dcfce7,stroke:#16a34a,color:#052e16
+    classDef ui fill:#e5e7eb,stroke:#4b5563,color:#111827
+    classDef warn fill:#ffedd5,stroke:#f97316,color:#431407

@@ -1,0 +1,187 @@
+import SwiftUI
+
+struct GeneralCommandPanelView: View {
+    let zone: FrontZone?
+    let general: GeneralData?
+    let assignment: GeneralAssignment?
+    let assignedDivisions: [Division]
+    let targetRegion: RegionNode?
+    let targetZone: FrontZone?
+    let hqUnderAttack: Bool
+    let plannedOperations: [PlayerPlannedOperation]
+    let canHoldLine: Bool
+    let canAttackRegion: Bool
+    let onShowProfile: () -> Void
+    let onHoldLine: () -> Void
+    let onAttackRegion: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("General Command")
+                .font(.headline)
+
+            if let zone {
+                LabeledContent("Front Zone") {
+                    Text(zone.name)
+                        .multilineTextAlignment(.trailing)
+                }
+            } else {
+                Text("No allied front zone selected.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+
+            if let general {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(alignment: .center, spacing: 10) {
+                        Button(action: onShowProfile) {
+                            portraitBadge(for: general)
+                        }
+                            .accessibilityLabel("Open profile for \(general.localizedName)")
+                            .buttonStyle(.plain)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(general.localizedName)
+                                .font(.subheadline.weight(.semibold))
+                            Text("\(general.rank) / \(styleLabel(general.commandStyle))")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+
+                    Text(general.biography)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(3)
+
+                    if !general.skills.isEmpty {
+                        Text(general.skills.joined(separator: ", "))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    if let assignment {
+                        metricBar(title: "Loyalty", value: assignment.loyalty)
+                        metricBar(title: "Satisfaction", value: assignment.satisfaction)
+                        LabeledContent("Interventions") {
+                            Text("\(assignment.interventionCount)")
+                        }
+                    }
+
+                    Button("View Profile", systemImage: "person.text.rectangle", action: onShowProfile)
+                        .buttonStyle(.bordered)
+                }
+            } else if zone != nil {
+                Text("No general assigned to this zone.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+
+            if hqUnderAttack {
+                Label("HQ region contested", systemImage: "exclamationmark.triangle.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.orange)
+            }
+
+            if !assignedDivisions.isEmpty {
+                Text("Assigned Units")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(Array(assignedDivisions.prefix(5)), id: \.id) { division in
+                        Label(division.name, systemImage: unitIcon(for: division))
+                            .font(.caption)
+                            .lineLimit(1)
+                    }
+                }
+            }
+
+            if let targetRegion, targetZone?.faction != zone?.faction {
+                LabeledContent("Target") {
+                    Text(targetRegion.name)
+                }
+            }
+
+            HStack(spacing: 8) {
+                Button("Hold Line", systemImage: "shield.fill", action: onHoldLine)
+                    .disabled(!canHoldLine)
+                Button("Attack Region", systemImage: "arrow.up.right.circle", action: onAttackRegion)
+                    .disabled(!canAttackRegion)
+            }
+            .buttonStyle(.bordered)
+
+            if !plannedOperations.isEmpty {
+                Text("Planned Operations")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(plannedOperations) { operation in
+                        Label(operationSummary(operation), systemImage: operationIcon(operation))
+                            .font(.caption)
+                            .lineLimit(2)
+                    }
+                }
+            }
+        }
+        .padding(12)
+        .background(PlatformStyles.systemBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+
+    private func portraitBadge(for general: GeneralData) -> some View {
+        Text(initials(for: general))
+            .font(.caption.weight(.bold))
+            .frame(width: 40, height: 40)
+            .background(PlatformStyles.selectionTint)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .accessibilityLabel("\(general.localizedName) portrait placeholder")
+    }
+
+    private func metricBar(title: String, value: Int) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            HStack {
+                Text(title)
+                Spacer()
+                Text("\(value)")
+            }
+            .font(.caption)
+            ProgressView(value: Double(value), total: 100)
+                .tint(value >= 65 ? .green : value >= 40 ? .orange : .red)
+        }
+    }
+
+    private func initials(for general: GeneralData) -> String {
+        let words = general.localizedName.split(separator: " ")
+        let letters = words.prefix(2).compactMap(\.first)
+        return letters.isEmpty ? String(general.name.prefix(2)).uppercased() : String(letters).uppercased()
+    }
+
+    private func styleLabel(_ style: ZoneCommanderAgentConfig.CommandStyle) -> String {
+        switch style {
+        case .aggressive:
+            return "Aggressive"
+        case .balanced:
+            return "Balanced"
+        case .cautious:
+            return "Cautious"
+        }
+    }
+
+    private func unitIcon(for division: Division) -> String {
+        if division.isArmor {
+            return "shield.lefthalf.filled"
+        }
+        if division.isArtillery {
+            return "scope"
+        }
+        return "person.3.fill"
+    }
+
+    private func operationIcon(_ operation: PlayerPlannedOperation) -> String {
+        operation.directiveType == .attack ? "arrow.up.right.circle" : "shield.fill"
+    }
+
+    private func operationSummary(_ operation: PlayerPlannedOperation) -> String {
+        let target = operation.targetRegionId?.rawValue ?? operation.sourceRegionId?.rawValue ?? operation.zoneId.rawValue
+        return "\(operation.directiveType.rawValue) / \(target)"
+    }
+}

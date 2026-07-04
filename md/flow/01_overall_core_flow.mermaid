@@ -1,0 +1,64 @@
+flowchart TD
+    ME["MapEditor<br/>编辑 hex / region / theater / unit"]:::editor
+    JSON["ScenarioDefinition.json<br/>RegionDataSet.json"]:::data
+    DL["DataLoader.loadInitialGameState<br/>loadGameState"]:::loader
+    GS["GameState<br/>运行时总状态"]:::state
+
+    HEX["Hex 战术层<br/>HexTile.controller<br/>Division.coord"]:::authority
+    REGION["Region 省份层<br/>controller 由 hex 聚合<br/>资源 / 补给 / VP"]:::derived
+    INIT["Initial Theater Snapshot<br/>只读初始战区"]:::snapshot
+    R2T["regionToTheater<br/>基础战区映射<br/>不是动态推进层"]:::snapshot
+    H2T["hexToTheater<br/>运行时动态战区权威"]:::authority
+    FRONT["FrontLine / FrontSegment<br/>按动态 theater 的真实 hex 邻接生成"]:::derived
+    DEPLOY["WarDeploymentState<br/>hexToFrontZone 权威<br/>FRONT / DEPTH / GARRISON"]:::derived
+
+    PLAYER["玩家操作<br/>tap / move / attack / endTurn"]:::input
+    AI["AI / 将领<br/>TheaterCommanderPool<br/>ZoneCommanderAgent"]:::input
+    ZD["ZoneDirective<br/>attack / defend<br/>category / tactic / target"]:::command
+    WCE["WarCommandExecutor<br/>directive -> Command"]:::command
+    CMD["Command<br/>move / attack / hold / resupply / endTurn"]:::command
+    RE["RuleEngine<br/>CommandValidator -> CommandExecutor"]:::rules
+    SYNC["StrategicStateSynchronizer<br/>Region -> Theater -> Front -> Deploy"]:::rules
+
+    UI["UI / SpriteKit Overlay<br/>hex / province / initial / dynamic / front / deploy"]:::ui
+    LOG["EventLog<br/>WarDirectiveRecord<br/>AgentDecisionRecord"]:::ui
+
+    ME --> JSON --> DL --> GS
+    GS --> HEX
+    HEX --> REGION
+    REGION --> INIT
+    INIT --> R2T
+    R2T -.-> H2T
+    HEX --> H2T
+    H2T --> FRONT --> DEPLOY
+
+    PLAYER --> CMD
+    AI --> ZD --> WCE --> CMD
+    CMD --> RE --> HEX
+    RE --> SYNC
+    SYNC --> REGION
+    SYNC --> H2T
+    SYNC --> FRONT
+    SYNC --> DEPLOY
+
+    GS --> UI
+    HEX --> UI
+    REGION --> UI
+    INIT --> UI
+    H2T --> UI
+    FRONT --> UI
+    DEPLOY --> UI
+    RE --> LOG
+    WCE --> LOG
+
+    classDef editor fill:#f6d365,stroke:#8a5a00,color:#1f1b10
+    classDef data fill:#f8f9fb,stroke:#6b7280,color:#111827
+    classDef loader fill:#dbeafe,stroke:#2563eb,color:#0f172a
+    classDef state fill:#ede9fe,stroke:#7c3aed,color:#1f143d
+    classDef authority fill:#fee2e2,stroke:#dc2626,color:#111827
+    classDef derived fill:#dcfce7,stroke:#16a34a,color:#052e16
+    classDef snapshot fill:#e0f2fe,stroke:#0284c7,color:#082f49
+    classDef input fill:#fef3c7,stroke:#d97706,color:#1f1600
+    classDef command fill:#fae8ff,stroke:#a21caf,color:#2a0a2f
+    classDef rules fill:#ccfbf1,stroke:#0f766e,color:#042f2e
+    classDef ui fill:#e5e7eb,stroke:#4b5563,color:#111827

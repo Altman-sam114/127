@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "generals": [
+    {
+      "id": "general_montgomery",
+      "name": "Bernard Montgomery",
+      "localizedName": "蒙哥马利",
+      "rank": "Field Marshal",
+      "faction": "allies",
+      "commandStyle": "balanced",
+      "skills": [
+        "set_piece_attack",
+        "logistics",
+        "coalition_coordination"
+      ],
+      "portrait": "portrait_montgomery",
+      "biography": "A methodical British field marshal who favors preparation, reserves, and overwhelming force before a major attack.",
+      "preferredTheaterIds": [
+        "theater_1"
+      ],
+      "preferredRegionIds": [
+        "region_1",
+        "region_4",
+        "region_5"
+      ],
+      "baseLoyalty": 72,
+      "baseSatisfaction": 76
+    },
+    {
+      "id": "general_weygand",
+      "name": "Maxime Weygand",
+      "localizedName": "魏刚",
+      "rank": "General",
+      "faction": "allies",
+      "commandStyle": "cautious",
+      "skills": [
+        "defensive_master",
+        "staff_coordination",
+        "reserve_control"
+      ],
+      "portrait": "portrait_weygand",
+      "biography": "A conservative staff-minded commander best suited to stabilizing strained defensive sectors and preserving reserves.",
+      "preferredTheaterIds": [
+        "theater_2"
+      ],
+      "preferredRegionIds": [
+        "region_2",
+        "region_3"
+      ],
+      "baseLoyalty": 68,
+      "baseSatisfaction": 70
+    },
+    {
+      "id": "general_de_gaulle",
+      "name": "Charles de Gaulle",
+      "localizedName": "戴高乐",
+      "rank": "Brigadier General",
+      "faction": "allies",
+      "commandStyle": "aggressive",
+      "skills": [
+        "armor_theory",
+        "counterattack",
+        "political_will"
+      ],
+      "portrait": "portrait_de_gaulle",
+      "biography": "An ambitious armored warfare advocate who accepts operational risk for mobile counterattacks and decisive initiative.",
+      "preferredTheaterIds": [
+        "theater_4"
+      ],
+      "preferredRegionIds": [
+        "region_8",
+        "region_9"
+      ],
+      "baseLoyalty": 65,
+      "baseSatisfaction": 74
+    },
+    {
+      "id": "general_guderian",
+      "name": "Heinz Guderian",
+      "localizedName": "古德里安",
+      "rank": "Generaloberst",
+      "faction": "germany",
+      "commandStyle": "aggressive",
+      "skills": [
+        "armor_expert",
+        "breakthrough",
+        "rapid_exploitation"
+      ],
+      "portrait": "portrait_guderian",
+      "biography": "A fast-moving armored commander focused on concentration, breakthrough, and exploitation before the enemy can stabilize.",
+      "preferredTheaterIds": [
+        "theater_3"
+      ],
+      "preferredRegionIds": [
+        "region_6",
+        "region_7",
+        "region_10"
+      ],
+      "baseLoyalty": 70,
+      "baseSatisfaction": 82
+    },
+    {
+      "id": "general_leeb",
+      "name": "Wilhelm Ritter von Leeb",
+      "localizedName": "里布",
+      "rank": "Field Marshal",
+      "faction": "germany",
+      "commandStyle": "cautious",
+      "skills": [
+        "defensive_master",
+        "fortress_operations",
+        "disciplined_retreat"
+      ],
+      "portrait": "portrait_leeb",
+      "biography": "A disciplined and cautious commander who favors prepared positions, strongpoints, and deliberate defensive control.",
+      "preferredTheaterIds": [
+        "theater_4"
+      ],
+      "preferredRegionIds": [
+        "region_8",
+        "region_9"
+      ],
+      "baseLoyalty": 78,
+      "baseSatisfaction": 68
+    },
+    {
+      "id": "general_bock",
+      "name": "Fedor von Bock",
+      "localizedName": "博客",
+      "rank": "Field Marshal",
+      "faction": "germany",
+      "commandStyle": "balanced",
+      "skills": [
+        "army_group_coordination",
+        "offensive_planning",
+        "pressure_management"
+      ],
+      "portrait": "portrait_bock",
+      "biography": "A forceful army group commander who balances offensive pressure with orderly front management and reserves.",
+      "preferredTheaterIds": [
+        "theater_3"
+      ],
+      "preferredRegionIds": [
+        "region_10",
+        "region_6"
+      ],
+      "baseLoyalty": 74,
+      "baseSatisfaction": 72
+    }
+  ]
+}
