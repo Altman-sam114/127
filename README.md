@@ -1,6 +1,6 @@
 # Modern Command Agent — iOS / macOS AI 战略战棋迁移工程
 
-> **当前状态：v6.4 ISR / ContactTrack / 电子战基础。工程底座仍来自 WWIIHexV0，源码兼容名和旧阿登 fallback 数据仍保留；已完成 v6.0 主 UI 显示名迁移、v6.1 现代作战方 / ROE 兼容层、v6.2 `grey_tide_2030` 默认剧本种子、v6.3 现代单位模板和首版现代移动/战斗/后勤修正，并在 v6.4 加入 `OperationalAwarenessState`、ContactTrack、SensorCoverage、EWEffect、侦察/EW 命令和 AI/UI 可见 contacts 摘要。默认战争 AI 仍是“元帅 -> 模拟 LLM JSON -> decoder -> compiler -> ZoneDirective”，下游仍收口到 `WarCommandExecutor -> RuleEngine`。历史测试基线曾达到 v0.37 Probe 18/0、Stage Regression 69/0、Full 226/0；当前工作流默认不跑 Xcode / XCTest / 模拟器测试，只按 `md/test/test.md` 做轻量检查，重验证看 GitHub Actions artifact。**
+> **当前状态：v6.5 精确火力 / 空地协同 / 无人侦察 / 防空压制首版。工程底座仍来自 WWIIHexV0，源码兼容名和旧阿登 fallback 数据仍保留；已完成 v6.0 主 UI 显示名迁移、v6.1 现代作战方 / ROE 兼容层、v6.2 `grey_tide_2030` 默认剧本种子、v6.3 现代单位模板和首版现代移动/战斗/后勤修正、v6.4 `OperationalAwarenessState` / ContactTrack / EW 基础，并在 v6.5 加入 `FireSupportState`、`AirTaskingState`、`Command.fireMission`、`Command.uavRecon`、`Command.suppressAirDefense` 和火力结果日志。默认战争 AI 仍是“元帅 -> 模拟 LLM JSON -> decoder -> compiler -> ZoneDirective”，下游仍收口到 `WarCommandExecutor -> RuleEngine`。历史测试基线曾达到 v0.37 Probe 18/0、Stage Regression 69/0、Full 226/0；当前工作流默认不跑 Xcode / XCTest / 模拟器测试，只按 `md/test/test.md` 做轻量检查，重验证看 GitHub Actions artifact。**
 
 ---
 
@@ -14,7 +14,7 @@
 
 一款正在从 WWIIHexV0 迁移而来的 iOS / macOS 回合制现代战争 AI Agent 策略游戏。目标是在保留 hex 战术权威、region 战略聚合、动态战区、前线、部署和统一规则管线的基础上，迁移到现代联合作战：合成营/任务编组、无人系统、侦察 contact、电子战、精确火力、后勤和可审计 AI Agent 指挥链。
 
-当前 v6.4 仍不是发布级现代战争剧本。`grey_tide_2030` 目前是 60-hex / 10-region 的可加载种子，用于替换默认阿登入口并验证现代数据链；`modern_unit_templates.json` 已提供装甲、机械化、侦察、火力、防空、工程、后勤、无人系统和特战组件，并通过现有 `strength + supplyState + components` 影响移动、战斗和补员成本。v6.4 的 ISR/EW 只建立第一版 contact 与传感器覆盖闭环，FireMission / AirTasking / ammo / fuel / readiness / signature 仍未独立建模。`GamePhase.germanAI/alliedPlayer`、`Division` 源码名、旧 unit template id 和若干二战测试 fixture 仍按兼容层保留。后续按 `md/prompt/v6.0-现代战争迁移/codex-v6.0-现代战争aiagent迁移总提示词.md` 继续扩到 v6.5-v6.10。
+当前 v6.5 仍不是发布级现代战争剧本。`grey_tide_2030` 目前是 60-hex / 10-region 的可加载种子，用于替换默认阿登入口并验证现代数据链；`modern_unit_templates.json` 已提供装甲、机械化、侦察、火力、防空、工程、后勤、无人系统和特战组件，并通过现有 `strength + supplyState + components` 影响移动、战斗和补员成本。v6.5 的火力/空中任务是抽象首版：火力任务必须先有 medium+ contact 或目标区域 contact，经 `CommandValidator -> CommandExecutor -> FireSupportRules` 检查弹药、冷却、目标质量、防空威胁、EW 和友军邻近风险后才会消耗弹药并造成有限 damage / retreat / failed log；`fireCoverage` ZoneDirective 会优先尝试生成 contact-gated fire mission，再继续地面行动。fuel / readiness / signature / 真实武器库 / 复杂实时空战仍未独立建模。`GamePhase.germanAI/alliedPlayer`、`Division` 源码名、旧 unit template id 和若干二战测试 fixture 仍按兼容层保留。后续按 `md/prompt/v6.0-现代战争迁移/codex-v6.0-现代战争aiagent迁移总提示词.md` 继续扩到 v6.6-v6.10。
 
 **核心参考：**
 - 《统一指挥2》：六角格战棋、补给、攻击（战术层参照）

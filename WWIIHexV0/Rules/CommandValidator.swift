@@ -2,6 +2,7 @@ import Foundation
 
 struct CommandValidator {
     private let movementRules = MovementRules()
+    private let fireSupportRules = FireSupportRules()
 
     func validate(_ command: Command, in state: GameState) -> CommandValidation {
         switch command {
@@ -17,8 +18,14 @@ struct CommandValidator {
             return validateRecoveryCommand(divisionId: divisionId, in: state)
         case .recon(let divisionId, let target):
             return validateAwarenessCommand(divisionId: divisionId, target: target, in: state, rangeBonus: 2)
+        case .uavRecon(let divisionId, let target):
+            return validateUAVRecon(divisionId: divisionId, target: target, in: state)
         case .electronicWarfare(let divisionId, let target):
             return validateAwarenessCommand(divisionId: divisionId, target: target, in: state, rangeBonus: 1)
+        case .fireMission(let issuerId, let target, let munitionClass):
+            return validateFireMission(issuerId: issuerId, target: target, munitionClass: munitionClass, in: state)
+        case .suppressAirDefense(let divisionId, let target):
+            return validateSuppressAirDefense(divisionId: divisionId, target: target, in: state)
         case .queueProduction(let kind):
             return validateProduction(kind: kind, in: state)
         case .endTurn:
@@ -145,6 +152,61 @@ struct CommandValidator {
         }
 
         return .valid
+    }
+
+    private func validateUAVRecon(
+        divisionId: String,
+        target: HexCoord,
+        in state: GameState
+    ) -> CommandValidation {
+        let unitValidation = validateAwarenessCommand(
+            divisionId: divisionId,
+            target: target,
+            in: state,
+            rangeBonus: 3
+        )
+        guard unitValidation.isValid,
+              let division = state.division(id: divisionId) else {
+            return unitValidation
+        }
+        return fireSupportRules.validateUAVRecon(issuer: division, target: target, in: state)
+    }
+
+    private func validateFireMission(
+        issuerId: String,
+        target: FireMissionTarget,
+        munitionClass: MunitionClass,
+        in state: GameState
+    ) -> CommandValidation {
+        let unitValidation = validateUnitCommand(divisionId: issuerId, in: state)
+        guard unitValidation.isValid,
+              let issuer = state.division(id: issuerId) else {
+            return unitValidation
+        }
+        return fireSupportRules.validateFireMission(
+            issuer: issuer,
+            target: target,
+            munitionClass: munitionClass,
+            in: state
+        )
+    }
+
+    private func validateSuppressAirDefense(
+        divisionId: String,
+        target: HexCoord,
+        in state: GameState
+    ) -> CommandValidation {
+        let unitValidation = validateAwarenessCommand(
+            divisionId: divisionId,
+            target: target,
+            in: state,
+            rangeBonus: 2
+        )
+        guard unitValidation.isValid,
+              let division = state.division(id: divisionId) else {
+            return unitValidation
+        }
+        return fireSupportRules.validateSuppressAirDefense(issuer: division, target: target, in: state)
     }
 
     private func validateEndTurn(in state: GameState) -> CommandValidation {

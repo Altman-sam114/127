@@ -7,7 +7,10 @@ enum Command: Codable, Equatable {
     case allowRetreat(divisionId: String)
     case resupply(divisionId: String)
     case recon(divisionId: String, target: HexCoord)
+    case uavRecon(divisionId: String, target: HexCoord)
     case electronicWarfare(divisionId: String, target: HexCoord)
+    case fireMission(issuerId: String, target: FireMissionTarget, munitionClass: MunitionClass)
+    case suppressAirDefense(divisionId: String, target: HexCoord)
     case queueProduction(kind: ProductionKind)
     case endTurn
 
@@ -33,8 +36,14 @@ enum Command: Codable, Equatable {
             return "Resupply(\(divisionId))"
         case .recon(let divisionId, let target):
             return "Recon(\(divisionId) -> \(target.q),\(target.r))"
+        case .uavRecon(let divisionId, let target):
+            return "UAVRecon(\(divisionId) -> \(target.q),\(target.r))"
         case .electronicWarfare(let divisionId, let target):
             return "EW(\(divisionId) -> \(target.q),\(target.r))"
+        case .fireMission(let issuerId, let target, let munitionClass):
+            return "FireMission(\(issuerId) -> \(target.displayName), \(munitionClass.displayName))"
+        case .suppressAirDefense(let divisionId, let target):
+            return "SuppressAD(\(divisionId) -> \(target.q),\(target.r))"
         case .queueProduction(let kind):
             return "QueueProduction(\(kind.displayName))"
         case .endTurn:
@@ -49,8 +58,12 @@ enum Command: Codable, Equatable {
              .allowRetreat(let divisionId),
              .resupply(let divisionId),
              .recon(let divisionId, _),
-             .electronicWarfare(let divisionId, _):
+             .uavRecon(let divisionId, _),
+             .electronicWarfare(let divisionId, _),
+             .suppressAirDefense(let divisionId, _):
             return divisionId
+        case .fireMission(let issuerId, _, _):
+            return issuerId
         case .attack(let attackerId, _):
             return attackerId
         case .queueProduction:
@@ -69,7 +82,10 @@ enum Command: Codable, Equatable {
              .hold,
              .allowRetreat,
              .recon,
+             .uavRecon,
              .electronicWarfare,
+             .fireMission,
+             .suppressAirDefense,
              .queueProduction,
              .endTurn:
             return false

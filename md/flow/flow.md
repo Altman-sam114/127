@@ -228,13 +228,13 @@ specialForces / electronicWarfare
 
 仍未完成：
 
-- FireMission / AirTasking / 精确火力命令仍未独立建模。
+- FireMission / AirTasking / 精确火力命令已在 v6.5 做抽象首版；真实武器库、fuel、readiness 和 signature 仍未独立建模。
 - fuel / ammo / readiness / signature / electronicProtection 尚未作为独立字段落库。
 - 现代战役地图仍是 60-hex 种子，未扩到发布级规模。
 
 ## 0.6 v6.4 ISR、ContactTrack 和电子战基础
 
-v6.4 第一批实现把现代战争的“发现目标再打击”前半段接入状态和命令管线，但仍不实现 v6.5 的独立 FireMission / AirTasking。
+v6.4 第一批实现把现代战争的“发现目标再打击”前半段接入状态和命令管线；v6.5 已在此基础上加入第一版 FireMission / AirTasking，见下一节。
 
 新增运行时状态：
 
@@ -275,9 +275,50 @@ ContactTrack
 
 仍未完成：
 
-- 火力任务、空地协同、防空压制和无人打击仍留给 v6.5。
 - 当前 contact overlay 只在 Region inspector 和攻击高亮中首版可见，还不是完整地图图层。
 - `linkedDivisionId` 仍存于 `OperationalAwarenessState` 供规则内部解析，AI/UI 摘要默认不暴露该字段。
+
+## 0.7 v6.5 精确火力、空地协同、无人系统和防空抽象
+
+v6.5 第一批实现把“侦察 -> 确认 contact -> 防空压制 / 火力打击 -> 地面推进”的现代作战闭环接入统一命令管线。它是抽象任务模型，不做真实武器数据库、复杂实时空战、独立 fuel/readiness/signature 或完整空域模拟。
+
+新增运行时状态：
+
+```text
+GameState.fireSupportState: FireSupportState
+  ammoBudgetBySide: [OperationalSideAlignment: FireSupportAmmoBudget]
+  cooldownsByAsset: [String: Int]
+  scheduledMissions: [FireMission]
+  lastMissionResults: [FireMissionResult]
+  airTaskingState: AirTaskingState
+    sorties
+    airDefenseThreat
+    airSuperiority
+    suppressionEffects
+    missionResults
+```
+
+新增命令：
+
+- `Command.fireMission(issuerId:target:munitionClass:)`：由火力单位或无人/巡飞弹载具发起，target 支持 contact / hex / region，但必须能解析到本方可见 contact。
+- `Command.uavRecon(divisionId:target:)`：强制以 UAV source 刷新目标周边 contact；高防空 / EW 风险会让任务降级或失败。
+- `Command.suppressAirDefense(divisionId:target:)`：消耗可用火力弹药，在目标周边写入持续若干回合的 `AirDefenseSuppression`，降低后续空中/无人任务风险。
+
+规则链路：
+
+- 三类新命令全部经过 `CommandValidator -> CommandExecutor -> FireSupportRules`，不得绕过 `RuleEngine` 直接改 `GameState`。
+- validator 检查阶段、阵营、单位行动权、目标 hex、射程、source asset、目标质量、弹药、冷却、防空威胁和友军邻近风险。
+- fire mission 只对 medium+ contact 或 region/hex 内 medium+ contact 放行；low / missing contact 会被拒绝。
+- executor 会消耗对应 `MunitionClass` 弹药、设置 source cooldown、记录 `FireMissionResult` / `AirSortie`，并写入 `fireSupport` 日志。
+- 命中目标时只施加有限 `strength` damage，必要时触发撤退或消灭；不会占领 hex，也不会替代地面推进。
+- `fireCoverage` 战术在 `WarCommandExecutor` 中会先尝试生成一次 contact-gated `fireMission`，再继续现有 ground attack / hold fallback。
+
+仍未完成：
+
+- 真实武器库、弹种库存分层、fuel、readiness、signature、electronic protection 尚未独立字段落库。
+- Air superiority 当前是抽象占位，未做持续空域争夺、截击、CAP 或机场出动率。
+- 火力 UI 仍主要通过日志可见，还没有独立火力范围 / 空中任务 overlay。
+- AI 只通过 `fireCoverage` 首版生成火力任务，尚未引入 FiresCoordinator / ISRCoordinator 独立 Agent。
 
 ---
 
@@ -299,6 +340,7 @@ theaterState: TheaterState
 frontLineState: FrontLineState
 warDeploymentState: WarDeploymentState
 economyState: EconomyState
+fireSupportState: FireSupportState
 divisions: [Division]
 victoryState
 eventLog
@@ -316,6 +358,7 @@ operationalAwareness
 - `warDeploymentState` 从动态战区/前线/单位位置派生，供 AI 调度单位。
 - `economyState` 保存 manpower、industry、supplies、生产队列、上回合收入/维护费/补员消耗，不直接改变战术占领权。
 - `operationalAwareness` 保存 contact、sensor coverage 和 EW effects，是 v6.4 后 UI/AI 可见敌情的入口；真实敌军 `Division` 仍只供规则内部解析。
+- `fireSupportState` 保存火力弹药、source cooldown、fire mission result、air sortie、防空威胁快照和防空压制效果，是 v6.5 后火力/空中任务的入口。
 - `eventLog` 给 UI 和调试看。
 - `warDirectiveRecords` 记录战争指令执行回放，供 v0.36+ 后续接 LLM / 聊天命令审计。
 

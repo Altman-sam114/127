@@ -316,6 +316,17 @@ struct WarCommandExecutor {
         var results: [CommandResult] = []
         let relatedRecordId = "war_directive_\(directive.zoneId.rawValue)_\(directive.type.rawValue)"
 
+        if tactic == .fireCoverage {
+            runPreparatoryFire(
+                from: attackingUnitIds,
+                targetRegionIds: parameters.weightedRegions,
+                commands: &commands,
+                results: &results,
+                state: &nextState,
+                relatedRecordId: relatedRecordId
+            )
+        }
+
         for unitId in attackingUnitIds {
             guard let division = nextState.division(id: unitId),
                   division.faction == zone.faction,
@@ -1171,6 +1182,51 @@ struct WarCommandExecutor {
         }
     }
 
+    private func runPreparatoryFire(
+        from unitIds: [String],
+        targetRegionIds: [RegionId],
+        commands: inout [Command],
+        results: inout [CommandResult],
+        state: inout GameState,
+        relatedRecordId: String?
+    ) {
+        guard let source = unitIds
+            .compactMap({ state.division(id: $0) })
+            .first(where: { $0.canAct && ($0.isArtillery || $0.hasUnmannedSupport) }),
+            let contact = state.operationalAwareness.visibleContacts(for: source.faction)
+                .first(where: { contact in
+                    guard contact.confidence >= .medium,
+                          let linkedDivisionId = contact.linkedDivisionId,
+                          let targetDivision = state.division(id: linkedDivisionId),
+                          targetDivision.faction.isHostile(to: source.faction) else {
+                        return false
+                    }
+                    if targetRegionIds.isEmpty {
+                        return true
+                    }
+                    return state.map.region(for: contact.lastKnownCoord).map { targetRegionIds.contains($0) } ?? false
+                }) else {
+            return
+        }
+
+        let munitionClass: MunitionClass = source.componentWeight(where: { $0 == .rocketArtillery }) >= 0.20
+            ? .rocket
+            : .tubeArtillery
+        let command = Command.fireMission(
+            issuerId: source.id,
+            target: .contact(id: contact.id),
+            munitionClass: munitionClass
+        )
+        run(
+            command,
+            fallback: .hold(divisionId: source.id),
+            commands: &commands,
+            results: &results,
+            state: &state,
+            relatedRecordId: relatedRecordId
+        )
+    }
+
     @discardableResult
     private func applyStrategicAdvance(
         regionId: RegionId,
@@ -1267,8 +1323,12 @@ struct WarCommandExecutor {
              .allowRetreat(let divisionId),
              .resupply(let divisionId),
              .recon(let divisionId, _),
-             .electronicWarfare(let divisionId, _):
+             .uavRecon(let divisionId, _),
+             .electronicWarfare(let divisionId, _),
+             .suppressAirDefense(let divisionId, _):
             return divisionId
+        case .fireMission(let issuerId, _, _):
+            return issuerId
         case .attack(let attackerId, _):
             return attackerId
         case .queueProduction,
@@ -1292,6 +1352,20 @@ struct WarCommandExecutor {
         switch command {
         case .move(_, let destination):
             return state.map.region(for: destination).map { [$0] } ?? []
+        case .fireMission(_, let target, _):
+            switch target {
+            case .contact(let id):
+                return state.operationalAwareness.contacts[id]
+                    .flatMap { state.map.region(for: $0.lastKnownCoord) }
+                    .map { [$0] } ?? []
+            case .hex(let coord):
+                return state.map.region(for: coord).map { [$0] } ?? []
+            case .region(let regionId):
+                return [regionId]
+            }
+        case .suppressAirDefense(_, let target),
+             .uavRecon(_, let target):
+            return state.map.region(for: target).map { [$0] } ?? []
         default:
             return []
         }

@@ -7,6 +7,7 @@ struct CommandExecutor {
     private let occupationRules = OccupationRules()
     private let strategicSynchronizer = StrategicStateSynchronizer()
     private let visibilityRules = VisibilityRules()
+    private let fireSupportRules = FireSupportRules()
     private let retreatLossThreshold = 0.35
 
     func execute(_ command: Command, in state: GameState) -> GameState {
@@ -25,8 +26,14 @@ struct CommandExecutor {
             executeResupply(divisionId: divisionId, in: &nextState)
         case .recon(let divisionId, let target):
             executeRecon(divisionId: divisionId, target: target, in: &nextState)
+        case .uavRecon(let divisionId, let target):
+            executeUAVRecon(divisionId: divisionId, target: target, in: &nextState)
         case .electronicWarfare(let divisionId, let target):
             executeElectronicWarfare(divisionId: divisionId, target: target, in: &nextState)
+        case .fireMission(let issuerId, let target, let munitionClass):
+            executeFireMission(issuerId: issuerId, target: target, munitionClass: munitionClass, in: &nextState)
+        case .suppressAirDefense(let divisionId, let target):
+            executeSuppressAirDefense(divisionId: divisionId, target: target, in: &nextState)
         case .queueProduction(let kind):
             executeQueueProduction(kind: kind, in: &nextState)
         case .endTurn:
@@ -168,8 +175,38 @@ struct CommandExecutor {
         ).state
     }
 
+    private func executeUAVRecon(divisionId: String, target: HexCoord, in state: inout GameState) {
+        state = fireSupportRules.executeUAVRecon(
+            divisionId: divisionId,
+            target: target,
+            in: state
+        )
+    }
+
     private func executeElectronicWarfare(divisionId: String, target: HexCoord, in state: inout GameState) {
         state = visibilityRules.applyElectronicWarfare(
+            divisionId: divisionId,
+            target: target,
+            in: state
+        )
+    }
+
+    private func executeFireMission(
+        issuerId: String,
+        target: FireMissionTarget,
+        munitionClass: MunitionClass,
+        in state: inout GameState
+    ) {
+        state = fireSupportRules.executeFireMission(
+            issuerId: issuerId,
+            target: target,
+            munitionClass: munitionClass,
+            in: state
+        )
+    }
+
+    private func executeSuppressAirDefense(divisionId: String, target: HexCoord, in state: inout GameState) {
+        state = fireSupportRules.executeSuppressAirDefense(
             divisionId: divisionId,
             target: target,
             in: state
@@ -191,6 +228,7 @@ struct CommandExecutor {
         supplyRules.applyEncirclementAttrition(in: &state)
         victoryRules.updateVictoryState(in: &state)
         state.operationalAwareness = visibilityRules.advanceTurn(state.operationalAwareness)
+        state.fireSupportState = fireSupportRules.advanceTurn(state.fireSupportState)
 
         switch state.activeFaction {
         case .germany:

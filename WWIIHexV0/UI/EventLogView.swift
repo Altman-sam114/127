@@ -85,6 +85,7 @@ private enum LogDisplayCategory {
     case diplomacy
     case intelligence
     case electronicWarfare
+    case fireSupport
     case event
 
     init(entry: GameLogEntry) {
@@ -121,6 +122,9 @@ private enum LogDisplayCategory {
             return
         case .electronicWarfare:
             self = .electronicWarfare
+            return
+        case .fireSupport:
+            self = .fireSupport
             return
         case .event:
             break
@@ -168,6 +172,8 @@ private enum LogDisplayCategory {
             return "Intel"
         case .electronicWarfare:
             return "EW"
+        case .fireSupport:
+            return "Fires"
         case .event:
             return "Event"
         }
@@ -197,6 +203,8 @@ private enum LogDisplayCategory {
             return .yellow
         case .electronicWarfare:
             return .pink
+        case .fireSupport:
+            return .orange
         case .event:
             return .secondary
         }

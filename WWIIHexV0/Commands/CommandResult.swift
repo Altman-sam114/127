@@ -8,6 +8,8 @@ enum CommandResultLogKind: String, Codable, Equatable {
     case supply
     case intelligence
     case electronicWarfare
+    case fireSupport
+    case airTasking
     case turn
     case system
 }

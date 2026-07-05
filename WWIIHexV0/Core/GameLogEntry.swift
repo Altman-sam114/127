@@ -12,6 +12,7 @@ enum GameLogCategory: String, Codable, Equatable {
     case diplomacy
     case intelligence
     case electronicWarfare
+    case fireSupport
     case event
 }
 

@@ -13,6 +13,7 @@ struct GameState: Codable, Equatable {
     var economyState: EconomyState
     var diplomacyState: DiplomacyState
     var operationalAwareness: OperationalAwarenessState
+    var fireSupportState: FireSupportState
     var divisions: [Division]
     var victoryState: VictoryState
     var selectedUnitSummary: String?
@@ -33,6 +34,7 @@ struct GameState: Codable, Equatable {
         economyState: EconomyState = .empty,
         diplomacyState: DiplomacyState = .empty,
         operationalAwareness: OperationalAwarenessState = .empty,
+        fireSupportState: FireSupportState = .initial,
         divisions: [Division],
         victoryState: VictoryState,
         selectedUnitSummary: String?,
@@ -52,6 +54,7 @@ struct GameState: Codable, Equatable {
         self.economyState = economyState
         self.diplomacyState = diplomacyState
         self.operationalAwareness = operationalAwareness
+        self.fireSupportState = fireSupportState
         self.divisions = divisions
         self.victoryState = victoryState
         self.selectedUnitSummary = selectedUnitSummary
@@ -151,6 +154,7 @@ struct GameState: Codable, Equatable {
         case economyState
         case diplomacyState
         case operationalAwareness
+        case fireSupportState
         case divisions
         case victoryState
         case selectedUnitSummary
@@ -177,6 +181,7 @@ struct GameState: Codable, Equatable {
                 OperationalAwarenessState.self,
                 forKey: .operationalAwareness
             ) ?? .empty,
+            fireSupportState: try container.decodeIfPresent(FireSupportState.self, forKey: .fireSupportState) ?? .initial,
             divisions: try container.decode([Division].self, forKey: .divisions),
             victoryState: try container.decode(VictoryState.self, forKey: .victoryState),
             selectedUnitSummary: try container.decodeIfPresent(String.self, forKey: .selectedUnitSummary),

@@ -95,7 +95,7 @@ flowchart LR
     ROE["ROE helper<br/>defaultROEStatus<br/>isHostile(to:)"]:::rules
     REGION["RegionDataSet fallback<br/>nil owner/controller -> neutral"]:::rules
     PIPE["命令与规则管线不变<br/>Command / ZoneDirective<br/>WarCommandExecutor / RuleEngine"]:::command
-    TODO["后续 v6.5+<br/>FireMission / AirTasking<br/>通用 phase raw value"]:::risk
+    TODO["后续 v6.6+<br/>现代 AI 指挥链<br/>通用 phase raw value"]:::risk
 
     DATA --> FACTION --> ALIGN --> ROE --> PIPE
     DATA --> REGION --> PIPE
@@ -120,7 +120,7 @@ flowchart LR
     EDITOR["MapEditor 默认资源桥<br/>读写 grey_tide_2030"]:::state
     PIPE["既有运行链<br/>Hex -> Region -> Theater<br/>FrontLine / WarDeployment"]:::rules
     FALLBACK["失败回退<br/>ardennes_v0 + ardennes_v02<br/>GameState.initial"]:::legacy
-    TODO["后续 v6.5+<br/>FireMission / AirTasking<br/>100-220 hex 发布地图"]:::risk
+    TODO["后续 v6.6+<br/>AI 指挥链 / 发布地图<br/>100-220 hex 发布地图"]:::risk
 
     ENTRY --> GREY --> MAP --> PIPE
     GREY --> EDITOR
@@ -148,7 +148,7 @@ flowchart LR
     MODIFIERS["v6.3 首版 modifiers<br/>terrain movement<br/>combat multiplier<br/>supply degradation<br/>reinforcement cost"]:::rules
     UI["玩家可见显示<br/>task force / battery / detachment<br/>tacticDisplayName"]:::display
     LEGACY["loadArdennesDataSet<br/>unit_templates.json<br/>旧 id / fixture 兼容"]:::legacy
-    TODO["后续 v6.5+<br/>FireMission / AirTasking<br/>ammo / fuel / readiness"]:::risk
+    TODO["v6.5 已接抽象火力<br/>后续 ammo / fuel<br/>readiness / signature"]:::risk
 
     ENTRY --> GREY --> MODERN --> DIV --> RULES --> MODIFIERS --> UI
     ENTRY --> LEGACY
@@ -177,7 +177,7 @@ flowchart LR
     AI["AI 摘要<br/>AgentContext.contactSummaries<br/>Zone / Marshal contact strength"]:::agent
     UI["UI 摘要<br/>Region inspector contacts<br/>contact-gated attack highlights"]:::display
     EXEC["WarCommandExecutor<br/>medium+ contact -> internal linkedDivisionId<br/>再交 RuleEngine"]:::rules
-    TODO["后续 v6.5<br/>FireMission / AirTasking<br/>防空压制 / 无人打击"]:::risk
+    FIRES["v6.5 火力接入<br/>FireMission / AirTasking<br/>防空压制 / UAV recon"]:::rules
 
     UNITS --> SENSOR --> CONTACT
     EW --> SENSOR
@@ -186,7 +186,7 @@ flowchart LR
     CONTACT --> AI
     CONTACT --> UI
     CONTACT --> EXEC
-    EXEC --> TODO
+    EXEC --> FIRES
 
     classDef state fill:#e0f2fe,stroke:#0284c7,color:#082f49
     classDef rules fill:#ccfbf1,stroke:#0f766e,color:#052e16
@@ -194,6 +194,33 @@ flowchart LR
     classDef agent fill:#e0e7ff,stroke:#4f46e5,color:#111827
     classDef display fill:#f8f9fb,stroke:#6b7280,color:#111827
     classDef risk fill:#fee2e2,stroke:#b91c1c,color:#111827
+```
+
+## 0.7 v6.5 精确火力、空地协同、无人系统和防空抽象
+
+这张图描述当前 v6.5 第一批实现。火力和空中任务只通过 `Command` 进入规则系统；FireSupport 不占领 hex，只影响 damage、retreat、contact quality、AD suppression 和日志。
+
+```mermaid
+flowchart LR
+    CONTACT["ContactTrack<br/>medium+ target quality<br/>contact / hex / region target"]:::state
+    CMD["Command.fireMission<br/>uavRecon<br/>suppressAirDefense"]:::command
+    VALID["CommandValidator<br/>source asset / ammo / cooldown<br/>target quality / range / ROE<br/>AD / EW / friendly risk"]:::rules
+    FIRE["FireSupportRules<br/>FireMission plan<br/>MunitionClass<br/>FireMissionResult"]:::rules
+    AIR["AirTaskingState<br/>sorties / AD threat<br/>airSuperiority / suppression"]:::state
+    DAMAGE["有限效果<br/>strength damage<br/>retreat / destroyed<br/>no hex occupation"]:::rules
+    LOG["fireSupport 日志<br/>success / degraded / failed / suppressed<br/>risk flags"]:::display
+    GROUND["地面推进<br/>move / attack<br/>仍由 RuleEngine 处理"]:::command
+
+    CONTACT --> CMD --> VALID --> FIRE
+    VALID --> AIR
+    FIRE --> AIR
+    FIRE --> DAMAGE --> LOG
+    FIRE --> GROUND
+
+    classDef state fill:#e0f2fe,stroke:#0284c7,color:#082f49
+    classDef rules fill:#ccfbf1,stroke:#0f766e,color:#052e16
+    classDef command fill:#fae8ff,stroke:#a21caf,color:#2a0a2f
+    classDef display fill:#f8f9fb,stroke:#6b7280,color:#111827
 ```
 
 ## 1. 总主线：从地图数据到游戏行动

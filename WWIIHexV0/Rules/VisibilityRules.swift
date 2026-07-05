@@ -65,6 +65,42 @@ struct VisibilityRules {
         return (next, refreshed)
     }
 
+    func performUAVRecon(
+        divisionId: String,
+        target: HexCoord,
+        confidencePenalty: Int,
+        in state: GameState
+    ) -> (state: GameState, refreshed: Int) {
+        var next = state
+        guard let index = next.divisionIndex(id: divisionId) else {
+            return (next, 0)
+        }
+
+        let observer = next.divisions[index]
+        var awareness = next.operationalAwareness
+        let before = awareness.visibleContacts(for: observer.faction).count
+        awareness.sensorCoverage = makeSensorCoverage(in: next)
+        refreshContacts(
+            for: observer.faction,
+            state: next,
+            focus: target,
+            forcedSource: .uav,
+            awareness: &awareness
+        )
+        degradeFreshUAVContacts(
+            owner: observer.faction,
+            focus: target,
+            penalty: confidencePenalty,
+            awareness: &awareness
+        )
+        next.operationalAwareness = awareness
+        next.divisions[index].hasActed = true
+
+        let after = awareness.visibleContacts(for: observer.faction).count
+        let refreshed = max(0, after - before)
+        return (next, refreshed)
+    }
+
     func applyElectronicWarfare(
         divisionId: String,
         target: HexCoord,
@@ -268,6 +304,35 @@ struct VisibilityRules {
             return .medium
         }
         return .low
+    }
+
+    private func degradeFreshUAVContacts(
+        owner: Faction,
+        focus: HexCoord,
+        penalty: Int,
+        awareness: inout OperationalAwarenessState
+    ) {
+        guard penalty > 0 else {
+            return
+        }
+
+        for key in awareness.contacts.keys {
+            guard var contact = awareness.contacts[key],
+                  contact.ownerFaction == owner,
+                  contact.source == .uav,
+                  contact.ageInTurns == 0,
+                  contact.lastKnownCoord.distance(to: focus) <= 2 else {
+                continue
+            }
+
+            for _ in 0..<penalty {
+                guard let degraded = contact.confidence.degraded else {
+                    break
+                }
+                contact.confidence = degraded
+            }
+            awareness.contacts[key] = contact
+        }
     }
 
     private func estimatedType(for division: Division, confidence: ContactConfidence) -> EstimatedContactType {
