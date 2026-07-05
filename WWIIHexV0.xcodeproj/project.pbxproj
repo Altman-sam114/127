@@ -58,6 +58,7 @@
 		01000000000000000000002C /* UnitNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002E /* UnitNode.swift */; };
 		01000000000000000000002D /* BoardSceneAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002F /* BoardSceneAdapter.swift */; };
 		01000000000000000000002E /* CommandPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000030 /* CommandPanelView.swift */; };
+		01000000000000000000020E /* ModernMissionPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000209 /* ModernMissionPanelView.swift */; };
 		01000000000000000000002F /* AgentPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000031 /* AgentPanelView.swift */; };
 		010000000000000000000030 /* HexLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000032 /* HexLayoutTests.swift */; };
 		010000000000000000000031 /* BoardInteractionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000033 /* BoardInteractionTests.swift */; };
@@ -299,6 +300,7 @@
 		0C0000000000000000000124 /* NewGameButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000067 /* NewGameButton.swift */; };
 		0C0000000000000000000125 /* EventLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000A /* EventLogView.swift */; };
 		0C0000000000000000000126 /* CommandPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000030 /* CommandPanelView.swift */; };
+		0C0000000000000000000209 /* ModernMissionPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000209 /* ModernMissionPanelView.swift */; };
 		0C0000000000000000000127 /* AgentPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000031 /* AgentPanelView.swift */; };
 		0C0000000000000000000128 /* PlatformStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0000000000000000000009 /* PlatformStyles.swift */; };
 		0C0000000000000000000129 /* BoardScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000B /* BoardScene.swift */; };
@@ -474,6 +476,7 @@
 		02000000000000000000002E /* UnitNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitNode.swift; sourceTree = "<group>"; };
 		02000000000000000000002F /* BoardSceneAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardSceneAdapter.swift; sourceTree = "<group>"; };
 		020000000000000000000030 /* CommandPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandPanelView.swift; sourceTree = "<group>"; };
+		020000000000000000000209 /* ModernMissionPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModernMissionPanelView.swift; sourceTree = "<group>"; };
 		020000000000000000000031 /* AgentPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentPanelView.swift; sourceTree = "<group>"; };
 		020000000000000000000032 /* HexLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexLayoutTests.swift; sourceTree = "<group>"; };
 		020000000000000000000033 /* BoardInteractionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardInteractionTests.swift; sourceTree = "<group>"; };
@@ -738,6 +741,7 @@
 				020000000000000000000067 /* NewGameButton.swift */,
 				02000000000000000000000A /* EventLogView.swift */,
 				020000000000000000000030 /* CommandPanelView.swift */,
+				020000000000000000000209 /* ModernMissionPanelView.swift */,
 				0D000000000000000000000B /* GeneralCommandPanelView.swift */,
 				0D000000000000000000000C /* GeneralProfileView.swift */,
 				020000000000000000000031 /* AgentPanelView.swift */,
@@ -1200,6 +1204,7 @@
 				010000000000000000000065 /* NewGameButton.swift in Sources */,
 				01000000000000000000000A /* EventLogView.swift in Sources */,
 				01000000000000000000002E /* CommandPanelView.swift in Sources */,
+				01000000000000000000020E /* ModernMissionPanelView.swift in Sources */,
 				01000000000000000000002F /* AgentPanelView.swift in Sources */,
 				01000000000000000000000B /* BoardScene.swift in Sources */,
 				01000000000000000000000C /* BoardSceneView.swift in Sources */,
@@ -1489,6 +1494,7 @@
 				0C0000000000000000000124 /* NewGameButton.swift in Sources */,
 				0C0000000000000000000125 /* EventLogView.swift in Sources */,
 				0C0000000000000000000126 /* CommandPanelView.swift in Sources */,
+				0C0000000000000000000209 /* ModernMissionPanelView.swift in Sources */,
 				0C0000000000000000000127 /* AgentPanelView.swift in Sources */,
 				0C0000000000000000000128 /* PlatformStyles.swift in Sources */,
 				0C0000000000000000000129 /* BoardScene.swift in Sources */,

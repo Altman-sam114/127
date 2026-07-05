@@ -1,4 +1,4 @@
-# WWIIHexV0 核心流程文档（v6.6 现代 AI 指挥链）
+# WWIIHexV0 核心流程文档（v6.7 现代玩家任务指挥）
 
 > 本文是项目当前核心逻辑的接手文档。目标不是复述历史设计，而是按当前代码真实链路说明：数据如何进入游戏，hex / region / theater / front / deploy 如何派生，主游戏和地图编辑器如何共同维护同一套地图语义，AI / 玩家命令如何落到规则系统。
 
@@ -30,6 +30,12 @@ MapEditor / JSON 数据
   -> CommandExecutor
   -> StrategicStateSynchronizer
   -> UI overlay / 日志 / WarDirectiveRecord
+
+Player Mission Planning
+  -> ModernMissionPanelView
+  -> AppContainer
+  -> Command / ZoneDirective
+  -> RuleEngine / WarCommandExecutor
 ```
 
 最关键的铁律：
@@ -43,6 +49,7 @@ MapEditor / JSON 数据
 - 玩家、AI、后续聊天命令最终都必须经过 `Command` / `ZoneDirective -> WarCommandExecutor -> RuleEngine`，不能直接改 `GameState`。
 - v6.6 默认战争 AI 上游是 `MarshalAgent -> TheaterDirective JSON -> ModernCommandChain advisory JSON -> TheaterDirectiveCompiler`，下游执行收口到 `ZoneDirective -> WarCommandExecutor -> RuleEngine`。
 - `ModernCommandChainPlan` 只做可审计分解、JSON 校验和复盘展示；ISR / Fires / Air / EW / Logistics / Brigade sub-directive 当前不直接执行。
+- v6.7 玩家现代任务 UI 只调用 `AppContainer` 方法；任务最终落成 `Command` 或 `ZoneDirective`，不得在 SwiftUI View 里直接改 `GameState`。
 - 统治者层只作为后续方向预留；当前执行主链路不调用 `RulerAgent`，也不写统治者决策记录。
 
 ## 0.1 云端协作与验证闭环
@@ -371,6 +378,47 @@ ModernCommandChainPlan
 - UI 仍通过现有 AI 面板 raw JSON 查看链路，还没有专门的多 Agent 决策复盘视图。
 - sub-directive 还没有独立调参 UI，也不会直接编译成 FireMission / Recon / EW command。
 - ChiefOfStaff 当前是 deterministic notes / deconflict 说明，未做复杂冲突仲裁搜索。
+
+## 0.9 v6.7 玩家现代指挥 UI、任务计划和人机协同
+
+v6.7 第一批实现把玩家侧从单纯 `Hold / Retreat / Reinforce` 扩展为现代任务面板。它不新增旁路执行器，不在 SwiftUI View 里改状态，而是把任务按钮接到 `AppContainer`，再由现有 `Command` 或 `ZoneDirective` 管线执行。
+
+新增 UI 入口：
+
+```text
+RootGameView
+  -> CompactInfoPanel.mission / "Tasks"
+  -> ModernMissionPanelView
+      - Formation / Target / Supply / Contacts / Ammo 摘要
+      - ISR: Recon Area / UAV Orbit
+      - Fires: Fire Mission / Air Support / SEAD
+      - Maneuver: Assault Objective / Hold / Delay
+      - Sustainment / EW: Resupply / Repair / Jam / Counter-Drone
+```
+
+任务落点：
+
+- `Recon Area` -> `Command.recon` -> `CommandValidator` -> `VisibilityRules.performRecon`。
+- `UAV Orbit` -> `Command.uavRecon` -> `FireSupportRules.validateUAVRecon` / `executeUAVRecon`。
+- `Fire Mission` -> `Command.fireMission`，优先使用选中 hex / region 的 visible contact；否则落到 selected region / hex，仍由 validator 判定目标质量和弹药。
+- `Air Support / SEAD` -> `Command.suppressAirDefense` -> `FireSupportRules.validateSuppressAirDefense` / `executeSuppressAirDefense`。
+- `Jam / Counter-Drone` -> `Command.electronicWarfare` -> `VisibilityRules.applyElectronicWarfare`。
+- `Resupply / Repair` -> `Command.resupply` -> `SupplyRules.applyResupplyRest`。
+- `Assault Objective` -> 既有玩家 `ZoneDirective attack` -> `WarCommandExecutor -> RuleEngine`。
+- `Hold / Delay` -> 既有玩家 `ZoneDirective defense` -> `WarCommandExecutor -> RuleEngine`。
+
+交互边界：
+
+- 面板按钮根据 `AppContainer` 暴露的 `canIssueSelectedModernUnitMission`、`canOrderModernAssaultObjective`、`canOrderModernHoldDelay` 和 observer mode 启用/禁用。
+- 任务拒绝仍通过 `lastCommandMessage`、interaction log 或 `WarDirectiveRecord` 记录具体原因，例如无可行动单位、目标超距、目标质量不足、弹药不足、防空威胁过高、source asset 不合法或 wrong phase。
+- 计划线仍复用 v0.4 `PlayerPlannedOperation` 的 attack / defend 可视化；Recon / Fires / EW 的专用 overlay 留给 v6.8。
+
+仍未完成：
+
+- 没有专门 readiness / fuel / signature 字段；面板当前只显示 supply、visible contact 数和 fire support ammo 摘要。
+- 任务按钮没有单独的 plan edit / preview / cancel 流程；点击即提交到规则系统。
+- Recon / Fires / EW 的地图 overlay 仍未独立绘制。
+- 未做本机 UI 点击或模拟器烟测，等待云端 build 和后续人工授权。
 
 ---
 

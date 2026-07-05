@@ -145,6 +145,7 @@ struct RootGameView: View {
                         strategicState: container.selectedUnitInspectorStrategicState
                     )
                     RegionInspectorView(inspectorState: container.selectedRegionInspectorState)
+                    modernMissionPanel
                     CommandPanelView(
                         selectedDivision: container.selectedDivision,
                         activeFaction: container.gameState.activeFaction,
@@ -172,6 +173,8 @@ struct RootGameView: View {
                         onHoldLine: container.orderSelectedGeneralHoldLine,
                         onAttackRegion: container.orderSelectedGeneralAttackRegion
                     )
+                case .mission:
+                    modernMissionPanel
                 case .region:
                     RegionInspectorView(inspectorState: container.selectedRegionInspectorState)
                 case .general:
@@ -216,10 +219,33 @@ struct RootGameView: View {
             .padding(.bottom, 10)
         }
     }
+
+    private var modernMissionPanel: some View {
+        ModernMissionPanelView(
+            selectedDivision: container.selectedDivision,
+            selectedHex: container.selectedHex,
+            selectedRegion: container.selectedModernMissionRegion,
+            visibleContactCount: container.selectedModernMissionContactCount,
+            fireBudgetSummary: container.playerFireBudgetSummary,
+            canIssueUnitMission: container.canIssueSelectedModernUnitMission,
+            canAssaultObjective: container.canOrderModernAssaultObjective,
+            canHoldDelay: container.canOrderModernHoldDelay,
+            observerModeEnabled: container.observerModeEnabled,
+            onReconArea: container.orderModernReconArea,
+            onUAVOrbit: container.orderModernUAVOrbit,
+            onFireMission: container.orderModernFireMission,
+            onSuppressAirDefense: container.orderModernSuppressAirDefense,
+            onElectronicWarfare: container.orderModernElectronicWarfare,
+            onResupplyRepair: container.orderModernResupplyRepair,
+            onAssaultObjective: container.orderModernAssaultObjective,
+            onHoldDelay: container.orderModernHoldDelay
+        )
+    }
 }
 
 private enum CompactInfoPanel: String, CaseIterable, Identifiable {
     case unit = "Formation"
+    case mission = "Tasks"
     case region = "Sector"
     case general = "Command"
     case log = "Log"

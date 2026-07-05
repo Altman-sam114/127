@@ -200,6 +200,59 @@ final class AppContainer: ObservableObject {
         submit(.resupply(divisionId: division.id))
     }
 
+    func orderModernReconArea() {
+        submitSelectedModernMission("Recon Area") { division, target in
+            .recon(divisionId: division.id, target: target)
+        }
+    }
+
+    func orderModernUAVOrbit() {
+        submitSelectedModernMission("UAV Orbit") { division, target in
+            .uavRecon(divisionId: division.id, target: target)
+        }
+    }
+
+    func orderModernFireMission() {
+        guard let division = selectedActionDivision else {
+            appendInteractionEvent("Fire mission rejected: no active allied unit selected.")
+            return
+        }
+        guard let target = selectedFireMissionTarget() else {
+            appendInteractionEvent("Fire mission rejected: select a target hex, sector, or visible contact.")
+            return
+        }
+
+        submit(.fireMission(
+            issuerId: division.id,
+            target: target,
+            munitionClass: preferredMunitionClass(for: division)
+        ))
+    }
+
+    func orderModernSuppressAirDefense() {
+        submitSelectedModernMission("Air Support / SEAD") { division, target in
+            .suppressAirDefense(divisionId: division.id, target: target)
+        }
+    }
+
+    func orderModernElectronicWarfare() {
+        submitSelectedModernMission("Jam / Counter-Drone") { division, target in
+            .electronicWarfare(divisionId: division.id, target: target)
+        }
+    }
+
+    func orderModernResupplyRepair() {
+        resupplySelected()
+    }
+
+    func orderModernAssaultObjective() {
+        orderSelectedGeneralAttackRegion()
+    }
+
+    func orderModernHoldDelay() {
+        orderSelectedGeneralHoldLine()
+    }
+
     func orderSelectedGeneralHoldLine() {
         guard let zone = selectedGeneralCommandZone else {
             appendInteractionEvent("General order rejected: no allied front zone selected.")
@@ -387,6 +440,31 @@ final class AppContainer: ObservableObject {
         selectedActionDivision != nil
     }
 
+    var selectedModernMissionRegion: RegionNode? {
+        selectedRegionId.flatMap { gameState.map.region(id: $0) }
+    }
+
+    var selectedModernMissionContactCount: Int {
+        selectedRegionInspectorState?.visibleContacts.count ?? 0
+    }
+
+    var playerFireBudgetSummary: String {
+        let budget = gameState.fireSupportState.budget(for: playerFaction.alignment)
+        return "T\(budget.tubeArtillery) R\(budget.rocket) P\(budget.precision) L\(budget.loitering)"
+    }
+
+    var canIssueSelectedModernUnitMission: Bool {
+        selectedActionDivision != nil
+    }
+
+    var canOrderModernAssaultObjective: Bool {
+        canOrderSelectedGeneralAttackRegion
+    }
+
+    var canOrderModernHoldDelay: Bool {
+        canOrderSelectedGeneralHoldLine
+    }
+
     private var selectedActionDivision: Division? {
         guard !observerModeEnabled else {
             return nil
@@ -536,6 +614,74 @@ final class AppContainer: ObservableObject {
         }
 
         return zone.generalAssignment?.hqRegionId ?? zone.regionIds.first
+    }
+
+    private func submitSelectedModernMission(
+        _ missionName: String,
+        command: (Division, HexCoord) -> Command
+    ) {
+        guard let division = selectedActionDivision else {
+            appendInteractionEvent("\(missionName) rejected: no active allied unit selected.")
+            return
+        }
+        guard let target = selectedMissionTargetHex() else {
+            appendInteractionEvent("\(missionName) rejected: select a target hex or sector.")
+            return
+        }
+
+        submit(command(division, target))
+    }
+
+    private func selectedMissionTargetHex() -> HexCoord? {
+        if let selectedHex {
+            return selectedHex
+        }
+
+        if let selectedRegionId,
+           let hex = gameState.map.representativeHex(for: selectedRegionId) {
+            return hex
+        }
+
+        return selectedDivision?.coord
+    }
+
+    private func selectedFireMissionTarget() -> FireMissionTarget? {
+        if let contact = selectedMissionContact() {
+            return .contact(id: contact.id)
+        }
+        if let selectedRegionId {
+            return .region(selectedRegionId)
+        }
+        if let selectedHex {
+            return .hex(selectedHex)
+        }
+        return nil
+    }
+
+    private func selectedMissionContact() -> ContactTrack? {
+        let contacts = gameState.operationalAwareness.visibleContacts(for: playerFaction)
+        if let selectedHex,
+           let contact = contacts.first(where: { $0.lastKnownCoord == selectedHex }) {
+            return contact
+        }
+        if let selectedRegionId,
+           let contact = contacts.first(where: { gameState.map.region(for: $0.lastKnownCoord) == selectedRegionId }) {
+            return contact
+        }
+        return contacts.first
+    }
+
+    private func preferredMunitionClass(for division: Division) -> MunitionClass {
+        if division.componentWeight(where: { $0 == .loiteringMunition || $0 == .uav }) >= 0.10 {
+            return .loitering
+        }
+        if division.componentWeight(where: { $0 == .rocketArtillery }) >= 0.20 {
+            return .rocket
+        }
+        if division.componentWeight(where: { $0 == .artillery }) >= 0.20 || division.isArtillery {
+            return .tubeArtillery
+        }
+        return .precision
     }
 
     private func logicalZoneId(for divisionId: String, in deploymentState: WarDeploymentState) -> FrontZoneId? {

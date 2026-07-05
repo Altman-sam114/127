@@ -95,7 +95,7 @@ flowchart LR
     ROE["ROE helper<br/>defaultROEStatus<br/>isHostile(to:)"]:::rules
     REGION["RegionDataSet fallback<br/>nil owner/controller -> neutral"]:::rules
     PIPE["命令与规则管线不变<br/>Command / ZoneDirective<br/>WarCommandExecutor / RuleEngine"]:::command
-    TODO["后续 v6.7+<br/>玩家现代指挥 UI<br/>通用 phase raw value"]:::risk
+    TODO["后续 v6.8+<br/>发布级 C2 UI<br/>通用 phase raw value"]:::risk
 
     DATA --> FACTION --> ALIGN --> ROE --> PIPE
     DATA --> REGION --> PIPE
@@ -120,7 +120,7 @@ flowchart LR
     EDITOR["MapEditor 默认资源桥<br/>读写 grey_tide_2030"]:::state
     PIPE["既有运行链<br/>Hex -> Region -> Theater<br/>FrontLine / WarDeployment"]:::rules
     FALLBACK["失败回退<br/>ardennes_v0 + ardennes_v02<br/>GameState.initial"]:::legacy
-    TODO["后续 v6.7+<br/>玩家现代指挥 UI / 发布地图<br/>100-220 hex 发布地图"]:::risk
+    TODO["后续 v6.8+<br/>发布级 C2 UI / 发布地图<br/>100-220 hex 发布地图"]:::risk
 
     ENTRY --> GREY --> MAP --> PIPE
     GREY --> EDITOR
@@ -255,6 +255,35 @@ flowchart LR
     classDef stop fill:#fee2e2,stroke:#b91c1c,color:#111827
 ```
 
+## 0.9 v6.7 玩家现代指挥 UI 和任务计划
+
+这张图描述当前 v6.7 第一批实现。玩家通过任务面板发起现代任务，但 SwiftUI 只调用 `AppContainer`，最终仍进入 `Command` / `ZoneDirective` 与规则系统。
+
+```mermaid
+flowchart LR
+    UI["ModernMissionPanelView<br/>Tasks tab<br/>8 类任务按钮"]:::display
+    APP["AppContainer<br/>orderModern... 方法<br/>选择单位 / hex / region / contact"]:::app
+    CMD["Command<br/>recon / uavRecon / fireMission<br/>suppressAirDefense / electronicWarfare / resupply"]:::command
+    DIR["ZoneDirective<br/>Assault Objective<br/>Hold / Delay"]:::command
+    VALID["CommandValidator<br/>phase / faction / range<br/>target quality / ammo / AD / EW"]:::rules
+    WCE["WarCommandExecutor<br/>玩家宏观 directive<br/>生成具体 Command"]:::rules
+    RE["RuleEngine<br/>CommandExecutor<br/>Visibility / FireSupport / Supply"]:::rules
+    LOG["lastCommandMessage<br/>interaction log<br/>WarDirectiveRecord"]:::display
+    PLAN["PlayerPlannedOperation<br/>attack / defend 计划线"]:::state
+
+    UI --> APP
+    APP --> CMD --> VALID --> RE --> LOG
+    APP --> DIR --> WCE --> RE
+    DIR --> PLAN
+    WCE --> LOG
+
+    classDef display fill:#f8f9fb,stroke:#6b7280,color:#111827
+    classDef app fill:#e0e7ff,stroke:#4f46e5,color:#111827
+    classDef command fill:#fae8ff,stroke:#a21caf,color:#2a0a2f
+    classDef rules fill:#ccfbf1,stroke:#0f766e,color:#052e16
+    classDef state fill:#e0f2fe,stroke:#0284c7,color:#082f49
+```
+
 ## 1. 总主线：从地图数据到游戏行动
 
 这张图看全局。左上是地图数据怎么进入游戏；中间是 hex、region、theater、front、deploy 的分层关系；右侧是玩家/AI 命令如何统一进入规则系统；底部是 UI 和日志怎么读取结果。
@@ -274,7 +303,8 @@ flowchart TD
     FRONT["前线层<br/>FrontLine / FrontSegment<br/>按双方动态战区的真实相邻 hex 生成"]:::derived
     DEPLOY["部署层<br/>WarDeploymentState<br/>用 hexToFrontZone 把单位分成前线/纵深/驻军"]:::derived
     ECO["经济总账<br/>EconomyState / EconomyRules<br/>收入、维护费、生产队列、自动补员"]:::economy
-    PLAYER["玩家输入<br/>点击地图、移动、攻击、结束回合"]:::input
+    PLAYER["玩家输入<br/>点击地图、任务面板、移动、攻击、结束回合"]:::input
+    MISSION["玩家现代任务面板<br/>ModernMissionPanelView<br/>Recon / UAV / Fire / SEAD / EW / Assault / Hold / Resupply"]:::command
     AI["AI 元帅系统<br/>MarshalAgent + TheaterDirective JSON<br/>先做大战役级规划"]:::input
     DEC["元帅 JSON 解码<br/>TheaterDirectiveDecoder<br/>提取 fenced JSON、校验 id 与 schema"]:::command
     MCHAIN["现代指挥链校验<br/>ModernCommandChainPlan<br/>国家/联合/ISR/火力/空中/EW/后勤/旅级 advisory JSON"]:::command
@@ -300,7 +330,9 @@ flowchart TD
     H2T --> FRONT --> DEPLOY
     GS --> ECO
 
+    PLAYER --> MISSION --> CMD
     PLAYER --> CMD
+    MISSION --> ZD
     AI --> DEC --> MCHAIN --> COMP --> ZD --> WCE --> CMD
     DEC --> COMP
     CMD --> RE --> HEX
