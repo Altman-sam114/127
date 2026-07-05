@@ -7,115 +7,2550 @@
     "redForce",
     "neutral"
   ],
-  "maxTurns": 18,
+  "maxTurns": 20,
   "initialTurn": 1,
   "initialPhase": "alliedPlayer",
   "playerFaction": "blueForce",
   "aiFaction": "redForce",
   "dataNotes": [
-    "v6.2 seed scenario for the modern migration.",
-    "Uses existing terrain schema while replacing the default campaign identity.",
-    "v6.3 routes default formations through modern_unit_templates.json for modern components and logistics-aware modifiers.",
-    "ISR, EW, precision fires, air tasking, and contact tracks remain staged for later v6.x work."
+    "v6.10 release-candidate scale scenario for the modern migration.",
+    "Expands Grey Tide to 120 hexes, 30 regions, and six operational sectors.",
+    "Uses existing terrain and region schema while adding modern key nodes for ISR, fires, air defense, logistics, and civilian buffers.",
+    "Modern victory is handled by VictoryRules for grey_tide_2030; JSON victoryConditions document the intended objective gates."
   ],
   "map": {
-    "width": 10,
-    "height": 6,
+    "width": 12,
+    "height": 10,
     "coordinateSystem": "axial-q-r",
     "isSparse": false,
     "tiles": [
-      {"q":0,"r":0,"terrain":"plain","hasRoad":true,"riverEdges":[],"controller":"blueForce","cityName":null,"fortressName":null,"isSupplySource":true,"supplyFaction":"blueForce","objectiveId":null,"regionId":"blue_landing_corridor"},
-      {"q":0,"r":1,"terrain":"plain","hasRoad":true,"riverEdges":[],"controller":"blueForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"blue_landing_corridor"},
-      {"q":0,"r":2,"terrain":"plain","hasRoad":false,"riverEdges":[],"controller":"blueForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"blue_landing_corridor"},
-      {"q":0,"r":3,"terrain":"hill","hasRoad":false,"riverEdges":[],"controller":"blueForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"northern_pass"},
-      {"q":0,"r":4,"terrain":"hill","hasRoad":true,"riverEdges":[],"controller":"blueForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"northern_pass"},
-      {"q":0,"r":5,"terrain":"forest","hasRoad":false,"riverEdges":[],"controller":"blueForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"northern_pass"},
-      {"q":1,"r":0,"terrain":"plain","hasRoad":true,"riverEdges":[],"controller":"blueForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"blue_landing_corridor"},
-      {"q":1,"r":1,"terrain":"plain","hasRoad":true,"riverEdges":[],"controller":"blueForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"blue_landing_corridor"},
-      {"q":1,"r":2,"terrain":"plain","hasRoad":false,"riverEdges":[],"controller":"blueForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"blue_landing_corridor"},
-      {"q":1,"r":3,"terrain":"hill","hasRoad":false,"riverEdges":[],"controller":"blueForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"northern_pass"},
-      {"q":1,"r":4,"terrain":"hill","hasRoad":true,"riverEdges":[],"controller":"blueForce","cityName":"Northern Pass","fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":"obj_northern_pass","regionId":"northern_pass"},
-      {"q":1,"r":5,"terrain":"forest","hasRoad":false,"riverEdges":[],"controller":"blueForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"northern_pass"},
-      {"q":2,"r":0,"terrain":"plain","hasRoad":true,"riverEdges":[],"controller":"blueForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"east_airport"},
-      {"q":2,"r":1,"terrain":"city","hasRoad":true,"riverEdges":[],"controller":"blueForce","cityName":"East Airport","fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":"obj_east_airport","regionId":"east_airport"},
-      {"q":2,"r":2,"terrain":"plain","hasRoad":true,"riverEdges":[],"controller":"blueForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"east_airport"},
-      {"q":2,"r":3,"terrain":"plain","hasRoad":true,"riverEdges":["east"],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"river_bridge"},
-      {"q":2,"r":4,"terrain":"plain","hasRoad":true,"riverEdges":["east"],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"river_bridge"},
-      {"q":2,"r":5,"terrain":"hill","hasRoad":false,"riverEdges":[],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"river_bridge"},
-      {"q":3,"r":0,"terrain":"plain","hasRoad":true,"riverEdges":[],"controller":"blueForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"east_airport"},
-      {"q":3,"r":1,"terrain":"plain","hasRoad":true,"riverEdges":[],"controller":"blueForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"east_airport"},
-      {"q":3,"r":2,"terrain":"plain","hasRoad":true,"riverEdges":[],"controller":"blueForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"east_airport"},
-      {"q":3,"r":3,"terrain":"plain","hasRoad":true,"riverEdges":["west"],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"river_bridge"},
-      {"q":3,"r":4,"terrain":"city","hasRoad":true,"riverEdges":["west"],"controller":"neutral","cityName":"River Bridge","fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":"obj_river_bridge","regionId":"river_bridge"},
-      {"q":3,"r":5,"terrain":"hill","hasRoad":false,"riverEdges":[],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"river_bridge"},
-      {"q":4,"r":0,"terrain":"plain","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"industrial_hub"},
-      {"q":4,"r":1,"terrain":"city","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":"Industrial Hub","fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":"obj_industrial_hub","regionId":"industrial_hub"},
-      {"q":4,"r":2,"terrain":"city","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"industrial_hub"},
-      {"q":4,"r":3,"terrain":"city","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"urban_core"},
-      {"q":4,"r":4,"terrain":"city","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"urban_core"},
-      {"q":4,"r":5,"terrain":"plain","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"urban_core"},
-      {"q":5,"r":0,"terrain":"plain","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"industrial_hub"},
-      {"q":5,"r":1,"terrain":"city","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"industrial_hub"},
-      {"q":5,"r":2,"terrain":"fortress","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":null,"fortressName":"Hardened Yard","isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"industrial_hub"},
-      {"q":5,"r":3,"terrain":"city","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"urban_core"},
-      {"q":5,"r":4,"terrain":"city","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":"Urban Core","fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"urban_core"},
-      {"q":5,"r":5,"terrain":"plain","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"urban_core"},
-      {"q":6,"r":0,"terrain":"plain","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"harbor_terminal"},
-      {"q":6,"r":1,"terrain":"city","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":"Harbor Terminal","fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":"obj_harbor_terminal","regionId":"harbor_terminal"},
-      {"q":6,"r":2,"terrain":"plain","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"harbor_terminal"},
-      {"q":6,"r":3,"terrain":"hill","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"comms_center"},
-      {"q":6,"r":4,"terrain":"fortress","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":"Comms Center","fortressName":"C2 Relay","isSupplySource":false,"supplyFaction":null,"objectiveId":"obj_comms_center","regionId":"comms_center"},
-      {"q":6,"r":5,"terrain":"hill","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"comms_center"},
-      {"q":7,"r":0,"terrain":"plain","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"harbor_terminal"},
-      {"q":7,"r":1,"terrain":"city","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"harbor_terminal"},
-      {"q":7,"r":2,"terrain":"plain","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"harbor_terminal"},
-      {"q":7,"r":3,"terrain":"hill","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"comms_center"},
-      {"q":7,"r":4,"terrain":"hill","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"comms_center"},
-      {"q":7,"r":5,"terrain":"forest","hasRoad":true,"riverEdges":[],"controller":"neutral","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"comms_center"},
-      {"q":8,"r":0,"terrain":"hill","hasRoad":false,"riverEdges":[],"controller":"redForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"radar_ridge"},
-      {"q":8,"r":1,"terrain":"fortress","hasRoad":true,"riverEdges":[],"controller":"redForce","cityName":"Radar Ridge","fortressName":"Radar Site","isSupplySource":false,"supplyFaction":null,"objectiveId":"obj_radar_ridge","regionId":"radar_ridge"},
-      {"q":8,"r":2,"terrain":"hill","hasRoad":true,"riverEdges":[],"controller":"redForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"radar_ridge"},
-      {"q":8,"r":3,"terrain":"plain","hasRoad":true,"riverEdges":[],"controller":"redForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"red_logistics_gate"},
-      {"q":8,"r":4,"terrain":"plain","hasRoad":true,"riverEdges":[],"controller":"redForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"red_logistics_gate"},
-      {"q":8,"r":5,"terrain":"forest","hasRoad":true,"riverEdges":[],"controller":"redForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"red_logistics_gate"},
-      {"q":9,"r":0,"terrain":"hill","hasRoad":false,"riverEdges":[],"controller":"redForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"radar_ridge"},
-      {"q":9,"r":1,"terrain":"hill","hasRoad":true,"riverEdges":[],"controller":"redForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"radar_ridge"},
-      {"q":9,"r":2,"terrain":"mountain","hasRoad":false,"riverEdges":[],"controller":"redForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"radar_ridge"},
-      {"q":9,"r":3,"terrain":"plain","hasRoad":true,"riverEdges":[],"controller":"redForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"red_logistics_gate"},
-      {"q":9,"r":4,"terrain":"plain","hasRoad":true,"riverEdges":[],"controller":"redForce","cityName":null,"fortressName":null,"isSupplySource":false,"supplyFaction":null,"objectiveId":null,"regionId":"red_logistics_gate"},
-      {"q":9,"r":5,"terrain":"plain","hasRoad":true,"riverEdges":[],"controller":"redForce","cityName":null,"fortressName":null,"isSupplySource":true,"supplyFaction":"redForce","objectiveId":null,"regionId":"red_logistics_gate"}
+      {
+        "q": 0,
+        "r": 0,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": true,
+        "supplyFaction": "blueForce",
+        "objectiveId": null,
+        "regionId": "blue_beachhead"
+      },
+      {
+        "q": 0,
+        "r": 1,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "blue_beachhead"
+      },
+      {
+        "q": 0,
+        "r": 2,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "blue_landing_corridor"
+      },
+      {
+        "q": 0,
+        "r": 3,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "blue_landing_corridor"
+      },
+      {
+        "q": 0,
+        "r": 4,
+        "terrain": "hill",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "northern_pass"
+      },
+      {
+        "q": 0,
+        "r": 5,
+        "terrain": "hill",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "northern_pass"
+      },
+      {
+        "q": 0,
+        "r": 6,
+        "terrain": "forest",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "western_hills"
+      },
+      {
+        "q": 0,
+        "r": 7,
+        "terrain": "hill",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "western_hills"
+      },
+      {
+        "q": 0,
+        "r": 8,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": true,
+        "supplyFaction": "blueForce",
+        "objectiveId": null,
+        "regionId": "blue_support_area"
+      },
+      {
+        "q": 0,
+        "r": 9,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "blue_support_area"
+      },
+      {
+        "q": 1,
+        "r": 0,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "blue_beachhead"
+      },
+      {
+        "q": 1,
+        "r": 1,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": "Blue Logistics Beachhead",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_blue_beachhead",
+        "regionId": "blue_beachhead"
+      },
+      {
+        "q": 1,
+        "r": 2,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "blue_landing_corridor"
+      },
+      {
+        "q": 1,
+        "r": 3,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "blue_landing_corridor"
+      },
+      {
+        "q": 1,
+        "r": 4,
+        "terrain": "hill",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "northern_pass"
+      },
+      {
+        "q": 1,
+        "r": 5,
+        "terrain": "forest",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": "Northern Pass",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_northern_pass",
+        "regionId": "northern_pass"
+      },
+      {
+        "q": 1,
+        "r": 6,
+        "terrain": "hill",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "western_hills"
+      },
+      {
+        "q": 1,
+        "r": 7,
+        "terrain": "hill",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "western_hills"
+      },
+      {
+        "q": 1,
+        "r": 8,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "blue_support_area"
+      },
+      {
+        "q": 1,
+        "r": 9,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": "Blue Support Area",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_blue_support_area",
+        "regionId": "blue_support_area"
+      },
+      {
+        "q": 2,
+        "r": 0,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "east_airport"
+      },
+      {
+        "q": 2,
+        "r": 1,
+        "terrain": "city",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "east_airport"
+      },
+      {
+        "q": 2,
+        "r": 2,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "logistics_yard"
+      },
+      {
+        "q": 2,
+        "r": 3,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "logistics_yard"
+      },
+      {
+        "q": 2,
+        "r": 4,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "river_bridge"
+      },
+      {
+        "q": 2,
+        "r": 5,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "river_bridge"
+      },
+      {
+        "q": 2,
+        "r": 6,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "river_ford"
+      },
+      {
+        "q": 2,
+        "r": 7,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "river_ford"
+      },
+      {
+        "q": 2,
+        "r": 8,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "southern_causeway"
+      },
+      {
+        "q": 2,
+        "r": 9,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "southern_causeway"
+      },
+      {
+        "q": 3,
+        "r": 0,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "east_airport"
+      },
+      {
+        "q": 3,
+        "r": 1,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "blueForce",
+        "cityName": "East Airport",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_east_airport",
+        "regionId": "east_airport"
+      },
+      {
+        "q": 3,
+        "r": 2,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [
+          "east"
+        ],
+        "controller": "blueForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "logistics_yard"
+      },
+      {
+        "q": 3,
+        "r": 3,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [
+          "east"
+        ],
+        "controller": "blueForce",
+        "cityName": "Logistics Yard",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_logistics_yard",
+        "regionId": "logistics_yard"
+      },
+      {
+        "q": 3,
+        "r": 4,
+        "terrain": "city",
+        "hasRoad": true,
+        "riverEdges": [
+          "east"
+        ],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "river_bridge"
+      },
+      {
+        "q": 3,
+        "r": 5,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [
+          "east"
+        ],
+        "controller": "neutral",
+        "cityName": "River Bridge",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_river_bridge",
+        "regionId": "river_bridge"
+      },
+      {
+        "q": 3,
+        "r": 6,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [
+          "east"
+        ],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "river_ford"
+      },
+      {
+        "q": 3,
+        "r": 7,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [
+          "east"
+        ],
+        "controller": "neutral",
+        "cityName": "River Ford",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_river_ford",
+        "regionId": "river_ford"
+      },
+      {
+        "q": 3,
+        "r": 8,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "southern_causeway"
+      },
+      {
+        "q": 3,
+        "r": 9,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": "Southern Causeway",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_southern_causeway",
+        "regionId": "southern_causeway"
+      },
+      {
+        "q": 4,
+        "r": 0,
+        "terrain": "city",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "industrial_hub"
+      },
+      {
+        "q": 4,
+        "r": 1,
+        "terrain": "city",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "industrial_hub"
+      },
+      {
+        "q": 4,
+        "r": 2,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [
+          "west"
+        ],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "urban_core"
+      },
+      {
+        "q": 4,
+        "r": 3,
+        "terrain": "city",
+        "hasRoad": false,
+        "riverEdges": [
+          "west"
+        ],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "urban_core"
+      },
+      {
+        "q": 4,
+        "r": 4,
+        "terrain": "city",
+        "hasRoad": true,
+        "riverEdges": [
+          "west"
+        ],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "civic_center"
+      },
+      {
+        "q": 4,
+        "r": 5,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [
+          "west"
+        ],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "civic_center"
+      },
+      {
+        "q": 4,
+        "r": 6,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [
+          "west"
+        ],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "rail_junction"
+      },
+      {
+        "q": 4,
+        "r": 7,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [
+          "west"
+        ],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "rail_junction"
+      },
+      {
+        "q": 4,
+        "r": 8,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "civilian_evac_zone"
+      },
+      {
+        "q": 4,
+        "r": 9,
+        "terrain": "city",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "civilian_evac_zone"
+      },
+      {
+        "q": 5,
+        "r": 0,
+        "terrain": "city",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "industrial_hub"
+      },
+      {
+        "q": 5,
+        "r": 1,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": "Industrial Hub",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_industrial_hub",
+        "regionId": "industrial_hub"
+      },
+      {
+        "q": 5,
+        "r": 2,
+        "terrain": "city",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "urban_core"
+      },
+      {
+        "q": 5,
+        "r": 3,
+        "terrain": "city",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": "Urban Core",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_urban_core",
+        "regionId": "urban_core"
+      },
+      {
+        "q": 5,
+        "r": 4,
+        "terrain": "city",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "civic_center"
+      },
+      {
+        "q": 5,
+        "r": 5,
+        "terrain": "city",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": "Civic Center",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_civic_center",
+        "regionId": "civic_center"
+      },
+      {
+        "q": 5,
+        "r": 6,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "rail_junction"
+      },
+      {
+        "q": 5,
+        "r": 7,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": "Rail Junction",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_rail_junction",
+        "regionId": "rail_junction"
+      },
+      {
+        "q": 5,
+        "r": 8,
+        "terrain": "city",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "civilian_evac_zone"
+      },
+      {
+        "q": 5,
+        "r": 9,
+        "terrain": "city",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": "Civilian Evac Zone",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_civilian_evac_zone",
+        "regionId": "civilian_evac_zone"
+      },
+      {
+        "q": 6,
+        "r": 0,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "harbor_terminal"
+      },
+      {
+        "q": 6,
+        "r": 1,
+        "terrain": "city",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "harbor_terminal"
+      },
+      {
+        "q": 6,
+        "r": 2,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "port_approach"
+      },
+      {
+        "q": 6,
+        "r": 3,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "port_approach"
+      },
+      {
+        "q": 6,
+        "r": 4,
+        "terrain": "hill",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "comms_center"
+      },
+      {
+        "q": 6,
+        "r": 5,
+        "terrain": "hill",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "comms_center"
+      },
+      {
+        "q": 6,
+        "r": 6,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "refinery_district"
+      },
+      {
+        "q": 6,
+        "r": 7,
+        "terrain": "city",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "refinery_district"
+      },
+      {
+        "q": 6,
+        "r": 8,
+        "terrain": "hill",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "fuel_depot"
+      },
+      {
+        "q": 6,
+        "r": 9,
+        "terrain": "fortress",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": "Hardened Position",
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "fuel_depot"
+      },
+      {
+        "q": 7,
+        "r": 0,
+        "terrain": "city",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "harbor_terminal"
+      },
+      {
+        "q": 7,
+        "r": 1,
+        "terrain": "city",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": "Harbor Terminal",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_harbor_terminal",
+        "regionId": "harbor_terminal"
+      },
+      {
+        "q": 7,
+        "r": 2,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "port_approach"
+      },
+      {
+        "q": 7,
+        "r": 3,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "port_approach"
+      },
+      {
+        "q": 7,
+        "r": 4,
+        "terrain": "fortress",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": "C2 Relay",
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "comms_center"
+      },
+      {
+        "q": 7,
+        "r": 5,
+        "terrain": "forest",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": "Comms Center",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_comms_center",
+        "regionId": "comms_center"
+      },
+      {
+        "q": 7,
+        "r": 6,
+        "terrain": "city",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "refinery_district"
+      },
+      {
+        "q": 7,
+        "r": 7,
+        "terrain": "city",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": "Refinery District",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_refinery_district",
+        "regionId": "refinery_district"
+      },
+      {
+        "q": 7,
+        "r": 8,
+        "terrain": "fortress",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": null,
+        "fortressName": "Fuel Storage Bunker",
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "fuel_depot"
+      },
+      {
+        "q": 7,
+        "r": 9,
+        "terrain": "hill",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "neutral",
+        "cityName": "Fuel Depot",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_fuel_depot",
+        "regionId": "fuel_depot"
+      },
+      {
+        "q": 8,
+        "r": 0,
+        "terrain": "hill",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "coastal_battery"
+      },
+      {
+        "q": 8,
+        "r": 1,
+        "terrain": "fortress",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": "Coastal Fire Control",
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "coastal_battery"
+      },
+      {
+        "q": 8,
+        "r": 2,
+        "terrain": "hill",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "radar_ridge"
+      },
+      {
+        "q": 8,
+        "r": 3,
+        "terrain": "hill",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "radar_ridge"
+      },
+      {
+        "q": 8,
+        "r": 4,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "drone_corridor_east"
+      },
+      {
+        "q": 8,
+        "r": 5,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "drone_corridor_east"
+      },
+      {
+        "q": 8,
+        "r": 6,
+        "terrain": "mountain",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "mountain_radar_spur"
+      },
+      {
+        "q": 8,
+        "r": 7,
+        "terrain": "hill",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "mountain_radar_spur"
+      },
+      {
+        "q": 8,
+        "r": 8,
+        "terrain": "hill",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "highland_pass"
+      },
+      {
+        "q": 8,
+        "r": 9,
+        "terrain": "hill",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "highland_pass"
+      },
+      {
+        "q": 9,
+        "r": 0,
+        "terrain": "fortress",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": "Hardened Position",
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "coastal_battery"
+      },
+      {
+        "q": 9,
+        "r": 1,
+        "terrain": "hill",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": "Coastal Battery",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_coastal_battery",
+        "regionId": "coastal_battery"
+      },
+      {
+        "q": 9,
+        "r": 2,
+        "terrain": "fortress",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": "Air Defense Site",
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "radar_ridge"
+      },
+      {
+        "q": 9,
+        "r": 3,
+        "terrain": "forest",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": "Radar Ridge",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_radar_ridge",
+        "regionId": "radar_ridge"
+      },
+      {
+        "q": 9,
+        "r": 4,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "drone_corridor_east"
+      },
+      {
+        "q": 9,
+        "r": 5,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "drone_corridor_east"
+      },
+      {
+        "q": 9,
+        "r": 6,
+        "terrain": "hill",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "mountain_radar_spur"
+      },
+      {
+        "q": 9,
+        "r": 7,
+        "terrain": "mountain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": "Radar Spur",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_mountain_radar_spur",
+        "regionId": "mountain_radar_spur"
+      },
+      {
+        "q": 9,
+        "r": 8,
+        "terrain": "hill",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "highland_pass"
+      },
+      {
+        "q": 9,
+        "r": 9,
+        "terrain": "hill",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": "Highland Pass",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_highland_pass",
+        "regionId": "highland_pass"
+      },
+      {
+        "q": 10,
+        "r": 0,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "red_coastal_gate"
+      },
+      {
+        "q": 10,
+        "r": 1,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "red_coastal_gate"
+      },
+      {
+        "q": 10,
+        "r": 2,
+        "terrain": "hill",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "red_air_defense_belt"
+      },
+      {
+        "q": 10,
+        "r": 3,
+        "terrain": "fortress",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": "Hardened Position",
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "red_air_defense_belt"
+      },
+      {
+        "q": 10,
+        "r": 4,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "red_logistics_gate"
+      },
+      {
+        "q": 10,
+        "r": 5,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "red_logistics_gate"
+      },
+      {
+        "q": 10,
+        "r": 6,
+        "terrain": "forest",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "red_reserve_area"
+      },
+      {
+        "q": 10,
+        "r": 7,
+        "terrain": "hill",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "red_reserve_area"
+      },
+      {
+        "q": 10,
+        "r": 8,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "red_supply_entry"
+      },
+      {
+        "q": 10,
+        "r": 9,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "red_supply_entry"
+      },
+      {
+        "q": 11,
+        "r": 0,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "red_coastal_gate"
+      },
+      {
+        "q": 11,
+        "r": 1,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": "Red Coastal Gate",
+        "fortressName": null,
+        "isSupplySource": true,
+        "supplyFaction": "redForce",
+        "objectiveId": "obj_red_coastal_gate",
+        "regionId": "red_coastal_gate"
+      },
+      {
+        "q": 11,
+        "r": 2,
+        "terrain": "fortress",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": "Hardened Position",
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "red_air_defense_belt"
+      },
+      {
+        "q": 11,
+        "r": 3,
+        "terrain": "hill",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": "Air Defense Belt",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_red_air_defense_belt",
+        "regionId": "red_air_defense_belt"
+      },
+      {
+        "q": 11,
+        "r": 4,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "red_logistics_gate"
+      },
+      {
+        "q": 11,
+        "r": 5,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": "Red Logistics Gate",
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": "obj_red_logistics_gate",
+        "regionId": "red_logistics_gate"
+      },
+      {
+        "q": 11,
+        "r": 6,
+        "terrain": "hill",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "red_reserve_area"
+      },
+      {
+        "q": 11,
+        "r": 7,
+        "terrain": "forest",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "red_reserve_area"
+      },
+      {
+        "q": 11,
+        "r": 8,
+        "terrain": "plain",
+        "hasRoad": false,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": null,
+        "fortressName": null,
+        "isSupplySource": false,
+        "supplyFaction": null,
+        "objectiveId": null,
+        "regionId": "red_supply_entry"
+      },
+      {
+        "q": 11,
+        "r": 9,
+        "terrain": "plain",
+        "hasRoad": true,
+        "riverEdges": [],
+        "controller": "redForce",
+        "cityName": "Red Supply Entry",
+        "fortressName": null,
+        "isSupplySource": true,
+        "supplyFaction": "redForce",
+        "objectiveId": "obj_red_supply_entry",
+        "regionId": "red_supply_entry"
+      }
     ]
   },
   "keyLocations": [
-    {"id":"loc_blue_entry","name":"Blue Logistics Beachhead","kind":"supply","coord":{"q":0,"r":0},"faction":"blueForce","objectiveId":null},
-    {"id":"loc_east_airport","name":"East Airport","kind":"airport","coord":{"q":2,"r":1},"faction":"blueForce","objectiveId":"obj_east_airport"},
-    {"id":"loc_river_bridge","name":"River Bridge","kind":"bridge","coord":{"q":3,"r":4},"faction":"neutral","objectiveId":"obj_river_bridge"},
-    {"id":"loc_industrial_hub","name":"Industrial Hub","kind":"industrial","coord":{"q":4,"r":1},"faction":"neutral","objectiveId":"obj_industrial_hub"},
-    {"id":"loc_harbor_terminal","name":"Harbor Terminal","kind":"port","coord":{"q":6,"r":1},"faction":"neutral","objectiveId":"obj_harbor_terminal"},
-    {"id":"loc_comms_center","name":"Comms Center","kind":"communications","coord":{"q":6,"r":4},"faction":"neutral","objectiveId":"obj_comms_center"},
-    {"id":"loc_radar_ridge","name":"Radar Ridge","kind":"radar","coord":{"q":8,"r":1},"faction":"redForce","objectiveId":"obj_radar_ridge"},
-    {"id":"loc_red_entry","name":"Red Logistics Gate","kind":"supply","coord":{"q":9,"r":5},"faction":"redForce","objectiveId":null}
+    {
+      "id": "loc_blue_beachhead",
+      "name": "Blue Logistics Beachhead",
+      "kind": "supply",
+      "coord": {
+        "q": 1,
+        "r": 1
+      },
+      "faction": "blueForce",
+      "objectiveId": "obj_blue_beachhead"
+    },
+    {
+      "id": "loc_east_airport",
+      "name": "East Airport",
+      "kind": "airport",
+      "coord": {
+        "q": 3,
+        "r": 1
+      },
+      "faction": "blueForce",
+      "objectiveId": "obj_east_airport"
+    },
+    {
+      "id": "loc_industrial_hub",
+      "name": "Industrial Hub",
+      "kind": "industrial",
+      "coord": {
+        "q": 5,
+        "r": 1
+      },
+      "faction": "neutral",
+      "objectiveId": "obj_industrial_hub"
+    },
+    {
+      "id": "loc_harbor_terminal",
+      "name": "Harbor Terminal",
+      "kind": "port",
+      "coord": {
+        "q": 7,
+        "r": 1
+      },
+      "faction": "neutral",
+      "objectiveId": "obj_harbor_terminal"
+    },
+    {
+      "id": "loc_coastal_battery",
+      "name": "Coastal Battery",
+      "kind": "fires",
+      "coord": {
+        "q": 9,
+        "r": 1
+      },
+      "faction": "redForce",
+      "objectiveId": "obj_coastal_battery"
+    },
+    {
+      "id": "loc_red_coastal_gate",
+      "name": "Red Coastal Gate",
+      "kind": "supply",
+      "coord": {
+        "q": 11,
+        "r": 1
+      },
+      "faction": "redForce",
+      "objectiveId": "obj_red_coastal_gate"
+    },
+    {
+      "id": "loc_logistics_yard",
+      "name": "Logistics Yard",
+      "kind": "sustainment",
+      "coord": {
+        "q": 3,
+        "r": 3
+      },
+      "faction": "blueForce",
+      "objectiveId": "obj_logistics_yard"
+    },
+    {
+      "id": "loc_urban_core",
+      "name": "Urban Core",
+      "kind": "city",
+      "coord": {
+        "q": 5,
+        "r": 3
+      },
+      "faction": "neutral",
+      "objectiveId": "obj_urban_core"
+    },
+    {
+      "id": "loc_radar_ridge",
+      "name": "Radar Ridge",
+      "kind": "radar",
+      "coord": {
+        "q": 9,
+        "r": 3
+      },
+      "faction": "redForce",
+      "objectiveId": "obj_radar_ridge"
+    },
+    {
+      "id": "loc_red_air_defense_belt",
+      "name": "Air Defense Belt",
+      "kind": "airDefense",
+      "coord": {
+        "q": 11,
+        "r": 3
+      },
+      "faction": "redForce",
+      "objectiveId": "obj_red_air_defense_belt"
+    },
+    {
+      "id": "loc_northern_pass",
+      "name": "Northern Pass",
+      "kind": "pass",
+      "coord": {
+        "q": 1,
+        "r": 5
+      },
+      "faction": "blueForce",
+      "objectiveId": "obj_northern_pass"
+    },
+    {
+      "id": "loc_river_bridge",
+      "name": "River Bridge",
+      "kind": "bridge",
+      "coord": {
+        "q": 3,
+        "r": 5
+      },
+      "faction": "neutral",
+      "objectiveId": "obj_river_bridge"
+    },
+    {
+      "id": "loc_civic_center",
+      "name": "Civic Center",
+      "kind": "city",
+      "coord": {
+        "q": 5,
+        "r": 5
+      },
+      "faction": "neutral",
+      "objectiveId": "obj_civic_center"
+    },
+    {
+      "id": "loc_comms_center",
+      "name": "Comms Center",
+      "kind": "communications",
+      "coord": {
+        "q": 7,
+        "r": 5
+      },
+      "faction": "neutral",
+      "objectiveId": "obj_comms_center"
+    },
+    {
+      "id": "loc_red_logistics_gate",
+      "name": "Red Logistics Gate",
+      "kind": "supply",
+      "coord": {
+        "q": 11,
+        "r": 5
+      },
+      "faction": "redForce",
+      "objectiveId": "obj_red_logistics_gate"
+    },
+    {
+      "id": "loc_river_ford",
+      "name": "River Ford",
+      "kind": "crossing",
+      "coord": {
+        "q": 3,
+        "r": 7
+      },
+      "faction": "neutral",
+      "objectiveId": "obj_river_ford"
+    },
+    {
+      "id": "loc_rail_junction",
+      "name": "Rail Junction",
+      "kind": "rail",
+      "coord": {
+        "q": 5,
+        "r": 7
+      },
+      "faction": "neutral",
+      "objectiveId": "obj_rail_junction"
+    },
+    {
+      "id": "loc_refinery_district",
+      "name": "Refinery District",
+      "kind": "fuel",
+      "coord": {
+        "q": 7,
+        "r": 7
+      },
+      "faction": "neutral",
+      "objectiveId": "obj_refinery_district"
+    },
+    {
+      "id": "loc_mountain_radar_spur",
+      "name": "Radar Spur",
+      "kind": "radar",
+      "coord": {
+        "q": 9,
+        "r": 7
+      },
+      "faction": "redForce",
+      "objectiveId": "obj_mountain_radar_spur"
+    },
+    {
+      "id": "loc_blue_support_area",
+      "name": "Blue Support Area",
+      "kind": "supply",
+      "coord": {
+        "q": 1,
+        "r": 9
+      },
+      "faction": "blueForce",
+      "objectiveId": "obj_blue_support_area"
+    },
+    {
+      "id": "loc_southern_causeway",
+      "name": "Southern Causeway",
+      "kind": "bridge",
+      "coord": {
+        "q": 3,
+        "r": 9
+      },
+      "faction": "neutral",
+      "objectiveId": "obj_southern_causeway"
+    },
+    {
+      "id": "loc_civilian_evac_zone",
+      "name": "Civilian Evac Zone",
+      "kind": "civilian",
+      "coord": {
+        "q": 5,
+        "r": 9
+      },
+      "faction": "neutral",
+      "objectiveId": "obj_civilian_evac_zone"
+    },
+    {
+      "id": "loc_fuel_depot",
+      "name": "Fuel Depot",
+      "kind": "fuel",
+      "coord": {
+        "q": 7,
+        "r": 9
+      },
+      "faction": "neutral",
+      "objectiveId": "obj_fuel_depot"
+    },
+    {
+      "id": "loc_highland_pass",
+      "name": "Highland Pass",
+      "kind": "pass",
+      "coord": {
+        "q": 9,
+        "r": 9
+      },
+      "faction": "redForce",
+      "objectiveId": "obj_highland_pass"
+    },
+    {
+      "id": "loc_red_supply_entry",
+      "name": "Red Supply Entry",
+      "kind": "supply",
+      "coord": {
+        "q": 11,
+        "r": 9
+      },
+      "faction": "redForce",
+      "objectiveId": "obj_red_supply_entry"
+    }
   ],
   "objectives": [
-    {"id":"obj_east_airport","name":"East Airport","kind":"city","coord":{"q":2,"r":1},"points":3},
-    {"id":"obj_river_bridge","name":"River Bridge","kind":"supply","coord":{"q":3,"r":4},"points":2},
-    {"id":"obj_industrial_hub","name":"Industrial Hub","kind":"city","coord":{"q":4,"r":1},"points":2},
-    {"id":"obj_harbor_terminal","name":"Harbor Terminal","kind":"city","coord":{"q":6,"r":1},"points":3},
-    {"id":"obj_comms_center","name":"Comms Center","kind":"fortress","coord":{"q":6,"r":4},"points":2},
-    {"id":"obj_radar_ridge","name":"Radar Ridge","kind":"fortress","coord":{"q":8,"r":1},"points":3},
-    {"id":"obj_northern_pass","name":"Northern Pass","kind":"supply","coord":{"q":1,"r":4},"points":1}
+    {
+      "id": "obj_blue_beachhead",
+      "name": "Blue Logistics Beachhead",
+      "kind": "supply",
+      "coord": {
+        "q": 1,
+        "r": 1
+      },
+      "points": 1
+    },
+    {
+      "id": "obj_east_airport",
+      "name": "East Airport",
+      "kind": "city",
+      "coord": {
+        "q": 3,
+        "r": 1
+      },
+      "points": 3
+    },
+    {
+      "id": "obj_industrial_hub",
+      "name": "Industrial Hub",
+      "kind": "city",
+      "coord": {
+        "q": 5,
+        "r": 1
+      },
+      "points": 2
+    },
+    {
+      "id": "obj_harbor_terminal",
+      "name": "Harbor Terminal",
+      "kind": "city",
+      "coord": {
+        "q": 7,
+        "r": 1
+      },
+      "points": 3
+    },
+    {
+      "id": "obj_coastal_battery",
+      "name": "Coastal Battery",
+      "kind": "fortress",
+      "coord": {
+        "q": 9,
+        "r": 1
+      },
+      "points": 2
+    },
+    {
+      "id": "obj_red_coastal_gate",
+      "name": "Red Coastal Gate",
+      "kind": "supply",
+      "coord": {
+        "q": 11,
+        "r": 1
+      },
+      "points": 1
+    },
+    {
+      "id": "obj_logistics_yard",
+      "name": "Logistics Yard",
+      "kind": "supply",
+      "coord": {
+        "q": 3,
+        "r": 3
+      },
+      "points": 1
+    },
+    {
+      "id": "obj_urban_core",
+      "name": "Urban Core",
+      "kind": "city",
+      "coord": {
+        "q": 5,
+        "r": 3
+      },
+      "points": 2
+    },
+    {
+      "id": "obj_radar_ridge",
+      "name": "Radar Ridge",
+      "kind": "fortress",
+      "coord": {
+        "q": 9,
+        "r": 3
+      },
+      "points": 3
+    },
+    {
+      "id": "obj_red_air_defense_belt",
+      "name": "Air Defense Belt",
+      "kind": "fortress",
+      "coord": {
+        "q": 11,
+        "r": 3
+      },
+      "points": 2
+    },
+    {
+      "id": "obj_northern_pass",
+      "name": "Northern Pass",
+      "kind": "supply",
+      "coord": {
+        "q": 1,
+        "r": 5
+      },
+      "points": 1
+    },
+    {
+      "id": "obj_river_bridge",
+      "name": "River Bridge",
+      "kind": "supply",
+      "coord": {
+        "q": 3,
+        "r": 5
+      },
+      "points": 2
+    },
+    {
+      "id": "obj_civic_center",
+      "name": "Civic Center",
+      "kind": "city",
+      "coord": {
+        "q": 5,
+        "r": 5
+      },
+      "points": 2
+    },
+    {
+      "id": "obj_comms_center",
+      "name": "Comms Center",
+      "kind": "fortress",
+      "coord": {
+        "q": 7,
+        "r": 5
+      },
+      "points": 2
+    },
+    {
+      "id": "obj_red_logistics_gate",
+      "name": "Red Logistics Gate",
+      "kind": "supply",
+      "coord": {
+        "q": 11,
+        "r": 5
+      },
+      "points": 1
+    },
+    {
+      "id": "obj_river_ford",
+      "name": "River Ford",
+      "kind": "supply",
+      "coord": {
+        "q": 3,
+        "r": 7
+      },
+      "points": 1
+    },
+    {
+      "id": "obj_rail_junction",
+      "name": "Rail Junction",
+      "kind": "city",
+      "coord": {
+        "q": 5,
+        "r": 7
+      },
+      "points": 2
+    },
+    {
+      "id": "obj_refinery_district",
+      "name": "Refinery District",
+      "kind": "city",
+      "coord": {
+        "q": 7,
+        "r": 7
+      },
+      "points": 2
+    },
+    {
+      "id": "obj_mountain_radar_spur",
+      "name": "Radar Spur",
+      "kind": "fortress",
+      "coord": {
+        "q": 9,
+        "r": 7
+      },
+      "points": 2
+    },
+    {
+      "id": "obj_blue_support_area",
+      "name": "Blue Support Area",
+      "kind": "supply",
+      "coord": {
+        "q": 1,
+        "r": 9
+      },
+      "points": 1
+    },
+    {
+      "id": "obj_southern_causeway",
+      "name": "Southern Causeway",
+      "kind": "supply",
+      "coord": {
+        "q": 3,
+        "r": 9
+      },
+      "points": 1
+    },
+    {
+      "id": "obj_civilian_evac_zone",
+      "name": "Civilian Evac Zone",
+      "kind": "city",
+      "coord": {
+        "q": 5,
+        "r": 9
+      },
+      "points": 1
+    },
+    {
+      "id": "obj_fuel_depot",
+      "name": "Fuel Depot",
+      "kind": "supply",
+      "coord": {
+        "q": 7,
+        "r": 9
+      },
+      "points": 2
+    },
+    {
+      "id": "obj_highland_pass",
+      "name": "Highland Pass",
+      "kind": "supply",
+      "coord": {
+        "q": 9,
+        "r": 9
+      },
+      "points": 2
+    },
+    {
+      "id": "obj_red_supply_entry",
+      "name": "Red Supply Entry",
+      "kind": "supply",
+      "coord": {
+        "q": 11,
+        "r": 9
+      },
+      "points": 1
+    }
   ],
   "initialUnits": [
-    {"id":"unit_blue_recon","name":"Blue Recon Screen","faction":"blueForce","templateId":"recon_screen","coord":{"q":1,"r":1},"facing":"east","hp":8,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
-    {"id":"unit_blue_mech_1","name":"Blue Mechanized Task Force","faction":"blueForce","templateId":"mechanized_task_force","coord":{"q":2,"r":1},"facing":"east","hp":10,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
-    {"id":"unit_blue_mech_2","name":"Blue Northern Task Force","faction":"blueForce","templateId":"mechanized_task_force","coord":{"q":1,"r":4},"facing":"east","hp":10,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
-    {"id":"unit_blue_fires","name":"Blue Fires Battery","faction":"blueForce","templateId":"fires_battery","coord":{"q":2,"r":4},"facing":"east","hp":8,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
-    {"id":"unit_blue_security","name":"Blue Security Element","faction":"blueForce","templateId":"security_detachment","coord":{"q":0,"r":2},"facing":"east","hp":9,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
-    {"id":"unit_red_mech_1","name":"Red Mechanized Group","faction":"redForce","templateId":"mechanized_task_force","coord":{"q":8,"r":1},"facing":"west","hp":10,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
-    {"id":"unit_red_mech_2","name":"Red Security Group","faction":"redForce","templateId":"mechanized_task_force","coord":{"q":8,"r":4},"facing":"west","hp":10,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
-    {"id":"unit_red_fires","name":"Red Fires Battery","faction":"redForce","templateId":"fires_battery","coord":{"q":9,"r":4},"facing":"west","hp":8,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
-    {"id":"unit_red_air_defense","name":"Red Air Defense Detachment","faction":"redForce","templateId":"air_defense_detachment","coord":{"q":9,"r":2},"facing":"west","hp":8,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null},
-    {"id":"unit_red_screen","name":"Red Forward Screen","faction":"redForce","templateId":"recon_screen","coord":{"q":7,"r":4},"facing":"west","hp":8,"retreatMode":"retreatable","supplyState":"supplied","assignedAgentId":null}
+    {
+      "id": "unit_blue_recon",
+      "name": "Blue Recon Screen",
+      "faction": "blueForce",
+      "templateId": "recon_screen",
+      "coord": {
+        "q": 1,
+        "r": 2
+      },
+      "facing": "east",
+      "hp": 8,
+      "retreatMode": "retreatable",
+      "supplyState": "supplied",
+      "assignedAgentId": null
+    },
+    {
+      "id": "unit_blue_mech_1",
+      "name": "Blue Airport Task Force",
+      "faction": "blueForce",
+      "templateId": "mechanized_task_force",
+      "coord": {
+        "q": 2,
+        "r": 1
+      },
+      "facing": "east",
+      "hp": 10,
+      "retreatMode": "retreatable",
+      "supplyState": "supplied",
+      "assignedAgentId": null
+    },
+    {
+      "id": "unit_blue_mech_2",
+      "name": "Blue Northern Task Force",
+      "faction": "blueForce",
+      "templateId": "mechanized_task_force",
+      "coord": {
+        "q": 1,
+        "r": 5
+      },
+      "facing": "east",
+      "hp": 10,
+      "retreatMode": "retreatable",
+      "supplyState": "supplied",
+      "assignedAgentId": null
+    },
+    {
+      "id": "unit_blue_fires",
+      "name": "Blue Fires Battery",
+      "faction": "blueForce",
+      "templateId": "fires_battery",
+      "coord": {
+        "q": 2,
+        "r": 5
+      },
+      "facing": "east",
+      "hp": 8,
+      "retreatMode": "retreatable",
+      "supplyState": "supplied",
+      "assignedAgentId": null
+    },
+    {
+      "id": "unit_blue_security",
+      "name": "Blue Security Element",
+      "faction": "blueForce",
+      "templateId": "security_detachment",
+      "coord": {
+        "q": 0,
+        "r": 1
+      },
+      "facing": "east",
+      "hp": 9,
+      "retreatMode": "retreatable",
+      "supplyState": "supplied",
+      "assignedAgentId": null
+    },
+    {
+      "id": "unit_blue_engineers",
+      "name": "Blue Engineer Detachment",
+      "faction": "blueForce",
+      "templateId": "engineer_detachment",
+      "coord": {
+        "q": 3,
+        "r": 4
+      },
+      "facing": "east",
+      "hp": 8,
+      "retreatMode": "retreatable",
+      "supplyState": "supplied",
+      "assignedAgentId": null
+    },
+    {
+      "id": "unit_blue_logistics",
+      "name": "Blue Logistics Element",
+      "faction": "blueForce",
+      "templateId": "logistics_element",
+      "coord": {
+        "q": 0,
+        "r": 8
+      },
+      "facing": "east",
+      "hp": 7,
+      "retreatMode": "retreatable",
+      "supplyState": "supplied",
+      "assignedAgentId": null
+    },
+    {
+      "id": "unit_blue_sof",
+      "name": "Blue Special Recon Team",
+      "faction": "blueForce",
+      "templateId": "sof_team",
+      "coord": {
+        "q": 2,
+        "r": 7
+      },
+      "facing": "east",
+      "hp": 7,
+      "retreatMode": "retreatable",
+      "supplyState": "supplied",
+      "assignedAgentId": null
+    },
+    {
+      "id": "unit_red_mech_1",
+      "name": "Red Radar Guard Group",
+      "faction": "redForce",
+      "templateId": "mechanized_task_force",
+      "coord": {
+        "q": 8,
+        "r": 2
+      },
+      "facing": "west",
+      "hp": 10,
+      "retreatMode": "retreatable",
+      "supplyState": "supplied",
+      "assignedAgentId": null
+    },
+    {
+      "id": "unit_red_mech_2",
+      "name": "Red Reserve Group",
+      "faction": "redForce",
+      "templateId": "mechanized_task_force",
+      "coord": {
+        "q": 10,
+        "r": 7
+      },
+      "facing": "west",
+      "hp": 10,
+      "retreatMode": "retreatable",
+      "supplyState": "supplied",
+      "assignedAgentId": null
+    },
+    {
+      "id": "unit_red_fires",
+      "name": "Red Fires Battery",
+      "faction": "redForce",
+      "templateId": "fires_battery",
+      "coord": {
+        "q": 10,
+        "r": 5
+      },
+      "facing": "west",
+      "hp": 8,
+      "retreatMode": "retreatable",
+      "supplyState": "supplied",
+      "assignedAgentId": null
+    },
+    {
+      "id": "unit_red_air_defense",
+      "name": "Red Air Defense Detachment",
+      "faction": "redForce",
+      "templateId": "air_defense_detachment",
+      "coord": {
+        "q": 9,
+        "r": 3
+      },
+      "facing": "west",
+      "hp": 8,
+      "retreatMode": "retreatable",
+      "supplyState": "supplied",
+      "assignedAgentId": null
+    },
+    {
+      "id": "unit_red_screen",
+      "name": "Red Forward Screen",
+      "faction": "redForce",
+      "templateId": "recon_screen",
+      "coord": {
+        "q": 8,
+        "r": 5
+      },
+      "facing": "west",
+      "hp": 8,
+      "retreatMode": "retreatable",
+      "supplyState": "supplied",
+      "assignedAgentId": null
+    },
+    {
+      "id": "unit_red_security",
+      "name": "Red Coastal Security Element",
+      "faction": "redForce",
+      "templateId": "security_detachment",
+      "coord": {
+        "q": 10,
+        "r": 1
+      },
+      "facing": "west",
+      "hp": 9,
+      "retreatMode": "retreatable",
+      "supplyState": "supplied",
+      "assignedAgentId": null
+    },
+    {
+      "id": "unit_red_sof",
+      "name": "Red Disruption Team",
+      "faction": "redForce",
+      "templateId": "sof_team",
+      "coord": {
+        "q": 9,
+        "r": 6
+      },
+      "facing": "west",
+      "hp": 7,
+      "retreatMode": "retreatable",
+      "supplyState": "supplied",
+      "assignedAgentId": null
+    },
+    {
+      "id": "unit_red_logistics",
+      "name": "Red Logistics Element",
+      "faction": "redForce",
+      "templateId": "logistics_element",
+      "coord": {
+        "q": 11,
+        "r": 9
+      },
+      "facing": "west",
+      "hp": 7,
+      "retreatMode": "retreatable",
+      "supplyState": "supplied",
+      "assignedAgentId": null
+    }
   ],
-  "victoryConditions": []
+  "victoryConditions": [
+    {
+      "id": "vc_blue_key_nodes",
+      "type": "controlObjectives",
+      "faction": "blueForce",
+      "objectiveId": null,
+      "objectiveIds": [
+        "obj_east_airport",
+        "obj_harbor_terminal",
+        "obj_river_bridge",
+        "obj_comms_center",
+        "obj_radar_ridge",
+        "obj_fuel_depot",
+        "obj_rail_junction",
+        "obj_highland_pass",
+        "obj_coastal_battery",
+        "obj_refinery_district"
+      ],
+      "targetFaction": "redForce",
+      "targetTemplateIds": null,
+      "turns": null,
+      "turn": null,
+      "count": 7,
+      "status": "success",
+      "description": "Blue wins by controlling seven of ten main operational objectives before the end of turn 20."
+    },
+    {
+      "id": "vc_red_defense_network",
+      "type": "denyObjectiveControl",
+      "faction": "redForce",
+      "objectiveId": null,
+      "objectiveIds": [
+        "obj_east_airport",
+        "obj_harbor_terminal",
+        "obj_river_bridge",
+        "obj_comms_center",
+        "obj_radar_ridge",
+        "obj_fuel_depot",
+        "obj_rail_junction",
+        "obj_highland_pass",
+        "obj_coastal_battery",
+        "obj_refinery_district"
+      ],
+      "targetFaction": "blueForce",
+      "targetTemplateIds": null,
+      "turns": null,
+      "turn": 20,
+      "count": 6,
+      "status": "success",
+      "description": "Red wins at final turn if Blue controls fewer than six main operational objectives."
+    }
+  ]
 }

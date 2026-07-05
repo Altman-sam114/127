@@ -116,11 +116,11 @@ flowchart LR
 flowchart LR
     ENTRY["DataLoader.loadInitialGameState"]:::data
     GREY["grey_tide_2030_scenario<br/>grey_tide_2030_regions"]:::data
-    MAP["60 hex / 10 region<br/>Blue / Red / Neutral"]:::state
+    MAP["120 hex / 30 region<br/>Blue / Red / Neutral"]:::state
     EDITOR["MapEditor 默认资源桥<br/>读写 grey_tide_2030"]:::state
     PIPE["既有运行链<br/>Hex -> Region -> Theater<br/>FrontLine / WarDeployment"]:::rules
     FALLBACK["失败回退<br/>ardennes_v0 + ardennes_v02<br/>GameState.initial"]:::legacy
-    TODO["后续 v6.9+<br/>试玩闭环 / 发布地图<br/>100-220 hex 发布地图"]:::risk
+    TODO["后续 v6.10+<br/>运行时验证<br/>10-20 observer turns"]:::risk
 
     ENTRY --> GREY --> MAP --> PIPE
     GREY --> EDITOR
