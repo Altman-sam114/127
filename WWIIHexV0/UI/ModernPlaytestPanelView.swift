@@ -3,6 +3,8 @@ import SwiftUI
 struct ModernPlaytestPanelView: View {
     let scenarioName: String
     let playerSideName: String
+    let opponentSideName: String
+    let controlModeText: String
     let turnText: String
     let localSnapshotSummary: String?
     let canLoadSnapshot: Bool
@@ -22,7 +24,9 @@ struct ModernPlaytestPanelView: View {
 
             VStack(alignment: .leading, spacing: ModernCommandDesignTokens.compactSpacing) {
                 LabeledContent("Operation", value: scenarioName)
-                LabeledContent("Player", value: playerSideName)
+                LabeledContent("Player Side", value: playerSideName)
+                LabeledContent("Opposition", value: opponentSideName)
+                LabeledContent("Control", value: controlModeText)
                 LabeledContent("Turn", value: turnText)
             }
             .font(.caption)

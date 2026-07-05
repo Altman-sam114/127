@@ -411,6 +411,23 @@ final class AppContainer: ObservableObject {
         }
     }
 
+    var playerRoleDisplayName: String {
+        playerFaction.displayName
+    }
+
+    var primaryOpponentDisplayName: String {
+        if let opponent = gameState.divisions.map(\.faction).first(where: { playerFaction.isHostile(to: $0) }) {
+            return opponent.displayName
+        }
+        return "No active hostile force"
+    }
+
+    var playtestControlModeSummary: String {
+        observerModeEnabled
+            ? "Observer AI"
+            : "Manual player command"
+    }
+
     var playtestGuidanceItems: [String] {
         var items: [String] = []
         if selectedDivision == nil {

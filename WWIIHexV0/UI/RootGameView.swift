@@ -247,7 +247,9 @@ struct RootGameView: View {
     private var playtestPanel: some View {
         ModernPlaytestPanelView(
             scenarioName: container.scenarioDisplayName,
-            playerSideName: container.playerFaction.shortDisplayName,
+            playerSideName: container.playerRoleDisplayName,
+            opponentSideName: container.primaryOpponentDisplayName,
+            controlModeText: container.playtestControlModeSummary,
             turnText: "\(container.gameState.turn) / \(container.gameState.maxTurns)",
             localSnapshotSummary: container.localSnapshotSummary,
             canLoadSnapshot: container.canLoadLocalSnapshot,

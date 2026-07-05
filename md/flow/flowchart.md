@@ -322,6 +322,7 @@ flowchart LR
 flowchart LR
     UI["ModernPlaytestPanelView<br/>Playtest tab<br/>New / Save / Continue / Clear"]:::display
     SETTINGS["试玩设置<br/>Observer AI toggle<br/>Default Layer picker"]:::display
+    ROLE["扮演方说明<br/>Player Side / Opposition<br/>Control Mode"]:::display
     GUIDE["短引导<br/>playtestGuidanceItems<br/>lastCommandMessage"]:::display
     APP["AppContainer<br/>resetGame / saveLocalSnapshot<br/>loadLocalSnapshot / clearLocalSnapshot"]:::app
     SNAP["UserDefaults 本地快照<br/>modernCommandAgent.localSnapshot.v1<br/>GameState JSON"]:::data
@@ -331,6 +332,7 @@ flowchart LR
 
     UI --> APP
     SETTINGS --> APP
+    STATE --> ROLE
     STATE --> GUIDE
     APP --> SNAP
     SNAP --> APP --> BOOT --> STATE

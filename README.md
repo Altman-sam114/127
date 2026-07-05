@@ -1,6 +1,6 @@
 # Modern Command Agent — iOS / macOS AI 战略战棋迁移工程
 
-> **当前状态：v6.10 发布候选准备。工程底座仍来自 WWIIHexV0，源码兼容名、target/module 名和旧阿登 fallback 数据仍保留；已完成 v6.0-v6.9 的现代作战方、灰潮种子、现代单位、ISR/EW/contact、火力/空中任务、现代 AI 指挥链、玩家任务入口、现代 C2 UI 和试玩闭环首轮。本轮把主游戏 iOS / macOS display name 收口为 `Modern Command Agent`，新增现代 C2 AppIcon 资产，地图补给源标签改为现代 Blue/Red 口径，并新增发布候选残留扫描与人工授权重验证清单。玩家任务仍经 `AppContainer -> Command / ZoneDirective -> WarCommandExecutor / RuleEngine`。历史测试基线曾达到 v0.37 Probe 18/0、Stage Regression 69/0、Full 226/0；当前工作流默认不跑 Xcode / XCTest / 模拟器测试，只按 `md/test/test.md` 做轻量检查，重验证看 GitHub Actions artifact。**
+> **当前状态：v6.10 发布候选准备。工程底座仍来自 WWIIHexV0，源码兼容名、target/module 名和旧阿登 fallback 数据仍保留；已完成 v6.0-v6.9 的现代作战方、灰潮种子、现代单位、ISR/EW/contact、火力/空中任务、现代 AI 指挥链、玩家任务入口、现代 C2 UI 和试玩闭环首轮。本轮把主游戏 iOS / macOS display name 收口为 `Modern Command Agent`，新增现代 C2 AppIcon 资产，Playtest 面板明确 Player Side / Opposition / Control Mode，地图补给源标签改为现代 Blue/Red 口径，并新增发布候选残留扫描与人工授权重验证清单。玩家任务仍经 `AppContainer -> Command / ZoneDirective -> WarCommandExecutor / RuleEngine`。历史测试基线曾达到 v0.37 Probe 18/0、Stage Regression 69/0、Full 226/0；当前工作流默认不跑 Xcode / XCTest / 模拟器测试，只按 `md/test/test.md` 做轻量检查，重验证看 GitHub Actions artifact。**
 
 ---
 
@@ -14,7 +14,7 @@
 
 一款正在从 WWIIHexV0 迁移而来的 iOS / macOS 回合制现代战争 AI Agent 策略游戏。目标是在保留 hex 战术权威、region 战略聚合、动态战区、前线、部署和统一规则管线的基础上，迁移到现代联合作战：合成营/任务编组、无人系统、侦察 contact、电子战、精确火力、后勤和可审计 AI Agent 指挥链。
 
-当前 v6.10 是发布候选准备态，不是正式发布。`grey_tide_2030` 目前是 60-hex / 10-region 的可加载现代种子，用于替换默认阿登入口并验证现代数据链；`modern_unit_templates.json` 已提供现代组件并通过现有 `strength + supplyState + components` 影响移动、战斗和补员成本。玩家任务面板可以发起 Recon Area、UAV Orbit、Fire Mission、Air Support / SEAD、Assault Objective、Hold / Delay、Resupply / Repair、Jam / Counter-Drone；实际行动仍由 `Command` 或 `ZoneDirective` 进入 `RuleEngine`。Playtest tab 支持新开灰潮局、保存/继续本地快照、清除快照、切换 observer AI 和地图图层，并显示不遮挡地图的短引导/错误反馈。fuel / readiness / signature / 真实武器库 / 复杂实时空战 / 真本地 LLM 多 Agent 并发仍未独立建模。`GamePhase.germanAI/alliedPlayer`、`Division` 源码名、旧 unit template id、target/module 名和若干二战测试 fixture 仍按兼容层保留。发布前仍需人工授权运行时验证：Xcode build、iOS/macOS 启动、UI 点击烟测、SpriteKit 截图、10-20 回合 observer 和性能体感。
+当前 v6.10 是发布候选准备态，不是正式发布。`grey_tide_2030` 目前是 60-hex / 10-region 的可加载现代种子，用于替换默认阿登入口并验证现代数据链；`modern_unit_templates.json` 已提供现代组件并通过现有 `strength + supplyState + components` 影响移动、战斗和补员成本。玩家任务面板可以发起 Recon Area、UAV Orbit、Fire Mission、Air Support / SEAD、Assault Objective、Hold / Delay、Resupply / Repair、Jam / Counter-Drone；实际行动仍由 `Command` 或 `ZoneDirective` 进入 `RuleEngine`。Playtest tab 支持新开灰潮局、保存/继续本地快照、清除快照、切换 observer AI 和地图图层，并显示 Player Side、Opposition、Control Mode、不遮挡地图的短引导和错误反馈。fuel / readiness / signature / 真实武器库 / 复杂实时空战 / 真本地 LLM 多 Agent 并发仍未独立建模。`GamePhase.germanAI/alliedPlayer`、`Division` 源码名、旧 unit template id、target/module 名和若干二战测试 fixture 仍按兼容层保留。完整红/蓝新局选择器仍留待后续版本。发布前仍需人工授权运行时验证：Xcode build、iOS/macOS 启动、UI 点击烟测、SpriteKit 截图、10-20 回合 observer 和性能体感。
 
 **核心参考：**
 - 《统一指挥2》：六角格战棋、补给、攻击（战术层参照）
