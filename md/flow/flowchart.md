@@ -351,6 +351,7 @@ flowchart LR
 ```mermaid
 flowchart LR
     DISPLAY["App Display Name<br/>Modern Command Agent"]:::display
+    ICON["AppIcon asset catalog<br/>iOS / iPadOS / macOS sizes"]:::display
     MAP["HexNode supply marker<br/>SUP B / SUP R"]:::display
     REPORT["v6.10 release candidate report<br/>residual scan / readiness matrix"]:::doc
     RULES["规则权威不变<br/>Command / ZoneDirective<br/>WarCommandExecutor / RuleEngine"]:::rules
@@ -358,6 +359,7 @@ flowchart LR
     RUNTIME["人工授权后再做<br/>launch / UI smoke / screenshot<br/>10-20 observer turns / performance"]:::risk
 
     DISPLAY --> REPORT
+    ICON --> REPORT
     MAP --> REPORT
     RULES --> REPORT
     REPORT --> CLOUD

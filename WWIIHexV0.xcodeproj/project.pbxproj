@@ -34,6 +34,7 @@
 		010000000000000000000201 /* grey_tide_2030_scenario.json in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000201 /* grey_tide_2030_scenario.json */; };
 		010000000000000000000202 /* grey_tide_2030_regions.json in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000202 /* grey_tide_2030_regions.json */; };
 		010000000000000000000203 /* modern_unit_templates.json in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000203 /* modern_unit_templates.json */; };
+		010000000000000000000211 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000020C /* Assets.xcassets */; };
 		010000000000000000000017 /* ScenarioDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000019 /* ScenarioDataTests.swift */; };
 		010000000000000000000018 /* HexDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001A /* HexDirection.swift */; };
 		010000000000000000000019 /* HexCoord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001B /* HexCoord.swift */; };
@@ -376,6 +377,7 @@
 		0C0000000000000000000201 /* grey_tide_2030_scenario.json in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000201 /* grey_tide_2030_scenario.json */; };
 		0C0000000000000000000202 /* grey_tide_2030_regions.json in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000202 /* grey_tide_2030_regions.json */; };
 		0C0000000000000000000203 /* modern_unit_templates.json in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000203 /* modern_unit_templates.json */; };
+		0C0000000000000000000204 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000020C /* Assets.xcassets */; };
 		0D0000000000000000000101 /* GeneralRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000001 /* GeneralRegistry.swift */; };
 		0D0000000000000000000102 /* RulerAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000002 /* RulerAgent.swift */; };
 		0D0000000000000000000103 /* DiplomacyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D0000000000000000000003 /* DiplomacyState.swift */; };
@@ -483,6 +485,7 @@
 		020000000000000000000209 /* ModernMissionPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModernMissionPanelView.swift; sourceTree = "<group>"; };
 		02000000000000000000020A /* ModernCommandDesignTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModernCommandDesignTokens.swift; sourceTree = "<group>"; };
 		02000000000000000000020B /* ModernPlaytestPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModernPlaytestPanelView.swift; sourceTree = "<group>"; };
+		02000000000000000000020C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		020000000000000000000031 /* AgentPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentPanelView.swift; sourceTree = "<group>"; };
 		020000000000000000000032 /* HexLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexLayoutTests.swift; sourceTree = "<group>"; };
 		020000000000000000000033 /* BoardInteractionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardInteractionTests.swift; sourceTree = "<group>"; };
@@ -674,6 +677,7 @@
 				070000000000000000000008 /* Commands */,
 				070000000000000000000009 /* Agents */,
 				07000000000000000000000A /* Data */,
+				02000000000000000000020C /* Assets.xcassets */,
 				07000000000000000000000B /* Tests */,
 				07000000000000000000000D /* Turn */,
 				07000000000000000000000E /* Probes */,
@@ -1113,6 +1117,7 @@
 				010000000000000000000201 /* grey_tide_2030_scenario.json in Resources */,
 				010000000000000000000202 /* grey_tide_2030_regions.json in Resources */,
 				010000000000000000000203 /* modern_unit_templates.json in Resources */,
+				010000000000000000000211 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1150,6 +1155,7 @@
 				0C0000000000000000000201 /* grey_tide_2030_scenario.json in Resources */,
 				0C0000000000000000000202 /* grey_tide_2030_regions.json in Resources */,
 				0C0000000000000000000203 /* modern_unit_templates.json in Resources */,
+				0C0000000000000000000204 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1712,6 +1718,7 @@
 				DEVELOPMENT_TEAM = C9YV46L3GA;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_KEY_CFBundleDisplayName = "Modern Command Agent";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -1743,6 +1750,7 @@
 				DEVELOPMENT_TEAM = C9YV46L3GA;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_KEY_CFBundleDisplayName = "Modern Command Agent";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -1923,6 +1931,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_KEY_CFBundleDisplayName = "Modern Command Agent";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1949,6 +1958,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_KEY_CFBundleDisplayName = "Modern Command Agent";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				LD_RUNPATH_SEARCH_PATHS = (
