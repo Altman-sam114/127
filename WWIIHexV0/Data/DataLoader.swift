@@ -105,7 +105,10 @@ struct DataLoader {
         var map = try makeMapState(from: scenario)
         try apply(regionData, to: &map)
         map = RegionOccupationRules().mapByAggregatingControllers(in: map)
-        let divisions = try makeDivisions(from: scenario.initialUnits)
+        let divisions = try makeDivisions(
+            from: scenario.initialUnits,
+            allowTemplateFallback: scenario.id != "grey_tide_2030"
+        )
         let turn = scenario.initialTurn
 
         let theaterState = makeTheaterState(
@@ -475,7 +478,10 @@ struct DataLoader {
         )
     }
 
-    private func makeDivisions(from definitions: [InitialUnitDefinition]) throws -> [Division] {
+    private func makeDivisions(
+        from definitions: [InitialUnitDefinition],
+        allowTemplateFallback: Bool = true
+    ) throws -> [Division] {
         let templates = (try? loadUnitTemplates()) ?? []
         var errors: [DataValidationError] = []
         let divisions = definitions.compactMap { definition -> Division? in
@@ -499,9 +505,16 @@ struct DataLoader {
                     }
                     return DivisionComponent(type: type, weight: component.weight)
                 }
-            } else {
+            } else if allowTemplateFallback {
                 maxHP = max(definition.hp, fallbackMaxHP(for: definition.templateId))
                 components = fallbackComponents(for: definition.templateId)
+            } else {
+                errors.append(
+                    DataValidationError(
+                        message: "Unit \(definition.id) references unknown template \(definition.templateId)."
+                    )
+                )
+                return nil
             }
 
             guard !components.isEmpty else {

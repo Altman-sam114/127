@@ -102,7 +102,7 @@ struct EconomyRules {
         state.economyState.updateLedger(ledger)
         state.economyState.lastResolvedTurn = state.turn
         state.appendEvent(
-            "\(faction.displayName) economy: +\(resourceSummary(turnIncome)); upkeep \(resourceSummary(upkeep)); reinforcement \(resourceSummary(reinforcementSpend)); stockpile \(resourceSummary(ledger.stockpile)).",
+            "\(faction.displayName) sustainment: +\(resourceSummary(turnIncome)); upkeep \(resourceSummary(upkeep)); replacement \(resourceSummary(reinforcementSpend)); available \(resourceSummary(ledger.stockpile)).",
             category: .supply
         )
     }
@@ -255,7 +255,7 @@ struct EconomyRules {
             if restored > 0 {
                 state.divisions[index].reinforceStrength(restored)
                 state.appendEvent(
-                    "\(state.divisions[index].name) received automatic replacements: +\(restored) strength.",
+                    "\(state.divisions[index].operationalDisplayName) received automatic replacements: +\(restored) strength.",
                     category: .reinforce
                 )
             }
@@ -324,7 +324,7 @@ struct EconomyRules {
                 state.divisions.append(division)
                 order.deploymentRegionId = deployment.regionId
                 state.appendEvent(
-                    "\(faction.displayName) deployed \(division.name) at \(deployment.coord.q),\(deployment.coord.r).",
+                    "\(faction.displayName) deployed \(division.operationalDisplayName) at \(deployment.coord.q),\(deployment.coord.r).",
                     category: .reinforce
                 )
             } else {
@@ -473,6 +473,6 @@ struct EconomyRules {
     }
 
     private func resourceSummary(_ resources: EconomyResources) -> String {
-        "MP \(resources.manpower), IC \(resources.industry), SUP \(resources.supplies)"
+        "PER \(resources.manpower), MAT \(resources.industry), LOG \(resources.supplies)"
     }
 }

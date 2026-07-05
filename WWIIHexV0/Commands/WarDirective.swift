@@ -517,27 +517,27 @@ enum TheaterDirectiveDecoderError: Error, Equatable, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidUTF8:
-            return "Theater directive JSON is not valid UTF-8."
+            return "Operational directive JSON is not valid UTF-8."
         case .malformedJSON(let detail):
-            return "Malformed theater directive JSON: \(detail)"
+            return "Malformed operational directive JSON: \(detail)"
         case .unsupportedSchemaVersion(let version):
-            return "Unsupported theater directive schemaVersion \(version)."
+            return "Unsupported operational directive schemaVersion \(version)."
         case .issuerMismatch(let expected, let actual):
-            return "Theater directive issuer mismatch. Expected \(expected), got \(actual)."
+            return "Operational directive issuer mismatch. Expected \(expected), got \(actual)."
         case .turnMismatch(let expected, let actual):
-            return "Theater directive turn mismatch. Expected \(expected), got \(actual)."
+            return "Operational directive turn mismatch. Expected \(expected), got \(actual)."
         case .factionMismatch(let expected, let actual):
-            return "Theater directive faction mismatch. Expected \(expected.displayName), got \(actual.displayName)."
+            return "Operational directive faction mismatch. Expected \(expected.displayName), got \(actual.displayName)."
         case .missingZone(let zoneId):
-            return "Theater directive references missing FrontZone \(zoneId.rawValue)."
+            return "Operational directive references missing command sector \(zoneId.rawValue)."
         case .zoneFactionMismatch(let zoneId, let expected, let actual):
-            return "Theater directive zone \(zoneId.rawValue) belongs to \(actual.displayName), expected \(expected.displayName)."
+            return "Operational directive command sector \(zoneId.rawValue) belongs to \(actual.displayName), expected \(expected.displayName)."
         case .missingTargetTheater(let theaterId):
-            return "Theater directive references missing target theater \(theaterId.rawValue)."
+            return "Operational directive references missing target operational zone \(theaterId.rawValue)."
         case .missingRegion(let regionId):
-            return "Theater directive references missing region \(regionId.rawValue)."
+            return "Operational directive references missing sector \(regionId.rawValue)."
         case .tacticCategoryMismatch(let directiveId, let tactic, let category):
-            return "Theater directive \(directiveId) uses tactic \(tactic.rawValue) outside category \(category.rawValue)."
+            return "Operational directive \(directiveId) uses tactic \(tactic.rawValue) outside category \(category.rawValue)."
         }
     }
 }

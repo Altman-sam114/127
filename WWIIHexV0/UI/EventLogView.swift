@@ -163,7 +163,7 @@ private enum LogDisplayCategory {
         case .frontChange:
             return "Front"
         case .theaterChange:
-            return "Theater"
+            return "Operational"
         case .regionOwnerChange:
             return "Region"
         case .diplomacy:

@@ -76,7 +76,7 @@ struct CommandExecutor {
             )
         }
 
-        state.appendEvent("\(state.divisions[index].name) moved to \(destination.q),\(destination.r).")
+        state.appendEvent("\(state.divisions[index].operationalDisplayName) moved to \(destination.q),\(destination.r).")
     }
 
     private func executeAttack(attackerId: String, targetId: String, in state: inout GameState) {
@@ -97,8 +97,8 @@ struct CommandExecutor {
         let attackOutcome = resolveCombatResult(for: defender, damage: damage, in: &state)
         state.appendEvent(
             combatLog(
-                prefix: "\(attacker.name) attacked \(defender.name)",
-                subjectName: defender.name,
+                prefix: "\(attacker.operationalDisplayName) attacked \(defender.operationalDisplayName)",
+                subjectName: defender.operationalDisplayName,
                 damage: damage,
                 outcome: attackOutcome
             )
@@ -125,8 +125,8 @@ struct CommandExecutor {
             let counterOutcome = resolveCombatResult(for: updatedAttacker, damage: counterDamage, in: &state)
             state.appendEvent(
                 combatLog(
-                    prefix: "\(updatedDefender.name) counterattacked \(updatedAttacker.name)",
-                    subjectName: updatedAttacker.name,
+                    prefix: "\(updatedDefender.operationalDisplayName) counterattacked \(updatedAttacker.operationalDisplayName)",
+                    subjectName: updatedAttacker.operationalDisplayName,
                     damage: counterDamage,
                     outcome: counterOutcome
                 )
@@ -145,7 +145,7 @@ struct CommandExecutor {
 
         state.divisions[index].retreatMode = .hold
         state.divisions[index].hasActed = true
-        state.appendEvent("\(state.divisions[index].name) set stance to HOLD: no retreat, +20% defense, +20% losses.")
+        state.appendEvent("\(state.divisions[index].operationalDisplayName) set stance to HOLD: no retreat, +20% defense, +20% losses.")
     }
 
     private func executeAllowRetreat(divisionId: String, in state: inout GameState) {
@@ -155,7 +155,7 @@ struct CommandExecutor {
 
         state.divisions[index].retreatMode = .retreatable
         state.divisions[index].hasActed = true
-        state.appendEvent("\(state.divisions[index].name) set stance to RETREATABLE: auto-retreat after severe losses.")
+        state.appendEvent("\(state.divisions[index].operationalDisplayName) set stance to RETREATABLE: auto-retreat after severe losses.")
     }
 
     private func executeResupply(divisionId: String, in state: inout GameState) {
@@ -379,7 +379,7 @@ struct CommandExecutor {
         }
 
         state.appendEvent(
-            "Hex \(hex.q),\(hex.r) reassigned to dynamic theater \(advancingTheaterId.rawValue).",
+            "Hex \(hex.q),\(hex.r) reassigned to operational zone \(advancingTheaterId.rawValue).",
             category: .theaterChange,
             relatedRecordId: nil
         )

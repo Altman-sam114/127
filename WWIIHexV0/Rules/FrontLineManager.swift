@@ -416,7 +416,7 @@ struct FrontLineManager {
             let factionB = finalSegments
                 .lazy
                 .compactMap { map.regions[$0.regionB]?.controller }
-                .first { $0.isHostile(to: factionA) } ?? factionA.opponent
+                .first { $0.isHostile(to: factionA) } ?? .neutral
 
             return FrontLine(
                 id: frontLineId(theaterId: theaterId, factionA: factionA, factionB: factionB),

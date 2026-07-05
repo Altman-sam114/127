@@ -13,7 +13,6 @@ struct WarCommandExecutionResult: Equatable {
 
 struct WarCommandExecutor {
     let commandHandler: GameCommandHandling
-    private let occupationRules = OccupationRules()
 
     private struct AttackTacticProfile {
         let includeDepthUnits: Bool
@@ -1118,7 +1117,7 @@ struct WarCommandExecutor {
 
         state = result.state
         let affectedRegionIds = affectedRegionIds(for: command, state: state)
-        let occupiedRegionIds = applyDirectiveOccupation(command: command, state: &state)
+        let occupiedRegionIds = occupiedRegionIds(for: command, state: state)
         let dynamicAdvancedRegionIds = stableUnique((affectedRegionIds + occupiedRegionIds).compactMap { regionId in
             applyStrategicAdvance(
                 regionId: regionId,
@@ -1281,7 +1280,7 @@ struct WarCommandExecutor {
             )
         }
         state.appendEvent(
-            "Hex \(hex.q),\(hex.r) reassigned to dynamic theater \(advancingTheaterId.rawValue).",
+            "Hex \(hex.q),\(hex.r) reassigned to operational zone \(advancingTheaterId.rawValue).",
             category: .theaterChange,
             relatedRecordId: relatedRecordId
         )
@@ -1397,16 +1396,16 @@ struct WarCommandExecutor {
         return result.sorted { $0.rawValue < $1.rawValue }
     }
 
-    private func applyDirectiveOccupation(command: Command, state: inout GameState) -> [RegionId] {
+    private func occupiedRegionIds(for command: Command, state: GameState) -> [RegionId] {
         guard case .move(let divisionId, let destination) = command,
               let division = state.division(id: divisionId),
-              occupationRules.canOccupy(division: division, destination: destination, in: state),
-              var tile = state.map.tile(at: destination) else {
+              let tile = state.map.tile(at: destination),
+              division.coord == destination,
+              tile.isCapturable,
+              tile.controller == division.faction else {
             return []
         }
 
-        tile.controller = division.faction
-        state.map.setTile(tile)
         return state.map.region(for: destination).map { [$0] } ?? []
     }
 

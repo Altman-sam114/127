@@ -31,14 +31,14 @@ MapEditor / JSON
 - `hexToTheater` 是运行时动态战区权威。
 - `hexToFrontZone` 是部署层动态归属权威。
 - 玩家、AI、聊天命令和 MockAI 都必须落到 `Command` / `ZoneDirective`，再经 `WarCommandExecutor`、`CommandValidator`、`RuleEngine` 执行。
-- 当前默认 AI 文档口径是 `MarshalAgent -> TheaterDirective JSON -> TheaterDirectiveDecoder -> TheaterDirectiveCompiler -> ZoneDirective -> WarCommandExecutor -> RuleEngine`。
+- 当前默认 AI 文档口径已是 `MarshalAgent -> Operational Directive JSON (TheaterDirective schema) -> TheaterDirectiveDecoder -> ModernCommandChain advisory JSON -> TheaterDirectiveCompiler -> ZoneDirective -> WarCommandExecutor -> RuleEngine`。
 - Legacy Agent D 管线保留作回归参考，默认战争 AI 主路径不得退回旧管线。
-- 当前 `Faction` 仍只有 `germany/allies`，且 `Faction.opponent`、`GamePhase.germanAI/alliedPlayer`、`CommandValidator`、`SupplyRules`、`FrontLineManager`、`WarCommandExecutor` 等处仍有二元阵营假设。
-- 当前单位源码类型叫 `Division`，兵种仍是 `tank`、`motorizedInfantry`、`infantry`、`artillery`。
-- 当前经济仍是 `manpower / industry / supplies`，生产项仍有 `Panzer Division`、`Motorized Division` 等二战语义。
-- 当前默认数据和 UI 仍有阿登、Germany、Allies、Bastogne、Guderian、Montgomery、Panzer、Division 等二战语义。
-- 当前 `DataLoader.loadInitialGameState()` 默认加载 `ardennes_v0_scenario` 与 `ardennes_v02_regions`。
-- 当前 `RegionDataSet.toRegions()` 对 nil owner/controller 仍会 fallback 到 `.allies`，这是中立语义和多方阵营迁移的风险点。
+- 当前 `Faction` 已支持 `blueForce`、`redForce`、`greenForce`、`neutral`，并以 `OperationalSideAlignment` / ROE helper 处理主路径敌我；`Faction.opponent` 仅作 legacy compatibility 属性保留。
+- 当前单位源码类型仍叫 `Division`，但默认灰潮数据和玩家可见 UI 已走 formation / task force / commander display name；旧兵种和模板 id 只作 fallback / fixture 兼容。
+- 当前经济源码字段仍是 `manpower / industry / supplies`，但玩家可见 UI 已收口为 PER / MAT / LOG、Facilities、sustainment 和现代 replacement 口径。
+- 当前默认数据和主 UI 已切到 `grey_tide_2030`、虚构 Blue / Red commander 和现代显示口径；旧阿登、Bastogne、Guderian、Montgomery、Panzer 等保留在 fallback、测试 fixture 或历史文档中。
+- 当前 `DataLoader.loadInitialGameState()` 默认优先加载 `grey_tide_2030_scenario` 与 `grey_tide_2030_regions`，失败才回退旧阿登资源。
+- 当前 `RegionDataSet.toRegions()` 对 nil owner/controller fallback 到 `.neutral`，不再把中立 region 错落到 `.allies`。
 - 当前工作树可能混有 v0.4、v0.5、v0.7、v0.8、v0.9、v1.0、v1.1、三国迁移、拿战迁移、隋唐迁移、明末迁移等未提交改动。任何实现前必须做分支和文件冲突审查，不能回滚他人改动。
 
 迁移目标不是“把二战文案换成现代文案”，而是把这个工程逐步迁移为一个可发布的 AI Agent 驱动现代战争策略游戏：玩家在现代作战态势图上指挥合成营、无人系统、精确火力、空地协同、电子战和后勤节点；AI Agent 以可审计 JSON 指令协作决策，所有行动仍被统一规则系统约束。
@@ -1421,11 +1421,11 @@ swiftc -parse path/to/ChangedFile.swift
 实现前必须主动关注这些风险：
 
 - 当前工作树很脏，且历史记录显示分支多次漂移；合并前必须重新确认分支、基点、dirty 文件和冲突。
-- `Faction` 二元模型是最大风险点；如果一次性强改，容易连锁破坏 AI、补给、前线、部署、UI 和数据加载。
-- `Faction.opponent` 残留会直接破坏多方、中立和 ROE 逻辑。
+- `Faction` 已扩到现代作战方，但旧 raw value / fixture / display fallback 仍存在；继续修改时必须确认 ROE、补给、前线、部署、UI 和数据加载没有退回二元假设。
+- `Faction.opponent` 仅作 legacy compatibility 属性保留；主路径不得重新调用它做敌我 fallback。
 - `GamePhase.germanAI/alliedPlayer` 残留会让新作战方控制权表现错误。
-- `RegionDataSet.toRegions()` 中 owner/controller nil fallback 到 `.allies` 是历史债，现代迁移时必须修或隔离。
-- `DataLoader` 默认资源、fallback components、validation 仍硬编码阿登和 Guderian。
+- `RegionDataSet.toRegions()` 当前 nil owner/controller fallback 到 `.neutral`；后续若改 schema 必须保持中立语义。
+- `DataLoader` 默认资源已切灰潮；旧阿登资源和 legacy template fallback 只作兼容，不能重新变成默认主路径。
 - `project.pbxproj` 已多次被多分支修改，只能由一个 Agent 处理。
 - UI/SpriteKit 改动需要视觉验证，但当前规范禁止主动启动 app；必须记录未验证风险。
 - Contact / fog-of-war 若实现不严谨，AI 可能读取真实敌军状态，破坏玩法和架构边界。

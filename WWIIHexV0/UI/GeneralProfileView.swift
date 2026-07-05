@@ -27,7 +27,7 @@ struct GeneralProfileView: View {
         .background(.ultraThinMaterial)
         .safeAreaInset(edge: .top) {
             HStack {
-                Text("General Profile")
+                Text("Commander Profile")
                     .font(.headline)
                 Spacer()
                 Button("Close", systemImage: "xmark", action: onClose)
@@ -64,7 +64,7 @@ struct GeneralProfileView: View {
 
     private var biographyBlock: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Biography")
+            Text("Command Notes")
                 .font(.headline)
             Text(general.biography)
                 .font(.body)
@@ -81,7 +81,7 @@ struct GeneralProfileView: View {
                 }
             }
             if hqUnderAttack {
-                Label("HQ region contested", systemImage: "exclamationmark.triangle.fill")
+                Label("Command post contested", systemImage: "exclamationmark.triangle.fill")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.orange)
             }
@@ -90,11 +90,11 @@ struct GeneralProfileView: View {
 
     private var statusBlock: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Relationship")
+            Text("Command Climate")
                 .font(.headline)
-            metricBar(title: "Loyalty", value: assignment?.loyalty ?? general.baseLoyalty)
-            metricBar(title: "Satisfaction", value: assignment?.satisfaction ?? general.baseSatisfaction)
-            LabeledContent("Player Interventions") {
+            metricBar(title: "Trust", value: assignment?.loyalty ?? general.baseLoyalty)
+            metricBar(title: "Readiness", value: assignment?.satisfaction ?? general.baseSatisfaction)
+            LabeledContent("Manual Overrides") {
                 Text("\(assignment?.interventionCount ?? 0)")
             }
         }
@@ -134,7 +134,7 @@ struct GeneralProfileView: View {
                     .foregroundStyle(.secondary)
             } else {
                 ForEach(assignedDivisions, id: \.id) { division in
-                    LabeledContent(division.name) {
+                    LabeledContent(division.operationalDisplayName) {
                         Text("\(division.strength)/\(division.maxStrength)")
                     }
                     .font(.caption)

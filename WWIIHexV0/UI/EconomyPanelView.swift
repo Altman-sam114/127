@@ -37,7 +37,7 @@ struct EconomyPanelView: View {
                 GridRow {
                     metric("Personnel", ledger.stockpile.manpower)
                     metric("Materiel", ledger.stockpile.industry)
-                    metric("Supplies", ledger.stockpile.supplies)
+                    metric("Logistics", ledger.stockpile.supplies)
                 }
 
                 GridRow {
@@ -115,7 +115,7 @@ struct EconomyPanelView: View {
     }
 
     private func resourceSummary(_ resources: EconomyResources) -> String {
-        "PER \(resources.manpower), MAT \(resources.industry), SUP \(resources.supplies)"
+        "PER \(resources.manpower), MAT \(resources.industry), LOG \(resources.supplies)"
     }
 
     private func iconName(for kind: ProductionKind) -> String {

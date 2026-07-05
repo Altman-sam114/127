@@ -88,7 +88,7 @@ struct AgentPanelView: View {
 
             if let rulerRecord {
                 Divider()
-                LabeledContent("Ruler") {
+                LabeledContent("National Command") {
                     Text(rulerRecord.rulerAgentId)
                 }
                 LabeledContent("Posture") {
@@ -220,6 +220,10 @@ struct AgentPanelView: View {
         switch provider {
         case "MockAI":
             return "Local Planner"
+        case "MockAI+MarshalDirective":
+            return "Local Planner + Operational Directive"
+        case "MockAI+Directive":
+            return "Local Planner + Directive"
         case let provider?:
             return provider
         case nil:
@@ -230,10 +234,10 @@ struct AgentPanelView: View {
     private func commandChainTargetLine(_ item: ModernCommandChainReplayItem) -> String {
         var targets: [String] = []
         if let zoneId = item.zoneId {
-            targets.append("zone \(zoneId.rawValue)")
+            targets.append("command sector \(zoneId.rawValue)")
         }
         if let regionId = item.regionId {
-            targets.append("region \(regionId.rawValue)")
+            targets.append("objective \(regionId.rawValue)")
         }
         if let contactId = item.contactId {
             targets.append("contact \(contactId)")

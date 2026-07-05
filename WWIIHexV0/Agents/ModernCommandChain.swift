@@ -55,7 +55,7 @@ enum ModernMissionType: String, Codable, Equatable, CaseIterable {
         case .setROE:
             return "Set ROE"
         case .theaterObjective:
-            return "Theater Objective"
+            return "Operational Objective"
         case .deconflict:
             return "Deconflict"
         case .reconArea:
@@ -481,7 +481,7 @@ struct ModernCommandChainOrchestrator {
             strategicIntent: theaterEnvelope.strategicIntent,
             theaterDirectiveIds: theaterEnvelope.directives.map(\.id),
             subDirectives: subDirectives,
-            rationale: "Joint command decomposed theater directives into ISR, fires, air, EW, logistics, and brigade tasks."
+            rationale: "Joint command decomposed operational directives into ISR, fires, air, EW, logistics, and brigade tasks."
         )
         let notes = chiefOfStaffNotes(theaterEnvelope: theaterEnvelope, subDirectives: subDirectives)
         return ModernCommandChainPlan(
@@ -492,7 +492,7 @@ struct ModernCommandChainOrchestrator {
             jointPlan: jointPlan,
             chiefOfStaffNotes: notes,
             compiledZoneDirectiveCount: theaterEnvelope.directives.count,
-            summary: "\(summary.marshalName): \(subDirectives.count) coordinated sub-directive(s), \(theaterEnvelope.directives.count) theater directive(s)."
+            summary: "\(summary.marshalName): \(subDirectives.count) coordinated sub-directive(s), \(theaterEnvelope.directives.count) operational directive(s)."
         )
     }
 
@@ -690,7 +690,7 @@ struct ModernCommandChainOrchestrator {
     ) -> [String] {
         let zones = Set(theaterEnvelope.directives.map(\.zoneId))
         return [
-            "ChiefOfStaffAgent deconflicted \(theaterEnvelope.directives.count) theater directive(s) across \(zones.count) zone(s).",
+            "ChiefOfStaffAgent deconflicted \(theaterEnvelope.directives.count) operational directive(s) across \(zones.count) zone(s).",
             "Sub-directives are advisory and compile back to ZoneDirective or Command before execution.",
             "No two coordinator roles execute directly; WarCommandExecutor and RuleEngine remain final authority.",
             "Generated \(subDirectives.count) auditable coordinator task(s)."

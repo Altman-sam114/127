@@ -837,10 +837,9 @@ struct TheaterCommanderPool {
 
     static func defaultConfig(for zone: FrontZone) -> ZoneCommanderAgentConfig {
         let style: ZoneCommanderAgentConfig.CommandStyle = zone.faction == .germany ? .aggressive : .balanced
-        let factionName = zone.faction == .germany ? "German" : "Allied"
         return ZoneCommanderAgentConfig(
             id: "auto_\(zone.id.rawValue)",
-            name: "\(factionName) Commander (\(zone.id.rawValue))",
+            name: "\(zone.faction.shortDisplayName) Commander (\(zone.id.rawValue))",
             faction: zone.faction,
             assignedZoneId: zone.id,
             skills: [],
@@ -1283,7 +1282,7 @@ struct SimulatedMarshalLLMClient: MarshalLLMClient {
             faction: summary.faction,
             strategicIntent: strategicIntent(summary: summary, bias: config.strategicBias),
             directives: directives,
-            summary: "\(summary.marshalName): \(directives.count) theater directive(s) from summarized fronts."
+            summary: "\(summary.marshalName): \(directives.count) operational directive(s) from summarized fronts."
         )
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
@@ -1543,9 +1542,11 @@ struct MarshalAgent {
             )
         }
 
+        var rawTheaterJSON: String?
         do {
             let summary = summarizer.summary(for: config, in: state)
             let raw = try llmClient.completeTheaterDirectiveJSON(summary: summary, config: config)
+            rawTheaterJSON = raw
             let theaterEnvelope = try decoder.parse(
                 raw,
                 expectedIssuerId: config.id,
@@ -1563,6 +1564,7 @@ struct MarshalAgent {
                     state: state
                 )
                 let rawPlan = try commandChainOrchestrator.fencedJSON(for: plan)
+                rawCommandChainJSON = rawPlan
                 commandChainPlan = try commandChainDecoder.parse(
                     rawPlan,
                     expectedIssuerId: config.id,
@@ -1570,7 +1572,6 @@ struct MarshalAgent {
                     expectedFaction: faction,
                     state: state
                 )
-                rawCommandChainJSON = rawPlan
             } catch {
                 diagnostics.append("Modern command chain validation failed: \(error.localizedDescription). Advisory sub-directives were not executed.")
             }
@@ -1591,12 +1592,12 @@ struct MarshalAgent {
         } catch {
             let fallback = fallbackPool.envelope(for: faction, in: state, issuerId: issuerId)
             return MarshalDirectiveResolution(
-                rawTheaterJSON: nil,
+                rawTheaterJSON: rawTheaterJSON,
                 rawCommandChainJSON: nil,
                 theaterEnvelope: nil,
                 commandChainPlan: nil,
                 directiveEnvelope: fallback,
-                diagnostics: ["Marshal directive decode/compile failed: \(error.localizedDescription). Fallback TheaterCommanderPool used."]
+                diagnostics: ["Operational directive decode/compile failed: \(error.localizedDescription). Fallback commander pool used."]
             )
         }
     }

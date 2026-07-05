@@ -285,7 +285,7 @@ final class AppContainer: ObservableObject {
 
     func orderSelectedGeneralHoldLine() {
         guard let zone = selectedGeneralCommandZone else {
-            appendInteractionEvent("General order rejected: no player-controlled command sector selected.")
+            appendInteractionEvent("Commander directive rejected: no player-controlled command sector selected.")
             return
         }
 
@@ -307,11 +307,11 @@ final class AppContainer: ObservableObject {
 
     func orderSelectedGeneralAttackRegion() {
         guard let target = selectedAttackTarget else {
-            appendInteractionEvent("General order rejected: select an enemy front region to attack.")
+            appendInteractionEvent("Commander directive rejected: select an enemy front region to attack.")
             return
         }
         guard let zone = selectedGeneralCommandZone else {
-            appendInteractionEvent("General order rejected: no player-controlled source command sector available.")
+            appendInteractionEvent("Commander directive rejected: no player-controlled source command sector available.")
             return
         }
 
@@ -954,18 +954,18 @@ final class AppContainer: ObservableObject {
         targetRegionId: RegionId?
     ) {
         guard canIssuePlayerDirective else {
-            appendInteractionEvent("General order rejected: not in the player command phase.")
+            appendInteractionEvent("Commander directive rejected: not in the player command phase.")
             return
         }
         guard gameState.warDeploymentState.frontZones[directive.zoneId]?.faction == playerFaction else {
-            appendInteractionEvent("General order rejected: source zone is not controlled by the player.")
+            appendInteractionEvent("Commander directive rejected: source zone is not controlled by the player.")
             return
         }
 
         let startState = refreshedRuntimeState(gameState)
         guard let refreshedZone = startState.warDeploymentState.frontZones[directive.zoneId],
               refreshedZone.faction == playerFaction else {
-            appendInteractionEvent("General order rejected: source zone changed during refresh.")
+            appendInteractionEvent("Commander directive rejected: source zone changed during refresh.")
             return
         }
         let lockedIds = startState.playerCommandState.micromanagedDivisionIds
@@ -1030,7 +1030,7 @@ final class AppContainer: ObservableObject {
         gameState = nextState
         lastWarDirectiveRecords = Array((lastWarDirectiveRecords + [record]).suffix(12))
         lastCommandMessage = playerDirectiveMessage(for: execution, diagnostics: diagnostics)
-        appendInteractionEvent("General order submitted: \(directive.type.rawValue) \(directive.zoneId.rawValue).")
+        appendInteractionEvent("Commander directive submitted: \(directive.type.rawValue) \(directive.zoneId.rawValue).")
         refreshSelectionAfterStateChange()
     }
 
@@ -1041,12 +1041,12 @@ final class AppContainer: ObservableObject {
         let acceptedCount = execution.commandResults.filter(\.succeeded).count
         let totalCount = execution.generatedCommands.count
         if totalCount == 0 {
-            return diagnostics.first ?? "General order produced no commands."
+            return diagnostics.first ?? "Commander directive produced no commands."
         }
         if acceptedCount == totalCount {
-            return "General order executed \(acceptedCount) command(s)."
+            return "Commander directive executed \(acceptedCount) command(s)."
         }
-        return "General order executed \(acceptedCount)/\(totalCount) command(s)."
+        return "Commander directive executed \(acceptedCount)/\(totalCount) command(s)."
     }
 
     private func shouldRunAI(for faction: Faction, phase: GamePhase) -> Bool {
@@ -1142,7 +1142,7 @@ final class AppContainer: ObservableObject {
                 .map(\.id)
             agent = GameAgent.sample(
                 id: "\(faction.rawValue)_mock_commander",
-                name: "\(faction.shortDisplayName) Mock Commander",
+                name: "\(faction.shortDisplayName) Local Planner",
                 faction: faction,
                 role: .armyCommander,
                 assignedDivisionIds: assignedIds
@@ -1196,13 +1196,13 @@ final class AppContainer: ObservableObject {
     private func handleDivisionTap(_ division: Division) {
         if observerModeEnabled {
             selectDivision(division)
-            appendInteractionEvent("Inspecting unit: \(division.name).")
+            appendInteractionEvent("Inspecting formation: \(division.operationalDisplayName).")
             return
         }
 
         if division.faction == playerFaction {
             selectDivision(division)
-            appendInteractionEvent("Selected unit: \(division.name).")
+            appendInteractionEvent("Selected formation: \(division.operationalDisplayName).")
             return
         }
 
@@ -1210,7 +1210,7 @@ final class AppContainer: ObservableObject {
             submit(.attack(attackerId: attacker.id, targetId: division.id))
         } else {
             selectDivision(division)
-            appendInteractionEvent("Selected enemy unit: \(division.name).")
+            appendInteractionEvent("Selected enemy formation: \(division.operationalDisplayName).")
         }
     }
 

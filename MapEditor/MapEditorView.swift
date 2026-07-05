@@ -6,6 +6,7 @@ import UniformTypeIdentifiers
 
 struct MapEditorView: View {
     @StateObject private var viewModel = MapEditorViewModel()
+    private let editorFactions: [Faction] = [.blueForce, .redForce, .greenForce]
 
     var body: some View {
         NavigationSplitView {
@@ -79,13 +80,13 @@ struct MapEditorView: View {
             Toggle("道路", isOn: $viewModel.paintRoad)
             Toggle("补给站", isOn: $viewModel.paintSupply)
             Picker("补给阵营", selection: $viewModel.supplyFaction) {
-                ForEach(Faction.allCases, id: \.self) { faction in
+                ForEach(editorFactions, id: \.self) { faction in
                     Text(faction.chineseName).tag(faction)
                 }
             }
             Picker("控制方", selection: controllerBinding) {
                 Text("中立").tag(Optional<Faction>.none)
-                ForEach(Faction.allCases, id: \.self) { faction in
+                ForEach(editorFactions, id: \.self) { faction in
                     Text(faction.chineseName).tag(Optional(faction))
                 }
             }
@@ -104,11 +105,11 @@ struct MapEditorView: View {
 
     private var regionPanel: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("省份模式")
+            Text("区域模式")
                 .font(.headline)
-            TextField("省份名称", text: $viewModel.newRegionText)
-            Button("准备新省份", systemImage: "square.and.pencil", action: viewModel.prepareNewRegion)
-            Picker("当前省份", selection: regionBinding) {
+            TextField("区域名称", text: $viewModel.newRegionText)
+            Button("准备新区域", systemImage: "square.and.pencil", action: viewModel.prepareNewRegion)
+            Picker("当前区域", selection: regionBinding) {
                 Text("未选择").tag(Optional<RegionId>.none)
                 ForEach(viewModel.document.regions.values.sorted { $0.id.rawValue < $1.id.rawValue }) { region in
                     Text("\(region.name) · \(region.id.rawValue)").tag(Optional(region.id))
@@ -123,17 +124,17 @@ struct MapEditorView: View {
 
     private var theaterPanel: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("战区模式")
+            Text("作战区模式")
                 .font(.headline)
-            TextField("战区名称", text: $viewModel.newTheaterText)
-            Button("准备新战区", systemImage: "square.and.pencil", action: viewModel.prepareNewTheater)
-            Picker("当前战区", selection: theaterBinding) {
+            TextField("作战区名称", text: $viewModel.newTheaterText)
+            Button("准备新作战区", systemImage: "square.and.pencil", action: viewModel.prepareNewTheater)
+            Picker("当前作战区", selection: theaterBinding) {
                 Text("未选择").tag(Optional<TheaterId>.none)
                 ForEach(viewModel.document.theaters.values.sorted { $0.id.rawValue < $1.id.rawValue }) { theater in
                     Text("\(theater.name) · \(theater.id.rawValue)").tag(Optional(theater.id))
                 }
             }
-            Text("待加入省份：\(viewModel.pendingTheaterRegions.count)")
+            Text("待加入区域：\(viewModel.pendingTheaterRegions.count)")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
         }
@@ -141,10 +142,10 @@ struct MapEditorView: View {
 
     private var unitPanel: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("部队模式")
+            Text("任务编组模式")
                 .font(.headline)
             Picker("阵营", selection: $viewModel.selectedUnitFaction) {
-                ForEach(Faction.allCases, id: \.self) { faction in
+                ForEach(editorFactions, id: \.self) { faction in
                     Text(faction.chineseName).tag(faction)
                 }
             }
@@ -262,19 +263,19 @@ struct MapEditorView: View {
                 Text("地形：\(hex.terrain.chineseName)")
                 Text("道路：\(hex.hasRoad ? "有" : "无")")
                 if let regionId = hex.regionId {
-                    Text("省份 ID：\(regionId.rawValue)")
-                    TextField("省份名称", text: $viewModel.inspectedRegionName)
+                    Text("区域 ID：\(regionId.rawValue)")
+                    TextField("区域名称", text: $viewModel.inspectedRegionName)
                     if let theaterId = viewModel.document.regionTheaterAssignments[regionId] {
-                        Text("战区 ID：\(theaterId.rawValue)")
-                        TextField("战区名称", text: $viewModel.inspectedTheaterName)
+                        Text("作战区 ID：\(theaterId.rawValue)")
+                        TextField("作战区名称", text: $viewModel.inspectedTheaterName)
                     } else {
-                        Text("战区：未分配")
+                        Text("作战区：未分配")
                             .foregroundStyle(.secondary)
                     }
                     Button("保存信息", systemImage: "square.and.arrow.down", action: viewModel.saveInspectedInfo)
                         .buttonStyle(.borderedProminent)
                 } else {
-                    Text("省份：未分配")
+                    Text("区域：未分配")
                         .foregroundStyle(.secondary)
                 }
             } else {

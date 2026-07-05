@@ -17,7 +17,7 @@ struct GeneralCommandPanelView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("General Command")
+            Text("Commander Cell")
                 .font(.headline)
 
             if let zone {
@@ -60,9 +60,9 @@ struct GeneralCommandPanelView: View {
                     }
 
                     if let assignment {
-                        metricBar(title: "Loyalty", value: assignment.loyalty)
-                        metricBar(title: "Satisfaction", value: assignment.satisfaction)
-                        LabeledContent("Interventions") {
+                        metricBar(title: "Trust", value: assignment.loyalty)
+                        metricBar(title: "Readiness", value: assignment.satisfaction)
+                        LabeledContent("Manual Overrides") {
                             Text("\(assignment.interventionCount)")
                         }
                     }
@@ -71,13 +71,13 @@ struct GeneralCommandPanelView: View {
                         .buttonStyle(.bordered)
                 }
             } else if zone != nil {
-                Text("No general assigned to this command sector.")
+                Text("No commander assigned to this command sector.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
 
             if hqUnderAttack {
-                Label("HQ region contested", systemImage: "exclamationmark.triangle.fill")
+                Label("Command post contested", systemImage: "exclamationmark.triangle.fill")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.orange)
             }
@@ -88,7 +88,7 @@ struct GeneralCommandPanelView: View {
                     .foregroundStyle(.secondary)
                 VStack(alignment: .leading, spacing: 4) {
                     ForEach(Array(assignedDivisions.prefix(5)), id: \.id) { division in
-                        Label(division.name, systemImage: unitIcon(for: division))
+                        Label(division.operationalDisplayName, systemImage: unitIcon(for: division))
                             .font(.caption)
                             .lineLimit(1)
                     }
@@ -96,7 +96,7 @@ struct GeneralCommandPanelView: View {
             }
 
             if let targetRegion, targetZone?.faction != zone?.faction {
-                LabeledContent("Target") {
+                LabeledContent("Objective") {
                     Text(targetRegion.name)
                 }
             }
@@ -104,7 +104,7 @@ struct GeneralCommandPanelView: View {
             HStack(spacing: 8) {
                 Button("Hold Line", systemImage: "shield.fill", action: onHoldLine)
                     .disabled(!canHoldLine)
-                Button("Attack Region", systemImage: "arrow.up.right.circle", action: onAttackRegion)
+                Button("Assault Objective", systemImage: "arrow.up.right.circle", action: onAttackRegion)
                     .disabled(!canAttackRegion)
             }
             .buttonStyle(.bordered)

@@ -1,5 +1,5 @@
 flowchart TD
-    ME["MapEditor<br/>编辑 hex / region / theater / unit"]:::editor
+    ME["MapEditor<br/>编辑 hex / region / theater / task force"]:::editor
     JSON["ScenarioDefinition.json<br/>RegionDataSet.json"]:::data
     DL["DataLoader.loadInitialGameState<br/>loadGameState"]:::loader
     GS["GameState<br/>运行时总状态"]:::state
@@ -13,7 +13,7 @@ flowchart TD
     DEPLOY["WarDeploymentState<br/>hexToFrontZone 权威<br/>FRONT / DEPTH / GARRISON"]:::derived
 
     PLAYER["玩家操作<br/>tap / move / attack / endTurn"]:::input
-    AI["AI / 将领<br/>TheaterCommanderPool<br/>ZoneCommanderAgent"]:::input
+    AI["AI 指挥链<br/>MarshalAgent<br/>ModernCommandChain<br/>Zone fallback"]:::input
     ZD["ZoneDirective<br/>attack / defend<br/>category / tactic / target"]:::command
     WCE["WarCommandExecutor<br/>directive -> Command"]:::command
     CMD["Command<br/>move / attack / hold / resupply / endTurn"]:::command

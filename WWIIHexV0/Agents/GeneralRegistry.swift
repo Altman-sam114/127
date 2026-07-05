@@ -116,9 +116,8 @@ struct GeneralDispatcher {
         seedAssignments: [RegionId: String] = [:]
     ) -> WarDeploymentState {
         var next = deploymentState
-        var usedGeneralIds = Set(
-            next.frontZones.values.compactMap { $0.generalAssignment?.generalId }
-        )
+        var usedGeneralIds: Set<String> = []
+        var unassignedZoneIds: [FrontZoneId] = []
 
         let zones = next.frontZones.values.sorted { $0.id.rawValue < $1.id.rawValue }
         for zone in zones {
@@ -129,25 +128,50 @@ struct GeneralDispatcher {
             let divisionIds = unitIds(in: editableZone)
             if let current = editableZone.generalAssignment,
                let general = registry.general(id: current.generalId),
-               general.faction == editableZone.faction {
+               general.faction == editableZone.faction,
+               !usedGeneralIds.contains(current.generalId) {
                 editableZone.generalAssignment = current.withAssignedDivisionIds(divisionIds)
                 next.frontZones[zone.id] = editableZone
                 usedGeneralIds.insert(current.generalId)
                 continue
             }
 
-            guard let general = seededGeneral(for: editableZone, seedAssignments: seedAssignments)
-                ?? firstAvailableGeneral(for: editableZone, usedGeneralIds: usedGeneralIds) else {
-                editableZone.generalAssignment = nil
-                next.frontZones[zone.id] = editableZone
+            editableZone.generalAssignment = nil
+            next.frontZones[zone.id] = editableZone
+            unassignedZoneIds.append(zone.id)
+        }
+
+        for zoneId in unassignedZoneIds {
+            guard var editableZone = next.frontZones[zoneId],
+                  let general = seededGeneral(
+                for: editableZone,
+                seedAssignments: seedAssignments,
+                usedGeneralIds: usedGeneralIds
+            ) else {
+                continue
+            }
+
+            let divisionIds = unitIds(in: editableZone)
+            editableZone.generalAssignment = general.defaultAssignment(
+                hqRegionId: hqRegion(for: editableZone, map: map),
+                divisionIds: divisionIds
+            )
+            next.frontZones[zoneId] = editableZone
+            usedGeneralIds.insert(general.id)
+        }
+
+        for zoneId in unassignedZoneIds {
+            guard var editableZone = next.frontZones[zoneId],
+                  editableZone.generalAssignment == nil,
+                  let general = firstAvailableGeneral(for: editableZone, usedGeneralIds: usedGeneralIds) else {
                 continue
             }
 
             editableZone.generalAssignment = general.defaultAssignment(
                 hqRegionId: hqRegion(for: editableZone, map: map),
-                divisionIds: divisionIds
+                divisionIds: unitIds(in: editableZone)
             )
-            next.frontZones[zone.id] = editableZone
+            next.frontZones[zoneId] = editableZone
             usedGeneralIds.insert(general.id)
         }
 
@@ -208,18 +232,23 @@ struct GeneralDispatcher {
 
     private func seededGeneral(
         for zone: FrontZone,
-        seedAssignments: [RegionId: String]
+        seedAssignments: [RegionId: String],
+        usedGeneralIds: Set<String>
     ) -> GeneralData? {
         let candidates = zone.regionIds.compactMap { seedAssignments[$0] }
         for generalId in candidates.sorted() {
             if let general = registry.general(id: generalId),
-               general.faction == zone.faction {
+               general.faction == zone.faction,
+               !usedGeneralIds.contains(general.id) {
                 return general
             }
         }
 
         return registry.generals(for: zone.faction)
             .first { general in
+                guard !usedGeneralIds.contains(general.id) else {
+                    return false
+                }
                 general.preferredTheaterIds.contains(TheaterId(zone.id.rawValue))
                     || !Set(general.preferredRegionIds).isDisjoint(with: Set(zone.regionIds))
             }

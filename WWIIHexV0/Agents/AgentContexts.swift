@@ -216,7 +216,7 @@ struct AgentContextBuilder {
     private func divisionSummary(_ division: Division, state: GameState) -> DivisionSummary {
         DivisionSummary(
             id: division.id,
-            name: division.name,
+            name: division.operationalDisplayName,
             faction: division.faction,
             coord: division.coord,
             regionId: division.location(in: state.map),

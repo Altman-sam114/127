@@ -231,7 +231,7 @@ struct TurnManager {
             let compiledJSON = try Self.canonicalDirectiveJSON(resolution.directiveEnvelope)
             var rawSections: [String] = []
             if let rawTheaterJSON = resolution.rawTheaterJSON {
-                rawSections.append("TheaterDirective JSON:\n\(rawTheaterJSON)")
+                rawSections.append("Operational Directive JSON:\n\(rawTheaterJSON)")
             }
             if let rawCommandChainJSON = resolution.rawCommandChainJSON {
                 rawSections.append("Modern Command Chain JSON:\n\(rawCommandChainJSON)")
@@ -239,8 +239,8 @@ struct TurnManager {
             rawSections.append("Compiled ZoneDirective JSON:\n\(compiledJSON)")
             let rawJSON = rawSections.joined(separator: "\n\n")
             let parsedIntent = resolution.commandChainPlan.map {
-                "\(resolution.theaterEnvelope?.strategicIntent ?? "marshal directives") | \($0.summary)"
-            } ?? (resolution.theaterEnvelope?.strategicIntent ?? "marshal directives")
+                "\(resolution.theaterEnvelope?.strategicIntent ?? "operational directives") | \($0.summary)"
+            } ?? (resolution.theaterEnvelope?.strategicIntent ?? "operational directives")
             let replayItems = resolution.commandChainPlan?.jointPlan.subDirectives.map {
                 ModernCommandChainReplayItem(directive: $0)
             } ?? []

@@ -1,6 +1,6 @@
 # Modern Command Agent — iOS / macOS AI 战略战棋迁移工程
 
-> **当前状态：v6.10 发布候选准备。工程底座仍来自 WWIIHexV0，源码兼容名、target/module 名和旧阿登 fallback 数据仍保留；已完成 v6.0-v6.9 的现代作战方、灰潮种子、现代单位、ISR/EW/contact、火力/空中任务、现代 AI 指挥链、玩家任务入口、现代 C2 UI 和试玩闭环首轮。本轮把主游戏 iOS / macOS display name 收口为 `Modern Command Agent`，新增现代 C2 AppIcon 资产，Playtest 面板支持红/蓝新局选择并显示 Player Side / Opposition / Control Mode / Action Gate / 十个主目标控制摘要，地图补给源标签改为现代 Blue/Red 口径，灰潮默认剧本扩到 120 hex / 30 region，并加入现代目标控制胜负判断；同时新增发布候选残留扫描、验收证据矩阵与人工授权重验证清单。玩家任务仍经 `AppContainer -> Command / ZoneDirective -> WarCommandExecutor / RuleEngine`。历史测试基线曾达到 v0.37 Probe 18/0、Stage Regression 69/0、Full 226/0；当前工作流默认不跑 Xcode / XCTest / 模拟器测试，只按 `md/test/test.md` 做轻量检查，重验证看 GitHub Actions artifact。**
+> **当前状态：v6.10 发布候选准备。工程底座仍来自 WWIIHexV0，源码兼容名、target/module 名和旧阿登 fallback 数据仍保留；已完成 v6.0-v6.9 的现代作战方、灰潮种子、现代单位、ISR/EW/contact、火力/空中任务、现代 AI 指挥链、玩家任务入口、现代 C2 UI 和试玩闭环首轮。本轮把主游戏 iOS / macOS display name 收口为 `Modern Command Agent`，新增现代 C2 AppIcon 资产，Playtest 面板支持红/蓝新局选择并显示 Player Side / Opposition / Control Mode / Action Gate / 十个主目标控制摘要，默认 commander 数据改为虚构 Blue / Red C2 staff，commander seed 会排除已分配 commander，地图补给源标签改为现代 Blue/Red 口径，灰潮默认剧本扩到 120 hex / 30 region，并加入现代目标控制胜负判断；同时新增发布候选残留扫描、验收证据矩阵与人工授权重验证清单。玩家任务仍经 `AppContainer -> Command / ZoneDirective -> WarCommandExecutor / RuleEngine`，AI 失败路径尽量保留 raw JSON 供复盘。历史测试基线曾达到 v0.37 Probe 18/0、Stage Regression 69/0、Full 226/0；当前工作流默认不跑 Xcode / XCTest / 模拟器测试，只按 `md/test/test.md` 做轻量检查，重验证看 GitHub Actions artifact。**
 
 ---
 
@@ -16,7 +16,7 @@
 
 一款正在从 WWIIHexV0 迁移而来的 iOS / macOS 回合制现代战争 AI Agent 策略游戏。目标是在保留 hex 战术权威、region 战略聚合、动态战区、前线、部署和统一规则管线的基础上，迁移到现代联合作战：合成营/任务编组、无人系统、侦察 contact、电子战、精确火力、后勤和可审计 AI Agent 指挥链。
 
-当前 v6.10 是发布候选准备态，不是正式发布。`grey_tide_2030` 目前是 120-hex / 30-region 的可加载现代发布候选剧本，用于替换默认阿登入口并验证现代数据链；它包含机场、港口、雷达/防空、河桥、铁路、燃料、通信、民用缓冲和蓝/红补给入口，`VictoryRules` / `RegionVictoryRules` 对 `grey_tide_2030` 使用十个主目标的现代目标控制判定。`modern_unit_templates.json` 已提供现代组件并通过现有 `strength + supplyState + components` 影响移动、战斗和补员成本。玩家任务面板可以发起 Recon Area、UAV Orbit、Fire Mission、Air Support / SEAD、Assault Objective、Hold / Delay、Resupply / Repair、Jam / Counter-Drone；实际行动仍由 `Command` 或 `ZoneDirective` 进入 `RuleEngine`。Playtest tab 支持选择 Blue Force 或 Red Force 新开灰潮局、保存/继续本地快照、清除快照、切换 observer AI 和地图图层；本地快照使用带 schemaVersion 的 envelope 保存 `GameState` 与玩家方，并保留旧裸 `GameState` 快照兼容读取。Playtest 状态区显示 Player Side、Opposition、Control Mode、Action Gate、十个主目标控制摘要、不遮挡地图的短引导和错误反馈；Action Gate 只读解释当前是玩家可下令、AI 可解析、observer 自动化还是需要结束回合，不直接执行命令。非 observer 模式下 AI 只接管当前非玩家敌对阵营。fuel / readiness / signature / 真实武器库 / 复杂实时空战 / 真本地 LLM 多 Agent 并发仍未独立建模。`GamePhase.germanAI/alliedPlayer`、`Division` 源码名、旧 unit template id、target/module 名和若干二战测试 fixture 仍按兼容层保留。发布前仍需人工授权运行时验证：Xcode build、iOS/macOS 启动、UI 点击烟测、SpriteKit 截图、10-20 回合 observer 和性能体感。
+当前 v6.10 是发布候选准备态，不是正式发布。`grey_tide_2030` 目前是 120-hex / 30-region 的可加载现代发布候选剧本，用于替换默认阿登入口并验证现代数据链；它包含机场、港口、雷达/防空、河桥、铁路、燃料、通信、民用缓冲和蓝/红补给入口，`VictoryRules` / `RegionVictoryRules` 对 `grey_tide_2030` 使用十个主目标的现代目标控制判定。MapEditor 默认桥接读写灰潮资源，编辑器可见模式收口为区域、作战区和任务编组；覆盖默认资源时会保留灰潮已有 `maxTurns`、胜负条件、河流边、VP、occupation 和 river crossing 等编辑器未表达的高级元数据。`modern_unit_templates.json` 已提供现代组件并通过现有 `strength + supplyState + components` 影响移动、战斗和补员成本，灰潮剧本未知模板不再静默回退为 infantry。玩家任务面板可以发起 Recon Area、UAV Orbit、Fire Mission、Air Support / SEAD、Assault Objective、Hold / Delay、Resupply / Repair、Jam / Counter-Drone；实际行动仍由 `Command` 或 `ZoneDirective` 进入 `RuleEngine`。Playtest tab 支持选择 Blue Force 或 Red Force 新开灰潮局、保存/继续本地快照、清除快照、切换 observer AI 和地图图层；本地快照使用带 schemaVersion 的 envelope 保存 `GameState` 与玩家方，并保留旧裸 `GameState` 快照兼容读取。Playtest 状态区显示 Player Side、Opposition、Control Mode、Action Gate、十个主目标控制摘要、不遮挡地图的短引导和错误反馈；Action Gate 只读解释当前是玩家可下令、AI 可解析、observer 自动化还是需要结束回合，不直接执行命令。非 observer 模式下 AI 只接管当前非玩家敌对阵营。fuel / readiness / signature / 真实武器库 / 复杂实时空战 / 真本地 LLM 多 Agent 并发仍未独立建模。`GamePhase.germanAI/alliedPlayer`、`Division` 源码名、旧 unit template id、target/module 名和若干二战测试 fixture 仍按兼容层保留。发布前仍需人工授权运行时验证：Xcode build、iOS/macOS 启动、UI 点击烟测、SpriteKit 截图、10-20 回合 observer 和性能体感。
 
 **核心参考：**
 - 《统一指挥2》：六角格战棋、补给、攻击（战术层参照）
@@ -85,7 +85,7 @@ WWIIHexV0/
 ├── Commands/      — 命令系统（Command、CommandResult、CommandValidation、GameCommandHandling）
 ├── Rules/         — 规则引擎（RuleEngine、CombatRules、SupplyRules、MovementRules、VictoryRules、CommandExecutor、CommandValidator）
 ├── Agents/        — AI Agent 管线（旧 Agent D + ZoneCommanderAgent / MarshalAgent / ModernCommandChain）
-├── Turn/          — 回合管理器（TurnManager，德军 AI 回合编排）
+├── Turn/          — 回合管理器（TurnManager，按玩家方 / 敌对方 / observer 编排 AI）
 ├── SpriteKit/     — 地图渲染（BoardScene、UnitNode、HexNode、HexLayout、TerrainStyle、BoardSceneAdapter）
 ├── UI/            — 界面组件（UnitInspectorView、EventLogView、HUDView、CommandPanelView、ModernMissionPanelView、AgentPanelView、RootGameView）
 ├── App/           — 入口（AppContainer、WWIIHexV0App、WWIIHexV0MacApp）
@@ -118,27 +118,27 @@ WWIIHexV0/
 |------|------|--------------|
 | `Agents/DecisionProvider.swift` | 统一 AI 接口 | `protocol DecisionProvider { func decide(context:) async throws -> AgentDecisionEnvelope }` |
 | `Agents/GameAgent.swift` | 运行时 agent 模型 | `GameAgent`（精简版，无 Cabinet/DirectiveDomain，v0.5 污染已剔除） |
-| `Agents/AgentConfiguration.swift` | agent 加载 | `GameAgent.guderian(from:state:)`，优先 `general_agents.json`，失败 fallback |
+| `Agents/AgentConfiguration.swift` | legacy agent bridge | 旧 `general_agents.json` 兼容路径；现代默认回合使用当前 faction 的 local planner fallback |
 | `Agents/AgentContexts.swift` | agent 能看到的摘要 | `AgentContext` + `AgentContextBuilder`（无 organization，适配 v0.1） |
 | `Agents/AgentDecision.swift` | 结构化决策 DTO | `AgentDecisionEnvelope` / `AgentOrder` / `AgentOrderType`（move/attack/hold/resupply） |
 | `Agents/AgentDecisionParser.swift` | JSON → envelope | 校验 schemaVersion / agentId / turn，malformed 抛 typed error |
 | `Agents/AgentCommandMapper.swift` | order → Command | `AgentCommandMapper.map(_:agentId:) -> IssuedCommand`，缺字段抛 error |
 | `Agents/AgentDecisionRecord.swift` | 决策记录 | `AgentDecisionRecord` / `CommandResultSummary` / `ModernCommandChainReplayItem`（UI 读） |
-| `Agents/MockAIClient.swift` | v0 默认 provider | 启发式：resupply → attack → move(向 Bastogne) → hold |
+| `Agents/MockAIClient.swift` | local planner provider | 启发式：resupply → contact attack → objective movement → hold |
 | `Agents/LLMClient.swift` | Legacy LLM 接口预留 | `protocol LLMClient` + `LLMRequest`（旧 Agent D 用，默认不启用） |
 | `Agents/LocalLLMDecisionProvider.swift` | 本地 LLM provider | 注入 `LLMClient` + `AgentPromptBuilder` + parser，失败由上层 fallback MockAI |
 | `Agents/AgentPromptBuilder.swift` | prompt 构造 | system + user prompt，强制 JSON 输出 |
 | `Agents/ModernCommandChain.swift` | v6.6 现代指挥链 advisory 层 | `StrategicConstraintEnvelope` / `JointCommandPlan` / `ModernSubDirective` / `ModernCommandChainDecoder` / `ModernCommandChainOrchestrator` |
-| `Turn/TurnManager.swift` | 德军 AI 回合编排 | `runGermanAITurn(state:) async -> AgentTurnOutcome`（含 endTurn 推进） |
-| `App/AppContainer.swift` | AI 接线 | `runAIIfNeeded()`（guard germany+germanAI → Task → 写 state/record），`lastAgentDecisionRecord` |
+| `Turn/TurnManager.swift` | AI 回合编排 | `runGermanAITurn(state:) async -> AgentTurnOutcome` legacy 方法名，实际按当前 active faction / player side 判定控制权 |
+| `App/AppContainer.swift` | AI 接线 | `runAIIfNeeded()` 按玩家方、observer 和 active faction 判定是否接管，并写入 state / decision record |
 | `UI/ModernCommandDesignTokens.swift` | v6.8 C2 设计 token | 面板间距、圆角、44pt 触控尺寸、side / sensor / fires / EW / sustainment 色标 |
 | `UI/ModernMissionPanelView.swift` | v6.7+ 玩家任务面板 | Recon / UAV / FireMission / SEAD / Assault / Hold / Resupply / EW 任务入口，v6.8 使用 C2 token 统一样式，所有 action 交给 `AppContainer` |
 | `UI/ModernPlaytestPanelView.swift` | v6.9 试玩闭环面板 | 新局、保存/继续本地快照、observer AI、地图图层和短引导入口，所有 action 交给 `AppContainer` |
 | `UI/AgentPanelView.swift` | 决策展示 | 读 `record`（agent/provider/intent/context/command-chain replay/command results/errors/raw JSON） |
 | `UI/RootGameView.swift` | 启动触发 | `.task { container.runAIIfNeeded() }` |
 
-**MockAI 行为（guderian，装甲突破风格）：**
-跳过已行动单位 → 低补给/包围优先 resupply → 射程内低 hp 敌军优先 attack（炮兵优先打城市/要塞）→ 装甲沿道路向 Bastogne move → 否则 hold
+**Local Planner 行为：**
+跳过已行动 formation → 低补给/包围优先 resupply → contact-gated 目标优先 attack / fire support → 依据当前 objective 和态势推进 → 否则 hold。
 
 **v0.7 ZoneDirective 战术行为：**
 `ZoneCommanderAgent` 读取所属 `FrontZone` 的前线/部署摘要，`BinaryTacticClassifier` 会结合兵力比、机动兵力、炮兵支援、纵深预备队、压力和补给警告，在 `standardAttack`、`blitzkrieg`、`spearhead`、`breakthrough`、`pincerMovement`、`fireCoverage`、`feint`、`guerrillaWarfare`、`holdPosition`、`elasticDefense`、`defenseInDepth`、`lastStand` 之间分类；`WarCommandExecutor` 将这些战术降级为 `move / attack / hold / allowRetreat`，仍统一交给 `RuleEngine` 校验执行。`WarDirectiveRecord` 记录 `category` / `tactic` / `commanderAgentId` / `commandTarget`，便于后续接真 LLM 回放与审计。
@@ -147,7 +147,7 @@ WWIIHexV0/
 `MarshalBattlefieldSummarizer` 把 `GameState` 降维为元帅摘要，只包含 front zone、strength ratio、补给警告、目标和事件，不把全量 hex 网格喂给模型。`SimulatedMarshalLLMClient` 生成 fenced JSON 形式的 `TheaterDirectiveEnvelope`；`TheaterDirectiveDecoder` 提取并校验 JSON；`TheaterDirectiveCompiler` 把元帅意图编译成现有 `ZoneDirective`。v0.7 后 `TheaterDirective` 可携带 `convergenceRegionId` / `coordinatedZoneIds` 支持钳形会师意图；解码或编译失败时 fallback 到 `TheaterCommanderPool`，不执行半成品 LLM 输出。
 
 **v6.6 ModernCommandChain 行为：**
-`MarshalAgent` 在成功解码 `TheaterDirectiveEnvelope` 后生成 `ModernCommandChainPlan`，并把 fenced JSON 交给 `ModernCommandChainDecoder` 复核。decoder 会检查顶层和嵌套 envelope 的 schema、issuer、turn、faction、role，以及每条 sub-directive 的 zone / region / contact / mission 合法性；失败只写 diagnostics。`TurnManager` 将 TheaterDirective JSON、Modern Command Chain JSON 和最终 Compiled ZoneDirective JSON 一起写入 `AgentDecisionRecord.rawJSON`，并把已验证的 sub-directive 派生成 `ModernCommandChainReplayItem`，让 AI 面板直接列出 ISR / Fires / Air / EW / Logistics / Brigade 任务、目标和理由。
+`MarshalAgent` 在成功解码 operational directive envelope 后生成 `ModernCommandChainPlan`，并把 fenced JSON 交给 `ModernCommandChainDecoder` 复核。decoder 会检查顶层和嵌套 envelope 的 schema、issuer、turn、faction、role，以及每条 sub-directive 的 zone / region / contact / mission 合法性；失败只写 diagnostics。`TurnManager` 将 Operational Directive JSON、Modern Command Chain JSON 和最终 Compiled ZoneDirective JSON 一起写入 `AgentDecisionRecord.rawJSON`；即使 operational 或 advisory JSON 校验失败，原始 JSON 也会尽量保留给 AI 面板审计。已验证的 sub-directive 会派生成 `ModernCommandChainReplayItem`，让 AI 面板直接列出 ISR / Fires / Air / EW / Logistics / Brigade 任务、目标和理由。
 
 **后续 Ruler / Diplomacy 边界：**
 统治者层不在当前执行主链路中。后续如要加入国家、集团、外交关系或统治者 agent，必须先设计独立 schema，并保持底层战争规则仍由 `Faction`、`ZoneDirective`、`WarCommandExecutor` 和 `RuleEngine` 收口。
@@ -158,7 +158,7 @@ WWIIHexV0/
 
 ### ✅ v0：六角格测试板（已完成）
 
-**场景**：阿登测试战场（Ardennes），德军 vs 盟军，11×9 六角格地图
+**历史基线场景**：阿登测试战场（legacy Ardennes fixture），11×9 六角格地图。当前默认发布候选入口已切到 `grey_tide_2030`。
 
 | 功能模块 | 状态 |
 |----------|------|
@@ -170,8 +170,8 @@ WWIIHexV0/
 | 占领系统（城市控制权变更） | ✅ |
 | 补给系统（supplied / lowSupply / encircled） | ✅ |
 | 包围判定与惩罚 | ✅ |
-| 回合系统（德军 AI 先手 → 盟军玩家 → 结算） | ✅ |
-| MockAI 将领 agent（guderian，装甲突破风格） | ✅ |
+| 回合系统（legacy：德军 AI 先手 → 盟军玩家 → 结算；v6.10 当前由玩家方 / 敌对方 / observer 判定控制权） | ✅ |
+| Legacy MockAI 将领 agent | ✅ |
 | 结构化 JSON 命令解析与校验 | ✅ |
 | AI 决策日志面板（AgentPanelView 读 AgentDecisionRecord） | ✅ |
 | 胜利条件（巴斯托涅占领 / 消灭 3 单位 / 切断补给） | ✅ |
@@ -205,9 +205,9 @@ WWIIHexV0/
 | `AgentDecisionEnvelope` / `AgentOrder` JSON schema | ✅ |
 | `AgentDecisionParser`（校验 schema/agent/turn） | ✅ |
 | `AgentCommandMapper`（order → Command，缺字段抛 error） | ✅ |
-| `MockAIClient`（guderian 启发式，向 Bastogne 推进） | ✅ |
+| `MockAIClient` legacy heuristic provider | ✅ |
 | `LLMClient` / `LocalLLMDecisionProvider` / `AgentPromptBuilder`（预留，v0 默认关） | ✅ |
-| `TurnManager`（德军 AI 回合编排，含 endTurn） | ✅ |
+| `TurnManager`（按玩家方 / 敌对方 / observer 编排 AI，含 endTurn） | ✅ |
 | `AppContainer.runAIIfNeeded()`（启动自动跑 AI 回合） | ✅ |
 | `AgentDecisionRecord` + `AgentPanelView`（UI 读决策记录） | ✅ |
 | `AgentPipelineTests`（8 测试：context/MockAI/parser/mapper/provider 失败/非法命令） | ✅ |
@@ -337,7 +337,7 @@ md/
 **你接手时的代码库状态：**
 - v0.5 分支已引入元帅层与模拟 LLM JSON/decoder/ compiler；历史测试基线曾达到 v0.37 Probe 18/0、Stage Regression 69/0、Full 226/0。当前默认不跑重测试，只做 `md/test/test.md` 允许的轻量检查。
 - 战斗模型：兵力伤害为主，`RetreatMode`（retreatable/hold）控制撤退，无 organization。
-- 默认战争 AI 管线：`MarshalAgent` 读取摘要并模拟输出 `TheaterDirectiveEnvelope` JSON，经 `TheaterDirectiveDecoder` 与 `TheaterDirectiveCompiler` 降级成 `ZoneDirective`，再走 `WarCommandExecutor`。`TheaterCommanderPool` / `ZoneCommanderAgent` 仍作为 fallback 和显式 `.zoneDirective` 路径。
+- 默认战争 AI 管线：`MarshalAgent` 读取摘要并模拟输出 `TheaterDirectiveEnvelope` JSON，经 `TheaterDirectiveDecoder` 校验后进入 `ModernCommandChainOrchestrator / ModernCommandChainDecoder` 生成只读 advisory 复盘，再由 `TheaterDirectiveCompiler` 降级成 `ZoneDirective`，最后走 `WarCommandExecutor`。`TheaterCommanderPool` / `ZoneCommanderAgent` 仍作为 fallback 和显式 `.zoneDirective` 路径。
 - Legacy Agent D 管线保留但默认不调用。
 - 地图坐标系：hex 仍是战术权威；Region 是省份规则层；动态战区看 `hexToTheater`。
 

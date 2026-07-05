@@ -34,8 +34,8 @@ final class MapEditorViewModel: ObservableObject {
     @Published var backgroundOffsetX: Double = 0
     @Published var backgroundOffsetY: Double = 0
 
-    @Published var newRegionText: String = "新省份"
-    @Published var newTheaterText: String = "新战区"
+    @Published var newRegionText: String = "新区域"
+    @Published var newTheaterText: String = "新作战区"
     @Published var newUnitNameText: String = "任务编组"
 
     init(document: MapEditorDocument = .new(width: 8, height: 6)) {
@@ -67,11 +67,11 @@ final class MapEditorViewModel: ObservableObject {
             let nextIndex = nextRegionIndex()
             id = RegionId("region_\(nextIndex)")
             let rawName = newRegionText.trimmingCharacters(in: .whitespacesAndNewlines)
-            name = rawName.isEmpty ? "省份 \(nextIndex)" : rawName
+            name = rawName.isEmpty ? "区域 \(nextIndex)" : rawName
         }
         document.createRegion(id: id, name: name)
         selectedRegionId = id
-        lastStatusMessage = "已创建省份：\(name)（\(id.rawValue)）。"
+        lastStatusMessage = "已创建区域：\(name)（\(id.rawValue)）。"
         markChanged()
     }
 
@@ -87,25 +87,25 @@ final class MapEditorViewModel: ObservableObject {
             let nextIndex = nextTheaterIndex()
             id = TheaterId("theater_\(nextIndex)")
             let rawName = newTheaterText.trimmingCharacters(in: .whitespacesAndNewlines)
-            name = rawName.isEmpty ? "战区 \(nextIndex)" : rawName
+            name = rawName.isEmpty ? "作战区 \(nextIndex)" : rawName
         }
         document.createTheater(id: id, name: name)
         selectedTheaterId = id
-        lastStatusMessage = "已创建战区：\(name)（\(id.rawValue)）。"
+        lastStatusMessage = "已创建作战区：\(name)（\(id.rawValue)）。"
         markChanged()
     }
 
     func prepareNewRegion() {
         selectedRegionId = nil
         pendingRegionHexes.removeAll()
-        lastStatusMessage = "将创建新省份，ID 会自动递增。"
+        lastStatusMessage = "将创建新区域，ID 会自动递增。"
         markChanged()
     }
 
     func prepareNewTheater() {
         selectedTheaterId = nil
         pendingTheaterRegions.removeAll()
-        lastStatusMessage = "将创建新战区，ID 会自动递增。"
+        lastStatusMessage = "将创建新作战区，ID 会自动递增。"
         markChanged()
     }
 
@@ -224,7 +224,7 @@ final class MapEditorViewModel: ObservableObject {
         guard let inspectedCoord,
               let hex = document.hexes[inspectedCoord],
               let regionId = hex.regionId else {
-            lastStatusMessage = "当前选中地块没有省份信息可保存。"
+            lastStatusMessage = "当前选中地块没有区域信息可保存。"
             markChanged()
             return
         }

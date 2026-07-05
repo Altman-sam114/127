@@ -2,147 +2,149 @@
   "schemaVersion": 1,
   "generals": [
     {
-      "id": "general_montgomery",
-      "name": "Bernard Montgomery",
-      "localizedName": "蒙哥马利",
-      "rank": "Field Marshal",
-      "faction": "allies",
+      "id": "commander_blue_jtf",
+      "name": "Maya Stone",
+      "localizedName": "玛雅·斯通",
+      "rank": "JTF Commander",
+      "faction": "blueForce",
       "commandStyle": "balanced",
       "skills": [
-        "set_piece_attack",
-        "logistics",
-        "coalition_coordination"
+        "coalition_coordination",
+        "joint_fires",
+        "logistics"
       ],
-      "portrait": "portrait_montgomery",
-      "biography": "A methodical British field marshal who favors preparation, reserves, and overwhelming force before a major attack.",
+      "portrait": "portrait_blue_jtf",
+      "biography": "Fictional Blue Force commander focused on joint fires, phased assaults, and resilient sustainment during littoral operations.",
       "preferredTheaterIds": [
-        "theater_1"
+        "blue_littoral_sector"
       ],
       "preferredRegionIds": [
-        "region_1",
-        "region_4",
-        "region_5"
+        "blue_beachhead",
+        "blue_landing_corridor"
       ],
       "baseLoyalty": 72,
       "baseSatisfaction": 76
     },
     {
-      "id": "general_weygand",
-      "name": "Maxime Weygand",
-      "localizedName": "魏刚",
-      "rank": "General",
-      "faction": "allies",
+      "id": "commander_blue_staff",
+      "name": "Noah Mercer",
+      "localizedName": "诺亚·默瑟",
+      "rank": "Brigade Commander",
+      "faction": "blueForce",
       "commandStyle": "cautious",
       "skills": [
-        "defensive_master",
-        "staff_coordination",
-        "reserve_control"
+        "counter_recon",
+        "reserve_control",
+        "staff_coordination"
       ],
-      "portrait": "portrait_weygand",
-      "biography": "A conservative staff-minded commander best suited to stabilizing strained defensive sectors and preserving reserves.",
+      "portrait": "portrait_blue_staff",
+      "biography": "Fictional Blue Force staff commander best suited to stabilizing contested sectors, preserving reserves, and screening logistics corridors.",
       "preferredTheaterIds": [
-        "theater_2"
+        "blue_highland_sector"
       ],
       "preferredRegionIds": [
-        "region_2",
-        "region_3"
+        "northern_pass",
+        "western_hills",
+        "blue_support_area"
       ],
       "baseLoyalty": 68,
       "baseSatisfaction": 70
     },
     {
-      "id": "general_de_gaulle",
-      "name": "Charles de Gaulle",
-      "localizedName": "戴高乐",
-      "rank": "Brigadier General",
-      "faction": "allies",
+      "id": "commander_blue_mobile",
+      "name": "Lina Park",
+      "localizedName": "莉娜·朴",
+      "rank": "Task Force Commander",
+      "faction": "blueForce",
       "commandStyle": "aggressive",
       "skills": [
-        "armor_theory",
+        "air_assault",
         "counterattack",
-        "political_will"
+        "rapid_exploitation"
       ],
-      "portrait": "portrait_de_gaulle",
-      "biography": "An ambitious armored warfare advocate who accepts operational risk for mobile counterattacks and decisive initiative.",
+      "portrait": "portrait_blue_mobile",
+      "biography": "Fictional Blue Force maneuver commander who accepts operational risk to seize objectives before Red Force can re-form its screen.",
       "preferredTheaterIds": [
-        "theater_4"
+        "airport_axis"
       ],
       "preferredRegionIds": [
-        "region_8",
-        "region_9"
+        "east_airport",
+        "logistics_yard"
       ],
       "baseLoyalty": 65,
       "baseSatisfaction": 74
     },
     {
-      "id": "general_guderian",
-      "name": "Heinz Guderian",
-      "localizedName": "古德里安",
-      "rank": "Generaloberst",
-      "faction": "germany",
+      "id": "commander_red_maneuver",
+      "name": "Viktor Sokol",
+      "localizedName": "维克托·索科尔",
+      "rank": "Operational Group Commander",
+      "faction": "redForce",
       "commandStyle": "aggressive",
       "skills": [
-        "armor_expert",
         "breakthrough",
+        "counter_landing",
         "rapid_exploitation"
       ],
-      "portrait": "portrait_guderian",
-      "biography": "A fast-moving armored commander focused on concentration, breakthrough, and exploitation before the enemy can stabilize.",
+      "portrait": "portrait_red_maneuver",
+      "biography": "Fictional Red Force commander focused on counter-landing attacks, fast exploitation, and isolating Blue Force beachheads.",
       "preferredTheaterIds": [
-        "theater_3"
+        "red_highland_sector"
       ],
       "preferredRegionIds": [
-        "region_6",
-        "region_7",
-        "region_10"
+        "drone_corridor_east",
+        "highland_pass",
+        "red_reserve_area"
       ],
       "baseLoyalty": 70,
       "baseSatisfaction": 82
     },
     {
-      "id": "general_leeb",
-      "name": "Wilhelm Ritter von Leeb",
-      "localizedName": "里布",
-      "rank": "Field Marshal",
-      "faction": "germany",
+      "id": "commander_red_air_defense",
+      "name": "Irina Volkov",
+      "localizedName": "伊琳娜·沃尔科娃",
+      "rank": "Air Defense Commander",
+      "faction": "redForce",
       "commandStyle": "cautious",
       "skills": [
+        "air_defense",
         "defensive_master",
-        "fortress_operations",
         "disciplined_retreat"
       ],
-      "portrait": "portrait_leeb",
-      "biography": "A disciplined and cautious commander who favors prepared positions, strongpoints, and deliberate defensive control.",
+      "portrait": "portrait_red_ad",
+      "biography": "Fictional Red Force commander who favors layered air defense, prepared strongpoints, and deliberate withdrawal under ISR pressure.",
       "preferredTheaterIds": [
-        "theater_4"
+        "red_highland_sector"
       ],
       "preferredRegionIds": [
-        "region_8",
-        "region_9"
+        "radar_ridge",
+        "red_air_defense_belt",
+        "mountain_radar_spur"
       ],
       "baseLoyalty": 78,
       "baseSatisfaction": 68
     },
     {
-      "id": "general_bock",
-      "name": "Fedor von Bock",
-      "localizedName": "博客",
-      "rank": "Field Marshal",
-      "faction": "germany",
+      "id": "commander_red_logistics",
+      "name": "Darin Kade",
+      "localizedName": "达林·凯德",
+      "rank": "Logistics Security Commander",
+      "faction": "redForce",
       "commandStyle": "balanced",
       "skills": [
-        "army_group_coordination",
         "offensive_planning",
-        "pressure_management"
+        "pressure_management",
+        "sustainment_security"
       ],
-      "portrait": "portrait_bock",
-      "biography": "A forceful army group commander who balances offensive pressure with orderly front management and reserves.",
+      "portrait": "portrait_red_logistics",
+      "biography": "Fictional Red Force commander balancing pressure on Blue Force objectives with protection of logistics gates and reserve routes.",
       "preferredTheaterIds": [
-        "theater_3"
+        "red_highland_sector"
       ],
       "preferredRegionIds": [
-        "region_10",
-        "region_6"
+        "red_logistics_gate",
+        "red_reserve_area",
+        "red_supply_entry"
       ],
       "baseLoyalty": 74,
       "baseSatisfaction": 72

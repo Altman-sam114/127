@@ -47,33 +47,7 @@ struct RegionVictoryRules {
     }
 
     private func greyTideObjectiveControlCounts(in state: GameState) -> (blue: Int, red: Int) {
-        let keyObjectiveNames: Set<String> = [
-            "East Airport",
-            "Harbor Terminal",
-            "River Bridge",
-            "Comms Center",
-            "Radar Ridge",
-            "Fuel Depot",
-            "Rail Junction",
-            "Highland Pass",
-            "Coastal Battery",
-            "Refinery District"
-        ]
-
-        var blue = 0
-        var red = 0
-        for region in state.map.regions.values where region.city.map({ keyObjectiveNames.contains($0.name) }) == true {
-            switch region.controller.alignment {
-            case .blue:
-                blue += 1
-            case .red:
-                red += 1
-            case .green,
-                 .neutral:
-                continue
-            }
-        }
-
-        return (blue, red)
+        let control = VictoryRules.greyTideObjectiveControlCounts(in: state)
+        return (control.blue, control.red)
     }
 }

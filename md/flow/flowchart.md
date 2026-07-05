@@ -71,7 +71,7 @@ flowchart LR
     LEGACY["旧源码 / 旧 JSON 兼容名<br/>Faction.germany/allies<br/>GamePhase.germanAI/alliedPlayer<br/>Division.name<br/>ProductionKind.panzerDivision<br/>MapDisplayLayer.province"]:::legacy
     DISPLAY["现代显示层<br/>Red / Blue Force<br/>Red Command / Blue Command<br/>operationalDisplayName<br/>Armored / Mechanized Task Force<br/>Sector / Operational / Brigade"]:::display
     RULES["规则权威不变<br/>Command / ZoneDirective<br/>WarCommandExecutor<br/>RuleEngine"]:::rules
-    RISK["v6.1-v6.2 待迁移<br/>ROE 替换 Faction.opponent<br/>中立不再 fallback allies<br/>grey_tide_2030 默认数据"]:::risk
+    RISK["后续兼容风险<br/>GamePhase raw value<br/>旧阿登 fallback<br/>深水 ROE fire rule"]:::risk
 
     LEGACY --> DISPLAY
     LEGACY --> RULES
@@ -229,7 +229,7 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    MARSHAL["MarshalAgent<br/>Battlefield summary<br/>TheaterDirective JSON"]:::agent
+    MARSHAL["MarshalAgent<br/>Battlefield summary<br/>Operational Directive JSON"]:::agent
     TDEC["TheaterDirectiveDecoder<br/>schema / issuer / turn / faction<br/>zone / region / tactic"]:::rules
     ORCH["ModernCommandChainOrchestrator<br/>National / Joint / Chief<br/>ISR / Fires / Air / EW / Logistics / Brigade"]:::agent
     CJSON["ModernCommandChainPlan JSON<br/>StrategicConstraintEnvelope<br/>JointCommandPlan<br/>ModernSubDirective"]:::data
@@ -237,7 +237,7 @@ flowchart LR
     FAIL["失败只写 diagnostics<br/>不执行半成品"]:::stop
     COMP["TheaterDirectiveCompiler<br/>编译 ZoneDirective"]:::command
     EXEC["WarCommandExecutor<br/>RuleEngine"]:::rules
-    RECORD["AgentDecisionRecord<br/>rawJSON + commandChainReplayItems<br/>Theater / Command Chain / Compiled Directive"]:::display
+    RECORD["AgentDecisionRecord<br/>rawJSON + commandChainReplayItems<br/>raw invalid JSON retained when available"]:::display
     PANEL["AgentPanelView<br/>role / mission / priority<br/>target / rationale / diagnostics"]:::display
 
     MARSHAL --> TDEC --> ORCH --> CJSON --> CDEC
@@ -362,6 +362,8 @@ flowchart LR
     DISPLAY["App Display Name<br/>Modern Command Agent"]:::display
     ICON["AppIcon asset catalog<br/>iOS / iPadOS / macOS sizes"]:::display
     MAP["HexNode supply marker<br/>SUP B / SUP R"]:::display
+    COMMANDERS["Default commanders<br/>fictional Blue / Red C2 staff"]:::display
+    TERMS["Visible terminology<br/>National Command / Operational Zone<br/>PER / MAT / LOG"]:::display
     REPORT["v6.10 release candidate report<br/>residual scan / evidence matrix"]:::doc
     RULES["规则权威不变<br/>Command / ZoneDirective<br/>WarCommandExecutor / RuleEngine"]:::rules
     CLOUD["main push<br/>GitHub Actions artifact<br/>manifest / junit / xcodebuild.log"]:::cloud
@@ -373,6 +375,8 @@ flowchart LR
     DISPLAY --> REPORT
     ICON --> REPORT
     MAP --> REPORT
+    COMMANDERS --> REPORT
+    TERMS --> REPORT
     SIDE --> REPORT
     GATE --> REPORT
     OBJ --> REPORT
@@ -393,8 +397,8 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-    ME["地图编辑器<br/>MapEditor<br/>用来画格子、省份、战区、初始部队"]:::editor
-    JSON["游戏数据 JSON<br/>ScenarioDefinition + RegionDataSet<br/>保存地图、单位、省份、初始战区"]:::data
+    ME["地图编辑器<br/>MapEditor<br/>用来画格子、区域、作战区、初始任务编组"]:::editor
+    JSON["游戏数据 JSON<br/>ScenarioDefinition + RegionDataSet<br/>保存地图、任务编组、区域、初始作战区"]:::data
     DL["数据加载器<br/>DataLoader.loadGameState<br/>把 JSON 变成可运行 GameState"]:::loader
     GS["运行时总状态<br/>GameState<br/>一局游戏所有状态都在这里"]:::state
 
@@ -409,7 +413,7 @@ flowchart TD
     PLAYER["玩家输入<br/>点击地图、任务面板、试玩面板<br/>移动、攻击、结束回合"]:::input
     PLAYTEST["试玩闭环<br/>ModernPlaytestPanelView<br/>New / Save / Continue / Observer / Layer / Guide"]:::ui
     MISSION["玩家现代任务面板<br/>ModernMissionPanelView<br/>Recon / UAV / Fire / SEAD / EW / Assault / Hold / Resupply"]:::command
-    AI["AI 元帅系统<br/>MarshalAgent + TheaterDirective JSON<br/>先做大战役级规划"]:::input
+    AI["AI 元帅系统<br/>MarshalAgent + Operational Directive JSON<br/>TheaterDirective schema"]:::input
     DEC["元帅 JSON 解码<br/>TheaterDirectiveDecoder<br/>提取 fenced JSON、校验 id 与 schema"]:::command
     MCHAIN["现代指挥链校验<br/>ModernCommandChainPlan<br/>国家/联合/ISR/火力/空中/EW/后勤/旅级 advisory JSON"]:::command
     COMP["元帅意图编译<br/>TheaterDirectiveCompiler<br/>把 TheaterDirective 降级成 ZoneDirective"]:::command
@@ -420,7 +424,7 @@ flowchart TD
     SYNC["战略同步器<br/>StrategicStateSynchronizer<br/>占领后刷新省份、战区、前线、部署"]:::rules
 
     UI["地图和面板显示<br/>SpriteKit / SwiftUI Overlay<br/>显示 hex、省份、战区、前线、部署<br/>v6.8 sensor/contact/EW/fire overlay"]:::ui
-    LOG["日志和复盘记录<br/>EventLog / WarDirectiveRecord / AgentDecisionRecord / RulerDecisionRecord<br/>用于 UI 展示和后续调试"]:::ui
+    LOG["日志和复盘记录<br/>EventLog / WarDirectiveRecord / AgentDecisionRecord<br/>RulerDecisionRecord 仅作未来/兼容预留"]:::ui
 
     ME --> JSON --> DL --> GS
     GS --> HEX
@@ -540,7 +544,7 @@ flowchart TD
     UI["经济面板<br/>EconomyPanelView<br/>展示资源和生产按钮"]:::ui
     QUEUE["生产命令<br/>Command.queueProduction<br/>玩家/未来 AI 共用底层命令"]:::command
     VALIDATE["生产校验<br/>CommandValidator.validateProduction<br/>检查 phase 与资源是否足够"]:::rules
-    PAY["预付成本并入队<br/>EconomyRules.queueProduction<br/>扣 MP/IC/SUP，追加 ProductionOrder"]:::economy
+    PAY["预付成本并入队<br/>EconomyRules.queueProduction<br/>扣 PER/MAT/LOG，追加 ProductionOrder"]:::economy
 
     END["结束当前阵营回合<br/>Command.endTurn<br/>CommandExecutor.executeEndTurn"]:::command
     SUPPLY["补给状态刷新<br/>SupplyRules.updateSupplyStates"]:::rules
@@ -583,20 +587,21 @@ flowchart TD
 
 ## 4. AI / 元帅决策链：AI 怎么下命令
 
-这张图看 v0.5 分支默认 AI 主路径。AI 不直接控制单位，也不直接改地图；元帅先读取降维战场摘要，模拟 LLM 输出 `TheaterDirectiveEnvelope` JSON，经 decoder 校验和 compiler 降级后，形成战区级 `DirectiveEnvelope`。`WarCommandExecutor` 再把这些战术翻译成底层 `Command`，最后交给 `RuleEngine`。
+这张图看 v6.10 当前默认 AI 主路径。AI 不直接控制单位，也不直接改地图；元帅先读取降维战场摘要，模拟 LLM 输出 `TheaterDirectiveEnvelope` JSON，经 decoder 校验后进入 `ModernCommandChain` advisory 复盘，再由 compiler 降级成战区级 `DirectiveEnvelope`。`WarCommandExecutor` 再把这些战术翻译成底层 `Command`，最后交给 `RuleEngine`。
 
-当前 v0.5 的默认 AI 主线是 `MarshalAgent -> TheaterDirective JSON -> TheaterDirectiveDecoder -> TheaterDirectiveCompiler -> ZoneDirective -> WarCommandExecutor -> RuleEngine`。旧 v0.37 `TheaterCommanderPool -> ZoneCommanderAgent` 作为 fallback 和显式 `.zoneDirective` 路径保留。统治者层只作为后续上游预留，当前不在主链路调用。旧 Agent D 管线仍保留，但默认不走。
+当前默认 AI 主线是 `MarshalAgent -> Operational Directive JSON (TheaterDirective schema) -> TheaterDirectiveDecoder -> ModernCommandChain advisory JSON -> TheaterDirectiveCompiler -> ZoneDirective -> WarCommandExecutor -> RuleEngine`。旧 v0.37 `TheaterCommanderPool -> ZoneCommanderAgent` 作为 fallback 和显式 `.zoneDirective` 路径保留。统治者层只作为后续上游预留，当前不在主链路调用。旧 Agent D 管线仍保留，但默认不走。
 
 ```mermaid
 flowchart TD
     START["触发 AI 行动<br/>AppContainer.advanceOrRunAI / runAIIfNeeded<br/>玩家点下一回合，或命令后轮到 AI"]:::input
-    CHECK{"当前阵营该由 AI 控制吗?<br/>德军 AI 阶段一定可跑；盟军只有观察者模式才跑"}:::decision
+    CHECK{"当前阵营该由 AI 控制吗?<br/>非玩家敌对方可跑；observer 可接管玩家方"}:::decision
     STOP["不运行 AI<br/>等待玩家操作或阶段切换"]:::stop
     REFRESH["行动前刷新运行时战略层<br/>StrategicStateBootstrapper.refreshRuntimeState<br/>避免 AI 读到旧前线/旧部署"]:::rules
     TM["AI 回合编排器<br/>TurnManager.runAITurn<br/>默认 pipelineMode = marshalDirective"]:::rules
     SUM["战场摘要<br/>MarshalBattlefieldSummarizer<br/>只给元帅 front/deploy/目标/补给摘要，不给全量 hex"]:::ai
     LLM["模拟 LLM 客户端<br/>SimulatedMarshalLLMClient<br/>输出 fenced JSON，不接真实网络或模型"]:::ai
     DEC["元帅 JSON 解码器<br/>TheaterDirectiveDecoder<br/>提取 JSON、解码、校验 schema/zone/region/tactic"]:::command
+    MCHAIN["现代指挥链 advisory<br/>ModernCommandChainOrchestrator / Decoder<br/>校验并记录 ISR/Fires/Air/EW/Logistics/Brigade 子任务"]:::command
     COMP["元帅意图编译器<br/>TheaterDirectiveCompiler<br/>TheaterDirective -> ZoneDirective<br/>传递 focus/convergence/coordinated 参数"]:::command
     ENV["指令信封<br/>DirectiveEnvelope<br/>收集编译后的 ZoneDirective"]:::command
     TACTIC["高级战术路由<br/>TacticName<br/>blitzkrieg / spearhead / breakthrough / pincer / fire / feint / guerrilla / elastic / depth / lastStand"]:::command
@@ -608,7 +613,7 @@ flowchart TD
 
     START --> CHECK
     CHECK -->|否| STOP
-    CHECK -->|是| REFRESH --> TM --> SUM --> LLM --> DEC --> COMP --> ENV
+    CHECK -->|是| REFRESH --> TM --> SUM --> LLM --> DEC --> MCHAIN --> COMP --> ENV
     ENV --> TACTIC --> WCE --> BOTTOM --> RE --> RECORD --> END
 
     FALLBACK["Fallback 将军池<br/>TheaterCommanderPool + ZoneCommanderAgent<br/>元帅 JSON 无效或某 zone 无指令时使用"]:::ai
@@ -637,18 +642,19 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    DOC["编辑器文档<br/>MapEditorDocument<br/>保存 hex、省份、战区分配、初始单位"]:::editor
+    DOC["编辑器文档<br/>MapEditorDocument<br/>保存 hex、区域、作战区分配、初始任务编组"]:::editor
     MODE1["地块编辑<br/>hexPainter<br/>画地形、道路、控制方、补给点"]:::editor
-    MODE2["省份编辑<br/>regionBuilder<br/>把每个 hex 分配给一个 region"]:::editor
-    MODE3["初始战区编辑<br/>theaterAssignment<br/>把 region 分配给开局 theater"]:::editor
-    MODE4["初始部队编辑<br/>unitPlanner<br/>放置开局单位和模板"]:::editor
+    MODE2["区域编辑<br/>regionBuilder<br/>把每个 hex 分配给一个 region"]:::editor
+    MODE3["初始作战区编辑<br/>theaterAssignment<br/>把 region 分配给开局 theater"]:::editor
+    MODE4["任务编组编辑<br/>unitPlanner<br/>放置开局 formation 和模板"]:::editor
     EXPORT["导出器<br/>MapEditorExporter.export<br/>把编辑器文档转成游戏 JSON"]:::loader
     CHECK{"导出校验通过吗?<br/>每个 hex 必须有 region；region 不能为空"}:::decision
     ERR["导出失败<br/>unassignedHex / missingRegion / emptyRegion<br/>先回编辑器补数据"]:::stop
-    SCEN["场景 JSON<br/>ScenarioDefinition<br/>保存 hex 地形、控制方、补给、目标、初始单位"]:::data
-    REG["省份 JSON<br/>RegionDataSet<br/>保存 hexToRegion、省份、边、初始 theaterId"]:::data
+    SCEN["场景 JSON<br/>ScenarioDefinition<br/>保存 hex 地形、控制方、补给、目标、初始任务编组"]:::data
+    REG["区域 JSON<br/>RegionDataSet<br/>保存 hexToRegion、区域、边、初始 theaterId"]:::data
     NEI["自动推导省份邻接<br/>真实 hex 邻接 -> Region.neighbors / RegionEdge<br/>避免手写邻接出错"]:::derived
     BRIDGE["默认资源桥<br/>MapEditorGameResourceBridge<br/>读取或覆盖项目默认地图资源"]:::loader
+    PRESERVE["默认灰潮元数据保留<br/>maxTurns / victoryConditions / riverEdges<br/>VP / occupation / river crossing"]:::loader
     FILES["项目默认数据文件<br/>WWIIHexV0/Data<br/>grey_tide_2030_scenario.json + grey_tide_2030_regions.json"]:::data
     LOAD["游戏启动加载<br/>DataLoader.loadGameState<br/>DEBUG 下优先读源码 JSON"]:::loader
     MAP["地图状态<br/>MapState<br/>tiles + hexToRegion + RegionGraph"]:::state
@@ -668,7 +674,7 @@ flowchart TD
     REG --> NEI --> REG
     SCEN --> BRIDGE
     REG --> BRIDGE
-    BRIDGE --> FILES
+    BRIDGE --> PRESERVE --> FILES
     FILES --> LOAD --> MAP --> THEATER --> FRONT --> DEPLOY --> GAME
 
     NOTE["重要提醒<br/>MapEditor 的 theater assignment 只定义开局战区<br/>运行时推进看 hexToTheater，不看 regionToTheater"]:::warn
@@ -758,24 +764,24 @@ flowchart TD
     classDef warn fill:#ffedd5,stroke:#f97316,color:#431407
 ```
 
-## 8. v0.4 将军与玩家双轨命令
+## 8. Commander 与玩家双轨命令
 
-这张图说明 v0.4 分支的新增主线：实体将军从 JSON / region 种子接入 FrontZone；玩家可以微操具体部队，也可以通过将军面板发战区宏观命令。两条路最终仍收口到规则系统。
+这张图说明当前兼容主线：实体 commander 从 JSON / region 种子接入 FrontZone；玩家可以微操具体 formation，也可以通过 Commander Cell 发作战区宏观命令。两条路最终仍收口到规则系统。
 
 ```mermaid
 flowchart TD
-    GJSON["将军数据<br/>generals.json<br/>六位历史将军、倾向、技能、忠诚/满意度"]:::data
-    RJSON["Region 种子<br/>ardennes_v02_regions.assignedGeneralId<br/>开局指定某 region 所属将军"]:::data
+    GJSON["Commander 数据<br/>generals.json<br/>灰潮虚构 Blue / Red commander<br/>倾向、技能、忠诚/满意度"]:::data
+    RJSON["Region 种子<br/>grey_tide_2030_regions.assignedGeneralId<br/>开局指定某 region 所属 commander"]:::data
     DL["加载器<br/>DataLoader.loadGeneralRegistry<br/>读取 GeneralRegistry"]:::loader
-    DISP["将军指派器<br/>GeneralDispatcher.assignGenerals<br/>种子 -> 偏好 -> 同阵营后备池"]:::rules
-    FZ["战区部署<br/>FrontZone.generalAssignment<br/>generalId、HQ region、辖下 division、忠诚/满意度"]:::state
-    POOL["将军池<br/>TheaterCommanderPool<br/>用 GeneralData 生成 ZoneCommanderAgentConfig"]:::ai
+    DISP["Commander 指派器<br/>GeneralDispatcher.assignGenerals<br/>种子 -> 偏好 -> 同阵营后备池"]:::rules
+    FZ["作战部署<br/>FrontZone.generalAssignment<br/>generalId、HQ region、辖下 formation、忠诚/满意度"]:::state
+    POOL["Commander fallback 池<br/>TheaterCommanderPool<br/>用 GeneralData 生成 ZoneCommanderAgentConfig"]:::ai
 
     TAP["玩家地图点击<br/>RootGameView / BoardScene<br/>选单位、选 region、选目标"]:::input
     MICRO["全微操<br/>AppContainer.submit(Command)<br/>move / attack / hold / resupply"]:::command
     LOCK["微操锁<br/>PlayerCommandState.micromanagedDivisionIds<br/>本回合玩家亲控单位"]:::state
-    GENUI["将军面板<br/>GeneralCommandPanelView<br/>Hold Line / Attack Region"]:::ui
-    ZD["玩家战区指令<br/>ZoneDirective<br/>defense holdLine 或 attack selected region"]:::command
+    GENUI["Commander Cell<br/>GeneralCommandPanelView<br/>Hold Line / Assault Objective"]:::ui
+    ZD["玩家作战区指令<br/>ZoneDirective<br/>defense holdLine 或 attack selected objective"]:::command
     WCE["执行器<br/>WarCommandExecutor.execute(excluding lockedIds)<br/>跳过已微操单位"]:::command
     RE["规则权威<br/>RuleEngine<br/>校验并修改 GameState"]:::rules
     RECORD["记录<br/>WarDirectiveRecord + PlayerPlannedOperation<br/>AI 面板、日志、计划线共用"]:::ui

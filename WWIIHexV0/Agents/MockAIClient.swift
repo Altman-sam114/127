@@ -1,8 +1,8 @@
 import Foundation
 
 // DEPRECATED as of v0.352 - kept for regression reference, not invoked by default. See WarPipelineMode.
-// Guderian MockAI. Heuristic: skip acted; low/encircled supply -> resupply;
-// in-range vulnerable enemy -> attack; else advance toward Bastogne on roads; else hold.
+// Legacy local planner. Heuristic: skip acted; low/encircled supply -> resupply;
+// in-range vulnerable enemy -> attack; else advance toward a visible objective; else hold.
 
 struct MockAIClient: DecisionProvider {
     func decide(context: AgentContext) async throws -> AgentDecisionEnvelope {
@@ -13,7 +13,7 @@ struct MockAIClient: DecisionProvider {
 
         var orders: [AgentOrder] = []
         var reservedDestinations = Set(context.friendlyDivisions.compactMap(\.regionId) + context.enemyDivisions.compactMap(\.regionId))
-        let objective = context.objectives.first { $0.name == "Bastogne" } ?? context.objectives.first
+        let objective = context.objectives.first
 
         for division in context.friendlyDivisions.sorted(by: orderPriority) {
             guard !division.hasActed else {
@@ -85,7 +85,7 @@ struct MockAIClient: DecisionProvider {
             schemaVersion: context.visibleRegions.isEmpty ? 1 : 2,
             agentId: context.agentId,
             turn: context.turn,
-            intent: "Break through toward Bastogne using armor on roads and artillery support.",
+            intent: "Advance toward visible objectives using mobile formations and fire support.",
             orders: orders
         )
     }

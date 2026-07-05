@@ -41,10 +41,10 @@ struct SupplyRules {
 
         if hpRecovered > 0 {
             state.appendEvent(
-                "\(after.name) reinforced in \(after.supplyState.rawValue): +\(hpRecovered) strength."
+                "\(after.operationalDisplayName) reinforced in \(after.supplyState.rawValue): +\(hpRecovered) strength."
             )
         } else {
-            state.appendEvent("\(after.name) could not recover while \(after.supplyState.rawValue).")
+            state.appendEvent("\(after.operationalDisplayName) could not recover while \(after.supplyState.rawValue).")
         }
     }
 
@@ -62,12 +62,12 @@ struct SupplyRules {
             }
             state.divisions[index].beginRetreat(to: destination)
             state.appendEvent(
-                "\(division.name) retreated from \(origin.q),\(origin.r) to \(destination.q),\(destination.r)."
+                "\(division.operationalDisplayName) retreated from \(origin.q),\(origin.r) to \(destination.q),\(destination.r)."
             )
         } else {
             state.divisions[index].hp = max(1, state.divisions[index].hp - failedRetreatHPLoss)
             state.appendEvent(
-                "\(division.name) failed to retreat and lost \(failedRetreatHPLoss) strength."
+                "\(division.operationalDisplayName) failed to retreat and lost \(failedRetreatHPLoss) strength."
             )
         }
     }
@@ -91,7 +91,7 @@ struct SupplyRules {
             let hpLost = beforeHP - state.divisions[index].hp
             if hpLost > 0 {
                 state.appendEvent(
-                    "\(state.divisions[index].name) suffered encirclement attrition: -\(hpLost) strength."
+                    "\(state.divisions[index].operationalDisplayName) suffered encirclement attrition: -\(hpLost) strength."
                 )
             }
         }
@@ -260,7 +260,7 @@ struct SupplyRules {
         let wasRetreating = state.divisions[index].isRetreating
         state.divisions[index].advanceRetreatTurn()
         if wasRetreating && !state.divisions[index].isRetreating {
-            state.appendEvent("\(state.divisions[index].name) completed retreat recovery.")
+            state.appendEvent("\(state.divisions[index].operationalDisplayName) completed retreat recovery.")
         }
 
         return true

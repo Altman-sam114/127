@@ -1,20 +1,21 @@
 flowchart TD
     DOC["MapEditorDocument<br/>hexes / regions / theaters / assignments / units"]:::editor
     MODE1["地块模式<br/>terrain / road / controller / supply"]:::editor
-    MODE2["省份模式<br/>hex -> regionId"]:::editor
-    MODE3["战区模式<br/>regionId -> theaterId"]:::editor
-    MODE4["部队模式<br/>initialUnits"]:::editor
+    MODE2["区域模式<br/>hex -> regionId"]:::editor
+    MODE3["作战区模式<br/>regionId -> theaterId"]:::editor
+    MODE4["任务编组模式<br/>initialUnits"]:::editor
     EXPORT["MapEditorExporter.export"]:::loader
     CHECK{"导出校验<br/>所有 hex 有 region<br/>region 非空"}:::decision
     ERR["导出失败<br/>unassignedHex / missingRegion / emptyRegion"]:::stop
-    SCEN["ScenarioDefinition<br/>tiles / objectives / initialUnits"]:::data
-    REG["RegionDataSet<br/>hexToRegion / regions / edges / theaterId"]:::data
+    SCEN["ScenarioDefinition<br/>tiles / objectives / initialUnits<br/>bridge overwrite preserves default metadata"]:::data
+    REG["RegionDataSet<br/>hexToRegion / regions / edges / theaterId<br/>bridge overwrite preserves advanced metadata"]:::data
     NEI["从真实 hex 邻接推导<br/>region neighbors / RegionEdge"]:::derived
     BRIDGE["MapEditorGameResourceBridge<br/>overwriteDefaultGameResources"]:::loader
-    FILES["WWIIHexV0/Data<br/>ardennes_v0_scenario.json<br/>ardennes_v02_regions.json"]:::data
+    PRESERVE["保留灰潮默认元数据<br/>maxTurns / victoryConditions / riverEdges<br/>VP / occupation / river crossing"]:::loader
+    FILES["WWIIHexV0/Data<br/>grey_tide_2030_scenario.json<br/>grey_tide_2030_regions.json"]:::data
     LOAD["DataLoader.loadGameState"]:::loader
     MAP["MapState<br/>tiles + hexToRegion + RegionGraph"]:::state
-    THEATER["TheaterState<br/>initialSnapshot + regionToTheater + hexToTheater seed"]:::state
+    THEATER["作战区状态 / TheaterState<br/>initialSnapshot + regionToTheater + hexToTheater seed"]:::state
     FRONT["FrontLineState"]:::derived
     DEPLOY["WarDeploymentState"]:::derived
     GAME["GameState ready"]:::state
@@ -30,10 +31,10 @@ flowchart TD
     REG --> NEI --> REG
     SCEN --> BRIDGE
     REG --> BRIDGE
-    BRIDGE --> FILES
+    BRIDGE --> PRESERVE --> FILES
     FILES --> LOAD --> MAP --> THEATER --> FRONT --> DEPLOY --> GAME
 
-    NOTE["注意：MapEditor 的 theater assignment<br/>只定义初始战区，不是运行时动态推进脚本"]:::warn
+    NOTE["注意：MapEditor 的 theater assignment<br/>只定义初始作战区，不是运行时动态推进脚本"]:::warn
     MODE3 -.语义.-> NOTE
 
     classDef editor fill:#f6d365,stroke:#8a5a00,color:#1f1b10

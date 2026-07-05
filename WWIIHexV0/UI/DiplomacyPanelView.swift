@@ -90,7 +90,7 @@ struct DiplomacyPanelView: View {
 
     private func rulerSection(_ record: RulerDecisionRecord) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Ruler")
+            Text("National Command")
                 .font(.subheadline.weight(.semibold))
             LabeledContent("Agent") {
                 Text(record.rulerAgentId)

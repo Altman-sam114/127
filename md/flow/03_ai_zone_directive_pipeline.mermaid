@@ -6,8 +6,9 @@ flowchart TD
     TM["TurnManager.runAITurn<br/>pipelineMode = marshalDirective / zoneDirective"]:::rules
     MARSHAL["MarshalAgent<br/>读取降维战场摘要"]:::ai
     SUMMARY["MarshalBattlefieldSummarizer<br/>front/deploy/目标/补给摘要"]:::ai
-    LLM["SimulatedMarshalLLMClient<br/>输出 fenced TheaterDirective JSON"]:::ai
+    LLM["SimulatedMarshalLLMClient<br/>输出 fenced Operational Directive JSON<br/>TheaterDirective schema"]:::ai
     DECODER["TheaterDirectiveDecoder<br/>提取 JSON 并校验 schema/zone/region/tactic"]:::command
+    MCHAIN["ModernCommandChain<br/>advisory JSON 校验与复盘<br/>ISR / Fires / Air / EW / Logistics / Brigade"]:::command
     COMPILER["TheaterDirectiveCompiler<br/>TheaterDirective -> ZoneDirective"]:::command
     POOL["TheaterCommanderPool<br/>遍历当前 faction 的 FrontZone"]:::ai
     ZONE{"FrontZone 有 frontSegments?"}:::decision
@@ -25,7 +26,7 @@ flowchart TD
 
     START --> CHECK
     CHECK -->|否| STOP
-    CHECK -->|是| REFRESH --> TM --> MARSHAL --> SUMMARY --> LLM --> DECODER --> COMPILER --> ENV
+    CHECK -->|是| REFRESH --> TM --> MARSHAL --> SUMMARY --> LLM --> DECODER --> MCHAIN --> COMPILER --> ENV
     TM -.显式 zoneDirective 或元帅失败 fallback.-> POOL --> ZONE
     ZONE -->|否| SKIP
     ZONE -->|是| AGENT --> CLS

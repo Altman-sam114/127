@@ -64,20 +64,20 @@ struct RegionInspectorView: View {
                 Text(state.region.terrain == .fortress ? "Yes" : "No")
             }
 
-            LabeledContent("Supply") {
+            LabeledContent("Logistics") {
                 Text("\(state.region.supplyValue)")
             }
 
-            LabeledContent("Factories") {
+            LabeledContent("Facilities") {
                 Text("\(state.region.factories)")
             }
 
             LabeledContent("Output") {
-                Text("MP \(state.economicOutput.manpower), IC \(state.economicOutput.industry), SUP \(state.economicOutput.supplies)")
+                Text("PER \(state.economicOutput.manpower), MAT \(state.economicOutput.industry), LOG \(state.economicOutput.supplies)")
                     .multilineTextAlignment(.trailing)
             }
 
-            LabeledContent("Theater") {
+            LabeledContent("Operational Zone") {
                 Text(state.theaterId?.rawValue ?? "None")
             }
 
@@ -102,7 +102,7 @@ struct RegionInspectorView: View {
                 Text(state.objectiveStatus)
             }
 
-            LabeledContent("Friendly Units") {
+            LabeledContent("Friendly Formations") {
                 Text(unitNames(state.friendlyDivisions))
                     .multilineTextAlignment(.trailing)
             }
@@ -118,7 +118,7 @@ struct RegionInspectorView: View {
         guard !divisions.isEmpty else {
             return "None"
         }
-        return divisions.map(\.name).joined(separator: ", ")
+        return divisions.map(\.operationalDisplayName).joined(separator: ", ")
     }
 
     private func contactNames(_ contacts: [VisibleContactDisplay]) -> String {

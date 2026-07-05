@@ -83,7 +83,7 @@ struct RootGameView: View {
                     onClose: { isGeneralProfilePresented = false }
                 )
             } else {
-                Text("No general selected.")
+                Text("No commander selected.")
                     .font(.headline)
                     .padding()
             }

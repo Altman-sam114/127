@@ -378,7 +378,7 @@ struct VisibilityRules {
             .min(by: { $0.coord.distance(to: target) < $1.coord.distance(to: target) }) {
             return hostile.faction.alignment
         }
-        return faction.opponent.alignment
+        return .neutral
     }
 
     private func activeObserverFactions(in state: GameState) -> [Faction] {
