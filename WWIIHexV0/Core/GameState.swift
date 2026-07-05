@@ -12,6 +12,7 @@ struct GameState: Codable, Equatable {
     var warDeploymentState: WarDeploymentState
     var economyState: EconomyState
     var diplomacyState: DiplomacyState
+    var operationalAwareness: OperationalAwarenessState
     var divisions: [Division]
     var victoryState: VictoryState
     var selectedUnitSummary: String?
@@ -31,6 +32,7 @@ struct GameState: Codable, Equatable {
         warDeploymentState: WarDeploymentState = .empty,
         economyState: EconomyState = .empty,
         diplomacyState: DiplomacyState = .empty,
+        operationalAwareness: OperationalAwarenessState = .empty,
         divisions: [Division],
         victoryState: VictoryState,
         selectedUnitSummary: String?,
@@ -49,6 +51,7 @@ struct GameState: Codable, Equatable {
         self.warDeploymentState = warDeploymentState
         self.economyState = economyState
         self.diplomacyState = diplomacyState
+        self.operationalAwareness = operationalAwareness
         self.divisions = divisions
         self.victoryState = victoryState
         self.selectedUnitSummary = selectedUnitSummary
@@ -147,6 +150,7 @@ struct GameState: Codable, Equatable {
         case warDeploymentState
         case economyState
         case diplomacyState
+        case operationalAwareness
         case divisions
         case victoryState
         case selectedUnitSummary
@@ -169,6 +173,10 @@ struct GameState: Codable, Equatable {
             warDeploymentState: try container.decodeIfPresent(WarDeploymentState.self, forKey: .warDeploymentState) ?? .empty,
             economyState: try container.decodeIfPresent(EconomyState.self, forKey: .economyState) ?? .empty,
             diplomacyState: try container.decodeIfPresent(DiplomacyState.self, forKey: .diplomacyState) ?? .empty,
+            operationalAwareness: try container.decodeIfPresent(
+                OperationalAwarenessState.self,
+                forKey: .operationalAwareness
+            ) ?? .empty,
             divisions: try container.decode([Division].self, forKey: .divisions),
             victoryState: try container.decode(VictoryState.self, forKey: .victoryState),
             selectedUnitSummary: try container.decodeIfPresent(String.self, forKey: .selectedUnitSummary),

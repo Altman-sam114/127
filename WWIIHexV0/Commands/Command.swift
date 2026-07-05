@@ -6,6 +6,8 @@ enum Command: Codable, Equatable {
     case hold(divisionId: String)
     case allowRetreat(divisionId: String)
     case resupply(divisionId: String)
+    case recon(divisionId: String, target: HexCoord)
+    case electronicWarfare(divisionId: String, target: HexCoord)
     case queueProduction(kind: ProductionKind)
     case endTurn
 
@@ -29,6 +31,10 @@ enum Command: Codable, Equatable {
             return "AllowRetreat(\(divisionId))"
         case .resupply(let divisionId):
             return "Resupply(\(divisionId))"
+        case .recon(let divisionId, let target):
+            return "Recon(\(divisionId) -> \(target.q),\(target.r))"
+        case .electronicWarfare(let divisionId, let target):
+            return "EW(\(divisionId) -> \(target.q),\(target.r))"
         case .queueProduction(let kind):
             return "QueueProduction(\(kind.displayName))"
         case .endTurn:
@@ -41,7 +47,9 @@ enum Command: Codable, Equatable {
         case .move(let divisionId, _),
              .hold(let divisionId),
              .allowRetreat(let divisionId),
-             .resupply(let divisionId):
+             .resupply(let divisionId),
+             .recon(let divisionId, _),
+             .electronicWarfare(let divisionId, _):
             return divisionId
         case .attack(let attackerId, _):
             return attackerId
@@ -60,6 +68,8 @@ enum Command: Codable, Equatable {
              .attack,
              .hold,
              .allowRetreat,
+             .recon,
+             .electronicWarfare,
              .queueProduction,
              .endTurn:
             return false

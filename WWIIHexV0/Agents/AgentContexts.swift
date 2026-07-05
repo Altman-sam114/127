@@ -37,6 +37,16 @@ struct DivisionSummary: Codable, Equatable {
     let isArtillery: Bool
 }
 
+struct ContactSummary: Codable, Equatable {
+    let id: String
+    let lastKnownCoord: HexCoord
+    let regionId: RegionId?
+    let confidence: ContactConfidence
+    let estimatedType: EstimatedContactType
+    let source: ContactSource
+    let ageInTurns: Int
+}
+
 struct SupplySummary: Codable, Equatable {
     let friendlySupplied: Int
     let friendlyLowSupply: Int
@@ -104,6 +114,7 @@ struct AgentContext: Codable, Equatable {
     let visibleRegions: [RegionSnapshot]
     let friendlyDivisions: [DivisionSummary]
     let enemyDivisions: [DivisionSummary]
+    let contactSummaries: [ContactSummary]
     let objectives: [ObjectiveSummary]
     let supplySummary: SupplySummary
     let recentEvents: [EventSummary]
@@ -128,10 +139,7 @@ struct AgentContextBuilder {
             .filter { $0.faction == agent.faction && (assignedIds.isEmpty || assignedIds.contains($0.id)) }
             .map { divisionSummary($0, state: state) }
             .sorted { $0.id < $1.id }
-        let enemyDivisions = state.divisions
-            .filter { $0.faction.isHostile(to: agent.faction) }
-            .map { divisionSummary($0, state: state) }
-            .sorted { $0.id < $1.id }
+        let contacts = contactSummaries(for: agent.faction, state: state)
 
         return AgentContext(
             agentId: agent.id,
@@ -142,7 +150,8 @@ struct AgentContextBuilder {
             visibleTiles: tileSummaries(state: state),
             visibleRegions: regionSnapshots(for: agent.faction, state: state),
             friendlyDivisions: friendlyDivisions,
-            enemyDivisions: enemyDivisions,
+            enemyDivisions: [],
+            contactSummaries: contacts,
             objectives: objectiveSummaries(state: state),
             supplySummary: supplySummary(for: agent.faction, state: state),
             recentEvents: recentEvents(state: state),
@@ -222,17 +231,30 @@ struct AgentContextBuilder {
         )
     }
 
+    private func contactSummaries(for faction: Faction, state: GameState) -> [ContactSummary] {
+        state.operationalAwareness.visibleContacts(for: faction).map { contact in
+            ContactSummary(
+                id: contact.id,
+                lastKnownCoord: contact.lastKnownCoord,
+                regionId: state.map.region(for: contact.lastKnownCoord),
+                confidence: contact.confidence,
+                estimatedType: contact.estimatedType,
+                source: contact.source,
+                ageInTurns: contact.ageInTurns
+            )
+        }
+    }
+
     private func supplySummary(for faction: Faction, state: GameState) -> SupplySummary {
         let friendly = state.divisions.filter { $0.faction == faction }
-        let enemy = state.divisions.filter { $0.faction.isHostile(to: faction) }
 
         return SupplySummary(
             friendlySupplied: friendly.filter { $0.supplyState == .supplied }.count,
             friendlyLowSupply: friendly.filter { $0.supplyState == .lowSupply }.count,
             friendlyEncircled: friendly.filter { $0.supplyState == .encircled }.count,
-            enemySupplied: enemy.filter { $0.supplyState == .supplied }.count,
-            enemyLowSupply: enemy.filter { $0.supplyState == .lowSupply }.count,
-            enemyEncircled: enemy.filter { $0.supplyState == .encircled }.count
+            enemySupplied: 0,
+            enemyLowSupply: 0,
+            enemyEncircled: 0
         )
     }
 

@@ -589,43 +589,37 @@ struct ZoneCommanderAgent: ZoneCommanderProviding {
     }
 
     private func visibleEnemyStrengthByRegion(zone: FrontZone, state: GameState) -> [RegionId: Int] {
-        let visibleEnemyRegions = Set(visibleEnemyRegionIds(zone: zone, state: state))
         var strengthByRegion: [RegionId: Int] = [:]
 
-        for division in state.divisions where division.faction != zone.faction && !division.isDestroyed {
-            guard let regionId = division.location(in: state.map),
-                  visibleEnemyRegions.contains(regionId) else {
+        for contact in state.operationalAwareness.visibleContacts(for: zone.faction) {
+            guard let regionId = state.map.region(for: contact.lastKnownCoord),
+                  contactRegionIsRelevant(regionId, zone: zone, state: state) else {
                 continue
             }
-            strengthByRegion[regionId, default: 0] += combatPower(division, mode: .enemy)
+            strengthByRegion[regionId, default: 0] += VisibilityRules().contactStrengthEstimate(contact)
         }
 
         return strengthByRegion
     }
 
     private func visibleEnemyRegionIds(zone: FrontZone, state: GameState) -> [RegionId] {
-        var regionIds: [RegionId] = []
-        for segment in zone.frontSegments.sorted(by: { $0.regionId.rawValue < $1.regionId.rawValue }) {
-            if state.map.regions[segment.regionId]?.controller != zone.faction ||
-                hasEnemyPresence(in: segment.regionId, zone: zone, state: state) {
-                regionIds.append(segment.regionId)
-            }
+        let regionIds = state.operationalAwareness.visibleContacts(for: zone.faction).compactMap { contact in
+            state.map.region(for: contact.lastKnownCoord)
+        }.filter { contactRegionIsRelevant($0, zone: zone, state: state) }
 
-            for neighborId in state.map.neighbors(of: segment.regionId).sorted(by: { $0.rawValue < $1.rawValue }) {
-                guard dynamicRegionTouchesZone(
-                    sourceRegionId: segment.regionId,
-                    neighborRegionId: neighborId,
-                    targetZoneId: segment.neighborEnemyZone,
-                    state: state
-                ),
-                    (state.map.regions[neighborId]?.controller != zone.faction ||
-                     hasEnemyPresence(in: neighborId, zone: zone, state: state)) else {
-                    continue
-                }
-                regionIds.append(neighborId)
+        return stableUnique(regionIds)
+    }
+
+    private func contactRegionIsRelevant(_ regionId: RegionId, zone: FrontZone, state: GameState) -> Bool {
+        for segment in zone.frontSegments {
+            if segment.regionId == regionId {
+                return true
+            }
+            if state.map.neighbors(of: segment.regionId).contains(regionId) {
+                return true
             }
         }
-        return stableUnique(regionIds)
+        return zone.regionIds.contains(regionId)
     }
 
     private func bestTargetZoneId(
@@ -1028,15 +1022,11 @@ struct MarshalBattlefieldSummarizer {
         let frontStrength = strength(for: zone.unitsFront, faction: faction, state: state, mode: .friendly)
             + strength(for: zone.frontSegments.flatMap(\.assignedFrontUnitIds), faction: faction, state: state, mode: .friendly)
         let depthStrength = strength(for: zone.unitsDepth, faction: faction, state: state, mode: .friendly)
-        let enemyStrength = enemyRegionIds.reduce(0) { total, regionId in
-            total + state.divisions
-                .filter {
-                    $0.faction != faction
-                        && !$0.isDestroyed
-                        && $0.location(in: state.map) == regionId
-                }
-                .reduce(0) { $0 + max(1, $1.strength) + max(1, $1.defense) }
-        }
+        let enemyStrength = visibleContactStrength(
+            faction: faction,
+            regionIds: enemyRegionIds,
+            state: state
+        )
         let ratio = enemyStrength == 0 ? Double(max(1, frontStrength)) : Double(frontStrength) / Double(enemyStrength)
         let unitIds = Set(zone.unitsFront + zone.unitsDepth + zone.unitsGarrison)
         let supplyWarnings = state.divisions.filter {
@@ -1091,28 +1081,39 @@ struct MarshalBattlefieldSummarizer {
     }
 
     private func visibleEnemyRegionIds(zone: FrontZone, state: GameState) -> [RegionId] {
-        var regionIds: [RegionId] = []
-        for segment in zone.frontSegments.sorted(by: { $0.regionId.rawValue < $1.regionId.rawValue }) {
-            if state.map.regions[segment.regionId]?.controller != zone.faction ||
-                hasEnemyPresence(in: segment.regionId, zone: zone, state: state) {
-                regionIds.append(segment.regionId)
-            }
+        let regionIds = state.operationalAwareness.visibleContacts(for: zone.faction).compactMap { contact in
+            state.map.region(for: contact.lastKnownCoord)
+        }.filter { contactRegionIsRelevant($0, zone: zone, state: state) }
 
-            for neighborId in state.map.neighbors(of: segment.regionId).sorted(by: { $0.rawValue < $1.rawValue }) {
-                guard dynamicRegionTouchesZone(
-                    sourceRegionId: segment.regionId,
-                    neighborRegionId: neighborId,
-                    targetZoneId: segment.neighborEnemyZone,
-                    state: state
-                ),
-                    (state.map.regions[neighborId]?.controller != zone.faction ||
-                     hasEnemyPresence(in: neighborId, zone: zone, state: state)) else {
-                    continue
+        return stableUnique(regionIds)
+    }
+
+    private func visibleContactStrength(
+        faction: Faction,
+        regionIds: [RegionId],
+        state: GameState
+    ) -> Int {
+        let regionIdSet = Set(regionIds)
+        return state.operationalAwareness.visibleContacts(for: faction)
+            .filter { contact in
+                guard let regionId = state.map.region(for: contact.lastKnownCoord) else {
+                    return false
                 }
-                regionIds.append(neighborId)
+                return regionIdSet.contains(regionId)
+            }
+            .reduce(0) { $0 + VisibilityRules().contactStrengthEstimate($1) }
+    }
+
+    private func contactRegionIsRelevant(_ regionId: RegionId, zone: FrontZone, state: GameState) -> Bool {
+        for segment in zone.frontSegments {
+            if segment.regionId == regionId {
+                return true
+            }
+            if state.map.neighbors(of: segment.regionId).contains(regionId) {
+                return true
             }
         }
-        return stableUnique(regionIds)
+        return zone.regionIds.contains(regionId)
     }
 
     private func dynamicRegionTouchesZone(

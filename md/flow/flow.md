@@ -111,7 +111,7 @@ v6.0 当前只完成“迁移审计 + 玩家可见显示名兼容层”，没有
 - `GamePhase.displayName` 现在是通用回合显示名；旧名保存在 `legacyDisplayName`。
 - `Division.operationalDisplayName` 只替换 UI 显示，不改 `Division.name` 编码字段。
 - `Faction.opponent`、`GamePhase.germanAI/alliedPlayer`、旧阿登 fallback JSON 仍是后续迁移风险。
-- 当前没有新增 ISR / ContactTrack / EW / FireMission / AirTasking / LogisticsNetwork 状态。
+- v6.0 当轮没有新增 ISR / ContactTrack / EW / FireMission / AirTasking / LogisticsNetwork 状态；v6.4 已加入第一版作战感知状态，详见下文 v6.4 小节。
 
 ## 0.3 v6.1 作战方与 ROE 兼容层
 
@@ -156,7 +156,7 @@ owner/controller 都缺省 -> neutral
 - `GamePhase` raw value 尚未重命名，当前只用 helper 把 red 映射到 AI phase、blue 映射到 player phase。
 - v6.2 已切入 `grey_tide_2030` 默认剧本种子，但不是最终发布级地图。
 - `Faction.opponent` 仍保留为旧接口 fallback。
-- FireMission / ISR / EW / restricted fire zone 尚未进入命令系统。
+- FireMission / restricted fire zone 尚未进入命令系统；ISR / EW 已在 v6.4 进入第一版命令系统。
 
 ## 0.4 v6.2 灰潮行动默认剧本种子
 
@@ -228,10 +228,56 @@ specialForces / electronicWarfare
 
 仍未完成：
 
-- ISR / ContactTrack / 传感器覆盖 / EW 效果尚未进入状态系统。
 - FireMission / AirTasking / 精确火力命令仍未独立建模。
 - fuel / ammo / readiness / signature / electronicProtection 尚未作为独立字段落库。
 - 现代战役地图仍是 60-hex 种子，未扩到发布级规模。
+
+## 0.6 v6.4 ISR、ContactTrack 和电子战基础
+
+v6.4 第一批实现把现代战争的“发现目标再打击”前半段接入状态和命令管线，但仍不实现 v6.5 的独立 FireMission / AirTasking。
+
+新增运行时状态：
+
+```text
+GameState.operationalAwareness: OperationalAwarenessState
+  contacts: [String: ContactTrack]
+  sensorCoverage: [SensorCoverage]
+  ewEffects: [EWEffect]
+```
+
+Contact 模型：
+
+```text
+ContactTrack
+  ownerFaction / observerSide
+  lastKnownCoord
+  confidence: low / medium / high / confirmed
+  estimatedType: armor / infantry / artillery / airDefense / logistics / unknown
+  source: groundRecon / uav / signal / visual / fireObservation
+  ageInTurns
+  linkedDivisionId: only rules-internal, not exposed by AI/UI summaries
+```
+
+规则链路：
+
+- `VisibilityRules.refreshAwareness(in:)` 从友军单位 vision、recon、UAV、防空、EW 组件生成 `SensorCoverage`，再为覆盖内敌军生成或刷新 contact。
+- `Command.recon` 经过 `CommandValidator` 校验单位、阶段、阵营、目标 hex 和侦察距离后，由 `CommandExecutor -> VisibilityRules.performRecon` 刷新目标周边 contact，并写入 `intelligence` 日志。
+- `Command.electronicWarfare` 经过同一命令管线校验，由 `VisibilityRules.applyElectronicWarfare` 生成持续若干回合的 `EWEffect`，降低受影响 side 的传感器质量，并写入 `electronicWarfare` 日志。
+- 回合推进时 `VisibilityRules.advanceTurn` 会让 EW 递减、contact 老化、可信度降级，low contact 继续老化后消失。
+- `VisibilityRules.targetQuality(contactId:for:in:)` 和 `contactStrengthEstimate(_:)` 是 v6.5 火力任务接入前的目标质量/强度估算 helper。
+
+信息隔离：
+
+- `AgentContextBuilder` 不再把真实敌军 `enemyDivisions` 放进 AI 摘要，改为 `contactSummaries`；legacy prompt 也展示 Visible contacts，而不是 Known enemy divisions。
+- `ZoneCommanderAgent`、`MarshalBattlefieldSummarizer` 和 `MockAICommander` 的可见敌情强度改由 visible contacts 估算。
+- `WarCommandExecutor.visibleEnemyDivision` 只会把 medium+ contact 的内部 `linkedDivisionId` 解析成真实攻击目标；没有 contact 时不凭空选择隐藏敌军。
+- 普通 UI 视角不再显示敌军 `Division` 兵牌；Region inspector 显示 contact 类型、可信度、来源和年龄，不显示敌军真实单位名。Observer mode 仍保留调试全显。
+
+仍未完成：
+
+- 火力任务、空地协同、防空压制和无人打击仍留给 v6.5。
+- 当前 contact overlay 只在 Region inspector 和攻击高亮中首版可见，还不是完整地图图层。
+- `linkedDivisionId` 仍存于 `OperationalAwarenessState` 供规则内部解析，AI/UI 摘要默认不暴露该字段。
 
 ---
 
@@ -258,6 +304,7 @@ victoryState
 eventLog
 warDirectiveRecords
 playerCommandState
+operationalAwareness
 ```
 
 状态含义：
@@ -268,6 +315,7 @@ playerCommandState
 - `frontLineState` 从动态战区相邻 hex 派生。
 - `warDeploymentState` 从动态战区/前线/单位位置派生，供 AI 调度单位。
 - `economyState` 保存 manpower、industry、supplies、生产队列、上回合收入/维护费/补员消耗，不直接改变战术占领权。
+- `operationalAwareness` 保存 contact、sensor coverage 和 EW effects，是 v6.4 后 UI/AI 可见敌情的入口；真实敌军 `Division` 仍只供规则内部解析。
 - `eventLog` 给 UI 和调试看。
 - `warDirectiveRecords` 记录战争指令执行回放，供 v0.36+ 后续接 LLM / 聊天命令审计。
 
@@ -1686,7 +1734,7 @@ theaterId = dominantDynamicTheaterId(region)
 frontZoneId = dominantDynamicFrontZoneId(region)
 frontPressure
 friendlyDivisions
-visibleEnemyDivisions
+visibleContacts
 ```
 
 单位 strategic state：

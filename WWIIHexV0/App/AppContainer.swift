@@ -154,6 +154,12 @@ final class AppContainer: ObservableObject {
             return
         }
 
+        if let attacker = selectedActionDivision,
+           let contactTarget = visibleContactTarget(at: coord, for: attacker) {
+            submit(.attack(attackerId: attacker.id, targetId: contactTarget.id))
+            return
+        }
+
         if let tappedDivision = displayedDivisions.first {
             handleDivisionTap(tappedDivision)
             return
@@ -821,9 +827,18 @@ final class AppContainer: ObservableObject {
 
         movementHighlights = MovementRules().movementRange(for: division, in: gameState)
         attackHighlights = Set(
-            gameState.divisions
-                .filter { $0.faction != division.faction && division.coord.distance(to: $0.coord) <= division.range }
-                .map(\.coord)
+            gameState.operationalAwareness.visibleContacts(for: division.faction)
+                .filter { contact in
+                    guard contact.confidence >= .medium,
+                          let linkedDivisionId = contact.linkedDivisionId,
+                          let target = gameState.division(id: linkedDivisionId),
+                          target.faction.isHostile(to: division.faction),
+                          !target.isDestroyed else {
+                        return false
+                    }
+                    return division.coord.distance(to: target.coord) <= division.range
+                }
+                .map(\.lastKnownCoord)
         )
     }
 
@@ -834,6 +849,28 @@ final class AppContainer: ObservableObject {
 
     private func submitMove(division: Division, tappedHex: HexCoord) {
         submit(.move(divisionId: division.id, destination: tappedHex))
+    }
+
+    private func visibleContactTarget(at coord: HexCoord, for attacker: Division) -> Division? {
+        gameState.operationalAwareness.visibleContacts(for: attacker.faction)
+            .filter { $0.lastKnownCoord == coord && $0.confidence >= .medium }
+            .compactMap { contact -> Division? in
+                guard let linkedDivisionId = contact.linkedDivisionId,
+                      let target = gameState.division(id: linkedDivisionId),
+                      target.faction.isHostile(to: attacker.faction),
+                      !target.isDestroyed,
+                      attacker.coord.distance(to: target.coord) <= attacker.range else {
+                    return nil
+                }
+                return target
+            }
+            .sorted {
+                if $0.strength == $1.strength {
+                    return $0.id < $1.id
+                }
+                return $0.strength < $1.strength
+            }
+            .first
     }
 
     private func selectionMessage(for coord: HexCoord) -> String {

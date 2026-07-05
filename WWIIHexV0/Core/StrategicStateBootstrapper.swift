@@ -12,6 +12,11 @@ struct StrategicStateBootstrapper {
             next.appendEvent("Diplomacy state bootstrapped with countries, blocs, and initial war relations.")
         }
 
+        if next.operationalAwareness.sensorCoverage.isEmpty &&
+            next.operationalAwareness.contacts.isEmpty {
+            next.operationalAwareness = VisibilityRules().refreshAwareness(in: next)
+        }
+
         guard !state.map.regions.isEmpty else {
             return next
         }
@@ -94,6 +99,7 @@ struct StrategicStateBootstrapper {
             turn: next.turn
         )
         next.warDeploymentState = rebuiltDeployment.preservingGeneralAssignments(from: state.warDeploymentState)
+        next.operationalAwareness = VisibilityRules().refreshAwareness(in: next)
         return next
     }
 }

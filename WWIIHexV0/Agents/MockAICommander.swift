@@ -120,15 +120,13 @@ struct MockAICommander {
         let visibleRegionIds = Set(zone.frontSegments.flatMap { segment in
             [segment.regionId] + state.map.neighbors(of: segment.regionId)
         })
-        return state.divisions
-            .filter { division in
-                guard division.faction != zone.faction,
-                      !division.isDestroyed,
-                      let regionId = division.location(in: state.map) else {
+        return state.operationalAwareness.visibleContacts(for: zone.faction)
+            .filter { contact in
+                guard let regionId = state.map.region(for: contact.lastKnownCoord) else {
                     return false
                 }
                 return visibleRegionIds.contains(regionId)
             }
-            .reduce(0) { $0 + max(1, $1.strength) + max(1, $1.defense) }
+            .reduce(0) { $0 + VisibilityRules().contactStrengthEstimate($1) }
     }
 }

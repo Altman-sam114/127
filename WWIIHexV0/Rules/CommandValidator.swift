@@ -15,6 +15,10 @@ struct CommandValidator {
             return validateUnitCommand(divisionId: divisionId, in: state)
         case .resupply(let divisionId):
             return validateRecoveryCommand(divisionId: divisionId, in: state)
+        case .recon(let divisionId, let target):
+            return validateAwarenessCommand(divisionId: divisionId, target: target, in: state, rangeBonus: 2)
+        case .electronicWarfare(let divisionId, let target):
+            return validateAwarenessCommand(divisionId: divisionId, target: target, in: state, rangeBonus: 1)
         case .queueProduction(let kind):
             return validateProduction(kind: kind, in: state)
         case .endTurn:
@@ -114,6 +118,30 @@ struct CommandValidator {
 
         guard !division.hasActed, !division.isDestroyed, !division.isRetreating else {
             return .invalid(.alreadyActed)
+        }
+
+        return .valid
+    }
+
+    private func validateAwarenessCommand(
+        divisionId: String,
+        target: HexCoord,
+        in state: GameState,
+        rangeBonus: Int
+    ) -> CommandValidation {
+        let unitValidation = validateUnitCommand(divisionId: divisionId, in: state)
+        guard unitValidation.isValid,
+              let division = state.division(id: divisionId) else {
+            return unitValidation
+        }
+
+        guard state.map.contains(target) else {
+            return .invalid(.destinationOutOfBounds)
+        }
+
+        let range = max(1, division.vision / 2 + rangeBonus)
+        guard division.coord.distance(to: target) <= range else {
+            return .invalid(.targetOutOfRange)
         }
 
         return .valid

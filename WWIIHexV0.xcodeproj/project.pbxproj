@@ -13,6 +13,7 @@
 		010000000000000000000004 /* Faction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000004 /* Faction.swift */; };
 		010000000000000000000005 /* GamePhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000005 /* GamePhase.swift */; };
 		010000000000000000000006 /* GameLogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000006 /* GameLogEntry.swift */; };
+		010000000000000000000204 /* OperationalAwarenessState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000204 /* OperationalAwarenessState.swift */; };
 		010000000000000000000007 /* RootGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000007 /* RootGameView.swift */; };
 		010000000000000000000008 /* HUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000008 /* HUDView.swift */; };
 		010000000000000000000009 /* UnitInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000009 /* UnitInspectorView.swift */; };
@@ -83,6 +84,7 @@
 		010000000000000000000047 /* RegionOccupationRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000049 /* RegionOccupationRules.swift */; };
 		010000000000000000000048 /* RegionSupplyRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004A /* RegionSupplyRules.swift */; };
 		010000000000000000000049 /* RegionVisibilityRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004B /* RegionVisibilityRules.swift */; };
+		010000000000000000000205 /* VisibilityRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000205 /* VisibilityRules.swift */; };
 		01000000000000000000004A /* RegionVictoryRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004C /* RegionVictoryRules.swift */; };
 		01000000000000000000004B /* RegionRuleSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004D /* RegionRuleSystem.swift */; };
 		01000000000000000000004C /* RegionMovementRulesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004E /* RegionMovementRulesTests.swift */; };
@@ -159,6 +161,7 @@
 		0100000000000000000000DD /* Faction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000004 /* Faction.swift */; };
 		0100000000000000000000DE /* GamePhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000005 /* GamePhase.swift */; };
 		0100000000000000000000DF /* GameLogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000006 /* GameLogEntry.swift */; };
+		010000000000000000000206 /* OperationalAwarenessState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000204 /* OperationalAwarenessState.swift */; };
 		0100000000000000000000E0 /* HexDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001A /* HexDirection.swift */; };
 		0100000000000000000000E1 /* HexCoord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001B /* HexCoord.swift */; };
 		0100000000000000000000E2 /* Terrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001C /* Terrain.swift */; };
@@ -215,6 +218,7 @@
 		010000000000000000000115 /* RegionOccupationRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000049 /* RegionOccupationRules.swift */; };
 		010000000000000000000116 /* RegionSupplyRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004A /* RegionSupplyRules.swift */; };
 		010000000000000000000117 /* RegionVisibilityRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004B /* RegionVisibilityRules.swift */; };
+		010000000000000000000207 /* VisibilityRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000205 /* VisibilityRules.swift */; };
 		010000000000000000000118 /* RegionVictoryRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004C /* RegionVictoryRules.swift */; };
 		010000000000000000000119 /* RegionRuleSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004D /* RegionRuleSystem.swift */; };
 		01000000000000000000011A /* RegionCommandValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000058 /* RegionCommandValidator.swift */; };
@@ -254,6 +258,7 @@
 		0C0000000000000000000103 /* Faction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000004 /* Faction.swift */; };
 		0C0000000000000000000104 /* GamePhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000005 /* GamePhase.swift */; };
 		0C0000000000000000000105 /* GameLogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000006 /* GameLogEntry.swift */; };
+		0C0000000000000000000204 /* OperationalAwarenessState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000204 /* OperationalAwarenessState.swift */; };
 		0C0000000000000000000106 /* WarPipelineMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000094 /* WarPipelineMode.swift */; };
 		0C0000000000000000000107 /* MapDisplayLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000095 /* MapDisplayLayer.swift */; };
 		0C0000000000000000000108 /* WarDirectiveRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000096 /* WarDirectiveRecord.swift */; };
@@ -314,6 +319,7 @@
 		0C000000000000000000013F /* OccupationRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000148 /* OccupationRules.swift */; };
 		0C0000000000000000000140 /* RegionSupplyRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004A /* RegionSupplyRules.swift */; };
 		0C0000000000000000000141 /* RegionVisibilityRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004B /* RegionVisibilityRules.swift */; };
+		0C0000000000000000000205 /* VisibilityRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000205 /* VisibilityRules.swift */; };
 		0C0000000000000000000142 /* RegionVictoryRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004C /* RegionVictoryRules.swift */; };
 		0C0000000000000000000143 /* RegionRuleSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000004D /* RegionRuleSystem.swift */; };
 		0C0000000000000000000144 /* RegionCommandValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000058 /* RegionCommandValidator.swift */; };
@@ -412,6 +418,7 @@
 		020000000000000000000004 /* Faction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Faction.swift; sourceTree = "<group>"; };
 		020000000000000000000005 /* GamePhase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamePhase.swift; sourceTree = "<group>"; };
 		020000000000000000000006 /* GameLogEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLogEntry.swift; sourceTree = "<group>"; };
+		020000000000000000000204 /* OperationalAwarenessState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationalAwarenessState.swift; sourceTree = "<group>"; };
 		020000000000000000000007 /* RootGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootGameView.swift; sourceTree = "<group>"; };
 		020000000000000000000008 /* HUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDView.swift; sourceTree = "<group>"; };
 		020000000000000000000009 /* UnitInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitInspectorView.swift; sourceTree = "<group>"; };
@@ -484,6 +491,7 @@
 		020000000000000000000049 /* RegionOccupationRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionOccupationRules.swift; sourceTree = "<group>"; };
 		02000000000000000000004A /* RegionSupplyRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionSupplyRules.swift; sourceTree = "<group>"; };
 		02000000000000000000004B /* RegionVisibilityRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionVisibilityRules.swift; sourceTree = "<group>"; };
+		020000000000000000000205 /* VisibilityRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisibilityRules.swift; sourceTree = "<group>"; };
 		02000000000000000000004C /* RegionVictoryRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionVictoryRules.swift; sourceTree = "<group>"; };
 		02000000000000000000004D /* RegionRuleSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionRuleSystem.swift; sourceTree = "<group>"; };
 		02000000000000000000004E /* RegionMovementRulesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionMovementRulesTests.swift; sourceTree = "<group>"; };
@@ -669,6 +677,7 @@
 				020000000000000000000004 /* Faction.swift */,
 				020000000000000000000005 /* GamePhase.swift */,
 				020000000000000000000006 /* GameLogEntry.swift */,
+				020000000000000000000204 /* OperationalAwarenessState.swift */,
 				020000000000000000000094 /* WarPipelineMode.swift */,
 				020000000000000000000095 /* MapDisplayLayer.swift */,
 				020000000000000000000096 /* WarDirectiveRecord.swift */,
@@ -759,6 +768,7 @@
 				020000000000000000000148 /* OccupationRules.swift */,
 				02000000000000000000004A /* RegionSupplyRules.swift */,
 				02000000000000000000004B /* RegionVisibilityRules.swift */,
+				020000000000000000000205 /* VisibilityRules.swift */,
 				02000000000000000000004C /* RegionVictoryRules.swift */,
 				02000000000000000000004D /* RegionRuleSystem.swift */,
 				020000000000000000000058 /* RegionCommandValidator.swift */,
@@ -1129,6 +1139,7 @@
 				010000000000000000000004 /* Faction.swift in Sources */,
 				010000000000000000000005 /* GamePhase.swift in Sources */,
 				010000000000000000000006 /* GameLogEntry.swift in Sources */,
+				010000000000000000000204 /* OperationalAwarenessState.swift in Sources */,
 				010000000000000000000126 /* WarPipelineMode.swift in Sources */,
 				0D0000000000000000000103 /* DiplomacyState.swift in Sources */,
 				0D0000000000000000000104 /* EconomyState.swift in Sources */,
@@ -1226,6 +1237,7 @@
 				010000000000000000000148 /* OccupationRules.swift in Sources */,
 				010000000000000000000048 /* RegionSupplyRules.swift in Sources */,
 				010000000000000000000049 /* RegionVisibilityRules.swift in Sources */,
+				010000000000000000000205 /* VisibilityRules.swift in Sources */,
 				01000000000000000000004A /* RegionVictoryRules.swift in Sources */,
 				01000000000000000000004B /* RegionRuleSystem.swift in Sources */,
 				010000000000000000000056 /* RegionCommandValidator.swift in Sources */,
@@ -1318,6 +1330,7 @@
 				0100000000000000000000DD /* Faction.swift in Sources */,
 				0100000000000000000000DE /* GamePhase.swift in Sources */,
 				0100000000000000000000DF /* GameLogEntry.swift in Sources */,
+				010000000000000000000206 /* OperationalAwarenessState.swift in Sources */,
 				01000000000000000000012E /* WarPipelineMode.swift in Sources */,
 				0D0000000000000000000203 /* DiplomacyState.swift in Sources */,
 				0D0000000000000000000204 /* EconomyState.swift in Sources */,
@@ -1388,6 +1401,7 @@
 				010000000000000000000149 /* OccupationRules.swift in Sources */,
 				010000000000000000000116 /* RegionSupplyRules.swift in Sources */,
 				010000000000000000000117 /* RegionVisibilityRules.swift in Sources */,
+				010000000000000000000207 /* VisibilityRules.swift in Sources */,
 				010000000000000000000118 /* RegionVictoryRules.swift in Sources */,
 				010000000000000000000119 /* RegionRuleSystem.swift in Sources */,
 				01000000000000000000011A /* RegionCommandValidator.swift in Sources */,
@@ -1408,6 +1422,7 @@
 				0C0000000000000000000103 /* Faction.swift in Sources */,
 				0C0000000000000000000104 /* GamePhase.swift in Sources */,
 				0C0000000000000000000105 /* GameLogEntry.swift in Sources */,
+				0C0000000000000000000204 /* OperationalAwarenessState.swift in Sources */,
 				0C0000000000000000000106 /* WarPipelineMode.swift in Sources */,
 				0D0000000000000000000303 /* DiplomacyState.swift in Sources */,
 				0D0000000000000000000304 /* EconomyState.swift in Sources */,
@@ -1479,6 +1494,7 @@
 				0C000000000000000000013F /* OccupationRules.swift in Sources */,
 				0C0000000000000000000140 /* RegionSupplyRules.swift in Sources */,
 				0C0000000000000000000141 /* RegionVisibilityRules.swift in Sources */,
+				0C0000000000000000000205 /* VisibilityRules.swift in Sources */,
 				0C0000000000000000000142 /* RegionVictoryRules.swift in Sources */,
 				0C0000000000000000000143 /* RegionRuleSystem.swift in Sources */,
 				0C0000000000000000000144 /* RegionCommandValidator.swift in Sources */,

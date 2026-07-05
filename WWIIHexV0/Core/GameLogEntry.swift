@@ -10,6 +10,8 @@ enum GameLogCategory: String, Codable, Equatable {
     case theaterChange
     case regionOwnerChange
     case diplomacy
+    case intelligence
+    case electronicWarfare
     case event
 }
 

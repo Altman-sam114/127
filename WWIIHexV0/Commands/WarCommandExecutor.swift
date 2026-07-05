@@ -804,15 +804,11 @@ struct WarCommandExecutor {
         against faction: Faction,
         state: GameState
     ) -> Int {
-        state.divisions
-            .filter { division in
-                guard division.faction != faction,
-                      !division.isDestroyed else {
-                    return false
-                }
-                return division.location(in: state.map) == regionId
+        state.operationalAwareness.visibleContacts(for: faction)
+            .filter { contact in
+                state.map.region(for: contact.lastKnownCoord) == regionId
             }
-            .reduce(0) { $0 + max(1, $1.strength) + max(1, $1.defense) }
+            .reduce(0) { $0 + VisibilityRules().contactStrengthEstimate($1) }
     }
 
     private func defensiveDestination(
@@ -931,12 +927,8 @@ struct WarCommandExecutor {
         zone: FrontZone,
         state: GameState
     ) -> Bool {
-        state.divisions.contains { division in
-            guard division.faction != zone.faction,
-                  !division.isDestroyed else {
-                return false
-            }
-            return division.location(in: state.map) == regionId
+        state.operationalAwareness.visibleContacts(for: zone.faction).contains { contact in
+            state.map.region(for: contact.lastKnownCoord) == regionId
         }
     }
 
@@ -947,23 +939,33 @@ struct WarCommandExecutor {
         state: GameState
     ) -> Division? {
         let regionSet = Set(regionIds)
-        return state.divisions
-            .filter { target in
-                guard target.faction != zone.faction,
+        return state.operationalAwareness.visibleContacts(for: zone.faction)
+            .compactMap { contact -> (contact: ContactTrack, target: Division)? in
+                guard contact.confidence >= .medium,
+                      let linkedDivisionId = contact.linkedDivisionId,
+                      let target = state.division(id: linkedDivisionId),
+                      target.faction.isHostile(to: zone.faction),
                       !target.isDestroyed,
                       let targetRegion = target.location(in: state.map),
                       regionSet.contains(targetRegion) else {
-                    return false
+                    return nil
                 }
-                return division.coord.distance(to: target.coord) <= division.range
+                guard division.coord.distance(to: target.coord) <= division.range else {
+                    return nil
+                }
+                return (contact, target)
             }
             .sorted {
-                if $0.strength == $1.strength {
-                    return $0.id < $1.id
+                if $0.contact.confidence != $1.contact.confidence {
+                    return $0.contact.confidence > $1.contact.confidence
                 }
-                return $0.strength < $1.strength
+                if $0.target.strength == $1.target.strength {
+                    return $0.target.id < $1.target.id
+                }
+                return $0.target.strength < $1.target.strength
             }
-            .first
+            .first?
+            .target
     }
 
     private func tacticalDestination(

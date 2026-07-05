@@ -38,6 +38,15 @@ extension UnitDisplayPlacement {
     }
 }
 
+struct VisibleContactDisplay: Equatable {
+    let id: String
+    let lastKnownCoord: HexCoord
+    let confidence: ContactConfidence
+    let estimatedType: EstimatedContactType
+    let source: ContactSource
+    let ageInTurns: Int
+}
+
 struct RegionInspectorState: Equatable {
     let region: RegionNode
     let selectedHex: HexCoord?
@@ -48,7 +57,7 @@ struct RegionInspectorState: Equatable {
     let frontZoneId: FrontZoneId?
     let frontPressure: Double
     let friendlyDivisions: [Division]
-    let visibleEnemyDivisions: [Division]
+    let visibleContacts: [VisibleContactDisplay]
     let objectiveNames: [String]
     let objectiveStatus: String
     let cityLevel: CityLevel
@@ -174,14 +183,15 @@ struct MapDisplayAdapter {
     }
 
     func isDivisionVisible(_ division: Division, viewerFaction: Faction) -> Bool {
+        if revealAll {
+            return true
+        }
+
         if division.faction == viewerFaction {
             return true
         }
 
-        guard let displayHex = unitDisplayHex(for: division) else {
-            return false
-        }
-        return visibility(for: displayHex, faction: viewerFaction) == .visible
+        return false
     }
 
     func inspectorState(for regionId: RegionId, selectedHex: HexCoord? = nil, viewerFaction: Faction) -> RegionInspectorState? {
@@ -193,9 +203,7 @@ struct MapDisplayAdapter {
             division.location(in: state.map) == regionId
         }
         let friendly = divisions.filter { $0.faction == viewerFaction }
-        let visibleEnemy = divisions.filter { division in
-            division.faction != viewerFaction && isDivisionVisible(division, viewerFaction: viewerFaction)
-        }
+        let visibleContacts = contactDisplays(for: regionId, viewerFaction: viewerFaction)
         let objectiveNames = state.map.objectives
             .filter { objective in
                 region.displayHexes.contains(objective.coord)
@@ -221,12 +229,29 @@ struct MapDisplayAdapter {
                 .map(\.pressureLevel)
                 .max() ?? 0,
             friendlyDivisions: friendly,
-            visibleEnemyDivisions: visibleEnemy,
+            visibleContacts: visibleContacts,
             objectiveNames: objectiveNames,
             objectiveStatus: objectiveStatus,
             cityLevel: cityLevel,
             economicOutput: economicOutput
         )
+    }
+
+    private func contactDisplays(for regionId: RegionId, viewerFaction: Faction) -> [VisibleContactDisplay] {
+        state.operationalAwareness.visibleContacts(for: viewerFaction)
+            .filter { contact in
+                state.map.region(for: contact.lastKnownCoord) == regionId
+            }
+            .map { contact in
+                VisibleContactDisplay(
+                    id: contact.id,
+                    lastKnownCoord: contact.lastKnownCoord,
+                    confidence: contact.confidence,
+                    estimatedType: contact.estimatedType,
+                    source: contact.source,
+                    ageInTurns: contact.ageInTurns
+                )
+            }
     }
 
     func unitInspectorState(for division: Division) -> UnitInspectorStrategicState {

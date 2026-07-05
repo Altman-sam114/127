@@ -6,6 +6,7 @@ struct CommandExecutor {
     private let supplyRules = SupplyRules()
     private let occupationRules = OccupationRules()
     private let strategicSynchronizer = StrategicStateSynchronizer()
+    private let visibilityRules = VisibilityRules()
     private let retreatLossThreshold = 0.35
 
     func execute(_ command: Command, in state: GameState) -> GameState {
@@ -22,6 +23,10 @@ struct CommandExecutor {
             executeAllowRetreat(divisionId: divisionId, in: &nextState)
         case .resupply(let divisionId):
             executeResupply(divisionId: divisionId, in: &nextState)
+        case .recon(let divisionId, let target):
+            executeRecon(divisionId: divisionId, target: target, in: &nextState)
+        case .electronicWarfare(let divisionId, let target):
+            executeElectronicWarfare(divisionId: divisionId, target: target, in: &nextState)
         case .queueProduction(let kind):
             executeQueueProduction(kind: kind, in: &nextState)
         case .endTurn:
@@ -155,6 +160,22 @@ struct CommandExecutor {
         state.divisions[index].hasActed = true
     }
 
+    private func executeRecon(divisionId: String, target: HexCoord, in state: inout GameState) {
+        state = visibilityRules.performRecon(
+            divisionId: divisionId,
+            target: target,
+            in: state
+        ).state
+    }
+
+    private func executeElectronicWarfare(divisionId: String, target: HexCoord, in state: inout GameState) {
+        state = visibilityRules.applyElectronicWarfare(
+            divisionId: divisionId,
+            target: target,
+            in: state
+        )
+    }
+
     private func executeQueueProduction(kind: ProductionKind, in state: inout GameState) {
         _ = EconomyRules().queueProduction(kind: kind, faction: state.activeFaction, in: &state)
     }
@@ -169,6 +190,7 @@ struct CommandExecutor {
         supplyRules.advanceRetreats(in: &state)
         supplyRules.applyEncirclementAttrition(in: &state)
         victoryRules.updateVictoryState(in: &state)
+        state.operationalAwareness = visibilityRules.advanceTurn(state.operationalAwareness)
 
         switch state.activeFaction {
         case .germany:

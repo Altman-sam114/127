@@ -39,8 +39,10 @@ struct AgentPromptBuilder {
         let friendly = context.friendlyDivisions
             .map { "\($0.id) \($0.name) str:\($0.strength)/\($0.maxStrength) region:\($0.regionId?.rawValue ?? "unknown") supply:\($0.supplyState.rawValue) acted:\($0.hasActed)" }
             .joined(separator: "\n")
-        let enemies = context.enemyDivisions
-            .map { "\($0.id) \($0.name) str:\($0.strength)/\($0.maxStrength) region:\($0.regionId?.rawValue ?? "unknown")" }
+        let contacts = context.contactSummaries
+            .map {
+                "\($0.id) type:\($0.estimatedType.rawValue) confidence:\($0.confidence.rawValue) region:\($0.regionId?.rawValue ?? "unknown") source:\($0.source.rawValue) age:\($0.ageInTurns)"
+            }
             .joined(separator: "\n")
         let regions = context.visibleRegions
             .filter(\.visible)
@@ -54,16 +56,17 @@ struct AgentPromptBuilder {
 
         Available commands:
         - move: requires divisionId and toRegionId
-        - attack: requires divisionId and targetDivisionId
+        - attack: legacy only; requires a real targetDivisionId and should not be used from unconfirmed contacts
         - hold: requires divisionId
         - resupply: requires divisionId
+        Recon and EW are modeled by the rules layer, but this legacy JSON schema cannot issue them yet.
 
         Battlefield summary:
         Friendly divisions:
         \(friendly)
 
-        Known enemy divisions:
-        \(enemies)
+        Visible contacts:
+        \(contacts.isEmpty ? "No visible contacts." : contacts)
 
         Objectives:
         \(objectives)

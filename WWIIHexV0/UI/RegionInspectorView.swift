@@ -107,8 +107,8 @@ struct RegionInspectorView: View {
                     .multilineTextAlignment(.trailing)
             }
 
-            LabeledContent("Visible Enemies") {
-                Text(unitNames(state.visibleEnemyDivisions))
+            LabeledContent("Contacts") {
+                Text(contactNames(state.visibleContacts))
                     .multilineTextAlignment(.trailing)
             }
         }
@@ -119,5 +119,14 @@ struct RegionInspectorView: View {
             return "None"
         }
         return divisions.map(\.name).joined(separator: ", ")
+    }
+
+    private func contactNames(_ contacts: [VisibleContactDisplay]) -> String {
+        guard !contacts.isEmpty else {
+            return "None"
+        }
+        return contacts.map { contact in
+            "\(contact.estimatedType.displayName) \(contact.confidence.displayName) \(contact.source.displayName) age \(contact.ageInTurns)"
+        }.joined(separator: ", ")
     }
 }

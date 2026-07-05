@@ -6,6 +6,8 @@ enum CommandResultLogKind: String, Codable, Equatable {
     case recovery
     case retreat
     case supply
+    case intelligence
+    case electronicWarfare
     case turn
     case system
 }
