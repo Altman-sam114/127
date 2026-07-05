@@ -1,4 +1,4 @@
-# WWIIHexV0 核心流程文档（v0.5 元帅决策链分支）
+# WWIIHexV0 核心流程文档（v6.6 现代 AI 指挥链）
 
 > 本文是项目当前核心逻辑的接手文档。目标不是复述历史设计，而是按当前代码真实链路说明：数据如何进入游戏，hex / region / theater / front / deploy 如何派生，主游戏和地图编辑器如何共同维护同一套地图语义，AI / 玩家命令如何落到规则系统。
 
@@ -22,6 +22,7 @@ MapEditor / JSON 数据
   -> WarDeployment hexToFrontZone + FRONT/DEPTH/GARRISON
   -> MarshalAgent / TheaterDirective JSON
   -> TheaterDirectiveDecoder
+  -> ModernCommandChainOrchestrator / ModernCommandChainDecoder
   -> TheaterDirectiveCompiler
   -> ZoneCommanderAgent fallback / 手写 ZoneDirective
   -> WarCommandExecutor
@@ -40,8 +41,9 @@ MapEditor / JSON 数据
 - `hexToFrontZone` 是部署层动态归属权威。
 - `EconomyState` 是 faction 级经济总账；收入来自受控 region、城市、工厂、基础设施和补给值，但战术占领仍以 hex 为准。
 - 玩家、AI、后续聊天命令最终都必须经过 `Command` / `ZoneDirective -> WarCommandExecutor -> RuleEngine`，不能直接改 `GameState`。
-- v0.5 默认战争 AI 上游是 `MarshalAgent -> TheaterDirective JSON -> TheaterDirectiveDecoder -> TheaterDirectiveCompiler`，下游执行收口到 `ZoneDirective -> WarCommandExecutor -> RuleEngine`。
-- 统治者层只作为后续方向预留；当前 v0.5 主链路不调用 `RulerAgent`，也不写统治者决策记录。
+- v6.6 默认战争 AI 上游是 `MarshalAgent -> TheaterDirective JSON -> ModernCommandChain advisory JSON -> TheaterDirectiveCompiler`，下游执行收口到 `ZoneDirective -> WarCommandExecutor -> RuleEngine`。
+- `ModernCommandChainPlan` 只做可审计分解、JSON 校验和复盘展示；ISR / Fires / Air / EW / Logistics / Brigade sub-directive 当前不直接执行。
+- 统治者层只作为后续方向预留；当前执行主链路不调用 `RulerAgent`，也不写统治者决策记录。
 
 ## 0.1 云端协作与验证闭环
 
@@ -319,6 +321,56 @@ GameState.fireSupportState: FireSupportState
 - Air superiority 当前是抽象占位，未做持续空域争夺、截击、CAP 或机场出动率。
 - 火力 UI 仍主要通过日志可见，还没有独立火力范围 / 空中任务 overlay。
 - AI 只通过 `fireCoverage` 首版生成火力任务，尚未引入 FiresCoordinator / ISRCoordinator 独立 Agent。
+
+## 0.8 v6.6 现代 AI Agent 指挥链和审计复盘
+
+v6.6 第一批实现把现代联合指挥层接到元帅 AI 与既有执行管线之间。它不替代 `TheaterDirectiveCompiler`、`ZoneDirective`、`WarCommandExecutor` 或 `RuleEngine`，而是在元帅 JSON 成功解码后生成一份可审计的现代指挥链 JSON。
+
+新增 AI 指挥链模型：
+
+```text
+StrategicConstraintEnvelope
+  schemaVersion / issuerId / turn / faction / role=nationalCommand
+  roeSummary / riskTolerance / priorityObjectives / prohibitedActions
+
+JointCommandPlan
+  schemaVersion / issuerId / turn / faction / role=jointCommand
+  strategicIntent / theaterDirectiveIds / subDirectives
+
+ModernSubDirective
+  role: nationalCommand / jointCommand / chiefOfStaff / isrCoordinator
+        firesCoordinator / airTasking / ewCoordinator / logistics / brigadeCommander
+  missionType: setROE / theaterObjective / deconflict / reconArea
+               confirmContact / fireMission / suppressAirDefense / airRecon
+               electronicWarfare / resupply / assault / hold / reserve
+  optional zoneId / regionId / contactId
+
+ModernCommandChainPlan
+  strategicConstraints + jointPlan + chiefOfStaffNotes
+  compiledZoneDirectiveCount / summary
+```
+
+运行链路：
+
+- `MarshalAgent` 先按既有流程生成并解码 `TheaterDirectiveEnvelope`。
+- `ModernCommandChainOrchestrator` 根据元帅摘要、TheaterDirective 和当前 `GameState` 生成 deterministic `ModernCommandChainPlan`，并输出 fenced JSON。
+- `ModernCommandChainDecoder` 重新解析该 JSON，校验顶层和嵌套 envelope 的 schemaVersion、issuerId、turn、faction、role。
+- decoder 逐条校验 sub-directive：role 是否允许 missionType、zone 是否存在且属于该 faction、region 是否存在、contact 是否存在且对该 faction 可见。
+- 校验成功后，plan 写入 `MarshalDirectiveResolution.commandChainPlan`；校验失败只添加 diagnostics，不执行半成品。
+- `TheaterDirectiveCompiler` 仍把元帅 TheaterDirective 编译成 `ZoneDirective`，再由 `WarCommandExecutor -> RuleEngine` 执行。
+- `TurnManager` 将 TheaterDirective JSON、Modern Command Chain JSON 和最终 Compiled ZoneDirective JSON 合并写入 `AgentDecisionRecord.rawJSON`，`parsedIntent` 增加现代指挥链 summary。
+
+安全边界：
+
+- 现代 sub-directive 当前是 advisory，不直接改 `GameState`，不直接发 `Command`。
+- 任何模型输出失败、schema 不匹配、turn/faction/issuer 不匹配、引用不存在或 role/mission 不合法时，都不会执行半成品。
+- 没有新增 API key、模型路径或网络依赖；真实本地 LLM 多 Agent 接入仍留给后续单独版本。
+
+仍未完成：
+
+- UI 仍通过现有 AI 面板 raw JSON 查看链路，还没有专门的多 Agent 决策复盘视图。
+- sub-directive 还没有独立调参 UI，也不会直接编译成 FireMission / Recon / EW command。
+- ChiefOfStaff 当前是 deterministic notes / deconflict 说明，未做复杂冲突仲裁搜索。
 
 ---
 

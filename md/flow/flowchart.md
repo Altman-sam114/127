@@ -95,7 +95,7 @@ flowchart LR
     ROE["ROE helper<br/>defaultROEStatus<br/>isHostile(to:)"]:::rules
     REGION["RegionDataSet fallback<br/>nil owner/controller -> neutral"]:::rules
     PIPE["命令与规则管线不变<br/>Command / ZoneDirective<br/>WarCommandExecutor / RuleEngine"]:::command
-    TODO["后续 v6.6+<br/>现代 AI 指挥链<br/>通用 phase raw value"]:::risk
+    TODO["后续 v6.7+<br/>玩家现代指挥 UI<br/>通用 phase raw value"]:::risk
 
     DATA --> FACTION --> ALIGN --> ROE --> PIPE
     DATA --> REGION --> PIPE
@@ -120,7 +120,7 @@ flowchart LR
     EDITOR["MapEditor 默认资源桥<br/>读写 grey_tide_2030"]:::state
     PIPE["既有运行链<br/>Hex -> Region -> Theater<br/>FrontLine / WarDeployment"]:::rules
     FALLBACK["失败回退<br/>ardennes_v0 + ardennes_v02<br/>GameState.initial"]:::legacy
-    TODO["后续 v6.6+<br/>AI 指挥链 / 发布地图<br/>100-220 hex 发布地图"]:::risk
+    TODO["后续 v6.7+<br/>玩家现代指挥 UI / 发布地图<br/>100-220 hex 发布地图"]:::risk
 
     ENTRY --> GREY --> MAP --> PIPE
     GREY --> EDITOR
@@ -223,6 +223,38 @@ flowchart LR
     classDef display fill:#f8f9fb,stroke:#6b7280,color:#111827
 ```
 
+## 0.8 v6.6 现代 AI Agent 指挥链和审计复盘
+
+这张图描述当前 v6.6 第一批实现。现代指挥链只作为 advisory JSON 和复盘层接入，不直接执行 sub-directive；最终行动仍回到 `ZoneDirective -> WarCommandExecutor -> RuleEngine`。
+
+```mermaid
+flowchart LR
+    MARSHAL["MarshalAgent<br/>Battlefield summary<br/>TheaterDirective JSON"]:::agent
+    TDEC["TheaterDirectiveDecoder<br/>schema / issuer / turn / faction<br/>zone / region / tactic"]:::rules
+    ORCH["ModernCommandChainOrchestrator<br/>National / Joint / Chief<br/>ISR / Fires / Air / EW / Logistics / Brigade"]:::agent
+    CJSON["ModernCommandChainPlan JSON<br/>StrategicConstraintEnvelope<br/>JointCommandPlan<br/>ModernSubDirective"]:::data
+    CDEC["ModernCommandChainDecoder<br/>nested schema / role<br/>zone / region / contact / mission"]:::rules
+    FAIL["失败只写 diagnostics<br/>不执行半成品"]:::stop
+    COMP["TheaterDirectiveCompiler<br/>编译 ZoneDirective"]:::command
+    EXEC["WarCommandExecutor<br/>RuleEngine"]:::rules
+    RECORD["AgentDecisionRecord.rawJSON<br/>Theater JSON + Command Chain JSON<br/>Compiled ZoneDirective JSON"]:::display
+
+    MARSHAL --> TDEC --> ORCH --> CJSON --> CDEC
+    CDEC -->|通过| COMP --> EXEC
+    CDEC -->|失败| FAIL
+    TDEC --> COMP
+    CJSON --> RECORD
+    COMP --> RECORD
+    EXEC --> RECORD
+
+    classDef agent fill:#e0e7ff,stroke:#4f46e5,color:#111827
+    classDef data fill:#f8f9fb,stroke:#6b7280,color:#111827
+    classDef rules fill:#ccfbf1,stroke:#0f766e,color:#052e16
+    classDef command fill:#fae8ff,stroke:#a21caf,color:#2a0a2f
+    classDef display fill:#f8f9fb,stroke:#6b7280,color:#111827
+    classDef stop fill:#fee2e2,stroke:#b91c1c,color:#111827
+```
+
 ## 1. 总主线：从地图数据到游戏行动
 
 这张图看全局。左上是地图数据怎么进入游戏；中间是 hex、region、theater、front、deploy 的分层关系；右侧是玩家/AI 命令如何统一进入规则系统；底部是 UI 和日志怎么读取结果。
@@ -245,6 +277,7 @@ flowchart TD
     PLAYER["玩家输入<br/>点击地图、移动、攻击、结束回合"]:::input
     AI["AI 元帅系统<br/>MarshalAgent + TheaterDirective JSON<br/>先做大战役级规划"]:::input
     DEC["元帅 JSON 解码<br/>TheaterDirectiveDecoder<br/>提取 fenced JSON、校验 id 与 schema"]:::command
+    MCHAIN["现代指挥链校验<br/>ModernCommandChainPlan<br/>国家/联合/ISR/火力/空中/EW/后勤/旅级 advisory JSON"]:::command
     COMP["元帅意图编译<br/>TheaterDirectiveCompiler<br/>把 TheaterDirective 降级成 ZoneDirective"]:::command
     ZD["战争指令<br/>ZoneDirective<br/>战区级 attack/defend 意图"]:::command
     WCE["指令翻译器<br/>WarCommandExecutor<br/>把战区意图翻成具体单位命令"]:::command
@@ -268,7 +301,8 @@ flowchart TD
     GS --> ECO
 
     PLAYER --> CMD
-    AI --> DEC --> COMP --> ZD --> WCE --> CMD
+    AI --> DEC --> MCHAIN --> COMP --> ZD --> WCE --> CMD
+    DEC --> COMP
     CMD --> RE --> HEX
     RE --> ECO
     RE --> SYNC

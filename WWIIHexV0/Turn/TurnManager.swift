@@ -229,9 +229,18 @@ struct TurnManager {
                 issuerId: agent.id
             )
             let compiledJSON = try Self.canonicalDirectiveJSON(resolution.directiveEnvelope)
-            let rawJSON = resolution.rawTheaterJSON.map {
-                "\($0)\n\nCompiled ZoneDirective JSON:\n\(compiledJSON)"
-            } ?? compiledJSON
+            var rawSections: [String] = []
+            if let rawTheaterJSON = resolution.rawTheaterJSON {
+                rawSections.append("TheaterDirective JSON:\n\(rawTheaterJSON)")
+            }
+            if let rawCommandChainJSON = resolution.rawCommandChainJSON {
+                rawSections.append("Modern Command Chain JSON:\n\(rawCommandChainJSON)")
+            }
+            rawSections.append("Compiled ZoneDirective JSON:\n\(compiledJSON)")
+            let rawJSON = rawSections.joined(separator: "\n\n")
+            let parsedIntent = resolution.commandChainPlan.map {
+                "\(resolution.theaterEnvelope?.strategicIntent ?? "marshal directives") | \($0.summary)"
+            } ?? (resolution.theaterEnvelope?.strategicIntent ?? "marshal directives")
 
             return executeDirectiveEnvelope(
                 resolution.directiveEnvelope,
@@ -239,7 +248,7 @@ struct TurnManager {
                 faction: faction,
                 contextSummary: contextSummary,
                 rawJSON: rawJSON,
-                parsedIntent: resolution.theaterEnvelope?.strategicIntent ?? "marshal directives",
+                parsedIntent: parsedIntent,
                 providerSuffix: "MarshalDirective",
                 additionalDiagnostics: diagnostics + resolution.diagnostics
             )

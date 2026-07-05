@@ -255,6 +255,8 @@
 		01000000000000000000014A /* Stage0355DynamicTheaterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000149 /* Stage0355DynamicTheaterTests.swift */; };
 		01000000000000000000014B /* ZoneCommanderAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000014B /* ZoneCommanderAgent.swift */; };
 		01000000000000000000014C /* ZoneCommanderAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000014B /* ZoneCommanderAgent.swift */; };
+		01000000000000000000020C /* ModernCommandChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000208 /* ModernCommandChain.swift */; };
+		01000000000000000000020D /* ModernCommandChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000208 /* ModernCommandChain.swift */; };
 		0C000000000000000000000B /* PlatformStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0000000000000000000009 /* PlatformStyles.swift */; };
 		0C0000000000000000000100 /* WWIIHexV0MacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0000000000000000000008 /* WWIIHexV0MacApp.swift */; };
 		0C0000000000000000000101 /* AppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000002 /* AppContainer.swift */; };
@@ -355,6 +357,7 @@
 		0C000000000000000000015C /* AgentPromptBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003E /* AgentPromptBuilder.swift */; };
 		0C000000000000000000015D /* MockAICommander.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000092 /* MockAICommander.swift */; };
 		0C000000000000000000015E /* ZoneCommanderAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000014B /* ZoneCommanderAgent.swift */; };
+		0C0000000000000000000208 /* ModernCommandChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000208 /* ModernCommandChain.swift */; };
 		0C000000000000000000015F /* DataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000010 /* DataLoader.swift */; };
 		0C0000000000000000000160 /* ScenarioDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000014 /* ScenarioDefinition.swift */; };
 		0C0000000000000000000161 /* RegionDataSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000043 /* RegionDataSet.swift */; };
@@ -585,6 +588,7 @@
 		020000000000000000000148 /* OccupationRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OccupationRules.swift; sourceTree = "<group>"; };
 		020000000000000000000149 /* Stage0355DynamicTheaterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stage0355DynamicTheaterTests.swift; sourceTree = "<group>"; };
 		02000000000000000000014B /* ZoneCommanderAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoneCommanderAgent.swift; sourceTree = "<group>"; };
+		020000000000000000000208 /* ModernCommandChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModernCommandChain.swift; sourceTree = "<group>"; };
 		0C0000000000000000000008 /* WWIIHexV0MacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WWIIHexV0MacApp.swift; sourceTree = "<group>"; };
 		0C0000000000000000000009 /* PlatformStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformStyles.swift; sourceTree = "<group>"; };
 		0C000000000000000000000A /* WWIIHexV0Mac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WWIIHexV0Mac.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -824,6 +828,7 @@
 				02000000000000000000003E /* AgentPromptBuilder.swift */,
 				020000000000000000000092 /* MockAICommander.swift */,
 				02000000000000000000014B /* ZoneCommanderAgent.swift */,
+				020000000000000000000208 /* ModernCommandChain.swift */,
 			);
 			path = Agents;
 			sourceTree = "<group>";
@@ -1236,6 +1241,7 @@
 				010000000000000000000039 /* MockAIClient.swift in Sources */,
 				010000000000000000000121 /* MockAICommander.swift in Sources */,
 				01000000000000000000014B /* ZoneCommanderAgent.swift in Sources */,
+				01000000000000000000020C /* ModernCommandChain.swift in Sources */,
 				01000000000000000000003A /* LLMClient.swift in Sources */,
 				01000000000000000000003B /* LocalLLMDecisionProvider.swift in Sources */,
 				01000000000000000000003C /* AgentPromptBuilder.swift in Sources */,
@@ -1402,6 +1408,7 @@
 				01000000000000000000010C /* MockAIClient.swift in Sources */,
 				010000000000000000000125 /* MockAICommander.swift in Sources */,
 				01000000000000000000014C /* ZoneCommanderAgent.swift in Sources */,
+				01000000000000000000020D /* ModernCommandChain.swift in Sources */,
 				01000000000000000000010D /* LLMClient.swift in Sources */,
 				01000000000000000000010E /* LocalLLMDecisionProvider.swift in Sources */,
 				01000000000000000000010F /* AgentPromptBuilder.swift in Sources */,
@@ -1540,6 +1547,7 @@
 				0C000000000000000000015C /* AgentPromptBuilder.swift in Sources */,
 				0C000000000000000000015D /* MockAICommander.swift in Sources */,
 				0C000000000000000000015E /* ZoneCommanderAgent.swift in Sources */,
+				0C0000000000000000000208 /* ModernCommandChain.swift in Sources */,
 				0C000000000000000000015F /* DataLoader.swift in Sources */,
 				0C0000000000000000000160 /* ScenarioDefinition.swift in Sources */,
 				0C0000000000000000000161 /* RegionDataSet.swift in Sources */,

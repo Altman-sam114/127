@@ -1491,7 +1491,9 @@ struct TheaterDirectiveCompiler {
 
 struct MarshalDirectiveResolution {
     let rawTheaterJSON: String?
+    let rawCommandChainJSON: String?
     let theaterEnvelope: TheaterDirectiveEnvelope?
+    let commandChainPlan: ModernCommandChainPlan?
     let directiveEnvelope: DirectiveEnvelope
     let diagnostics: [String]
 }
@@ -1502,19 +1504,25 @@ struct MarshalAgent {
     let llmClient: MarshalLLMClient
     let decoder: TheaterDirectiveDecoder
     let compiler: TheaterDirectiveCompiler
+    let commandChainOrchestrator: ModernCommandChainOrchestrator
+    let commandChainDecoder: ModernCommandChainDecoder
 
     init(
         config: MarshalAgentConfig,
         summarizer: MarshalBattlefieldSummarizer = MarshalBattlefieldSummarizer(),
         llmClient: MarshalLLMClient = SimulatedMarshalLLMClient(),
         decoder: TheaterDirectiveDecoder = TheaterDirectiveDecoder(),
-        compiler: TheaterDirectiveCompiler = TheaterDirectiveCompiler()
+        compiler: TheaterDirectiveCompiler = TheaterDirectiveCompiler(),
+        commandChainOrchestrator: ModernCommandChainOrchestrator = ModernCommandChainOrchestrator(),
+        commandChainDecoder: ModernCommandChainDecoder = ModernCommandChainDecoder()
     ) {
         self.config = config
         self.summarizer = summarizer
         self.llmClient = llmClient
         self.decoder = decoder
         self.compiler = compiler
+        self.commandChainOrchestrator = commandChainOrchestrator
+        self.commandChainDecoder = commandChainDecoder
     }
 
     func resolve(
@@ -1527,7 +1535,9 @@ struct MarshalAgent {
             let fallback = fallbackPool.envelope(for: faction, in: state, issuerId: issuerId)
             return MarshalDirectiveResolution(
                 rawTheaterJSON: nil,
+                rawCommandChainJSON: nil,
                 theaterEnvelope: nil,
+                commandChainPlan: nil,
                 directiveEnvelope: fallback,
                 diagnostics: ["Marshal \(config.id) belongs to \(config.faction.displayName), fallback used for \(faction.displayName)."]
             )
@@ -1543,6 +1553,27 @@ struct MarshalAgent {
                 expectedFaction: faction,
                 state: state
             )
+            var rawCommandChainJSON: String?
+            var commandChainPlan: ModernCommandChainPlan?
+            var diagnostics: [String] = []
+            do {
+                let plan = commandChainOrchestrator.makePlan(
+                    summary: summary,
+                    theaterEnvelope: theaterEnvelope,
+                    state: state
+                )
+                let rawPlan = try commandChainOrchestrator.fencedJSON(for: plan)
+                commandChainPlan = try commandChainDecoder.parse(
+                    rawPlan,
+                    expectedIssuerId: config.id,
+                    expectedTurn: state.turn,
+                    expectedFaction: faction,
+                    state: state
+                )
+                rawCommandChainJSON = rawPlan
+            } catch {
+                diagnostics.append("Modern command chain validation failed: \(error.localizedDescription). Advisory sub-directives were not executed.")
+            }
             let directiveEnvelope = compiler.compile(
                 theaterEnvelope,
                 state: state,
@@ -1551,15 +1582,19 @@ struct MarshalAgent {
             )
             return MarshalDirectiveResolution(
                 rawTheaterJSON: raw,
+                rawCommandChainJSON: rawCommandChainJSON,
                 theaterEnvelope: theaterEnvelope,
+                commandChainPlan: commandChainPlan,
                 directiveEnvelope: directiveEnvelope,
-                diagnostics: []
+                diagnostics: diagnostics
             )
         } catch {
             let fallback = fallbackPool.envelope(for: faction, in: state, issuerId: issuerId)
             return MarshalDirectiveResolution(
                 rawTheaterJSON: nil,
+                rawCommandChainJSON: nil,
                 theaterEnvelope: nil,
+                commandChainPlan: nil,
                 directiveEnvelope: fallback,
                 diagnostics: ["Marshal directive decode/compile failed: \(error.localizedDescription). Fallback TheaterCommanderPool used."]
             )
