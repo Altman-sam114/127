@@ -5,6 +5,8 @@ struct ModernPlaytestPanelView: View {
     let playerSideName: String
     let opponentSideName: String
     let controlModeText: String
+    let actionGateTitle: String
+    let actionGateDetail: String
     let turnText: String
     let objectiveSummaryText: String?
     let objectiveThresholdText: String?
@@ -31,6 +33,7 @@ struct ModernPlaytestPanelView: View {
                 LabeledContent("Player Side", value: playerSideName)
                 LabeledContent("Opposition", value: opponentSideName)
                 LabeledContent("Control", value: controlModeText)
+                LabeledContent(actionGateTitle, value: actionGateDetail)
                 LabeledContent("Turn", value: turnText)
                 if let objectiveSummaryText {
                     LabeledContent("Objectives", value: objectiveSummaryText)

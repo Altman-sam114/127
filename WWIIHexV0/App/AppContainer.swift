@@ -493,6 +493,48 @@ final class AppContainer: ObservableObject {
         return "\(gameState.activeFaction.shortDisplayName) controlled by AI"
     }
 
+    var playtestActionGateTitle: String {
+        if gameState.victoryState.winner != nil {
+            return "Status"
+        }
+
+        if observerModeEnabled {
+            return "Automation"
+        }
+
+        if canIssuePlayerDirective {
+            return "Action Gate"
+        }
+
+        if shouldRunAI(for: gameState.activeFaction, phase: gameState.phase) {
+            return "Action Gate"
+        }
+
+        return "Action Gate"
+    }
+
+    var playtestActionGateDetail: String {
+        if let winner = gameState.victoryState.winner {
+            return "\(winner.shortDisplayName) victory reached"
+        }
+
+        if observerModeEnabled {
+            return shouldRunAI(for: gameState.activeFaction, phase: gameState.phase)
+                ? "AI can resolve active side"
+                : "Advance turn to continue"
+        }
+
+        if canIssuePlayerDirective {
+            return "Player orders open"
+        }
+
+        if shouldRunAI(for: gameState.activeFaction, phase: gameState.phase) {
+            return "\(gameState.activeFaction.shortDisplayName) AI ready"
+        }
+
+        return "End turn to advance phase"
+    }
+
     var playtestObjectiveSummaryText: String? {
         guard gameState.scenarioId == "grey_tide_2030" else {
             return nil

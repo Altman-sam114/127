@@ -250,6 +250,8 @@ struct RootGameView: View {
             playerSideName: container.playerRoleDisplayName,
             opponentSideName: container.primaryOpponentDisplayName,
             controlModeText: container.playtestControlModeSummary,
+            actionGateTitle: container.playtestActionGateTitle,
+            actionGateDetail: container.playtestActionGateDetail,
             turnText: "\(container.gameState.turn) / \(container.gameState.maxTurns)",
             objectiveSummaryText: container.playtestObjectiveSummaryText,
             objectiveThresholdText: container.playtestObjectiveThresholdText,
