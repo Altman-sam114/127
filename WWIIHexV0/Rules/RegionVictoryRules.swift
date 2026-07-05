@@ -63,14 +63,13 @@ struct RegionVictoryRules {
         var blue = 0
         var red = 0
         for region in state.map.regions.values where region.city.map({ keyObjectiveNames.contains($0.name) }) == true {
-            switch region.controller?.alignment {
-            case .some(.blue):
+            switch region.controller.alignment {
+            case .blue:
                 blue += 1
-            case .some(.red):
+            case .red:
                 red += 1
-            case .some(.green),
-                 .some(.neutral),
-                 .none:
+            case .green,
+                 .neutral:
                 continue
             }
         }
