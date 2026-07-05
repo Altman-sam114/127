@@ -222,6 +222,7 @@ final class BoardScene: SKScene {
         drawRegionOverlays(renderState: renderState, layout: layout)
         drawRoads(map: state.map, layout: layout)
         drawRivers(map: state.map, layout: layout)
+        drawModernC2Overlays(renderState: renderState, layout: layout)
         drawPlannedOperations(renderState: renderState, layout: layout)
         drawUnits(renderState: renderState, layout: layout)
     }
@@ -318,6 +319,183 @@ final class BoardScene: SKScene {
                 addChild(river)
             }
         }
+    }
+
+    private func drawModernC2Overlays(renderState: BoardRenderState, layout: HexLayout) {
+        guard renderState.mapDisplayLayer != .frontLine else {
+            return
+        }
+
+        drawSensorCoverage(renderState: renderState, layout: layout)
+        drawEWEffects(renderState: renderState, layout: layout)
+        drawFireSupportResults(renderState: renderState, layout: layout)
+        drawContacts(renderState: renderState, layout: layout)
+    }
+
+    private func drawSensorCoverage(renderState: BoardRenderState, layout: HexLayout) {
+        let side = renderState.viewerFaction.alignment
+        let coverages = renderState.gameState.operationalAwareness.sensorCoverage.filter {
+            $0.side == side && renderState.gameState.map.contains($0.coord)
+        }
+
+        for coverage in coverages {
+            let center = layout.hexToPixel(coverage.coord)
+            let overlay = SKShapeNode(path: modernHexPath(center: center, layout: layout, inset: 0.16))
+            let alpha = min(0.22, 0.06 + CGFloat(coverage.quality) * 0.018)
+            overlay.fillColor = modernSensorColor.withAlphaComponent(alpha)
+            overlay.strokeColor = coverage.jammed
+                ? modernEWColor.withAlphaComponent(0.42)
+                : modernSensorColor.withAlphaComponent(0.18)
+            overlay.lineWidth = coverage.jammed ? 2 : 1
+            overlay.zPosition = 21
+            addChild(overlay)
+        }
+    }
+
+    private func drawEWEffects(renderState: BoardRenderState, layout: HexLayout) {
+        for effect in renderState.gameState.operationalAwareness.ewEffects {
+            for coord in effect.area where renderState.gameState.map.contains(coord) {
+                let center = layout.hexToPixel(coord)
+                let marker = SKShapeNode(path: modernHexPath(center: center, layout: layout, inset: 0.04))
+                marker.fillColor = modernEWColor.withAlphaComponent(0.10)
+                marker.strokeColor = modernEWColor.withAlphaComponent(0.58)
+                marker.lineWidth = max(1.5, layout.hexSize * 0.04)
+                marker.zPosition = 22
+                addChild(marker)
+            }
+        }
+    }
+
+    private func drawFireSupportResults(renderState: BoardRenderState, layout: HexLayout) {
+        let results = renderState.gameState.fireSupportState.lastMissionResults.suffix(6)
+        for result in results where result.side == renderState.viewerFaction.alignment {
+            guard let center = fireResultPoint(for: result, state: renderState.gameState, layout: layout) else {
+                continue
+            }
+
+            let radius = max(8, layout.hexSize * 0.22)
+            let marker = SKShapeNode(circleOfRadius: radius)
+            marker.position = center
+            marker.fillColor = fireResultColor(for: result.status).withAlphaComponent(0.16)
+            marker.strokeColor = fireResultColor(for: result.status).withAlphaComponent(0.86)
+            marker.lineWidth = max(2, layout.hexSize * 0.06)
+            marker.zPosition = 31
+            addChild(marker)
+
+            let label = SKLabelNode(text: result.status == .failed ? "!" : "F")
+            label.fontName = "AvenirNext-Bold"
+            label.fontSize = max(8, layout.hexSize * 0.18)
+            label.fontColor = SKColor(white: 1, alpha: 0.94)
+            label.horizontalAlignmentMode = .center
+            label.verticalAlignmentMode = .center
+            label.position = center
+            label.zPosition = 32
+            addChild(label)
+        }
+    }
+
+    private func drawContacts(renderState: BoardRenderState, layout: HexLayout) {
+        let contacts = renderState.gameState.operationalAwareness.visibleContacts(for: renderState.viewerFaction)
+        for contact in contacts where renderState.gameState.map.contains(contact.lastKnownCoord) {
+            let center = layout.hexToPixel(contact.lastKnownCoord)
+            let radius = contact.confidence == .confirmed ? layout.hexSize * 0.18 : layout.hexSize * 0.15
+            let marker = SKShapeNode(circleOfRadius: max(6, radius))
+            marker.position = CGPoint(x: center.x, y: center.y + layout.hexSize * 0.42)
+            marker.fillColor = contactColor(for: contact.confidence).withAlphaComponent(0.78)
+            marker.strokeColor = SKColor(white: 1, alpha: 0.84)
+            marker.lineWidth = contact.confidence >= .high ? 2 : 1
+            marker.zPosition = 42
+            addChild(marker)
+
+            let label = SKLabelNode(text: contactLabel(for: contact))
+            label.fontName = "AvenirNext-Bold"
+            label.fontSize = max(7, layout.hexSize * 0.16)
+            label.fontColor = SKColor(white: 0.98, alpha: 1)
+            label.horizontalAlignmentMode = .center
+            label.verticalAlignmentMode = .center
+            label.position = marker.position
+            label.zPosition = 43
+            addChild(label)
+        }
+    }
+
+    private func fireResultPoint(for result: FireMissionResult, state: GameState, layout: HexLayout) -> CGPoint? {
+        switch result.target {
+        case .contact(let id):
+            guard let contact = state.operationalAwareness.contacts[id] else {
+                return nil
+            }
+            return layout.hexToPixel(contact.lastKnownCoord)
+        case .hex(let coord):
+            guard state.map.contains(coord) else {
+                return nil
+            }
+            return layout.hexToPixel(coord)
+        case .region(let regionId):
+            guard let coord = state.map.representativeHex(for: regionId) else {
+                return nil
+            }
+            return layout.hexToPixel(coord)
+        }
+    }
+
+    private func contactLabel(for contact: ContactTrack) -> String {
+        switch contact.estimatedType {
+        case .armor:
+            return "A"
+        case .infantry:
+            return "I"
+        case .artillery:
+            return "F"
+        case .airDefense:
+            return "AD"
+        case .logistics:
+            return "L"
+        case .unknown:
+            return contact.confidence >= .high ? "?" : "?"
+        }
+    }
+
+    private func contactColor(for confidence: ContactConfidence) -> SKColor {
+        switch confidence {
+        case .low:
+            return SKColor(red: 0.72, green: 0.76, blue: 0.78, alpha: 1)
+        case .medium:
+            return SKColor(red: 0.95, green: 0.66, blue: 0.22, alpha: 1)
+        case .high:
+            return SKColor(red: 0.96, green: 0.42, blue: 0.20, alpha: 1)
+        case .confirmed:
+            return SKColor(red: 0.86, green: 0.16, blue: 0.16, alpha: 1)
+        }
+    }
+
+    private func fireResultColor(for status: FireMissionOutcomeStatus) -> SKColor {
+        switch status {
+        case .success:
+            return SKColor(red: 0.95, green: 0.44, blue: 0.16, alpha: 1)
+        case .degraded:
+            return SKColor(red: 0.96, green: 0.70, blue: 0.26, alpha: 1)
+        case .failed:
+            return SKColor(red: 0.62, green: 0.28, blue: 0.84, alpha: 1)
+        case .suppressed:
+            return SKColor(red: 0.20, green: 0.64, blue: 0.84, alpha: 1)
+        }
+    }
+
+    private func modernHexPath(center: CGPoint, layout: HexLayout, inset: CGFloat) -> CGPath {
+        let points = layout.polygonPoints(center: center).map { point in
+            CGPoint(
+                x: center.x + (point.x - center.x) * (1 - inset),
+                y: center.y + (point.y - center.y) * (1 - inset)
+            )
+        }
+        let path = CGMutablePath()
+        path.move(to: points[0])
+        for point in points.dropFirst() {
+            path.addLine(to: point)
+        }
+        path.closeSubpath()
+        return path
     }
 
     private func drawPlannedOperations(renderState: BoardRenderState, layout: HexLayout) {
@@ -436,6 +614,14 @@ final class BoardScene: SKScene {
         case .defend:
             return SKColor(red: 0.18, green: 0.64, blue: 0.38, alpha: 0.85)
         }
+    }
+
+    private var modernSensorColor: SKColor {
+        SKColor(red: 0.20, green: 0.66, blue: 0.82, alpha: 1)
+    }
+
+    private var modernEWColor: SKColor {
+        SKColor(red: 0.62, green: 0.28, blue: 0.84, alpha: 1)
     }
 
     private func drawUnits(renderState: BoardRenderState, layout: HexLayout) {

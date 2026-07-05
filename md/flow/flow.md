@@ -1,4 +1,4 @@
-# WWIIHexV0 核心流程文档（v6.7 现代玩家任务指挥）
+# WWIIHexV0 核心流程文档（v6.8 现代 C2 UI 首轮打磨）
 
 > 本文是项目当前核心逻辑的接手文档。目标不是复述历史设计，而是按当前代码真实链路说明：数据如何进入游戏，hex / region / theater / front / deploy 如何派生，主游戏和地图编辑器如何共同维护同一套地图语义，AI / 玩家命令如何落到规则系统。
 
@@ -36,6 +36,12 @@ Player Mission Planning
   -> AppContainer
   -> Command / ZoneDirective
   -> RuleEngine / WarCommandExecutor
+
+Modern C2 Presentation
+  -> ModernCommandDesignTokens
+  -> HUDView C2 status strip
+  -> ModernMissionPanelView tokenized controls
+  -> BoardScene sensor / contact / EW / fire overlays
 ```
 
 最关键的铁律：
@@ -50,6 +56,7 @@ Player Mission Planning
 - v6.6 默认战争 AI 上游是 `MarshalAgent -> TheaterDirective JSON -> ModernCommandChain advisory JSON -> TheaterDirectiveCompiler`，下游执行收口到 `ZoneDirective -> WarCommandExecutor -> RuleEngine`。
 - `ModernCommandChainPlan` 只做可审计分解、JSON 校验和复盘展示；ISR / Fires / Air / EW / Logistics / Brigade sub-directive 当前不直接执行。
 - v6.7 玩家现代任务 UI 只调用 `AppContainer` 方法；任务最终落成 `Command` 或 `ZoneDirective`，不得在 SwiftUI View 里直接改 `GameState`。
+- v6.8 只新增现代 C2 展示层和地图态势 overlay；HUD、任务面板和 SpriteKit 标记只读 `GameState`，不绕过规则系统写状态。
 - 统治者层只作为后续方向预留；当前执行主链路不调用 `RulerAgent`，也不写统治者决策记录。
 
 ## 0.1 云端协作与验证闭环
@@ -411,14 +418,54 @@ RootGameView
 
 - 面板按钮根据 `AppContainer` 暴露的 `canIssueSelectedModernUnitMission`、`canOrderModernAssaultObjective`、`canOrderModernHoldDelay` 和 observer mode 启用/禁用。
 - 任务拒绝仍通过 `lastCommandMessage`、interaction log 或 `WarDirectiveRecord` 记录具体原因，例如无可行动单位、目标超距、目标质量不足、弹药不足、防空威胁过高、source asset 不合法或 wrong phase。
-- 计划线仍复用 v0.4 `PlayerPlannedOperation` 的 attack / defend 可视化；Recon / Fires / EW 的专用 overlay 留给 v6.8。
+- 计划线仍复用 v0.4 `PlayerPlannedOperation` 的 attack / defend 可视化；v6.8 已加入 sensor / contact / EW / fire support 只读态势 overlay 首版。
 
 仍未完成：
 
 - 没有专门 readiness / fuel / signature 字段；面板当前只显示 supply、visible contact 数和 fire support ammo 摘要。
 - 任务按钮没有单独的 plan edit / preview / cancel 流程；点击即提交到规则系统。
-- Recon / Fires / EW 的地图 overlay 仍未独立绘制。
+- Recon / Fires / EW 的地图 overlay 仍是首版轻量标记，未做完整图层开关、动画、tooltip 或视觉截图验收。
 - 未做本机 UI 点击或模拟器烟测，等待云端 build 和后续人工授权。
+
+---
+
+## 0.10 v6.8 发布级现代 C2 UI、美术和交互收口首轮
+
+v6.8 第一批实现只收口现代 C2 展示层，不新增命令执行器，不改变战术权威和 AI 指挥链。新增 UI token 和 overlay 都从现有 `GameState` 派生，仍由规则系统负责产生 contact、EW、fire result、air tasking 和 supply 状态。
+
+新增展示链路：
+
+```text
+GameState
+  -> OperationalAwarenessState.contacts / sensorCoverage / ewEffects
+  -> FireSupportState.lastMissionResults / AirTaskingState / ammoBudgetBySide
+  -> EconomyState / Division.supplyState
+  -> HUDView C2 status strip
+  -> ModernMissionPanelView tokenized mission controls
+  -> BoardScene.drawModernC2Overlays
+```
+
+SwiftUI 首轮：
+
+- `ModernCommandDesignTokens` 统一 8pt 圆角、间距、44pt 最小触控区，以及 blue/red/green/neutral、sensor、fires、EW、sustainment、warning 色标。
+- `HUDView` 从旧资源格子升级为现代 C2 状态条，显示 turn、side、phase、victory、visible contacts、EW zones、ammo、air、supply risk 和 C2 queue。
+- `ModernMissionPanelView` 继续只调用 `AppContainer` 的任务方法，但使用 token 化样式、`Label` / SF Symbols、44pt 按钮和更清晰的 Supply / Contacts / Ammo 摘要。
+- `NewGameButton` 使用同一触控尺寸约束。
+
+SpriteKit 首轮：
+
+- `BoardScene.drawModernC2Overlays` 在非 frontLine 图层绘制只读态势标记。
+- Sensor coverage 以青色半透明 hex heatmap 表示，jammed coverage 用 EW 色描边。
+- EW effects 以紫色 hex 区域表示。
+- Fire support 最近结果以火力环和 `F` / `!` 标记表示。
+- Visible contacts 以稳定尺寸圆点标记，按 confidence 改变颜色，并用 A/I/F/AD/L/? 表示估计类型。
+
+边界和未完成：
+
+- overlay 当前没有独立图层开关、legend、tooltip、Reduce Motion 动画策略或截图验收。
+- v6.8 没有新增 readiness / fuel / signature / electronicProtection 字段。
+- 没有改 `Command`、`ZoneDirective`、`WarCommandExecutor` 或 `RuleEngine` 执行语义。
+- 未在本机启动 app、模拟器或 UI 点击烟测；视觉正确性等待后续人工授权或专门 UI 验收。
 
 ---
 

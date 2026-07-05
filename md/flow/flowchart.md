@@ -95,7 +95,7 @@ flowchart LR
     ROE["ROE helper<br/>defaultROEStatus<br/>isHostile(to:)"]:::rules
     REGION["RegionDataSet fallback<br/>nil owner/controller -> neutral"]:::rules
     PIPE["命令与规则管线不变<br/>Command / ZoneDirective<br/>WarCommandExecutor / RuleEngine"]:::command
-    TODO["后续 v6.8+<br/>发布级 C2 UI<br/>通用 phase raw value"]:::risk
+    TODO["后续 v6.9+<br/>试玩闭环 / 新局设置<br/>通用 phase raw value"]:::risk
 
     DATA --> FACTION --> ALIGN --> ROE --> PIPE
     DATA --> REGION --> PIPE
@@ -120,7 +120,7 @@ flowchart LR
     EDITOR["MapEditor 默认资源桥<br/>读写 grey_tide_2030"]:::state
     PIPE["既有运行链<br/>Hex -> Region -> Theater<br/>FrontLine / WarDeployment"]:::rules
     FALLBACK["失败回退<br/>ardennes_v0 + ardennes_v02<br/>GameState.initial"]:::legacy
-    TODO["后续 v6.8+<br/>发布级 C2 UI / 发布地图<br/>100-220 hex 发布地图"]:::risk
+    TODO["后续 v6.9+<br/>试玩闭环 / 发布地图<br/>100-220 hex 发布地图"]:::risk
 
     ENTRY --> GREY --> MAP --> PIPE
     GREY --> EDITOR
@@ -284,6 +284,36 @@ flowchart LR
     classDef state fill:#e0f2fe,stroke:#0284c7,color:#082f49
 ```
 
+## 0.10 v6.8 现代 C2 状态 UI 和地图态势 overlay
+
+这张图描述当前 v6.8 第一批实现。它只从既有 `GameState` 读取态势并绘制 UI，不新增执行器，也不绕过 `Command` / `RuleEngine`。
+
+```mermaid
+flowchart LR
+    GS["GameState<br/>作战态势权威容器"]:::state
+    AWARE["OperationalAwarenessState<br/>contacts / sensorCoverage / ewEffects"]:::state
+    FIRE["FireSupportState<br/>ammo / airTasking / lastMissionResults"]:::state
+    ECON["EconomyState + Division.supplyState<br/>C2 queue / supply risk"]:::state
+    TOKENS["ModernCommandDesignTokens<br/>spacing / radius / 44pt tap<br/>side / sensor / fires / EW colors"]:::display
+    HUD["HUDView<br/>C2 status strip<br/>contacts / EW / ammo / air / supply"]:::display
+    TASKS["ModernMissionPanelView<br/>tokenized mission controls<br/>Label + SF Symbols"]:::display
+    MAP["BoardScene.drawModernC2Overlays<br/>sensor heatmap / contact marker<br/>EW area / fire result ring"]:::display
+    RULES["Command / ZoneDirective<br/>WarCommandExecutor / RuleEngine<br/>仍是唯一写状态路径"]:::rules
+
+    GS --> AWARE --> HUD
+    GS --> FIRE --> HUD
+    GS --> ECON --> HUD
+    TOKENS --> HUD
+    TOKENS --> TASKS
+    AWARE --> MAP
+    FIRE --> MAP
+    TASKS --> RULES --> GS
+
+    classDef state fill:#e0f2fe,stroke:#0284c7,color:#082f49
+    classDef display fill:#f8f9fb,stroke:#6b7280,color:#111827
+    classDef rules fill:#ccfbf1,stroke:#0f766e,color:#052e16
+```
+
 ## 1. 总主线：从地图数据到游戏行动
 
 这张图看全局。左上是地图数据怎么进入游戏；中间是 hex、region、theater、front、deploy 的分层关系；右侧是玩家/AI 命令如何统一进入规则系统；底部是 UI 和日志怎么读取结果。
@@ -315,7 +345,7 @@ flowchart TD
     RE["规则引擎<br/>RuleEngine<br/>先校验，再真正修改 GameState"]:::rules
     SYNC["战略同步器<br/>StrategicStateSynchronizer<br/>占领后刷新省份、战区、前线、部署"]:::rules
 
-    UI["地图和面板显示<br/>SpriteKit / SwiftUI Overlay<br/>显示 hex、省份、初始战区、动态战区、前线、部署"]:::ui
+    UI["地图和面板显示<br/>SpriteKit / SwiftUI Overlay<br/>显示 hex、省份、战区、前线、部署<br/>v6.8 sensor/contact/EW/fire overlay"]:::ui
     LOG["日志和复盘记录<br/>EventLog / WarDirectiveRecord / AgentDecisionRecord / RulerDecisionRecord<br/>用于 UI 展示和后续调试"]:::ui
 
     ME --> JSON --> DL --> GS

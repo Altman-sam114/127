@@ -20,12 +20,15 @@ struct ModernMissionPanelView: View {
     let onHoldDelay: () -> Void
 
     private let columns = [
-        GridItem(.adaptive(minimum: 132), spacing: 8)
+        GridItem(
+            .adaptive(minimum: ModernCommandDesignTokens.missionButtonMinWidth),
+            spacing: ModernCommandDesignTokens.compactSpacing
+        )
     ]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Mission Planning")
+        VStack(alignment: .leading, spacing: ModernCommandDesignTokens.spacing) {
+            Label("Mission Planning", systemImage: "point.topleft.down.curvedto.point.bottomright.up")
                 .font(.headline)
 
             missionSummary
@@ -62,13 +65,17 @@ struct ModernMissionPanelView: View {
                 ]
             )
         }
-        .padding(12)
-        .background(PlatformStyles.systemBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .padding(ModernCommandDesignTokens.padding)
+        .background(ModernCommandDesignTokens.panelBackground)
+        .clipShape(RoundedRectangle(cornerRadius: ModernCommandDesignTokens.cornerRadius))
+        .overlay {
+            RoundedRectangle(cornerRadius: ModernCommandDesignTokens.cornerRadius)
+                .stroke(ModernCommandDesignTokens.panelStroke, lineWidth: 1)
+        }
     }
 
     private var missionSummary: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: ModernCommandDesignTokens.compactSpacing) {
             LabeledContent("Formation") {
                 Text(selectedDivision?.operationalDisplayName ?? "None")
                     .multilineTextAlignment(.trailing)
@@ -77,12 +84,30 @@ struct ModernMissionPanelView: View {
                 Text(targetSummary)
                     .multilineTextAlignment(.trailing)
             }
-            HStack(spacing: 8) {
-                ModernMissionMetricView(title: "Supply", value: selectedDivision.map(supplySummary) ?? "--")
-                ModernMissionMetricView(title: "Contacts", value: "\(visibleContactCount)")
-                ModernMissionMetricView(title: "Ammo", value: fireBudgetSummary)
+            HStack(spacing: ModernCommandDesignTokens.compactSpacing) {
+                ModernMissionMetricView(
+                    title: "Supply",
+                    value: selectedDivision.map(supplySummary) ?? "--",
+                    icon: "cross.case",
+                    tint: selectedDivision.map { ModernCommandDesignTokens.supplyColor(for: $0.supplyState) } ?? .secondary
+                )
+                ModernMissionMetricView(
+                    title: "Contacts",
+                    value: "\(visibleContactCount)",
+                    icon: "dot.scope",
+                    tint: ModernCommandDesignTokens.sensor
+                )
+                ModernMissionMetricView(
+                    title: "Ammo",
+                    value: fireBudgetSummary,
+                    icon: "scope",
+                    tint: ModernCommandDesignTokens.fires
+                )
             }
         }
+        .padding(ModernCommandDesignTokens.compactSpacing)
+        .background(ModernCommandDesignTokens.insetPanelBackground)
+        .clipShape(RoundedRectangle(cornerRadius: ModernCommandDesignTokens.cornerRadius))
         .font(.caption)
         .foregroundStyle(observerModeEnabled ? .secondary : .primary)
     }
@@ -109,17 +134,22 @@ struct ModernMissionPanelView: View {
     }
 
     private func missionSection(title: String, actions: [MissionAction]) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: ModernCommandDesignTokens.compactSpacing) {
             Text(title)
-                .font(.caption.weight(.semibold))
+                .font(.caption.bold())
                 .foregroundStyle(.secondary)
 
-            LazyVGrid(columns: columns, alignment: .leading, spacing: 8) {
+            LazyVGrid(columns: columns, alignment: .leading, spacing: ModernCommandDesignTokens.compactSpacing) {
                 ForEach(actions) { action in
                     Button(action: action.action) {
                         Label(action.label, systemImage: action.icon)
+                            .font(.caption)
                             .lineLimit(2)
-                            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                            .frame(
+                                maxWidth: .infinity,
+                                minHeight: ModernCommandDesignTokens.minimumTapSize,
+                                alignment: .leading
+                            )
                     }
                     .buttonStyle(.bordered)
                     .disabled(!action.enabled || observerModeEnabled)
@@ -143,17 +173,29 @@ private struct MissionAction: Identifiable {
 private struct ModernMissionMetricView: View {
     let title: String
     let value: String
+    let icon: String
+    let tint: Color
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(title)
-                .font(.caption2.weight(.semibold))
-                .foregroundStyle(.secondary)
-            Text(value)
-                .font(.caption)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
+        Label {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text(value)
+                    .font(.caption.bold())
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+        } icon: {
+            Image(systemName: icon)
+                .foregroundStyle(tint)
+                .frame(width: 18)
         }
-        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+        .frame(
+            maxWidth: .infinity,
+            minHeight: ModernCommandDesignTokens.minimumTapSize,
+            alignment: .leading
+        )
     }
 }
