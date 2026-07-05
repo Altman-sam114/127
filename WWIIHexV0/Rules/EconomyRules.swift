@@ -206,7 +206,7 @@ struct EconomyRules {
         }
 
         state.appendEvent(
-            "\(faction.displayName) strategic supply stockpile is depleted; supplied units degrade to Low Supply this turn.",
+            "\(faction.displayName) strategic logistics stockpile is depleted; ready formations degrade to Low Logistics this turn.",
             category: .supply
         )
     }
@@ -308,7 +308,7 @@ struct EconomyRules {
             if order.kind == .supplyStockpile {
                 ledger.stockpile.add(EconomyResources(supplies: order.kind.supplyOutput))
                 state.appendEvent(
-                    "\(faction.displayName) completed \(order.kind.displayName): +\(order.kind.supplyOutput) supplies.",
+                    "\(faction.displayName) completed \(order.kind.displayName): +\(order.kind.supplyOutput) logistics.",
                     category: .supply
                 )
                 continue

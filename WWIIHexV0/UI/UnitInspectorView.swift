@@ -71,7 +71,7 @@ struct UnitInspectorView: View {
                 Text(division.retreatMode.displayName)
             }
 
-            LabeledContent("Supply") {
+            LabeledContent("Logistics") {
                 Text(division.supplyState.displayName)
             }
 
@@ -136,11 +136,11 @@ private extension SupplyState {
     var displayName: String {
         switch self {
         case .supplied:
-            return "Supplied"
+            return "Ready"
         case .lowSupply:
-            return "Low Supply"
+            return "Low Logistics"
         case .encircled:
-            return "Encircled"
+            return "Logistics Cut"
         }
     }
 }

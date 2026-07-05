@@ -20,7 +20,7 @@ struct UnitTooltipView: View {
                         value("\(division.strength)/\(division.maxStrength)")
                     }
                     GridRow {
-                        label("Supply")
+                        label("Logistics")
                         value(division.supplyState.tooltipDisplayName)
                     }
                     GridRow {
@@ -93,7 +93,7 @@ private extension SupplyState {
     var tooltipDisplayName: String {
         switch self {
         case .supplied:
-            return "Supplied"
+            return "Ready"
         case .lowSupply:
             return "Low"
         case .encircled:

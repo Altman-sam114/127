@@ -416,7 +416,8 @@ v6.7 第一批实现把玩家侧从单纯 `Hold / Retreat / Reinforce` 扩展为
 RootGameView
   -> CompactInfoPanel.mission / "Tasks"
   -> ModernMissionPanelView
-      - Formation / Target / Supply / Contacts / Ammo 摘要
+      - Formation / Target / Logistics / Contacts / Ammo 摘要
+      - Mission Status：解释 observer、未选单位、非玩家 phase、已行动、缺少 fire target 或宏观指令可用状态
       - ISR: Recon Area / UAV Orbit
       - Fires: Fire Mission / Air Support / SEAD
       - Maneuver: Assault Objective / Hold / Delay
@@ -436,13 +437,13 @@ RootGameView
 
 交互边界：
 
-- 面板按钮根据 `AppContainer` 暴露的 `canIssueSelectedModernUnitMission`、`canOrderModernAssaultObjective`、`canOrderModernHoldDelay` 和 observer mode 启用/禁用。
-- 任务拒绝仍通过 `lastCommandMessage`、interaction log 或 `WarDirectiveRecord` 记录具体原因，例如无可行动单位、目标超距、目标质量不足、弹药不足、防空威胁过高、source asset 不合法或 wrong phase。
+- 面板按钮根据 `AppContainer` 暴露的 `canIssueSelectedModernUnitMission`、`canIssueSelectedFireMission`、`canOrderModernAssaultObjective`、`canOrderModernHoldDelay` 和 observer mode 启用/禁用；Fire Mission 额外要求已有 target hex / sector / contact。
+- 任务拒绝同步写入 `lastCommandMessage` 和 interaction log；玩家宏观 directive 部分失败时，`lastCommandMessage` 会带出第一条规则拒绝原因，完整细节继续保留在 `WarDirectiveRecord`。
 - 计划线仍复用 v0.4 `PlayerPlannedOperation` 的 attack / defend 可视化；v6.8 已加入 sensor / contact / EW / fire support 只读态势 overlay 首版。
 
 仍未完成：
 
-- 没有专门 readiness / fuel / signature 字段；面板当前只显示 supply、visible contact 数和 fire support ammo 摘要。
+- 没有专门 readiness / fuel / signature 字段；面板当前只显示 logistics 状态、visible contact 数和 fire support ammo 摘要。
 - 任务按钮没有单独的 plan edit / preview / cancel 流程；点击即提交到规则系统。
 - Recon / Fires / EW 的地图 overlay 仍是首版轻量标记，未做完整图层开关、动画、tooltip 或视觉截图验收。
 - 未做本机 UI 点击或模拟器烟测，等待云端 build 和后续人工授权。
@@ -468,8 +469,8 @@ GameState
 SwiftUI 首轮：
 
 - `ModernCommandDesignTokens` 统一 8pt 圆角、间距、44pt 最小触控区，以及 blue/red/green/neutral、sensor、fires、EW、sustainment、warning 色标。
-- `HUDView` 从旧资源格子升级为现代 C2 状态条，显示 turn、side、phase、victory、visible contacts、EW zones、ammo、air、supply risk 和 C2 queue。
-- `ModernMissionPanelView` 继续只调用 `AppContainer` 的任务方法，但使用 token 化样式、`Label` / SF Symbols、44pt 按钮和更清晰的 Supply / Contacts / Ammo 摘要。
+- `HUDView` 从旧资源格子升级为现代 C2 状态条，显示 turn、side、phase、victory、visible contacts、EW zones、ammo、air、logistics risk 和 C2 queue。
+- `ModernMissionPanelView` 继续只调用 `AppContainer` 的任务方法，但使用 token 化样式、`Label` / SF Symbols、44pt 按钮和更清晰的 Logistics / Contacts / Ammo 摘要。
 - `NewGameButton` 使用同一触控尺寸约束。
 
 SpriteKit 首轮：

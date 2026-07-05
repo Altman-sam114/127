@@ -47,7 +47,7 @@ struct HUDView: View {
                 metric("EW Zones", "\(activeEWEffects.count)", icon: "antenna.radiowaves.left.and.right", tint: ModernCommandDesignTokens.electronicWarfare)
                 metric("Ammo", fireBudgetText, icon: "scope", tint: ModernCommandDesignTokens.fires)
                 metric("Air", airTaskingText, icon: "airplane", tint: airTaskingTint)
-                metric("Supply Risk", "\(supplyRiskCount)", icon: "cross.case", tint: supplyRiskTint)
+                metric("Logistics Risk", "\(supplyRiskCount)", icon: "cross.case", tint: supplyRiskTint)
                 metric("C2 Queue", "\(activeLedger.productionQueue.count)", icon: "tray.full")
             }
         }

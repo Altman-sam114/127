@@ -6,7 +6,9 @@ struct ModernMissionPanelView: View {
     let selectedRegion: RegionNode?
     let visibleContactCount: Int
     let fireBudgetSummary: String
+    let missionAvailabilityText: String
     let canIssueUnitMission: Bool
+    let canIssueFireMission: Bool
     let canAssaultObjective: Bool
     let canHoldDelay: Bool
     let observerModeEnabled: Bool
@@ -32,6 +34,7 @@ struct ModernMissionPanelView: View {
                 .font(.headline)
 
             missionSummary
+            missionStatus
 
             missionSection(
                 title: "ISR",
@@ -44,7 +47,7 @@ struct ModernMissionPanelView: View {
             missionSection(
                 title: "Fires",
                 actions: [
-                    MissionAction(label: "Fire Mission", icon: "target", enabled: canIssueUnitMission, action: onFireMission),
+                    MissionAction(label: "Fire Mission", icon: "target", enabled: canIssueFireMission, action: onFireMission),
                     MissionAction(label: "Air Support / SEAD", icon: "shield.lefthalf.filled", enabled: canIssueUnitMission, action: onSuppressAirDefense)
                 ]
             )
@@ -74,6 +77,22 @@ struct ModernMissionPanelView: View {
         }
     }
 
+    private var missionStatus: some View {
+        Label(
+            missionAvailabilityText,
+            systemImage: hasAvailableMission ? "checkmark.seal" : "info.circle"
+        )
+        .font(.caption)
+        .foregroundStyle(hasAvailableMission ? .secondary : ModernCommandDesignTokens.warning)
+        .lineLimit(3)
+        .fixedSize(horizontal: false, vertical: true)
+        .accessibilityLabel("Mission status: \(missionAvailabilityText)")
+    }
+
+    private var hasAvailableMission: Bool {
+        !observerModeEnabled && (canIssueUnitMission || canIssueFireMission || canAssaultObjective || canHoldDelay)
+    }
+
     private var missionSummary: some View {
         VStack(alignment: .leading, spacing: ModernCommandDesignTokens.compactSpacing) {
             LabeledContent("Formation") {
@@ -86,7 +105,7 @@ struct ModernMissionPanelView: View {
             }
             HStack(spacing: ModernCommandDesignTokens.compactSpacing) {
                 ModernMissionMetricView(
-                    title: "Supply",
+                    title: "Logistics",
                     value: selectedDivision.map(supplySummary) ?? "--",
                     icon: "cross.case",
                     tint: selectedDivision.map { ModernCommandDesignTokens.supplyColor(for: $0.supplyState) } ?? .secondary
@@ -153,6 +172,13 @@ struct ModernMissionPanelView: View {
                     }
                     .buttonStyle(.bordered)
                     .disabled(!action.enabled || observerModeEnabled)
+                    .accessibilityHint(
+                        Text(
+                            action.enabled && !observerModeEnabled
+                                ? "Submits \(action.label) through the rules pipeline."
+                                : missionAvailabilityText
+                        )
+                    )
                 }
             }
         }

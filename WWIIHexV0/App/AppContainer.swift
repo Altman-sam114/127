@@ -205,7 +205,7 @@ final class AppContainer: ObservableObject {
 
     func holdSelected() {
         guard let division = selectedActionDivision else {
-            appendInteractionEvent("Hold rejected: no active player-controlled unit selected.")
+            rejectPlayerAction("Hold rejected: no active player-controlled unit selected.")
             return
         }
 
@@ -214,7 +214,7 @@ final class AppContainer: ObservableObject {
 
     func allowRetreatSelected() {
         guard let division = selectedActionDivision else {
-            appendInteractionEvent("Allow retreat rejected: no active player-controlled unit selected.")
+            rejectPlayerAction("Allow retreat rejected: no active player-controlled unit selected.")
             return
         }
 
@@ -223,7 +223,7 @@ final class AppContainer: ObservableObject {
 
     func resupplySelected() {
         guard let division = selectedActionDivision else {
-            appendInteractionEvent("Resupply rejected: no active player-controlled unit selected.")
+            rejectPlayerAction("Resupply rejected: no active player-controlled unit selected.")
             return
         }
 
@@ -244,11 +244,11 @@ final class AppContainer: ObservableObject {
 
     func orderModernFireMission() {
         guard let division = selectedActionDivision else {
-            appendInteractionEvent("Fire mission rejected: no active player-controlled unit selected.")
+            rejectPlayerAction("Fire mission rejected: no active player-controlled unit selected.")
             return
         }
         guard let target = selectedFireMissionTarget() else {
-            appendInteractionEvent("Fire mission rejected: select a target hex, sector, or visible contact.")
+            rejectPlayerAction("Fire mission rejected: select a target hex, sector, or visible contact.")
             return
         }
 
@@ -285,7 +285,7 @@ final class AppContainer: ObservableObject {
 
     func orderSelectedGeneralHoldLine() {
         guard let zone = selectedGeneralCommandZone else {
-            appendInteractionEvent("Commander directive rejected: no player-controlled command sector selected.")
+            rejectPlayerAction("Commander directive rejected: no player-controlled command sector selected.")
             return
         }
 
@@ -307,11 +307,11 @@ final class AppContainer: ObservableObject {
 
     func orderSelectedGeneralAttackRegion() {
         guard let target = selectedAttackTarget else {
-            appendInteractionEvent("Commander directive rejected: select an enemy front region to attack.")
+            rejectPlayerAction("Commander directive rejected: select an enemy front region to attack.")
             return
         }
         guard let zone = selectedGeneralCommandZone else {
-            appendInteractionEvent("Commander directive rejected: no player-controlled source command sector available.")
+            rejectPlayerAction("Commander directive rejected: no player-controlled source command sector available.")
             return
         }
 
@@ -337,7 +337,7 @@ final class AppContainer: ObservableObject {
 
     func queueProduction(_ kind: ProductionKind) {
         guard !observerModeEnabled else {
-            appendInteractionEvent("Production rejected: observer mode is read-only.")
+            rejectPlayerAction("Production rejected: observer mode is read-only.")
             return
         }
 
@@ -706,8 +706,45 @@ final class AppContainer: ObservableObject {
         return "T\(budget.tubeArtillery) R\(budget.rocket) P\(budget.precision) L\(budget.loitering)"
     }
 
+    var modernMissionAvailabilityText: String {
+        if observerModeEnabled {
+            return "Observer mode is read-only; disable Observer AI to issue player missions."
+        }
+
+        if canOrderModernAssaultObjective || canOrderModernHoldDelay {
+            return "Command sector directive is ready; assault or hold orders will route through WarCommandExecutor."
+        }
+
+        guard let selectedDivision else {
+            return "Select a friendly formation before issuing recon, fires, EW, sustainment, or maneuver."
+        }
+
+        guard selectedDivision.faction == playerFaction else {
+            return "Selected formation belongs to \(selectedDivision.faction.shortDisplayName); choose a \(playerFaction.shortDisplayName) formation."
+        }
+
+        guard gameState.activeFaction == playerFaction,
+              playerFaction.canCommand(in: gameState.phase) else {
+            return "Await \(playerFaction.shortDisplayName) command phase; end turn or enable Observer AI to resolve other phases."
+        }
+
+        guard !selectedDivision.hasActed else {
+            return "\(selectedDivision.operationalDisplayName) has already acted this turn."
+        }
+
+        if !canIssueSelectedFireMission {
+            return "Formation missions are ready; select a target hex, sector, or contact before precision fires."
+        }
+
+        return "Mission orders are ready for \(selectedDivision.operationalDisplayName)."
+    }
+
     var canIssueSelectedModernUnitMission: Bool {
         selectedActionDivision != nil
+    }
+
+    var canIssueSelectedFireMission: Bool {
+        selectedActionDivision != nil && selectedFireMissionTarget() != nil
     }
 
     var canOrderModernAssaultObjective: Bool {
@@ -874,11 +911,11 @@ final class AppContainer: ObservableObject {
         command: (Division, HexCoord) -> Command
     ) {
         guard let division = selectedActionDivision else {
-            appendInteractionEvent("\(missionName) rejected: no active player-controlled unit selected.")
+            rejectPlayerAction("\(missionName) rejected: no active player-controlled unit selected.")
             return
         }
         guard let target = selectedMissionTargetHex() else {
-            appendInteractionEvent("\(missionName) rejected: select a target hex or sector.")
+            rejectPlayerAction("\(missionName) rejected: select a target hex or sector.")
             return
         }
 
@@ -954,18 +991,18 @@ final class AppContainer: ObservableObject {
         targetRegionId: RegionId?
     ) {
         guard canIssuePlayerDirective else {
-            appendInteractionEvent("Commander directive rejected: not in the player command phase.")
+            rejectPlayerAction("Commander directive rejected: not in the player command phase.")
             return
         }
         guard gameState.warDeploymentState.frontZones[directive.zoneId]?.faction == playerFaction else {
-            appendInteractionEvent("Commander directive rejected: source zone is not controlled by the player.")
+            rejectPlayerAction("Commander directive rejected: source zone is not controlled by the player.")
             return
         }
 
         let startState = refreshedRuntimeState(gameState)
         guard let refreshedZone = startState.warDeploymentState.frontZones[directive.zoneId],
               refreshedZone.faction == playerFaction else {
-            appendInteractionEvent("Commander directive rejected: source zone changed during refresh.")
+            rejectPlayerAction("Commander directive rejected: source zone changed during refresh.")
             return
         }
         let lockedIds = startState.playerCommandState.micromanagedDivisionIds
@@ -1046,7 +1083,12 @@ final class AppContainer: ObservableObject {
         if acceptedCount == totalCount {
             return "Commander directive executed \(acceptedCount) command(s)."
         }
-        return "Commander directive executed \(acceptedCount)/\(totalCount) command(s)."
+        if let firstRejected = execution.commandResults.first(where: { !$0.succeeded }),
+           !firstRejected.validation.errors.isEmpty {
+            let reason = firstRejected.validation.errors.map(\.rawValue).joined(separator: ", ")
+            return "Commander directive executed \(acceptedCount)/\(totalCount) command(s); first rejection: \(reason)."
+        }
+        return "Commander directive executed \(acceptedCount)/\(totalCount) command(s); \(diagnostics.first ?? "review Log for details")."
     }
 
     private func shouldRunAI(for faction: Faction, phase: GamePhase) -> Bool {
@@ -1342,6 +1384,11 @@ final class AppContainer: ObservableObject {
         if interactionLog.count > 80 {
             interactionLog.removeFirst(interactionLog.count - 80)
         }
+    }
+
+    private func rejectPlayerAction(_ message: String) {
+        lastCommandMessage = message
+        appendInteractionEvent(message)
     }
 
     private func snapshotSummary(for state: GameState) -> String {

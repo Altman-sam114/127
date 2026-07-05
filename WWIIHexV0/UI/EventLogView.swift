@@ -159,7 +159,7 @@ private enum LogDisplayCategory {
         case .encirclement:
             return "Encircle"
         case .supply:
-            return "Supply"
+            return "Logistics"
         case .frontChange:
             return "Front"
         case .theaterChange:
