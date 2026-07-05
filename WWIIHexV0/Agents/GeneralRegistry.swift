@@ -249,7 +249,7 @@ struct GeneralDispatcher {
                 guard !usedGeneralIds.contains(general.id) else {
                     return false
                 }
-                general.preferredTheaterIds.contains(TheaterId(zone.id.rawValue))
+                return general.preferredTheaterIds.contains(TheaterId(zone.id.rawValue))
                     || !Set(general.preferredRegionIds).isDisjoint(with: Set(zone.regionIds))
             }
     }
