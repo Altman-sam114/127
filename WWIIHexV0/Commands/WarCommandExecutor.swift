@@ -1265,7 +1265,9 @@ struct WarCommandExecutor {
         case .move(let divisionId, _),
              .hold(let divisionId),
              .allowRetreat(let divisionId),
-             .resupply(let divisionId):
+             .resupply(let divisionId),
+             .recon(let divisionId, _),
+             .electronicWarfare(let divisionId, _):
             return divisionId
         case .attack(let attackerId, _):
             return attackerId
