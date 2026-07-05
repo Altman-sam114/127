@@ -14,6 +14,7 @@ final class AppContainer: ObservableObject {
     @Published private(set) var lastWarDirectiveRecords: [WarDirectiveRecord]
     @Published private(set) var observerModeEnabled: Bool
     @Published private(set) var mapDisplayLayer: MapDisplayLayer
+    @Published private(set) var localSnapshotSummary: String?
 
     let commandHandler: GameCommandHandling
     let dataLoader: DataLoader
@@ -22,6 +23,8 @@ final class AppContainer: ObservableObject {
     let warPipelineMode: WarPipelineMode
     let turnManager: TurnManager?
     private var isRunningAI = false
+    private static let localSnapshotKey = "modernCommandAgent.localSnapshot.v1"
+    private static let localSnapshotSummaryKey = "modernCommandAgent.localSnapshot.summary.v1"
 
     init(
         gameState: GameState,
@@ -53,6 +56,7 @@ final class AppContainer: ObservableObject {
         self.lastWarDirectiveRecords = []
         self.observerModeEnabled = observerModeEnabled
         self.mapDisplayLayer = mapDisplayLayer
+        self.localSnapshotSummary = Self.storedLocalSnapshotSummary()
     }
 
     static func bootstrap() -> AppContainer {
@@ -339,6 +343,104 @@ final class AppContainer: ObservableObject {
         gameState = refreshGeneralAssignments(
             in: StrategicStateBootstrapper().bootstrapIfNeeded(dataLoader.loadInitialGameState())
         )
+        resetTransientSessionState()
+        lastCommandMessage = "New Grey Tide 2030 operation loaded."
+        appendInteractionEvent("New operation loaded: \(scenarioDisplayName).")
+        runAIIfNeeded()
+    }
+
+    func saveLocalSnapshot() {
+        do {
+            let data = try JSONEncoder().encode(gameState)
+            let summary = snapshotSummary(for: gameState)
+            UserDefaults.standard.set(data, forKey: Self.localSnapshotKey)
+            UserDefaults.standard.set(summary, forKey: Self.localSnapshotSummaryKey)
+            localSnapshotSummary = summary
+            lastCommandMessage = "Local snapshot saved."
+            appendInteractionEvent("Local snapshot saved: \(summary).")
+        } catch {
+            lastCommandMessage = "Save failed: \(error.localizedDescription)"
+            appendInteractionEvent("Save failed: \(error.localizedDescription)")
+        }
+    }
+
+    func loadLocalSnapshot() {
+        guard let data = UserDefaults.standard.data(forKey: Self.localSnapshotKey) else {
+            lastCommandMessage = "Continue rejected: no local snapshot found."
+            appendInteractionEvent("Continue rejected: no local snapshot found.")
+            return
+        }
+
+        do {
+            let decoded = try JSONDecoder().decode(GameState.self, from: data)
+            isRunningAI = false
+            gameState = refreshGeneralAssignments(in: StrategicStateBootstrapper().bootstrapIfNeeded(decoded))
+            resetTransientSessionState()
+            let summary = snapshotSummary(for: gameState)
+            localSnapshotSummary = summary
+            UserDefaults.standard.set(summary, forKey: Self.localSnapshotSummaryKey)
+            lastCommandMessage = "Local snapshot loaded."
+            appendInteractionEvent("Local snapshot loaded: \(summary).")
+            runAIIfNeeded()
+        } catch {
+            lastCommandMessage = "Continue failed: \(error.localizedDescription)"
+            appendInteractionEvent("Continue failed: \(error.localizedDescription)")
+        }
+    }
+
+    func clearLocalSnapshot() {
+        UserDefaults.standard.removeObject(forKey: Self.localSnapshotKey)
+        UserDefaults.standard.removeObject(forKey: Self.localSnapshotSummaryKey)
+        localSnapshotSummary = nil
+        lastCommandMessage = "Local snapshot cleared."
+        appendInteractionEvent("Local snapshot cleared.")
+    }
+
+    var canLoadLocalSnapshot: Bool {
+        UserDefaults.standard.data(forKey: Self.localSnapshotKey) != nil
+    }
+
+    var scenarioDisplayName: String {
+        switch gameState.scenarioId {
+        case "grey_tide_2030":
+            return "Grey Tide 2030"
+        case "ardennes_v0":
+            return "Legacy Fallback Scenario"
+        default:
+            return gameState.scenarioId
+        }
+    }
+
+    var playtestGuidanceItems: [String] {
+        var items: [String] = []
+        if selectedDivision == nil {
+            items.append("Select a friendly formation on the map.")
+        } else if canIssueSelectedModernUnitMission {
+            items.append("Use Tasks for recon, fires, EW, sustainment, or maneuver.")
+        } else {
+            items.append("Selected formation is waiting, spent, or outside player command.")
+        }
+
+        if gameState.operationalAwareness.visibleContacts(for: playerFaction).isEmpty {
+            items.append("Run Recon Area or UAV Orbit before calling precision fires.")
+        } else {
+            items.append("Visible contacts can drive fire missions and contact-gated attacks.")
+        }
+
+        if gameState.fireSupportState.lastMissionResults.isEmpty {
+            items.append("Fire results and rejected commands appear in Log and AI tabs.")
+        } else {
+            items.append("Review recent fire effects before committing ground maneuver.")
+        }
+
+        if gameState.phase != .alliedPlayer {
+            items.append("End Turn or enable Observer to let AI command phases resolve.")
+        }
+
+        return Array(items.prefix(4))
+    }
+
+    private func resetTransientSessionState() {
         selectedUnitId = nil
         selectedHex = nil
         selectedRegionId = nil
@@ -1041,6 +1143,14 @@ final class AppContainer: ObservableObject {
         if interactionLog.count > 80 {
             interactionLog.removeFirst(interactionLog.count - 80)
         }
+    }
+
+    private func snapshotSummary(for state: GameState) -> String {
+        "\(scenarioDisplayName) turn \(state.turn)/\(state.maxTurns), \(state.activeFaction.shortDisplayName), \(state.phase.displayName)"
+    }
+
+    private static func storedLocalSnapshotSummary() -> String? {
+        UserDefaults.standard.string(forKey: localSnapshotSummaryKey)
     }
 
 }

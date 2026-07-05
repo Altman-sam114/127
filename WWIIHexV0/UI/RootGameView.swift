@@ -175,6 +175,8 @@ struct RootGameView: View {
                     )
                 case .mission:
                     modernMissionPanel
+                case .playtest:
+                    playtestPanel
                 case .region:
                     RegionInspectorView(inspectorState: container.selectedRegionInspectorState)
                 case .general:
@@ -241,11 +243,36 @@ struct RootGameView: View {
             onHoldDelay: container.orderModernHoldDelay
         )
     }
+
+    private var playtestPanel: some View {
+        ModernPlaytestPanelView(
+            scenarioName: container.scenarioDisplayName,
+            playerSideName: container.playerFaction.shortDisplayName,
+            turnText: "\(container.gameState.turn) / \(container.gameState.maxTurns)",
+            localSnapshotSummary: container.localSnapshotSummary,
+            canLoadSnapshot: container.canLoadLocalSnapshot,
+            lastCommandMessage: container.lastCommandMessage,
+            guidanceItems: container.playtestGuidanceItems,
+            observerModeEnabled: Binding(
+                get: { container.observerModeEnabled },
+                set: { container.setObserverModeEnabled($0) }
+            ),
+            mapDisplayLayer: Binding(
+                get: { container.mapDisplayLayer },
+                set: { container.setMapDisplayLayer($0) }
+            ),
+            onNewOperation: container.resetGame,
+            onSaveSnapshot: container.saveLocalSnapshot,
+            onLoadSnapshot: container.loadLocalSnapshot,
+            onClearSnapshot: container.clearLocalSnapshot
+        )
+    }
 }
 
 private enum CompactInfoPanel: String, CaseIterable, Identifiable {
     case unit = "Formation"
     case mission = "Tasks"
+    case playtest = "Playtest"
     case region = "Sector"
     case general = "Command"
     case log = "Log"

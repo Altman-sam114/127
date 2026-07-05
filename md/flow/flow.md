@@ -1,4 +1,4 @@
-# WWIIHexV0 核心流程文档（v6.8 现代 C2 UI 首轮打磨）
+# WWIIHexV0 核心流程文档（v6.9 试玩闭环首轮）
 
 > 本文是项目当前核心逻辑的接手文档。目标不是复述历史设计，而是按当前代码真实链路说明：数据如何进入游戏，hex / region / theater / front / deploy 如何派生，主游戏和地图编辑器如何共同维护同一套地图语义，AI / 玩家命令如何落到规则系统。
 
@@ -42,6 +42,12 @@ Modern C2 Presentation
   -> HUDView C2 status strip
   -> ModernMissionPanelView tokenized controls
   -> BoardScene sensor / contact / EW / fire overlays
+
+Playtest Loop
+  -> ModernPlaytestPanelView
+  -> AppContainer local snapshot save / load / clear
+  -> observer AI toggle / map layer setting
+  -> short guidance / last command feedback
 ```
 
 最关键的铁律：
@@ -57,6 +63,7 @@ Modern C2 Presentation
 - `ModernCommandChainPlan` 只做可审计分解、JSON 校验和复盘展示；ISR / Fires / Air / EW / Logistics / Brigade sub-directive 当前不直接执行。
 - v6.7 玩家现代任务 UI 只调用 `AppContainer` 方法；任务最终落成 `Command` 或 `ZoneDirective`，不得在 SwiftUI View 里直接改 `GameState`。
 - v6.8 只新增现代 C2 展示层和地图态势 overlay；HUD、任务面板和 SpriteKit 标记只读 `GameState`，不绕过规则系统写状态。
+- v6.9 Playtest tab 只通过 `AppContainer` 做新局、保存/继续本地快照、observer 和图层设置；本地快照是 `GameState` JSON，不污染默认 JSON 资源。
 - 统治者层只作为后续方向预留；当前执行主链路不调用 `RulerAgent`，也不写统治者决策记录。
 
 ## 0.1 云端协作与验证闭环
@@ -466,6 +473,53 @@ SpriteKit 首轮：
 - v6.8 没有新增 readiness / fuel / signature / electronicProtection 字段。
 - 没有改 `Command`、`ZoneDirective`、`WarCommandExecutor` 或 `RuleEngine` 执行语义。
 - 未在本机启动 app、模拟器或 UI 点击烟测；视觉正确性等待后续人工授权或专门 UI 验收。
+
+---
+
+## 0.11 v6.9 新手引导、继续和试玩闭环首轮
+
+v6.9 第一批实现把“能打开局面”推进到“能在主界面继续试玩”。本轮不设计完整存档浏览器、不改玩家阵营模型、不引入文件导入导出，而是在 `AppContainer` 内建立受控本地快照，并用 `ModernPlaytestPanelView` 提供新局、保存、继续、清除、observer AI、地图图层和短引导入口。
+
+新增试玩链路：
+
+```text
+RootGameView
+  -> CompactInfoPanel.playtest / "Playtest"
+  -> ModernPlaytestPanelView
+      - Operation / Player / Turn 摘要
+      - New Operation
+      - Save / Continue / Clear Snapshot
+      - Observer AI toggle
+      - Default Layer picker
+      - Field Prompts / last command feedback
+  -> AppContainer
+      - resetGame()
+      - saveLocalSnapshot()
+      - loadLocalSnapshot()
+      - clearLocalSnapshot()
+      - playtestGuidanceItems
+```
+
+本地快照边界：
+
+- 快照内容是当前 `GameState` 的 JSON 编码，存入 `UserDefaults` 的 `modernCommandAgent.localSnapshot.v1` key。
+- 快照摘要单独存入 `modernCommandAgent.localSnapshot.summary.v1`，用于 UI 显示。
+- `loadLocalSnapshot()` 解码后仍经过 `StrategicStateBootstrapper().bootstrapIfNeeded` 和 `refreshGeneralAssignments`，并清空选择、高亮、临时交互日志和最近 AI/指令记录。
+- 保存/继续失败会写 `lastCommandMessage` 和 interaction log，给玩家可读反馈。
+- 本地快照不修改 `grey_tide_2030_scenario.json`、`grey_tide_2030_regions.json` 或旧阿登 fallback 资源。
+
+引导边界：
+
+- `playtestGuidanceItems` 根据当前选择、可行动状态、visible contacts、fire support result 和 phase 生成最多 4 条短提示。
+- 提示显示在 Playtest tab 内，不遮挡地图核心交互。
+- 本轮不做全屏 onboarding、弹窗教程、截图检查或 UI 点击自动化。
+
+仍未完成：
+
+- 没有完整“选择红方/蓝方/AI 控制选项”的新局向导；当前仍沿用现有 `playerFaction` 和 observer mode。
+- 没有多存档槽、文件导出、iCloud、版本迁移 UI 或存档损坏修复面板。
+- 没有本机启动 app、模拟器、UI 点击、10-20 回合观察者模式或截图验收。
+- v6.10 仍需发布候选残留扫描、资源检查和人工授权重验证清单。
 
 ---
 

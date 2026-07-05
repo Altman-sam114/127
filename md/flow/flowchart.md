@@ -314,6 +314,36 @@ flowchart LR
     classDef rules fill:#ccfbf1,stroke:#0f766e,color:#052e16
 ```
 
+## 0.11 v6.9 新局、继续和试玩闭环首轮
+
+这张图描述当前 v6.9 第一批实现。Playtest 面板只调用 `AppContainer`，本地快照保存的是 `GameState` JSON，不修改默认数据资源。
+
+```mermaid
+flowchart LR
+    UI["ModernPlaytestPanelView<br/>Playtest tab<br/>New / Save / Continue / Clear"]:::display
+    SETTINGS["试玩设置<br/>Observer AI toggle<br/>Default Layer picker"]:::display
+    GUIDE["短引导<br/>playtestGuidanceItems<br/>lastCommandMessage"]:::display
+    APP["AppContainer<br/>resetGame / saveLocalSnapshot<br/>loadLocalSnapshot / clearLocalSnapshot"]:::app
+    SNAP["UserDefaults 本地快照<br/>modernCommandAgent.localSnapshot.v1<br/>GameState JSON"]:::data
+    BOOT["StrategicStateBootstrapper<br/>refreshGeneralAssignments<br/>清空选择/高亮/临时日志"]:::rules
+    STATE["GameState<br/>当前试玩局"]:::state
+    RES["默认 JSON 资源<br/>grey_tide_2030<br/>不被存档写回"]:::data
+
+    UI --> APP
+    SETTINGS --> APP
+    STATE --> GUIDE
+    APP --> SNAP
+    SNAP --> APP --> BOOT --> STATE
+    APP --> STATE
+    RES -.-> APP
+
+    classDef display fill:#f8f9fb,stroke:#6b7280,color:#111827
+    classDef app fill:#e0e7ff,stroke:#4f46e5,color:#111827
+    classDef data fill:#fef3c7,stroke:#d97706,color:#1f1600
+    classDef rules fill:#ccfbf1,stroke:#0f766e,color:#052e16
+    classDef state fill:#e0f2fe,stroke:#0284c7,color:#082f49
+```
+
 ## 1. 总主线：从地图数据到游戏行动
 
 这张图看全局。左上是地图数据怎么进入游戏；中间是 hex、region、theater、front、deploy 的分层关系；右侧是玩家/AI 命令如何统一进入规则系统；底部是 UI 和日志怎么读取结果。
@@ -333,7 +363,8 @@ flowchart TD
     FRONT["前线层<br/>FrontLine / FrontSegment<br/>按双方动态战区的真实相邻 hex 生成"]:::derived
     DEPLOY["部署层<br/>WarDeploymentState<br/>用 hexToFrontZone 把单位分成前线/纵深/驻军"]:::derived
     ECO["经济总账<br/>EconomyState / EconomyRules<br/>收入、维护费、生产队列、自动补员"]:::economy
-    PLAYER["玩家输入<br/>点击地图、任务面板、移动、攻击、结束回合"]:::input
+    PLAYER["玩家输入<br/>点击地图、任务面板、试玩面板<br/>移动、攻击、结束回合"]:::input
+    PLAYTEST["试玩闭环<br/>ModernPlaytestPanelView<br/>New / Save / Continue / Observer / Layer / Guide"]:::ui
     MISSION["玩家现代任务面板<br/>ModernMissionPanelView<br/>Recon / UAV / Fire / SEAD / EW / Assault / Hold / Resupply"]:::command
     AI["AI 元帅系统<br/>MarshalAgent + TheaterDirective JSON<br/>先做大战役级规划"]:::input
     DEC["元帅 JSON 解码<br/>TheaterDirectiveDecoder<br/>提取 fenced JSON、校验 id 与 schema"]:::command
@@ -360,6 +391,7 @@ flowchart TD
     H2T --> FRONT --> DEPLOY
     GS --> ECO
 
+    PLAYER --> PLAYTEST
     PLAYER --> MISSION --> CMD
     PLAYER --> CMD
     MISSION --> ZD
