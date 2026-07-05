@@ -27,6 +27,26 @@ final class AppContainer: ObservableObject {
     private static let localSnapshotKey = "modernCommandAgent.localSnapshot.v1"
     private static let localSnapshotSummaryKey = "modernCommandAgent.localSnapshot.summary.v1"
     private static let localSnapshotPlayerFactionKey = "modernCommandAgent.localSnapshot.playerFaction.v1"
+    private static let localSnapshotSchemaVersion = 2
+
+    private struct LocalPlaytestSnapshot: Codable, Equatable {
+        let schemaVersion: Int
+        let savedAt: Date
+        let playerFaction: Faction
+        let gameState: GameState
+
+        init(
+            schemaVersion: Int = AppContainer.localSnapshotSchemaVersion,
+            savedAt: Date = Date(),
+            playerFaction: Faction,
+            gameState: GameState
+        ) {
+            self.schemaVersion = schemaVersion
+            self.savedAt = savedAt
+            self.playerFaction = playerFaction
+            self.gameState = gameState
+        }
+    }
 
     init(
         gameState: GameState,
@@ -376,7 +396,11 @@ final class AppContainer: ObservableObject {
 
     func saveLocalSnapshot() {
         do {
-            let data = try JSONEncoder().encode(gameState)
+            let snapshot = LocalPlaytestSnapshot(
+                playerFaction: playerFaction,
+                gameState: gameState
+            )
+            let data = try JSONEncoder().encode(snapshot)
             let summary = snapshotSummary(for: gameState)
             UserDefaults.standard.set(data, forKey: Self.localSnapshotKey)
             UserDefaults.standard.set(summary, forKey: Self.localSnapshotSummaryKey)
@@ -398,17 +422,16 @@ final class AppContainer: ObservableObject {
         }
 
         do {
-            let decoded = try JSONDecoder().decode(GameState.self, from: data)
+            let snapshot = try Self.decodeLocalSnapshot(data)
             isRunningAI = false
-            if let savedPlayerFaction = Self.storedLocalSnapshotPlayerFaction() {
-                playerFaction = savedPlayerFaction
-                nextOperationPlayerFaction = savedPlayerFaction
-            }
-            gameState = refreshGeneralAssignments(in: StrategicStateBootstrapper().bootstrapIfNeeded(decoded))
+            playerFaction = snapshot.playerFaction
+            nextOperationPlayerFaction = snapshot.playerFaction
+            gameState = refreshGeneralAssignments(in: StrategicStateBootstrapper().bootstrapIfNeeded(snapshot.gameState))
             resetTransientSessionState()
             let summary = snapshotSummary(for: gameState)
             localSnapshotSummary = summary
             UserDefaults.standard.set(summary, forKey: Self.localSnapshotSummaryKey)
+            UserDefaults.standard.set(playerFaction.rawValue, forKey: Self.localSnapshotPlayerFactionKey)
             lastCommandMessage = "Local snapshot loaded."
             appendInteractionEvent("Local snapshot loaded: \(summary).")
             runAIIfNeeded()
@@ -1285,6 +1308,22 @@ final class AppContainer: ObservableObject {
 
     private static func storedLocalSnapshotPlayerFaction() -> Faction? {
         Faction.dataValue(UserDefaults.standard.string(forKey: localSnapshotPlayerFactionKey))
+    }
+
+    private static func decodeLocalSnapshot(_ data: Data) throws -> LocalPlaytestSnapshot {
+        let decoder = JSONDecoder()
+        if let snapshot = try? decoder.decode(LocalPlaytestSnapshot.self, from: data),
+           snapshot.schemaVersion <= localSnapshotSchemaVersion {
+            return snapshot
+        }
+
+        let legacyState = try decoder.decode(GameState.self, from: data)
+        return LocalPlaytestSnapshot(
+            schemaVersion: 1,
+            savedAt: .distantPast,
+            playerFaction: storedLocalSnapshotPlayerFaction() ?? defaultPlayerFaction(for: legacyState),
+            gameState: legacyState
+        )
     }
 
 }

@@ -71,7 +71,7 @@ Release Candidate Readiness
 - `ModernCommandChainPlan` 只做可审计分解、JSON 校验和复盘展示；ISR / Fires / Air / EW / Logistics / Brigade sub-directive 当前不直接执行。
 - v6.7 玩家现代任务 UI 只调用 `AppContainer` 方法；任务最终落成 `Command` 或 `ZoneDirective`，不得在 SwiftUI View 里直接改 `GameState`。
 - v6.8 只新增现代 C2 展示层和地图态势 overlay；HUD、任务面板和 SpriteKit 标记只读 `GameState`，不绕过规则系统写状态。
-- v6.9 Playtest tab 只通过 `AppContainer` 做新局、保存/继续本地快照、observer 和图层设置；本地快照是 `GameState` JSON，不污染默认 JSON 资源。
+- v6.9 Playtest tab 只通过 `AppContainer` 做新局、保存/继续本地快照、observer 和图层设置；本地快照是带 schemaVersion 的 envelope，不污染默认 JSON 资源，并兼容旧裸 `GameState` 快照读取。
 - v6.10 发布候选准备收口玩家可见命名、App 图标资产、玩家扮演方说明、主目标控制摘要、地图补给源标签、残留扫描和发布前重验证清单；未获授权前不声明正式发布或运行时发布级已验证。
 - 统治者层只作为后续方向预留；当前执行主链路不调用 `RulerAgent`，也不写统治者决策记录。
 
@@ -517,9 +517,10 @@ RootGameView
 
 本地快照边界：
 
-- 快照内容是当前 `GameState` 的 JSON 编码，存入 `UserDefaults` 的 `modernCommandAgent.localSnapshot.v1` key。
+- 快照内容是 `LocalPlaytestSnapshot` envelope，存入 `UserDefaults` 的 `modernCommandAgent.localSnapshot.v1` key；当前 schemaVersion 为 2，包含 `savedAt`、`playerFaction` 和 `gameState`。
 - 快照摘要单独存入 `modernCommandAgent.localSnapshot.summary.v1`，用于 UI 显示。
-- 玩家方 raw value 单独存入 `modernCommandAgent.localSnapshot.playerFaction.v1`，继续本地快照时同步恢复 Blue / Red 控制方；旧快照缺失该字段时保持当前选择。
+- 玩家方 raw value 仍冗余写入 `modernCommandAgent.localSnapshot.playerFaction.v1`，用于兼容旧裸 `GameState` 快照；新 envelope 以 `playerFaction` 字段为准。
+- `decodeLocalSnapshot(_:)` 先按 envelope 解码，schemaVersion 不高于当前版本时直接恢复；若失败则按旧裸 `GameState` 解码，并从旧 playerFaction key 或当前默认作战方推断玩家方。
 - `loadLocalSnapshot()` 解码后仍经过 `StrategicStateBootstrapper().bootstrapIfNeeded` 和 `refreshGeneralAssignments`，并清空选择、高亮、临时交互日志和最近 AI/指令记录。
 - 保存/继续失败会写 `lastCommandMessage` 和 interaction log，给玩家可读反馈。
 - 本地快照不修改 `grey_tide_2030_scenario.json`、`grey_tide_2030_regions.json` 或旧阿登 fallback 资源。

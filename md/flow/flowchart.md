@@ -328,7 +328,7 @@ flowchart LR
     OBJECTIVE["主目标控制摘要<br/>Blue / Red / Neutral count<br/>Victory threshold"]:::display
     GUIDE["短引导<br/>playtestGuidanceItems<br/>lastCommandMessage"]:::display
     APP["AppContainer<br/>resetGame(playerFaction:)<br/>save / load / clear snapshot"]:::app
-    SNAP["UserDefaults 本地快照<br/>GameState JSON<br/>playerFaction raw value"]:::data
+    SNAP["UserDefaults 本地快照<br/>LocalPlaytestSnapshot envelope<br/>schemaVersion / playerFaction / GameState<br/>legacy GameState fallback"]:::data
     BOOT["StrategicStateBootstrapper<br/>refreshGeneralAssignments<br/>清空选择/高亮/临时日志"]:::rules
     STATE["GameState<br/>当前试玩局"]:::state
     RES["默认 JSON 资源<br/>grey_tide_2030<br/>不被存档写回"]:::data
