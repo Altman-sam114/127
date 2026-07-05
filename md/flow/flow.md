@@ -1,4 +1,4 @@
-# WWIIHexV0 核心流程文档（v6.9 试玩闭环首轮）
+# WWIIHexV0 核心流程文档（v6.10 发布候选准备）
 
 > 本文是项目当前核心逻辑的接手文档。目标不是复述历史设计，而是按当前代码真实链路说明：数据如何进入游戏，hex / region / theater / front / deploy 如何派生，主游戏和地图编辑器如何共同维护同一套地图语义，AI / 玩家命令如何落到规则系统。
 
@@ -48,6 +48,12 @@ Playtest Loop
   -> AppContainer local snapshot save / load / clear
   -> observer AI toggle / map layer setting
   -> short guidance / last command feedback
+
+Release Candidate Readiness
+  -> app display name = Modern Command Agent
+  -> HexNode supply markers = SUP B / SUP R
+  -> v6.10 residual scan report
+  -> runtime validation requires human authorization
 ```
 
 最关键的铁律：
@@ -64,6 +70,7 @@ Playtest Loop
 - v6.7 玩家现代任务 UI 只调用 `AppContainer` 方法；任务最终落成 `Command` 或 `ZoneDirective`，不得在 SwiftUI View 里直接改 `GameState`。
 - v6.8 只新增现代 C2 展示层和地图态势 overlay；HUD、任务面板和 SpriteKit 标记只读 `GameState`，不绕过规则系统写状态。
 - v6.9 Playtest tab 只通过 `AppContainer` 做新局、保存/继续本地快照、observer 和图层设置；本地快照是 `GameState` JSON，不污染默认 JSON 资源。
+- v6.10 发布候选准备只收口玩家可见命名、地图补给源标签、残留扫描和发布前重验证清单；未获授权前不声明正式发布或运行时发布级已验证。
 - 统治者层只作为后续方向预留；当前执行主链路不调用 `RulerAgent`，也不写统治者决策记录。
 
 ## 0.1 云端协作与验证闭环
@@ -519,7 +526,29 @@ RootGameView
 - 没有完整“选择红方/蓝方/AI 控制选项”的新局向导；当前仍沿用现有 `playerFaction` 和 observer mode。
 - 没有多存档槽、文件导出、iCloud、版本迁移 UI 或存档损坏修复面板。
 - 没有本机启动 app、模拟器、UI 点击、10-20 回合观察者模式或截图验收。
-- v6.10 仍需发布候选残留扫描、资源检查和人工授权重验证清单。
+- v6.10 已补发布候选残留扫描、资源检查口径和人工授权重验证清单。
+
+## 0.12 v6.10 发布候选准备和残留扫描
+
+v6.10 当前不是正式发布，而是把现代战争迁移路线收口到可提交发布候选的状态：代码和文档准备好后继续通过 `origin/main` GitHub Actions artifact 做云端 build 复核；本机仍不主动跑 Xcode、模拟器、UI 点击、截图、observer 长回合或性能检查。
+
+本轮明确处理的玩家可见项：
+
+- iOS / macOS 主游戏 target 的 `INFOPLIST_KEY_CFBundleDisplayName` 已统一为 `Modern Command Agent`。
+- `HexNode` 的补给源标签从旧 `SUP A` / `SUP G` 改为按 `Faction.alignment` 派生的 `SUP B` / `SUP R`；旧 `.allies` / `.germany` 兼容阵营也会显示为现代 Blue / Red。
+- `md/prompt/v6.0-现代战争迁移/v6.10_release_candidate_progress.md` 记录发布候选矩阵、残留扫描、保留的源码兼容名和人工授权重验证清单。
+
+仍保留的兼容残留：
+
+- `WWIIHexV0` / `WWIIHexV0Mac` target、module、scheme 和 bundle id 未在 v6.10 改名，避免引入 Xcode 工程级重命名风险。
+- `GamePhase.germanAI/alliedPlayer`、`Division`、`ProductionKind.panzerDivision` 等源码兼容名仍保留，但玩家可见显示层走现代 display name。
+- `ardennes_*`、`unit_templates.json`、`general_agents.json` 和旧将领数据继续作为 fallback / 历史测试 fixture，不是默认现代剧本主路径。
+
+发布前仍需人工授权：
+
+- Xcode build、iOS Simulator 或真机启动、macOS target 启动。
+- 基础 UI 点击烟测、SpriteKit 截图或人工视觉检查。
+- 至少 10-20 回合 observer 模式和性能体感检查。
 
 ---
 

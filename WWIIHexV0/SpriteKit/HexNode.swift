@@ -112,13 +112,23 @@ final class HexNode: SKNode {
 
         if let supplySourceFaction {
             addLabel(
-                text: supplySourceFaction == .allies ? "SUP A" : "SUP G",
+                text: supplyLabel(for: supplySourceFaction),
                 y: layout.hexSize * 0.36,
                 fontSize: max(6, layout.hexSize * 0.13),
                 color: TerrainStyle.textColor(for: displayState.terrain),
                 zPosition: 7
             )
         }
+    }
+
+    private func supplyLabel(for faction: Faction) -> String {
+        if faction.alignment == .blue {
+            return "SUP B"
+        }
+        if faction.alignment == .red {
+            return "SUP R"
+        }
+        return "SUP \(String(faction.shortDisplayName.prefix(1)).uppercased())"
     }
 
     private func addFog(for visibility: VisibilityState, path: CGPath) {

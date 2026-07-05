@@ -344,6 +344,32 @@ flowchart LR
     classDef state fill:#e0f2fe,stroke:#0284c7,color:#082f49
 ```
 
+## 0.12 v6.10 发布候选准备
+
+这张图描述当前 v6.10 收口项。发布候选准备只处理玩家可见命名、残留扫描、文档矩阵和发布前验证清单，不改变命令执行权威。
+
+```mermaid
+flowchart LR
+    DISPLAY["App Display Name<br/>Modern Command Agent"]:::display
+    MAP["HexNode supply marker<br/>SUP B / SUP R"]:::display
+    REPORT["v6.10 release candidate report<br/>residual scan / readiness matrix"]:::doc
+    RULES["规则权威不变<br/>Command / ZoneDirective<br/>WarCommandExecutor / RuleEngine"]:::rules
+    CLOUD["main push<br/>GitHub Actions artifact<br/>manifest / junit / xcodebuild.log"]:::cloud
+    RUNTIME["人工授权后再做<br/>launch / UI smoke / screenshot<br/>10-20 observer turns / performance"]:::risk
+
+    DISPLAY --> REPORT
+    MAP --> REPORT
+    RULES --> REPORT
+    REPORT --> CLOUD
+    REPORT --> RUNTIME
+
+    classDef display fill:#f8f9fb,stroke:#6b7280,color:#111827
+    classDef doc fill:#e0e7ff,stroke:#4f46e5,color:#111827
+    classDef rules fill:#ccfbf1,stroke:#0f766e,color:#052e16
+    classDef cloud fill:#fae8ff,stroke:#a21caf,color:#2a0a2f
+    classDef risk fill:#fee2e2,stroke:#b91c1c,color:#111827
+```
+
 ## 1. 总主线：从地图数据到游戏行动
 
 这张图看全局。左上是地图数据怎么进入游戏；中间是 hex、region、theater、front、deploy 的分层关系；右侧是玩家/AI 命令如何统一进入规则系统；底部是 UI 和日志怎么读取结果。
