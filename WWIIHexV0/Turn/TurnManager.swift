@@ -241,6 +241,9 @@ struct TurnManager {
             let parsedIntent = resolution.commandChainPlan.map {
                 "\(resolution.theaterEnvelope?.strategicIntent ?? "marshal directives") | \($0.summary)"
             } ?? (resolution.theaterEnvelope?.strategicIntent ?? "marshal directives")
+            let replayItems = resolution.commandChainPlan?.jointPlan.subDirectives.map {
+                ModernCommandChainReplayItem(directive: $0)
+            } ?? []
 
             return executeDirectiveEnvelope(
                 resolution.directiveEnvelope,
@@ -250,6 +253,7 @@ struct TurnManager {
                 rawJSON: rawJSON,
                 parsedIntent: parsedIntent,
                 providerSuffix: "MarshalDirective",
+                commandChainReplayItems: replayItems,
                 additionalDiagnostics: diagnostics + resolution.diagnostics
             )
         } catch {
@@ -288,6 +292,7 @@ struct TurnManager {
         rawJSON: String,
         parsedIntent: String,
         providerSuffix: String,
+        commandChainReplayItems: [ModernCommandChainReplayItem] = [],
         additionalDiagnostics: [String]
     ) -> AgentTurnOutcome {
         var nextState = state
@@ -379,6 +384,7 @@ struct TurnManager {
                 contextSummary: contextSummary,
                 rawJSON: rawJSON,
                 parsedIntent: parsedIntent,
+                commandChainReplayItems: commandChainReplayItems,
                 commandResults: commandResults,
                 errors: errors
             ),

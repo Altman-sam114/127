@@ -237,7 +237,8 @@ flowchart LR
     FAIL["失败只写 diagnostics<br/>不执行半成品"]:::stop
     COMP["TheaterDirectiveCompiler<br/>编译 ZoneDirective"]:::command
     EXEC["WarCommandExecutor<br/>RuleEngine"]:::rules
-    RECORD["AgentDecisionRecord.rawJSON<br/>Theater JSON + Command Chain JSON<br/>Compiled ZoneDirective JSON"]:::display
+    RECORD["AgentDecisionRecord<br/>rawJSON + commandChainReplayItems<br/>Theater / Command Chain / Compiled Directive"]:::display
+    PANEL["AgentPanelView<br/>role / mission / priority<br/>target / rationale / diagnostics"]:::display
 
     MARSHAL --> TDEC --> ORCH --> CJSON --> CDEC
     CDEC -->|通过| COMP --> EXEC
@@ -246,6 +247,7 @@ flowchart LR
     CJSON --> RECORD
     COMP --> RECORD
     EXEC --> RECORD
+    RECORD --> PANEL
 
     classDef agent fill:#e0e7ff,stroke:#4f46e5,color:#111827
     classDef data fill:#f8f9fb,stroke:#6b7280,color:#111827

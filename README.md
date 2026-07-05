@@ -121,7 +121,7 @@ WWIIHexV0/
 | `Agents/AgentDecision.swift` | 结构化决策 DTO | `AgentDecisionEnvelope` / `AgentOrder` / `AgentOrderType`（move/attack/hold/resupply） |
 | `Agents/AgentDecisionParser.swift` | JSON → envelope | 校验 schemaVersion / agentId / turn，malformed 抛 typed error |
 | `Agents/AgentCommandMapper.swift` | order → Command | `AgentCommandMapper.map(_:agentId:) -> IssuedCommand`，缺字段抛 error |
-| `Agents/AgentDecisionRecord.swift` | 决策记录 | `AgentDecisionRecord` / `CommandResultSummary`（UI 读） |
+| `Agents/AgentDecisionRecord.swift` | 决策记录 | `AgentDecisionRecord` / `CommandResultSummary` / `ModernCommandChainReplayItem`（UI 读） |
 | `Agents/MockAIClient.swift` | v0 默认 provider | 启发式：resupply → attack → move(向 Bastogne) → hold |
 | `Agents/LLMClient.swift` | Legacy LLM 接口预留 | `protocol LLMClient` + `LLMRequest`（旧 Agent D 用，默认不启用） |
 | `Agents/LocalLLMDecisionProvider.swift` | 本地 LLM provider | 注入 `LLMClient` + `AgentPromptBuilder` + parser，失败由上层 fallback MockAI |
@@ -132,7 +132,7 @@ WWIIHexV0/
 | `UI/ModernCommandDesignTokens.swift` | v6.8 C2 设计 token | 面板间距、圆角、44pt 触控尺寸、side / sensor / fires / EW / sustainment 色标 |
 | `UI/ModernMissionPanelView.swift` | v6.7+ 玩家任务面板 | Recon / UAV / FireMission / SEAD / Assault / Hold / Resupply / EW 任务入口，v6.8 使用 C2 token 统一样式，所有 action 交给 `AppContainer` |
 | `UI/ModernPlaytestPanelView.swift` | v6.9 试玩闭环面板 | 新局、保存/继续本地快照、observer AI、地图图层和短引导入口，所有 action 交给 `AppContainer` |
-| `UI/AgentPanelView.swift` | 决策展示 | 读 `record`（agent/provider/intent/context/command results/errors/raw JSON） |
+| `UI/AgentPanelView.swift` | 决策展示 | 读 `record`（agent/provider/intent/context/command-chain replay/command results/errors/raw JSON） |
 | `UI/RootGameView.swift` | 启动触发 | `.task { container.runAIIfNeeded() }` |
 
 **MockAI 行为（guderian，装甲突破风格）：**
@@ -145,7 +145,7 @@ WWIIHexV0/
 `MarshalBattlefieldSummarizer` 把 `GameState` 降维为元帅摘要，只包含 front zone、strength ratio、补给警告、目标和事件，不把全量 hex 网格喂给模型。`SimulatedMarshalLLMClient` 生成 fenced JSON 形式的 `TheaterDirectiveEnvelope`；`TheaterDirectiveDecoder` 提取并校验 JSON；`TheaterDirectiveCompiler` 把元帅意图编译成现有 `ZoneDirective`。v0.7 后 `TheaterDirective` 可携带 `convergenceRegionId` / `coordinatedZoneIds` 支持钳形会师意图；解码或编译失败时 fallback 到 `TheaterCommanderPool`，不执行半成品 LLM 输出。
 
 **v6.6 ModernCommandChain 行为：**
-`MarshalAgent` 在成功解码 `TheaterDirectiveEnvelope` 后生成 `ModernCommandChainPlan`，并把 fenced JSON 交给 `ModernCommandChainDecoder` 复核。decoder 会检查顶层和嵌套 envelope 的 schema、issuer、turn、faction、role，以及每条 sub-directive 的 zone / region / contact / mission 合法性；失败只写 diagnostics。`TurnManager` 将 TheaterDirective JSON、Modern Command Chain JSON 和最终 Compiled ZoneDirective JSON 一起写入 `AgentDecisionRecord.rawJSON`，AI 面板可回放完整链路。
+`MarshalAgent` 在成功解码 `TheaterDirectiveEnvelope` 后生成 `ModernCommandChainPlan`，并把 fenced JSON 交给 `ModernCommandChainDecoder` 复核。decoder 会检查顶层和嵌套 envelope 的 schema、issuer、turn、faction、role，以及每条 sub-directive 的 zone / region / contact / mission 合法性；失败只写 diagnostics。`TurnManager` 将 TheaterDirective JSON、Modern Command Chain JSON 和最终 Compiled ZoneDirective JSON 一起写入 `AgentDecisionRecord.rawJSON`，并把已验证的 sub-directive 派生成 `ModernCommandChainReplayItem`，让 AI 面板直接列出 ISR / Fires / Air / EW / Logistics / Brigade 任务、目标和理由。
 
 **后续 Ruler / Diplomacy 边界：**
 统治者层不在当前执行主链路中。后续如要加入国家、集团、外交关系或统治者 agent，必须先设计独立 schema，并保持底层战争规则仍由 `Faction`、`ZoneDirective`、`WarCommandExecutor` 和 `RuleEngine` 收口。

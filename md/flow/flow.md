@@ -390,7 +390,8 @@ ModernCommandChainPlan
 - decoder 逐条校验 sub-directive：role 是否允许 missionType、zone 是否存在且属于该 faction、region 是否存在、contact 是否存在且对该 faction 可见。
 - 校验成功后，plan 写入 `MarshalDirectiveResolution.commandChainPlan`；校验失败只添加 diagnostics，不执行半成品。
 - `TheaterDirectiveCompiler` 仍把元帅 TheaterDirective 编译成 `ZoneDirective`，再由 `WarCommandExecutor -> RuleEngine` 执行。
-- `TurnManager` 将 TheaterDirective JSON、Modern Command Chain JSON 和最终 Compiled ZoneDirective JSON 合并写入 `AgentDecisionRecord.rawJSON`，`parsedIntent` 增加现代指挥链 summary。
+- `TurnManager` 将 TheaterDirective JSON、Modern Command Chain JSON 和最终 Compiled ZoneDirective JSON 合并写入 `AgentDecisionRecord.rawJSON`，`parsedIntent` 增加现代指挥链 summary，并把已验证 sub-directive 派生成 `ModernCommandChainReplayItem`。
+- `AgentPanelView` 在 Raw JSON 之外显示结构化 Command Chain 回放项：角色、任务、优先级、zone / region / contact 目标和 rationale；这只读 `AgentDecisionRecord`，不执行 sub-directive。
 
 安全边界：
 
@@ -400,7 +401,7 @@ ModernCommandChainPlan
 
 仍未完成：
 
-- UI 仍通过现有 AI 面板 raw JSON 查看链路，还没有专门的多 Agent 决策复盘视图。
+- UI 已能通过现有 AI 面板查看结构化 Command Chain 摘要和 raw JSON，但还没有专门的多 Agent 决策复盘全屏视图。
 - sub-directive 还没有独立调参 UI，也不会直接编译成 FireMission / Recon / EW command。
 - ChiefOfStaff 当前是 deterministic notes / deconflict 说明，未做复杂冲突仲裁搜索。
 

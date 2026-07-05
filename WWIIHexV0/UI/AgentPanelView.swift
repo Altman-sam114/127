@@ -40,6 +40,45 @@ struct AgentPanelView: View {
                 }
             }
 
+            if let record, !record.commandChainReplayItems.isEmpty {
+                Text("Command Chain")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                VStack(alignment: .leading, spacing: 6) {
+                    ForEach(record.commandChainReplayItems) { item in
+                        VStack(alignment: .leading, spacing: 3) {
+                            HStack(spacing: 6) {
+                                Text(item.role.displayName)
+                                    .font(.caption.bold())
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(PlatformStyles.selectionTint)
+                                    .clipShape(RoundedRectangle(cornerRadius: 4))
+
+                                Text("\(item.missionType.displayName) / P\(item.priority)")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.75)
+                            }
+
+                            Text(commandChainTargetLine(item))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+
+                            Text(item.rationale)
+                                .font(.caption)
+                                .lineLimit(2)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(6)
+                        .background(PlatformStyles.tertiarySystemBackground)
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                    }
+                }
+            }
+
             if let rulerRecord {
                 Divider()
                 LabeledContent("Ruler") {
@@ -168,6 +207,20 @@ struct AgentPanelView: View {
         }
 
         return result.message
+    }
+
+    private func commandChainTargetLine(_ item: ModernCommandChainReplayItem) -> String {
+        var targets: [String] = []
+        if let zoneId = item.zoneId {
+            targets.append("zone \(zoneId.rawValue)")
+        }
+        if let regionId = item.regionId {
+            targets.append("region \(regionId.rawValue)")
+        }
+        if let contactId = item.contactId {
+            targets.append("contact \(contactId)")
+        }
+        return targets.isEmpty ? "global coordination" : targets.joined(separator: " / ")
     }
 
     private var rawJSONPlaceholder: String {

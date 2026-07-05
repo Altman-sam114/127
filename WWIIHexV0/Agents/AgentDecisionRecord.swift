@@ -88,6 +88,50 @@ struct CommandResultSummary: Identifiable, Codable, Equatable {
     }
 }
 
+struct ModernCommandChainReplayItem: Identifiable, Codable, Equatable {
+    let id: String
+    let role: ModernCommandAgentRole
+    let missionType: ModernMissionType
+    let zoneId: FrontZoneId?
+    let regionId: RegionId?
+    let contactId: String?
+    let priority: Int
+    let rationale: String
+
+    init(
+        id: String,
+        role: ModernCommandAgentRole,
+        missionType: ModernMissionType,
+        zoneId: FrontZoneId?,
+        regionId: RegionId?,
+        contactId: String?,
+        priority: Int,
+        rationale: String
+    ) {
+        self.id = id
+        self.role = role
+        self.missionType = missionType
+        self.zoneId = zoneId
+        self.regionId = regionId
+        self.contactId = contactId
+        self.priority = priority
+        self.rationale = rationale
+    }
+
+    init(directive: ModernSubDirective) {
+        self.init(
+            id: directive.id,
+            role: directive.role,
+            missionType: directive.missionType,
+            zoneId: directive.zoneId,
+            regionId: directive.regionId,
+            contactId: directive.contactId,
+            priority: directive.priority,
+            rationale: directive.rationale
+        )
+    }
+}
+
 struct AgentDecisionRecord: Identifiable, Codable, Equatable {
     let id: String
     let turn: Int
@@ -96,6 +140,61 @@ struct AgentDecisionRecord: Identifiable, Codable, Equatable {
     let contextSummary: String
     let rawJSON: String?
     let parsedIntent: String?
+    let commandChainReplayItems: [ModernCommandChainReplayItem]
     let commandResults: [CommandResultSummary]
     let errors: [String]
+
+    init(
+        id: String,
+        turn: Int,
+        agentId: String,
+        provider: String,
+        contextSummary: String,
+        rawJSON: String?,
+        parsedIntent: String?,
+        commandChainReplayItems: [ModernCommandChainReplayItem] = [],
+        commandResults: [CommandResultSummary],
+        errors: [String]
+    ) {
+        self.id = id
+        self.turn = turn
+        self.agentId = agentId
+        self.provider = provider
+        self.contextSummary = contextSummary
+        self.rawJSON = rawJSON
+        self.parsedIntent = parsedIntent
+        self.commandChainReplayItems = commandChainReplayItems
+        self.commandResults = commandResults
+        self.errors = errors
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case turn
+        case agentId
+        case provider
+        case contextSummary
+        case rawJSON
+        case parsedIntent
+        case commandChainReplayItems
+        case commandResults
+        case errors
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        turn = try container.decode(Int.self, forKey: .turn)
+        agentId = try container.decode(String.self, forKey: .agentId)
+        provider = try container.decode(String.self, forKey: .provider)
+        contextSummary = try container.decode(String.self, forKey: .contextSummary)
+        rawJSON = try container.decodeIfPresent(String.self, forKey: .rawJSON)
+        parsedIntent = try container.decodeIfPresent(String.self, forKey: .parsedIntent)
+        commandChainReplayItems = try container.decodeIfPresent(
+            [ModernCommandChainReplayItem].self,
+            forKey: .commandChainReplayItems
+        ) ?? []
+        commandResults = try container.decode([CommandResultSummary].self, forKey: .commandResults)
+        errors = try container.decode([String].self, forKey: .errors)
+    }
 }

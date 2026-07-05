@@ -10,6 +10,29 @@ enum ModernCommandAgentRole: String, Codable, Equatable, CaseIterable {
     case ewCoordinator
     case logistics
     case brigadeCommander
+
+    var displayName: String {
+        switch self {
+        case .nationalCommand:
+            return "National Command"
+        case .jointCommand:
+            return "Joint Command"
+        case .chiefOfStaff:
+            return "Chief of Staff"
+        case .isrCoordinator:
+            return "ISR Coordinator"
+        case .firesCoordinator:
+            return "Fires Coordinator"
+        case .airTasking:
+            return "Air Tasking"
+        case .ewCoordinator:
+            return "EW Coordinator"
+        case .logistics:
+            return "Logistics"
+        case .brigadeCommander:
+            return "Brigade Commander"
+        }
+    }
 }
 
 enum ModernMissionType: String, Codable, Equatable, CaseIterable {
@@ -26,6 +49,37 @@ enum ModernMissionType: String, Codable, Equatable, CaseIterable {
     case assault
     case hold
     case reserve
+
+    var displayName: String {
+        switch self {
+        case .setROE:
+            return "Set ROE"
+        case .theaterObjective:
+            return "Theater Objective"
+        case .deconflict:
+            return "Deconflict"
+        case .reconArea:
+            return "Recon Area"
+        case .confirmContact:
+            return "Confirm Contact"
+        case .fireMission:
+            return "Fire Mission"
+        case .suppressAirDefense:
+            return "Suppress Air Defense"
+        case .airRecon:
+            return "Air Recon"
+        case .electronicWarfare:
+            return "Electronic Warfare"
+        case .resupply:
+            return "Resupply"
+        case .assault:
+            return "Assault"
+        case .hold:
+            return "Hold"
+        case .reserve:
+            return "Reserve"
+        }
+    }
 }
 
 struct StrategicConstraintEnvelope: Codable, Equatable {
