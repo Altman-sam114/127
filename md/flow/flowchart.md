@@ -348,14 +348,14 @@ flowchart LR
 
 ## 0.12 v6.10 发布候选准备
 
-这张图描述当前 v6.10 收口项。发布候选准备只处理玩家可见命名、残留扫描、文档矩阵和发布前验证清单，不改变命令执行权威。
+这张图描述当前 v6.10 收口项。发布候选准备只处理玩家可见命名、残留扫描、证据矩阵和发布前验证清单，不改变命令执行权威。
 
 ```mermaid
 flowchart LR
     DISPLAY["App Display Name<br/>Modern Command Agent"]:::display
     ICON["AppIcon asset catalog<br/>iOS / iPadOS / macOS sizes"]:::display
     MAP["HexNode supply marker<br/>SUP B / SUP R"]:::display
-    REPORT["v6.10 release candidate report<br/>residual scan / readiness matrix"]:::doc
+    REPORT["v6.10 release candidate report<br/>residual scan / evidence matrix"]:::doc
     RULES["规则权威不变<br/>Command / ZoneDirective<br/>WarCommandExecutor / RuleEngine"]:::rules
     CLOUD["main push<br/>GitHub Actions artifact<br/>manifest / junit / xcodebuild.log"]:::cloud
     RUNTIME["人工授权后再做<br/>launch / UI smoke / screenshot<br/>10-20 observer turns / performance"]:::risk

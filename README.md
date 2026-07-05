@@ -1,6 +1,6 @@
 # Modern Command Agent — iOS / macOS AI 战略战棋迁移工程
 
-> **当前状态：v6.10 发布候选准备。工程底座仍来自 WWIIHexV0，源码兼容名、target/module 名和旧阿登 fallback 数据仍保留；已完成 v6.0-v6.9 的现代作战方、灰潮种子、现代单位、ISR/EW/contact、火力/空中任务、现代 AI 指挥链、玩家任务入口、现代 C2 UI 和试玩闭环首轮。本轮把主游戏 iOS / macOS display name 收口为 `Modern Command Agent`，新增现代 C2 AppIcon 资产，Playtest 面板明确 Player Side / Opposition / Control Mode，地图补给源标签改为现代 Blue/Red 口径，并新增发布候选残留扫描与人工授权重验证清单。玩家任务仍经 `AppContainer -> Command / ZoneDirective -> WarCommandExecutor / RuleEngine`。历史测试基线曾达到 v0.37 Probe 18/0、Stage Regression 69/0、Full 226/0；当前工作流默认不跑 Xcode / XCTest / 模拟器测试，只按 `md/test/test.md` 做轻量检查，重验证看 GitHub Actions artifact。**
+> **当前状态：v6.10 发布候选准备。工程底座仍来自 WWIIHexV0，源码兼容名、target/module 名和旧阿登 fallback 数据仍保留；已完成 v6.0-v6.9 的现代作战方、灰潮种子、现代单位、ISR/EW/contact、火力/空中任务、现代 AI 指挥链、玩家任务入口、现代 C2 UI 和试玩闭环首轮。本轮把主游戏 iOS / macOS display name 收口为 `Modern Command Agent`，新增现代 C2 AppIcon 资产，Playtest 面板明确 Player Side / Opposition / Control Mode，地图补给源标签改为现代 Blue/Red 口径，并新增发布候选残留扫描、验收证据矩阵与人工授权重验证清单。玩家任务仍经 `AppContainer -> Command / ZoneDirective -> WarCommandExecutor / RuleEngine`。历史测试基线曾达到 v0.37 Probe 18/0、Stage Regression 69/0、Full 226/0；当前工作流默认不跑 Xcode / XCTest / 模拟器测试，只按 `md/test/test.md` 做轻量检查，重验证看 GitHub Actions artifact。**
 
 ---
 
