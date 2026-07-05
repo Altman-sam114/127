@@ -359,7 +359,7 @@ rg -n "enum Faction|struct Division|enum ComponentType|EconomyResources|Producti
 职责：
 
 - 迁移剧本、地图、地形、兵种、装备、指挥官、作战方数据。
-- 建立 `grey_tide_2030_scenario.json`、`grey_tide_2030_regions.json`、`modern_unit_templates.json`、`modern_commanders.json`、`modern_terrain_rules.json`。
+- 建立 `grey_tide_2030_scenario.json`、`grey_tide_2030_regions.json`、`modern_unit_templates.json`，并复用当前落地的 `generals.json` 作为现代 commander 数据、`terrain_rules.json` 作为现代地形规则数据；`modern_commanders.json` / `modern_terrain_rules.json` 属早期规划名，不作为 v6.10 当前必建文件。
 - 保证 JSON key 稳定，id 使用 ASCII，例如 `power_blue`, `region_airport_east`, `unit_blue_bct_1`, `commander_blue_jtf`.
 - 中文只放在 `displayName`、`localizedName`、`biography`、`briefing` 等展示字段。
 
@@ -660,8 +660,8 @@ displayName: 灰潮行动 2030
 - `WWIIHexV0/Data/grey_tide_2030_scenario.json`
 - `WWIIHexV0/Data/grey_tide_2030_regions.json`
 - `WWIIHexV0/Data/modern_unit_templates.json`
-- `WWIIHexV0/Data/modern_commanders.json`
-- `WWIIHexV0/Data/modern_terrain_rules.json`
+- `WWIIHexV0/Data/generals.json`（当前现代 commander 数据落地文件；早期规划名 `modern_commanders.json` 不另建）
+- `WWIIHexV0/Data/terrain_rules.json`（当前地形规则落地文件；早期规划名 `modern_terrain_rules.json` 不另建）
 - `WWIIHexV0/Data/modern_operational_sides.json` 可后置到 v6.1 或 v6.2。
 
 MapEditor 迁移：
@@ -1366,8 +1366,8 @@ rg -n "Germany|Allies|Ardennes|Bastogne|Panzer|tank|motorized|germanAI|alliedPla
 jq empty WWIIHexV0/Data/grey_tide_2030_scenario.json
 jq empty WWIIHexV0/Data/grey_tide_2030_regions.json
 jq empty WWIIHexV0/Data/modern_unit_templates.json
-jq empty WWIIHexV0/Data/modern_commanders.json
-jq empty WWIIHexV0/Data/modern_terrain_rules.json
+jq empty WWIIHexV0/Data/generals.json
+jq empty WWIIHexV0/Data/terrain_rules.json
 plutil -lint WWIIHexV0.xcodeproj/project.pbxproj
 ```
 

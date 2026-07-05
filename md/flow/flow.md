@@ -973,11 +973,13 @@ strength < maxStrength
 AppContainer.bootstrap()
   -> DataLoader().loadInitialGameState()
   -> RuleEngine()
-  -> GameAgent.guderian(...)
+  -> GameAgent.guderian(...) legacy .germany fallback bridge
   -> StrategicStateBootstrapper().bootstrapIfNeeded(...)
   -> TurnManager(... commanderPool: buildCommanderPool(state: bootstrappedState))
   -> AppContainer(...)
 ```
+
+默认 `grey_tide_2030` 主路径的玩家可见 AI / commander 文案由 `generals.json`、`GeneralRegistry` 和面板 display name 提供，显示为现代 Blue / Red commander 或 Local Planner；`GameAgent.guderian(...)` 只保留为旧 `.germany` fallback / source compatibility bridge，不代表 v6.10 默认 UI 文案。
 
 `DataLoader.loadInitialGameState()` 当前优先走编辑器兼容 JSON：
 

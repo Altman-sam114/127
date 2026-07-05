@@ -295,9 +295,9 @@ flowchart LR
     GS["GameState<br/>作战态势权威容器"]:::state
     AWARE["OperationalAwarenessState<br/>contacts / sensorCoverage / ewEffects"]:::state
     FIRE["FireSupportState<br/>ammo / airTasking / lastMissionResults"]:::state
-    ECON["EconomyState + Division.supplyState<br/>C2 queue / supply risk"]:::state
+    ECON["EconomyState + Division.supplyState<br/>C2 queue / logistics risk"]:::state
     TOKENS["ModernCommandDesignTokens<br/>spacing / radius / 44pt tap<br/>side / sensor / fires / EW colors"]:::display
-    HUD["HUDView<br/>C2 status strip<br/>contacts / EW / ammo / air / supply"]:::display
+    HUD["HUDView<br/>C2 status strip<br/>contacts / EW / ammo / air / logistics"]:::display
     TASKS["ModernMissionPanelView<br/>tokenized mission controls<br/>Label + SF Symbols"]:::display
     MAP["BoardScene.drawModernC2Overlays<br/>sensor heatmap / contact marker<br/>EW area / fire result ring"]:::display
     RULES["Command / ZoneDirective<br/>WarCommandExecutor / RuleEngine<br/>仍是唯一写状态路径"]:::rules
@@ -736,7 +736,7 @@ flowchart TD
     LOG["日志面板<br/>EventLogView<br/>最近 60 条 LogDisplayEntry"]:::ui
     AIUI["AI 面板<br/>AgentPanelView<br/>raw JSON + command results + zone directives"]:::ui
     BOARD["地图场景<br/>BoardScene<br/>缓存 unit display hex 后排序绘制"]:::ui
-    MARSHAL["模拟元帅 / MockAI<br/>MarshalAgent + SimulatedMarshalLLMClient"]:::ai
+    MARSHAL["Local Planner<br/>MockAIClient implementation<br/>MarshalAgent + SimulatedMarshalLLMClient"]:::ai
     ZD["战区指令<br/>ZoneDirective<br/>tactic / focus / intensity"]:::command
     WCE["执行解释<br/>WarCommandExecutor<br/>infiltration 限制默认投入"]:::command
     RULE["规则权威<br/>RuleEngine<br/>唯一修改 GameState"]:::rules
@@ -751,7 +751,7 @@ flowchart TD
     LOG --> PLAYTEST
     BOARD --> PLAYTEST
 
-    WARN["边界<br/>UI / MockAI 不直接改 GameState<br/>仍必须走统一命令管线"]:::warn
+    WARN["边界<br/>UI / Local Planner 不直接改 GameState<br/>仍必须走统一命令管线"]:::warn
     AIUI -.守住.-> WARN
     WCE -.守住.-> WARN
 

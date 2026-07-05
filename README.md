@@ -1,6 +1,6 @@
 # Modern Command Agent — iOS / macOS AI 战略战棋迁移工程
 
-> **当前状态：v6.10 发布候选准备。工程底座仍来自 WWIIHexV0，源码兼容名、target/module 名和旧阿登 fallback 数据仍保留；已完成 v6.0-v6.9 的现代作战方、灰潮种子、现代单位、ISR/EW/contact、火力/空中任务、现代 AI 指挥链、玩家任务入口、现代 C2 UI 和试玩闭环首轮。本轮把主游戏 iOS / macOS display name 收口为 `Modern Command Agent`，新增现代 C2 AppIcon 资产，Playtest 面板支持红/蓝新局选择并显示 Player Side / Opposition / Control Mode / Action Gate / 十个主目标控制摘要，默认 commander 数据改为虚构 Blue / Red C2 staff，commander seed 会排除已分配 commander，地图补给源标签改为现代 Blue/Red 口径，灰潮默认剧本扩到 120 hex / 30 region，并加入现代目标控制胜负判断；同时新增发布候选残留扫描、验收证据矩阵与人工授权重验证清单。玩家任务仍经 `AppContainer -> Command / ZoneDirective -> WarCommandExecutor / RuleEngine`，AI 失败路径尽量保留 raw JSON 供复盘。历史测试基线曾达到 v0.37 Probe 18/0、Stage Regression 69/0、Full 226/0；当前工作流默认不跑 Xcode / XCTest / 模拟器测试，只按 `md/test/test.md` 做轻量检查，重验证看 GitHub Actions artifact。**
+> **当前状态：v6.10 发布候选准备。工程底座仍来自 WWIIHexV0，源码兼容名、target/module 名和旧阿登 fallback 数据仍保留；已完成 v6.0-v6.9 的现代作战方、灰潮种子、现代单位、ISR/EW/contact、火力/空中任务、现代 AI 指挥链、玩家任务入口、现代 C2 UI 和试玩闭环首轮。本轮把主游戏 iOS / macOS display name 收口为 `Modern Command Agent`，新增现代 C2 AppIcon 资产，Playtest 面板支持红/蓝新局选择并显示 Player Side / Opposition / Control Mode / Action Gate / 十个主目标控制摘要，任务面板显示 Mission Status 并区分 Fire Mission 目标门禁，HUD、任务、单位和事件日志主路径使用 Logistics / sustainment 口径，默认 commander 数据改为虚构 Blue / Red C2 staff，commander seed 会排除已分配 commander，地图补给源标签改为现代 Blue/Red 口径，灰潮默认剧本扩到 120 hex / 30 region，并加入现代目标控制胜负判断；同时新增发布候选残留扫描、验收证据矩阵与人工授权重验证清单。玩家任务仍经 `AppContainer -> Command / ZoneDirective -> WarCommandExecutor / RuleEngine`，玩家拒绝反馈会同步写入 command feedback，AI 失败路径尽量保留 raw JSON 供复盘。历史测试基线曾达到 v0.37 Probe 18/0、Stage Regression 69/0、Full 226/0；当前工作流默认不跑 Xcode / XCTest / 模拟器测试，只按 `md/test/test.md` 做轻量检查，重验证看 GitHub Actions artifact。**
 
 ---
 
@@ -16,7 +16,7 @@
 
 一款正在从 WWIIHexV0 迁移而来的 iOS / macOS 回合制现代战争 AI Agent 策略游戏。目标是在保留 hex 战术权威、region 战略聚合、动态战区、前线、部署和统一规则管线的基础上，迁移到现代联合作战：合成营/任务编组、无人系统、侦察 contact、电子战、精确火力、后勤和可审计 AI Agent 指挥链。
 
-当前 v6.10 是发布候选准备态，不是正式发布。`grey_tide_2030` 目前是 120-hex / 30-region 的可加载现代发布候选剧本，用于替换默认阿登入口并验证现代数据链；它包含机场、港口、雷达/防空、河桥、铁路、燃料、通信、民用缓冲和蓝/红补给入口，`VictoryRules` / `RegionVictoryRules` 对 `grey_tide_2030` 使用十个主目标的现代目标控制判定。MapEditor 默认桥接读写灰潮资源，编辑器可见模式收口为区域、作战区和任务编组；覆盖默认资源时会保留灰潮已有 `maxTurns`、胜负条件、河流边、VP、occupation 和 river crossing 等编辑器未表达的高级元数据。`modern_unit_templates.json` 已提供现代组件并通过现有 `strength + supplyState + components` 影响移动、战斗和补员成本，灰潮剧本未知模板不再静默回退为 infantry。玩家任务面板可以发起 Recon Area、UAV Orbit、Fire Mission、Air Support / SEAD、Assault Objective、Hold / Delay、Resupply / Repair、Jam / Counter-Drone；实际行动仍由 `Command` 或 `ZoneDirective` 进入 `RuleEngine`。Playtest tab 支持选择 Blue Force 或 Red Force 新开灰潮局、保存/继续本地快照、清除快照、切换 observer AI 和地图图层；本地快照使用带 schemaVersion 的 envelope 保存 `GameState` 与玩家方，并保留旧裸 `GameState` 快照兼容读取。Playtest 状态区显示 Player Side、Opposition、Control Mode、Action Gate、十个主目标控制摘要、不遮挡地图的短引导和错误反馈；Action Gate 只读解释当前是玩家可下令、AI 可解析、observer 自动化还是需要结束回合，不直接执行命令。非 observer 模式下 AI 只接管当前非玩家敌对阵营。fuel / readiness / signature / 真实武器库 / 复杂实时空战 / 真本地 LLM 多 Agent 并发仍未独立建模。`GamePhase.germanAI/alliedPlayer`、`Division` 源码名、旧 unit template id、target/module 名和若干二战测试 fixture 仍按兼容层保留。发布前仍需人工授权运行时验证：Xcode build、iOS/macOS 启动、UI 点击烟测、SpriteKit 截图、10-20 回合 observer 和性能体感。
+当前 v6.10 是发布候选准备态，不是正式发布。`grey_tide_2030` 目前是 120-hex / 30-region 的可加载现代发布候选剧本，用于替换默认阿登入口并验证现代数据链；它包含机场、港口、雷达/防空、河桥、铁路、燃料、通信、民用缓冲和蓝/红补给入口，`VictoryRules` / `RegionVictoryRules` 对 `grey_tide_2030` 使用十个主目标的现代目标控制判定。MapEditor 默认桥接读写灰潮资源，编辑器可见模式收口为区域、作战区和任务编组；覆盖默认资源时会保留灰潮已有 `maxTurns`、胜负条件、河流边、VP、occupation 和 river crossing 等编辑器未表达的高级元数据。`modern_unit_templates.json` 已提供现代组件并通过现有 `strength + supplyState + components` 影响移动、战斗和补员成本，灰潮剧本未知模板不再静默回退为 infantry。玩家任务面板可以发起 Recon Area、UAV Orbit、Fire Mission、Air Support / SEAD、Assault Objective、Hold / Delay、Resupply / Repair、Jam / Counter-Drone；实际行动仍由 `Command` 或 `ZoneDirective` 进入 `RuleEngine`。任务面板会显示 Mission Status 来解释按钮不可用原因，Fire Mission 额外要求 selected formation 可行动且存在 target hex / sector / contact；拒绝反馈会进入 `lastCommandMessage` 和 interaction log，主 UI 后勤文案使用 Logistics 口径。Playtest tab 支持选择 Blue Force 或 Red Force 新开灰潮局、保存/继续本地快照、清除快照、切换 observer AI 和地图图层；本地快照使用带 schemaVersion 的 envelope 保存 `GameState` 与玩家方，并保留旧裸 `GameState` 快照兼容读取。Playtest 状态区显示 Player Side、Opposition、Control Mode、Action Gate、十个主目标控制摘要、不遮挡地图的短引导和错误反馈；Action Gate 只读解释当前是玩家可下令、AI 可解析、observer 自动化还是需要结束回合，不直接执行命令。非 observer 模式下 AI 只接管当前非玩家敌对阵营。fuel / readiness / signature / 真实武器库 / 复杂实时空战 / 真本地 LLM 多 Agent 并发仍未独立建模。`GamePhase.germanAI/alliedPlayer`、`Division` 源码名、旧 unit template id、target/module 名和若干二战测试 fixture 仍按兼容层保留。发布前仍需人工授权运行时验证：Xcode build、iOS/macOS 启动、UI 点击烟测、SpriteKit 截图、10-20 回合 observer 和性能体感。
 
 **核心参考：**
 - 《统一指挥2》：六角格战棋、补给、攻击（战术层参照）
@@ -73,7 +73,7 @@ ZoneDirective / WarCommandExecutor / RuleEngine
 | 语言 | Swift |
 | UI 框架 | SwiftUI（面板、按钮、日志、单位详情） |
 | 地图渲染 | SpriteKit（六角格地图、单位显示、移动/攻击反馈） |
-| AI 接口 | `DecisionProvider` 协议（MockAI 已实现，预留本地 LLM） |
+| AI 接口 | `DecisionProvider` 协议（Local Planner / `MockAIClient` 已实现，预留本地 LLM） |
 
 ---
 
@@ -98,7 +98,7 @@ WWIIHexV0/
 
 - **规则与 UI 解耦**：游戏状态只能由 `RuleEngine` 修改，UI 只读取状态
 - **命令管线**：玩家 / AI → `Command` → `CommandValidator` 校验 → `CommandExecutor` 执行 → 日志
-- **AI 接口可替换**：`DecisionProvider` 协议，MockAI 已实现，未来可插入本地 LLM
+- **AI 接口可替换**：`DecisionProvider` 协议，Local Planner / `MockAIClient` 已实现，未来可插入本地 LLM
 - **地图分层**：hex（战术层，`HexCoord`）+ region（省份层，`RegionId`）+ dynamic theater（运行时战区，`hexToTheater`），不替换
 - **AI 命令与玩家命令共用同一管线**：都经 `RuleEngine` 校验执行
 
@@ -154,7 +154,9 @@ WWIIHexV0/
 
 ---
 
-## 当前完成进度
+## 历史里程碑 / Legacy Baseline
+
+以下 v0-v1.x 条目是 WWIIHexV0 历史基线和源码兼容背景，不代表 v6.10 当前默认剧本、主 UI 文案或玩家可见命名；当前默认入口仍是 `grey_tide_2030` 和现代 Blue / Red 口径。
 
 ### ✅ v0：六角格测试板（已完成）
 
@@ -171,7 +173,7 @@ WWIIHexV0/
 | 补给系统（supplied / lowSupply / encircled） | ✅ |
 | 包围判定与惩罚 | ✅ |
 | 回合系统（legacy：德军 AI 先手 → 盟军玩家 → 结算；v6.10 当前由玩家方 / 敌对方 / observer 判定控制权） | ✅ |
-| Legacy MockAI 将领 agent | ✅ |
+| Legacy Local Planner / MockAI 将领 agent | ✅ |
 | 结构化 JSON 命令解析与校验 | ✅ |
 | AI 决策日志面板（AgentPanelView 读 AgentDecisionRecord） | ✅ |
 | 胜利条件（巴斯托涅占领 / 消灭 3 单位 / 切断补给） | ✅ |
@@ -294,7 +296,7 @@ WWIIHexV0/
 2. LLM 只读取摘要，不读取完整地图
 3. LLM 输出必须经过 `CommandValidator` 校验才能执行
 4. 非法命令先尝试自动修复，修复失败则丢弃并记录日志
-5. 没有 LLM 时，MockAI 接管所有决策
+5. 没有 LLM 时，Local Planner / `MockAIClient` 接管所有决策
 
 **架构扩展约束（后续 agent 必须遵守）：**
 - 不要跳过命令管线直接修改 `GameState`
