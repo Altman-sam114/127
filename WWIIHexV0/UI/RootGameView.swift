@@ -255,6 +255,11 @@ struct RootGameView: View {
             canLoadSnapshot: container.canLoadLocalSnapshot,
             lastCommandMessage: container.lastCommandMessage,
             guidanceItems: container.playtestGuidanceItems,
+            playableSides: container.playableOperationSides,
+            nextOperationPlayerFaction: Binding(
+                get: { container.nextOperationPlayerFaction },
+                set: { container.setNextOperationPlayerFaction($0) }
+            ),
             observerModeEnabled: Binding(
                 get: { container.observerModeEnabled },
                 set: { container.setObserverModeEnabled($0) }
@@ -263,7 +268,7 @@ struct RootGameView: View {
                 get: { container.mapDisplayLayer },
                 set: { container.setMapDisplayLayer($0) }
             ),
-            onNewOperation: container.resetGame,
+            onNewOperation: container.resetGame(playerFaction:),
             onSaveSnapshot: container.saveLocalSnapshot,
             onLoadSnapshot: container.loadLocalSnapshot,
             onClearSnapshot: container.clearLocalSnapshot

@@ -1,6 +1,6 @@
 import Foundation
 
-enum Faction: String, Codable, Equatable, CaseIterable {
+enum Faction: String, Codable, Equatable, Hashable, CaseIterable {
     case germany
     case allies
     case blueForce
@@ -44,6 +44,22 @@ enum Faction: String, Codable, Equatable, CaseIterable {
 
     var usesAICommandPhase: Bool {
         alignment == .red
+    }
+
+    var commandPhase: GamePhase? {
+        switch alignment {
+        case .red:
+            return .germanAI
+        case .blue:
+            return .alliedPlayer
+        case .green,
+             .neutral:
+            return nil
+        }
+    }
+
+    func canCommand(in phase: GamePhase) -> Bool {
+        commandPhase == phase
     }
 
     var isNeutralLike: Bool {

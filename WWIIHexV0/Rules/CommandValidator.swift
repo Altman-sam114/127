@@ -226,13 +226,6 @@ struct CommandValidator {
     }
 
     private func phaseAllowsCommands(in state: GameState) -> Bool {
-        switch state.phase {
-        case .germanAI:
-            return state.activeFaction.usesAICommandPhase
-        case .alliedPlayer:
-            return state.activeFaction.usesPlayerCommandPhase
-        case .resolution:
-            return false
-        }
+        state.activeFaction.canCommand(in: state.phase)
     }
 }

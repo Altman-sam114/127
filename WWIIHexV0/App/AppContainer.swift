@@ -15,16 +15,18 @@ final class AppContainer: ObservableObject {
     @Published private(set) var observerModeEnabled: Bool
     @Published private(set) var mapDisplayLayer: MapDisplayLayer
     @Published private(set) var localSnapshotSummary: String?
+    @Published private(set) var playerFaction: Faction
+    @Published private(set) var nextOperationPlayerFaction: Faction
 
     let commandHandler: GameCommandHandling
     let dataLoader: DataLoader
     let generalRegistry: GeneralRegistry
-    let playerFaction: Faction
     let warPipelineMode: WarPipelineMode
     let turnManager: TurnManager?
     private var isRunningAI = false
     private static let localSnapshotKey = "modernCommandAgent.localSnapshot.v1"
     private static let localSnapshotSummaryKey = "modernCommandAgent.localSnapshot.summary.v1"
+    private static let localSnapshotPlayerFactionKey = "modernCommandAgent.localSnapshot.playerFaction.v1"
 
     init(
         gameState: GameState,
@@ -43,6 +45,7 @@ final class AppContainer: ObservableObject {
         self.dataLoader = dataLoader
         self.generalRegistry = generalRegistry
         self.playerFaction = playerFaction
+        self.nextOperationPlayerFaction = playerFaction
         self.warPipelineMode = warPipelineMode
         self.turnManager = turnManager
         self.selectedUnitId = nil
@@ -82,6 +85,7 @@ final class AppContainer: ObservableObject {
             commandHandler: commandHandler,
             dataLoader: dataLoader,
             generalRegistry: generalRegistry,
+            playerFaction: Self.defaultPlayerFaction(for: bootstrappedState),
             turnManager: turnManager,
             warPipelineMode: .marshalDirective
         )
@@ -121,12 +125,14 @@ final class AppContainer: ObservableObject {
         let stateSnapshot = gameState
         let pipelineMode = warPipelineMode
         let observerEnabled = observerModeEnabled
+        let playerFactionSnapshot = playerFaction
 
         Task {
             let outcome = await self.runAISequence(
                 from: stateSnapshot,
                 pipelineMode: pipelineMode,
-                observerEnabled: observerEnabled
+                observerEnabled: observerEnabled,
+                playerFaction: playerFactionSnapshot
             )
             await MainActor.run {
                 self.gameState = self.refreshedRuntimeState(outcome.state)
@@ -179,7 +185,7 @@ final class AppContainer: ObservableObject {
 
     func holdSelected() {
         guard let division = selectedActionDivision else {
-            appendInteractionEvent("Hold rejected: no active allied unit selected.")
+            appendInteractionEvent("Hold rejected: no active player-controlled unit selected.")
             return
         }
 
@@ -188,7 +194,7 @@ final class AppContainer: ObservableObject {
 
     func allowRetreatSelected() {
         guard let division = selectedActionDivision else {
-            appendInteractionEvent("Allow retreat rejected: no active allied unit selected.")
+            appendInteractionEvent("Allow retreat rejected: no active player-controlled unit selected.")
             return
         }
 
@@ -197,7 +203,7 @@ final class AppContainer: ObservableObject {
 
     func resupplySelected() {
         guard let division = selectedActionDivision else {
-            appendInteractionEvent("Resupply rejected: no active allied unit selected.")
+            appendInteractionEvent("Resupply rejected: no active player-controlled unit selected.")
             return
         }
 
@@ -218,7 +224,7 @@ final class AppContainer: ObservableObject {
 
     func orderModernFireMission() {
         guard let division = selectedActionDivision else {
-            appendInteractionEvent("Fire mission rejected: no active allied unit selected.")
+            appendInteractionEvent("Fire mission rejected: no active player-controlled unit selected.")
             return
         }
         guard let target = selectedFireMissionTarget() else {
@@ -259,7 +265,7 @@ final class AppContainer: ObservableObject {
 
     func orderSelectedGeneralHoldLine() {
         guard let zone = selectedGeneralCommandZone else {
-            appendInteractionEvent("General order rejected: no allied front zone selected.")
+            appendInteractionEvent("General order rejected: no player-controlled front zone selected.")
             return
         }
 
@@ -285,7 +291,7 @@ final class AppContainer: ObservableObject {
             return
         }
         guard let zone = selectedGeneralCommandZone else {
-            appendInteractionEvent("General order rejected: no allied source front zone available.")
+            appendInteractionEvent("General order rejected: no player-controlled source front zone available.")
             return
         }
 
@@ -338,14 +344,33 @@ final class AppContainer: ObservableObject {
         mapDisplayLayer = layer
     }
 
+    func setNextOperationPlayerFaction(_ faction: Faction) {
+        guard playableOperationSides.contains(faction) else {
+            return
+        }
+        nextOperationPlayerFaction = faction
+    }
+
     func resetGame() {
+        resetGame(playerFaction: nextOperationPlayerFaction)
+    }
+
+    func resetGame(playerFaction selectedPlayerFaction: Faction) {
         isRunningAI = false
+        let initialState = dataLoader.loadInitialGameState()
+        let resolvedPlayerFaction = initialState.divisions.contains(where: { $0.faction == selectedPlayerFaction })
+            ? selectedPlayerFaction
+            : Self.defaultPlayerFaction(for: initialState)
+        playerFaction = resolvedPlayerFaction
+        nextOperationPlayerFaction = resolvedPlayerFaction
         gameState = refreshGeneralAssignments(
-            in: StrategicStateBootstrapper().bootstrapIfNeeded(dataLoader.loadInitialGameState())
+            in: StrategicStateBootstrapper().bootstrapIfNeeded(
+                configuredNewOperationState(initialState, playerFaction: resolvedPlayerFaction)
+            )
         )
         resetTransientSessionState()
-        lastCommandMessage = "New Grey Tide 2030 operation loaded."
-        appendInteractionEvent("New operation loaded: \(scenarioDisplayName).")
+        lastCommandMessage = "New Grey Tide 2030 operation loaded for \(resolvedPlayerFaction.shortDisplayName)."
+        appendInteractionEvent("New operation loaded: \(scenarioDisplayName), player side \(resolvedPlayerFaction.displayName).")
         runAIIfNeeded()
     }
 
@@ -355,6 +380,7 @@ final class AppContainer: ObservableObject {
             let summary = snapshotSummary(for: gameState)
             UserDefaults.standard.set(data, forKey: Self.localSnapshotKey)
             UserDefaults.standard.set(summary, forKey: Self.localSnapshotSummaryKey)
+            UserDefaults.standard.set(playerFaction.rawValue, forKey: Self.localSnapshotPlayerFactionKey)
             localSnapshotSummary = summary
             lastCommandMessage = "Local snapshot saved."
             appendInteractionEvent("Local snapshot saved: \(summary).")
@@ -374,6 +400,10 @@ final class AppContainer: ObservableObject {
         do {
             let decoded = try JSONDecoder().decode(GameState.self, from: data)
             isRunningAI = false
+            if let savedPlayerFaction = Self.storedLocalSnapshotPlayerFaction() {
+                playerFaction = savedPlayerFaction
+                nextOperationPlayerFaction = savedPlayerFaction
+            }
             gameState = refreshGeneralAssignments(in: StrategicStateBootstrapper().bootstrapIfNeeded(decoded))
             resetTransientSessionState()
             let summary = snapshotSummary(for: gameState)
@@ -391,6 +421,7 @@ final class AppContainer: ObservableObject {
     func clearLocalSnapshot() {
         UserDefaults.standard.removeObject(forKey: Self.localSnapshotKey)
         UserDefaults.standard.removeObject(forKey: Self.localSnapshotSummaryKey)
+        UserDefaults.standard.removeObject(forKey: Self.localSnapshotPlayerFactionKey)
         localSnapshotSummary = nil
         lastCommandMessage = "Local snapshot cleared."
         appendInteractionEvent("Local snapshot cleared.")
@@ -398,6 +429,10 @@ final class AppContainer: ObservableObject {
 
     var canLoadLocalSnapshot: Bool {
         UserDefaults.standard.data(forKey: Self.localSnapshotKey) != nil
+    }
+
+    var playableOperationSides: [Faction] {
+        [.blueForce, .redForce]
     }
 
     var scenarioDisplayName: String {
@@ -423,9 +458,16 @@ final class AppContainer: ObservableObject {
     }
 
     var playtestControlModeSummary: String {
-        observerModeEnabled
-            ? "Observer AI"
-            : "Manual player command"
+        if observerModeEnabled {
+            return "Observer AI"
+        }
+
+        if gameState.activeFaction == playerFaction,
+           playerFaction.canCommand(in: gameState.phase) {
+            return "Manual \(playerFaction.shortDisplayName) command"
+        }
+
+        return "\(gameState.activeFaction.shortDisplayName) controlled by AI"
     }
 
     var playtestGuidanceItems: [String] {
@@ -450,8 +492,8 @@ final class AppContainer: ObservableObject {
             items.append("Review recent fire effects before committing ground maneuver.")
         }
 
-        if gameState.phase != .alliedPlayer {
-            items.append("End Turn or enable Observer to let AI command phases resolve.")
+        if gameState.activeFaction != playerFaction || !playerFaction.canCommand(in: gameState.phase) {
+            items.append("End Turn or enable Observer to let non-player command phases resolve.")
         }
 
         return Array(items.prefix(4))
@@ -591,7 +633,7 @@ final class AppContainer: ObservableObject {
         guard let division = selectedDivision,
               division.faction == playerFaction,
               gameState.activeFaction == playerFaction,
-              gameState.phase == .alliedPlayer,
+              playerFaction.canCommand(in: gameState.phase),
               !division.hasActed else {
             return nil
         }
@@ -602,7 +644,7 @@ final class AppContainer: ObservableObject {
     private var canIssuePlayerDirective: Bool {
         !observerModeEnabled &&
             gameState.activeFaction == playerFaction &&
-            gameState.phase == .alliedPlayer
+            playerFaction.canCommand(in: gameState.phase)
     }
 
     private var selectedAttackTarget: (region: RegionNode, zone: FrontZone)? {
@@ -657,7 +699,7 @@ final class AppContainer: ObservableObject {
 
         guard let divisionId = command.actingDivisionId,
               previousState.activeFaction == playerFaction,
-              previousState.phase == .alliedPlayer,
+              playerFaction.canCommand(in: previousState.phase),
               previousState.division(id: divisionId)?.faction == playerFaction else {
             return next
         }
@@ -740,7 +782,7 @@ final class AppContainer: ObservableObject {
         command: (Division, HexCoord) -> Command
     ) {
         guard let division = selectedActionDivision else {
-            appendInteractionEvent("\(missionName) rejected: no active allied unit selected.")
+            appendInteractionEvent("\(missionName) rejected: no active player-controlled unit selected.")
             return
         }
         guard let target = selectedMissionTargetHex() else {
@@ -916,19 +958,22 @@ final class AppContainer: ObservableObject {
     }
 
     private func shouldRunAI(for faction: Faction, phase: GamePhase) -> Bool {
-        if faction.usesAICommandPhase {
-            return phase == .germanAI
+        guard faction.canCommand(in: phase) else {
+            return false
         }
-        if faction.usesPlayerCommandPhase {
-            return observerModeEnabled && phase == .alliedPlayer
+
+        if faction == playerFaction {
+            return observerModeEnabled
         }
-        return false
+
+        return faction.isHostile(to: playerFaction)
     }
 
     private func runAISequence(
         from state: GameState,
         pipelineMode: WarPipelineMode,
-        observerEnabled: Bool
+        observerEnabled: Bool,
+        playerFaction: Faction
     ) async -> AgentTurnOutcome {
         var currentState = refreshedRuntimeState(state)
         var lastOutcome: AgentTurnOutcome?
@@ -936,7 +981,11 @@ final class AppContainer: ObservableObject {
 
         for _ in 0..<maxSteps {
             currentState = refreshedRuntimeState(currentState)
-            guard shouldRunAIInSnapshot(state: currentState, observerEnabled: observerEnabled) else {
+            guard shouldRunAIInSnapshot(
+                state: currentState,
+                observerEnabled: observerEnabled,
+                playerFaction: playerFaction
+            ) else {
                 break
             }
 
@@ -970,14 +1019,20 @@ final class AppContainer: ObservableObject {
         )
     }
 
-    private func shouldRunAIInSnapshot(state: GameState, observerEnabled: Bool) -> Bool {
-        if state.activeFaction.usesAICommandPhase {
-            return state.phase == .germanAI
+    private func shouldRunAIInSnapshot(
+        state: GameState,
+        observerEnabled: Bool,
+        playerFaction: Faction
+    ) -> Bool {
+        guard state.activeFaction.canCommand(in: state.phase) else {
+            return false
         }
-        if state.activeFaction.usesPlayerCommandPhase {
-            return observerEnabled && state.phase == .alliedPlayer
+
+        if state.activeFaction == playerFaction {
+            return observerEnabled
         }
-        return false
+
+        return state.activeFaction.isHostile(to: playerFaction)
     }
 
     private func turnManager(for faction: Faction, state: GameState) -> TurnManager {
@@ -1146,6 +1201,37 @@ final class AppContainer: ObservableObject {
         return "Selected region: \(region.name) (\(selectedRegionId.rawValue))."
     }
 
+    private func configuredNewOperationState(
+        _ initialState: GameState,
+        playerFaction selectedPlayerFaction: Faction
+    ) -> GameState {
+        var state = initialState
+        if state.divisions.contains(where: { $0.faction == selectedPlayerFaction }),
+           let commandPhase = selectedPlayerFaction.commandPhase {
+            state.activeFaction = selectedPlayerFaction
+            state.phase = commandPhase
+        }
+        return state
+    }
+
+    private static func defaultPlayerFaction(for state: GameState) -> Faction {
+        if state.divisions.contains(where: { $0.faction == .blueForce }) {
+            return .blueForce
+        }
+
+        if state.divisions.contains(where: { $0.faction == .allies }) {
+            return .allies
+        }
+
+        if state.activeFaction.canCommand(in: state.phase) {
+            return state.activeFaction
+        }
+
+        return state.divisions
+            .map(\.faction)
+            .first(where: { $0.commandPhase == .alliedPlayer }) ?? .allies
+    }
+
     private func appendInteractionEvent(_ message: String) {
         interactionLog.append(
             GameLogEntry(
@@ -1163,11 +1249,15 @@ final class AppContainer: ObservableObject {
     }
 
     private func snapshotSummary(for state: GameState) -> String {
-        "\(scenarioDisplayName) turn \(state.turn)/\(state.maxTurns), \(state.activeFaction.shortDisplayName), \(state.phase.displayName)"
+        "\(scenarioDisplayName) turn \(state.turn)/\(state.maxTurns), player \(playerFaction.shortDisplayName), active \(state.activeFaction.shortDisplayName), \(state.phase.displayName)"
     }
 
     private static func storedLocalSnapshotSummary() -> String? {
         UserDefaults.standard.string(forKey: localSnapshotSummaryKey)
+    }
+
+    private static func storedLocalSnapshotPlayerFaction() -> Faction? {
+        Faction.dataValue(UserDefaults.standard.string(forKey: localSnapshotPlayerFactionKey))
     }
 
 }

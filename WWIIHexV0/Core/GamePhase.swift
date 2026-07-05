@@ -8,9 +8,9 @@ enum GamePhase: String, Codable, Equatable, CaseIterable {
     var displayName: String {
         switch self {
         case .germanAI:
-            return "AI Command"
+            return "Red Command"
         case .alliedPlayer:
-            return "Player Command"
+            return "Blue Command"
         case .resolution:
             return "Resolution"
         }

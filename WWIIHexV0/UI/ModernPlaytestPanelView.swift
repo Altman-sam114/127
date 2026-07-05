@@ -10,9 +10,11 @@ struct ModernPlaytestPanelView: View {
     let canLoadSnapshot: Bool
     let lastCommandMessage: String?
     let guidanceItems: [String]
+    let playableSides: [Faction]
+    @Binding var nextOperationPlayerFaction: Faction
     @Binding var observerModeEnabled: Bool
     @Binding var mapDisplayLayer: MapDisplayLayer
-    let onNewOperation: () -> Void
+    let onNewOperation: (Faction) -> Void
     let onSaveSnapshot: () -> Void
     let onLoadSnapshot: () -> Void
     let onClearSnapshot: () -> Void
@@ -35,9 +37,22 @@ struct ModernPlaytestPanelView: View {
             .clipShape(RoundedRectangle(cornerRadius: ModernCommandDesignTokens.cornerRadius))
 
             VStack(alignment: .leading, spacing: ModernCommandDesignTokens.compactSpacing) {
-                Button("New Operation", systemImage: "arrow.counterclockwise", action: onNewOperation)
-                    .buttonStyle(.borderedProminent)
-                    .frame(maxWidth: .infinity, minHeight: ModernCommandDesignTokens.minimumTapSize, alignment: .leading)
+                Picker("New Operation Side", selection: $nextOperationPlayerFaction) {
+                    ForEach(playableSides, id: \.rawValue) { side in
+                        Text(side.shortDisplayName).tag(side)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .frame(minHeight: ModernCommandDesignTokens.minimumTapSize)
+
+                Button {
+                    onNewOperation(nextOperationPlayerFaction)
+                } label: {
+                    Label("New Operation", systemImage: "arrow.counterclockwise")
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .buttonStyle(.borderedProminent)
+                .frame(maxWidth: .infinity, minHeight: ModernCommandDesignTokens.minimumTapSize, alignment: .leading)
 
                 HStack(spacing: ModernCommandDesignTokens.compactSpacing) {
                     Button("Save", systemImage: "square.and.arrow.down", action: onSaveSnapshot)

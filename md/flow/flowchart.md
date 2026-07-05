@@ -69,7 +69,7 @@ flowchart TD
 ```mermaid
 flowchart LR
     LEGACY["旧源码 / 旧 JSON 兼容名<br/>Faction.germany/allies<br/>GamePhase.germanAI/alliedPlayer<br/>Division.name<br/>ProductionKind.panzerDivision<br/>MapDisplayLayer.province"]:::legacy
-    DISPLAY["现代显示层<br/>Red / Blue Force<br/>AI Command / Player Command<br/>operationalDisplayName<br/>Armored / Mechanized Task Force<br/>Sector / Operational / Brigade"]:::display
+    DISPLAY["现代显示层<br/>Red / Blue Force<br/>Red Command / Blue Command<br/>operationalDisplayName<br/>Armored / Mechanized Task Force<br/>Sector / Operational / Brigade"]:::display
     RULES["规则权威不变<br/>Command / ZoneDirective<br/>WarCommandExecutor<br/>RuleEngine"]:::rules
     RISK["v6.1-v6.2 待迁移<br/>ROE 替换 Faction.opponent<br/>中立不再 fallback allies<br/>grey_tide_2030 默认数据"]:::risk
 
@@ -314,24 +314,25 @@ flowchart LR
     classDef rules fill:#ccfbf1,stroke:#0f766e,color:#052e16
 ```
 
-## 0.11 v6.9 新局、继续和试玩闭环首轮
+## 0.11 v6.9-v6.10 新局、继续和试玩闭环
 
-这张图描述当前 v6.9 第一批实现。Playtest 面板只调用 `AppContainer`，本地快照保存的是 `GameState` JSON，不修改默认数据资源。
+这张图描述当前 v6.9-v6.10 试玩闭环。Playtest 面板只调用 `AppContainer`，红/蓝新局选择、本地快照和地图图层设置都不修改默认数据资源。
 
 ```mermaid
 flowchart LR
-    UI["ModernPlaytestPanelView<br/>Playtest tab<br/>New / Save / Continue / Clear"]:::display
+    UI["ModernPlaytestPanelView<br/>Playtest tab<br/>Blue / Red selector<br/>New / Save / Continue / Clear"]:::display
     SETTINGS["试玩设置<br/>Observer AI toggle<br/>Default Layer picker"]:::display
-    ROLE["扮演方说明<br/>Player Side / Opposition<br/>Control Mode"]:::display
+    ROLE["红蓝新局与扮演方<br/>New Operation Side<br/>Player Side / Opposition<br/>Control Mode"]:::display
     GUIDE["短引导<br/>playtestGuidanceItems<br/>lastCommandMessage"]:::display
-    APP["AppContainer<br/>resetGame / saveLocalSnapshot<br/>loadLocalSnapshot / clearLocalSnapshot"]:::app
-    SNAP["UserDefaults 本地快照<br/>modernCommandAgent.localSnapshot.v1<br/>GameState JSON"]:::data
+    APP["AppContainer<br/>resetGame(playerFaction:)<br/>save / load / clear snapshot"]:::app
+    SNAP["UserDefaults 本地快照<br/>GameState JSON<br/>playerFaction raw value"]:::data
     BOOT["StrategicStateBootstrapper<br/>refreshGeneralAssignments<br/>清空选择/高亮/临时日志"]:::rules
     STATE["GameState<br/>当前试玩局"]:::state
     RES["默认 JSON 资源<br/>grey_tide_2030<br/>不被存档写回"]:::data
 
     UI --> APP
     SETTINGS --> APP
+    ROLE --> APP
     STATE --> ROLE
     STATE --> GUIDE
     APP --> SNAP
@@ -358,11 +359,13 @@ flowchart LR
     REPORT["v6.10 release candidate report<br/>residual scan / evidence matrix"]:::doc
     RULES["规则权威不变<br/>Command / ZoneDirective<br/>WarCommandExecutor / RuleEngine"]:::rules
     CLOUD["main push<br/>GitHub Actions artifact<br/>manifest / junit / xcodebuild.log"]:::cloud
+    SIDE["Playtest side selector<br/>Blue / Red new operation<br/>AI controls non-player hostile side"]:::display
     RUNTIME["人工授权后再做<br/>launch / UI smoke / screenshot<br/>10-20 observer turns / performance"]:::risk
 
     DISPLAY --> REPORT
     ICON --> REPORT
     MAP --> REPORT
+    SIDE --> REPORT
     RULES --> REPORT
     REPORT --> CLOUD
     REPORT --> RUNTIME

@@ -69,7 +69,7 @@ struct CommandPanelView: View {
 
         return selectedDivision.faction == playerFaction &&
             activeFaction == playerFaction &&
-            phase == .alliedPlayer &&
+            playerFaction.canCommand(in: phase) &&
             !selectedDivision.hasActed
     }
 
@@ -94,7 +94,7 @@ struct CommandPanelView: View {
             return "Hostile formation selected. Commands disabled."
         }
 
-        guard activeFaction == playerFaction, phase == .alliedPlayer else {
+        guard activeFaction == playerFaction, playerFaction.canCommand(in: phase) else {
             return "Commands unavailable during \(phase.displayName)."
         }
 
