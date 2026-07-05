@@ -6,6 +6,8 @@ struct ModernPlaytestPanelView: View {
     let opponentSideName: String
     let controlModeText: String
     let turnText: String
+    let objectiveSummaryText: String?
+    let objectiveThresholdText: String?
     let localSnapshotSummary: String?
     let canLoadSnapshot: Bool
     let lastCommandMessage: String?
@@ -30,6 +32,13 @@ struct ModernPlaytestPanelView: View {
                 LabeledContent("Opposition", value: opponentSideName)
                 LabeledContent("Control", value: controlModeText)
                 LabeledContent("Turn", value: turnText)
+                if let objectiveSummaryText {
+                    LabeledContent("Objectives", value: objectiveSummaryText)
+                }
+                if let objectiveThresholdText {
+                    Label(objectiveThresholdText, systemImage: "target")
+                        .foregroundStyle(.secondary)
+                }
             }
             .font(.caption)
             .padding(ModernCommandDesignTokens.compactSpacing)

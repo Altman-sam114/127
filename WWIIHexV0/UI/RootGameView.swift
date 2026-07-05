@@ -251,6 +251,8 @@ struct RootGameView: View {
             opponentSideName: container.primaryOpponentDisplayName,
             controlModeText: container.playtestControlModeSummary,
             turnText: "\(container.gameState.turn) / \(container.gameState.maxTurns)",
+            objectiveSummaryText: container.playtestObjectiveSummaryText,
+            objectiveThresholdText: container.playtestObjectiveThresholdText,
             localSnapshotSummary: container.localSnapshotSummary,
             canLoadSnapshot: container.canLoadLocalSnapshot,
             lastCommandMessage: container.lastCommandMessage,

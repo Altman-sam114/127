@@ -1,6 +1,19 @@
 import Foundation
 
 struct VictoryRules {
+    static let greyTideMainObjectiveIds: Set<String> = [
+        "obj_east_airport",
+        "obj_harbor_terminal",
+        "obj_river_bridge",
+        "obj_comms_center",
+        "obj_radar_ridge",
+        "obj_fuel_depot",
+        "obj_rail_junction",
+        "obj_highland_pass",
+        "obj_coastal_battery",
+        "obj_refinery_district"
+    ]
+
     func updateVictoryState(in state: inout GameState) {
         guard state.victoryState.winner == nil else {
             return
@@ -85,23 +98,13 @@ struct VictoryRules {
         }
     }
 
-    private func greyTideObjectiveControlCounts(in state: GameState) -> (blue: Int, red: Int) {
-        let keyObjectiveIds: Set<String> = [
-            "obj_east_airport",
-            "obj_harbor_terminal",
-            "obj_river_bridge",
-            "obj_comms_center",
-            "obj_radar_ridge",
-            "obj_fuel_depot",
-            "obj_rail_junction",
-            "obj_highland_pass",
-            "obj_coastal_battery",
-            "obj_refinery_district"
-        ]
-
+    static func greyTideObjectiveControlCounts(in state: GameState) -> (blue: Int, red: Int, neutral: Int, total: Int) {
         var blue = 0
         var red = 0
-        for objective in state.map.objectives where keyObjectiveIds.contains(objective.id) {
+        var neutral = 0
+        var total = 0
+        for objective in state.map.objectives where greyTideMainObjectiveIds.contains(objective.id) {
+            total += 1
             switch state.map.tile(at: objective.coord)?.controller?.alignment {
             case .some(.blue):
                 blue += 1
@@ -110,10 +113,14 @@ struct VictoryRules {
             case .some(.green),
                  .some(.neutral),
                  .none:
-                continue
+                neutral += 1
             }
         }
 
-        return (blue, red)
+        return (blue, red, neutral, total)
+    }
+
+    private func greyTideObjectiveControlCounts(in state: GameState) -> (blue: Int, red: Int, neutral: Int, total: Int) {
+        Self.greyTideObjectiveControlCounts(in: state)
     }
 }

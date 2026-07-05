@@ -470,6 +470,33 @@ final class AppContainer: ObservableObject {
         return "\(gameState.activeFaction.shortDisplayName) controlled by AI"
     }
 
+    var playtestObjectiveSummaryText: String? {
+        guard gameState.scenarioId == "grey_tide_2030" else {
+            return nil
+        }
+
+        let control = VictoryRules.greyTideObjectiveControlCounts(in: gameState)
+        return "Blue \(control.blue)/\(control.total), Red \(control.red), Neutral \(control.neutral)"
+    }
+
+    var playtestObjectiveThresholdText: String? {
+        guard gameState.scenarioId == "grey_tide_2030" else {
+            return nil
+        }
+
+        let control = VictoryRules.greyTideObjectiveControlCounts(in: gameState)
+        if let winner = gameState.victoryState.winner {
+            return "\(winner.shortDisplayName) victory condition reached."
+        }
+
+        let remaining = max(0, 7 - control.blue)
+        if remaining == 0 {
+            return "Blue immediate victory threshold is met."
+        }
+
+        return "Blue needs \(remaining) more for instant win; final turn needs 6."
+    }
+
     var playtestGuidanceItems: [String] {
         var items: [String] = []
         if selectedDivision == nil {

@@ -323,6 +323,7 @@ flowchart LR
     UI["ModernPlaytestPanelView<br/>Playtest tab<br/>Blue / Red selector<br/>New / Save / Continue / Clear"]:::display
     SETTINGS["试玩设置<br/>Observer AI toggle<br/>Default Layer picker"]:::display
     ROLE["红蓝新局与扮演方<br/>New Operation Side<br/>Player Side / Opposition<br/>Control Mode"]:::display
+    OBJECTIVE["主目标控制摘要<br/>Blue / Red / Neutral count<br/>Victory threshold"]:::display
     GUIDE["短引导<br/>playtestGuidanceItems<br/>lastCommandMessage"]:::display
     APP["AppContainer<br/>resetGame(playerFaction:)<br/>save / load / clear snapshot"]:::app
     SNAP["UserDefaults 本地快照<br/>GameState JSON<br/>playerFaction raw value"]:::data
@@ -334,6 +335,7 @@ flowchart LR
     SETTINGS --> APP
     ROLE --> APP
     STATE --> ROLE
+    STATE --> OBJECTIVE
     STATE --> GUIDE
     APP --> SNAP
     SNAP --> APP --> BOOT --> STATE
@@ -360,12 +362,14 @@ flowchart LR
     RULES["规则权威不变<br/>Command / ZoneDirective<br/>WarCommandExecutor / RuleEngine"]:::rules
     CLOUD["main push<br/>GitHub Actions artifact<br/>manifest / junit / xcodebuild.log"]:::cloud
     SIDE["Playtest side selector<br/>Blue / Red new operation<br/>AI controls non-player hostile side"]:::display
+    OBJ["Playtest objective summary<br/>10 main objectives<br/>Blue threshold / Red hold condition"]:::display
     RUNTIME["人工授权后再做<br/>launch / UI smoke / screenshot<br/>10-20 observer turns / performance"]:::risk
 
     DISPLAY --> REPORT
     ICON --> REPORT
     MAP --> REPORT
     SIDE --> REPORT
+    OBJ --> REPORT
     RULES --> REPORT
     REPORT --> CLOUD
     REPORT --> RUNTIME

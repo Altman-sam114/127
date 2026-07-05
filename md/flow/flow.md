@@ -72,7 +72,7 @@ Release Candidate Readiness
 - v6.7 玩家现代任务 UI 只调用 `AppContainer` 方法；任务最终落成 `Command` 或 `ZoneDirective`，不得在 SwiftUI View 里直接改 `GameState`。
 - v6.8 只新增现代 C2 展示层和地图态势 overlay；HUD、任务面板和 SpriteKit 标记只读 `GameState`，不绕过规则系统写状态。
 - v6.9 Playtest tab 只通过 `AppContainer` 做新局、保存/继续本地快照、observer 和图层设置；本地快照是 `GameState` JSON，不污染默认 JSON 资源。
-- v6.10 发布候选准备只收口玩家可见命名、App 图标资产、玩家扮演方说明、地图补给源标签、残留扫描和发布前重验证清单；未获授权前不声明正式发布或运行时发布级已验证。
+- v6.10 发布候选准备收口玩家可见命名、App 图标资产、玩家扮演方说明、主目标控制摘要、地图补给源标签、残留扫描和发布前重验证清单；未获授权前不声明正式发布或运行时发布级已验证。
 - 统治者层只作为后续方向预留；当前执行主链路不调用 `RulerAgent`，也不写统治者决策记录。
 
 ## 0.1 云端协作与验证闭环
@@ -499,6 +499,7 @@ RootGameView
   -> ModernPlaytestPanelView
       - Operation / Player / Turn 摘要
       - New Operation Side
+      - Main Objective Control 摘要
       - New Operation
       - Save / Continue / Clear Snapshot
       - Observer AI toggle
@@ -509,6 +510,7 @@ RootGameView
       - saveLocalSnapshot()
       - loadLocalSnapshot()
       - clearLocalSnapshot()
+      - playtestObjectiveSummaryText / playtestObjectiveThresholdText
       - playtestGuidanceItems
 ```
 
@@ -523,6 +525,7 @@ RootGameView
 
 引导边界：
 
+- `playtestObjectiveSummaryText` 与 `playtestObjectiveThresholdText` 从 `VictoryRules.greyTideObjectiveControlCounts(in:)` 派生，显示 Blue / Red / Neutral 对十个主目标的控制数和蓝方胜利阈值；它只读 `GameState`，不写胜负状态。
 - `playtestGuidanceItems` 根据当前选择、可行动状态、visible contacts、fire support result 和 phase 生成最多 4 条短提示。
 - 提示显示在 Playtest tab 内，不遮挡地图核心交互。
 - 本轮不做全屏 onboarding、弹窗教程、截图检查或 UI 点击自动化。
