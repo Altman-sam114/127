@@ -11,11 +11,14 @@ struct InfoPanelToggle<Summary: View, Content: View>: View {
                 Button {
                     isExpanded.toggle()
                 } label: {
-                    Text("[ INFO ]")
-                        .font(.caption.weight(.semibold))
+                    Label(isExpanded ? "Hide Info" : "Info", systemImage: "info.circle")
+                        .font(.caption.bold())
                         .lineLimit(1)
                 }
                 .buttonStyle(.bordered)
+                .frame(minWidth: 44, minHeight: 44)
+                .accessibilityLabel(isExpanded ? "Hide information panel" : "Show information panel")
+                .accessibilityValue(isExpanded ? "Expanded" : "Collapsed")
 
                 Spacer(minLength: 8)
             }

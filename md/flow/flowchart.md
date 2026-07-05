@@ -410,6 +410,7 @@ flowchart TD
     FRONT["前线层<br/>FrontLine / FrontSegment<br/>按双方动态战区的真实相邻 hex 生成"]:::derived
     DEPLOY["部署层<br/>WarDeploymentState<br/>用 hexToFrontZone 把单位分成前线/纵深/驻军"]:::derived
     ECO["经济总账<br/>EconomyState / EconomyRules<br/>收入、维护费、生产队列、自动补员"]:::economy
+    DIP["ROE / DiplomacyState<br/>敌我关系、限制状态和国家指挥预留"]:::derived
     PLAYER["玩家输入<br/>点击地图、任务面板、试玩面板<br/>移动、攻击、结束回合"]:::input
     PLAYTEST["试玩闭环<br/>ModernPlaytestPanelView<br/>New / Save / Continue / Observer / Layer / Guide"]:::ui
     MISSION["玩家现代任务面板<br/>ModernMissionPanelView<br/>Recon / UAV / Fire / SEAD / EW / Assault / Hold / Resupply"]:::command

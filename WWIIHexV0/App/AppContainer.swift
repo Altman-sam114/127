@@ -564,31 +564,50 @@ final class AppContainer: ObservableObject {
 
     var playtestGuidanceItems: [String] {
         var items: [String] = []
-        if selectedDivision == nil {
-            items.append("Select a friendly formation on the map.")
-        } else if canIssueSelectedModernUnitMission {
-            items.append("Use Tasks for recon, fires, EW, sustainment, or maneuver.")
+
+        if observerModeEnabled {
+            appendGuidance("Observer AI is enabled: \(playtestActionGateDetail).", to: &items)
+        } else if shouldRunAI(for: gameState.activeFaction, phase: gameState.phase) {
+            appendGuidance("Use End Turn or Observer AI to resolve \(gameState.activeFaction.shortDisplayName).", to: &items)
         } else {
-            items.append("Selected formation is waiting, spent, or outside player command.")
+            appendGuidance(playtestActionGateDetail, to: &items)
+        }
+
+        if canOrderModernAssaultObjective || canOrderModernHoldDelay {
+            appendGuidance("Command sector directive is ready in Tasks.", to: &items)
+        } else if selectedDivision == nil {
+            appendGuidance("Select a friendly formation or command sector on the map.", to: &items)
+        } else if canIssueSelectedModernUnitMission {
+            appendGuidance("Use Tasks for recon, fires, EW, sustainment, or maneuver.", to: &items)
+            if canIssueSelectedFireMission {
+                appendGuidance("Fire Mission has a valid target.", to: &items)
+            } else {
+                appendGuidance("Select a target hex, sector, or contact before Fire Mission.", to: &items)
+            }
+        } else {
+            appendGuidance(modernMissionAvailabilityText, to: &items)
         }
 
         if gameState.operationalAwareness.visibleContacts(for: playerFaction).isEmpty {
-            items.append("Run Recon Area or UAV Orbit before calling precision fires.")
+            appendGuidance("Run Recon Area or UAV Orbit before calling precision fires.", to: &items)
         } else {
-            items.append("Visible contacts can drive fire missions and contact-gated attacks.")
+            appendGuidance("Visible contacts can drive fire missions and contact-gated attacks.", to: &items)
         }
 
         if gameState.fireSupportState.lastMissionResults.isEmpty {
-            items.append("Fire results and rejected commands appear in Log and AI tabs.")
+            appendGuidance("Fire results and rejected commands appear in Log and AI tabs.", to: &items)
         } else {
-            items.append("Review recent fire effects before committing ground maneuver.")
-        }
-
-        if gameState.activeFaction != playerFaction || !playerFaction.canCommand(in: gameState.phase) {
-            items.append("End Turn or enable Observer to let non-player command phases resolve.")
+            appendGuidance("Review recent fire effects before committing ground maneuver.", to: &items)
         }
 
         return Array(items.prefix(4))
+    }
+
+    private func appendGuidance(_ message: String, to items: inout [String]) {
+        guard !items.contains(message) else {
+            return
+        }
+        items.append(message)
     }
 
     private func resetTransientSessionState() {

@@ -122,7 +122,7 @@ struct AgentPanelView: View {
             }
 
             if !directiveRecords.isEmpty {
-                Text("Zone Directives")
+                Text("Operational Directives")
                     .font(.caption)
                     .foregroundStyle(.secondary)
 

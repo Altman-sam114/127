@@ -135,7 +135,7 @@ WWIIHexV0/
 | `UI/ModernMissionPanelView.swift` | v6.7+ 玩家任务面板 | Recon / UAV / FireMission / SEAD / Assault / Hold / Resupply / EW 任务入口，v6.8 使用 C2 token 统一样式，所有 action 交给 `AppContainer` |
 | `UI/ModernPlaytestPanelView.swift` | v6.9 试玩闭环面板 | 新局、保存/继续本地快照、observer AI、地图图层和短引导入口，所有 action 交给 `AppContainer` |
 | `UI/AgentPanelView.swift` | 决策展示 | 读 `record`（agent/provider/intent/context/command-chain replay/command results/errors/raw JSON） |
-| `UI/RootGameView.swift` | 启动触发 | `.task { container.runAIIfNeeded() }` |
+| `UI/RootGameView.swift` | 主界面接线 | HUD / command panels call `advanceOrRunAI()`；命令提交、重置和继续后由 `AppContainer.runAIIfNeeded()` 受控触发 |
 
 **Local Planner 行为：**
 跳过已行动 formation → 低补给/包围优先 resupply → contact-gated 目标优先 attack / fire support → 依据当前 objective 和态势推进 → 否则 hold。

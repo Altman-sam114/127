@@ -56,15 +56,13 @@ struct RootGameView: View {
                         .transition(.opacity)
                 }
 
-                Button {
-                    isInfoExpanded.toggle()
-                } label: {
-                    Text("[ INFO ]")
-                        .font(.caption.weight(.semibold))
-                        .lineLimit(1)
+                VStack {
+                    Spacer()
+                    HStack {
+                        infoToggleButton
+                        Spacer()
+                    }
                 }
-                .buttonStyle(.bordered)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
                 .padding(10)
 
                 UnitTooltipView(division: container.selectedDivision)
@@ -96,6 +94,21 @@ struct RootGameView: View {
             onHexTapped: container.handleBoardTap
         )
         .accessibilityLabel("Modern command hex operations board")
+    }
+
+    private var infoToggleButton: some View {
+        Button {
+            isInfoExpanded.toggle()
+        } label: {
+            Label(isInfoExpanded ? "Hide Info" : "Info", systemImage: "info.circle")
+                .font(.caption.bold())
+                .lineLimit(1)
+        }
+        .buttonStyle(.bordered)
+        .frame(minWidth: 44, minHeight: 44)
+        .accessibilityLabel(isInfoExpanded ? "Hide command panel" : "Show command panel")
+        .accessibilityValue(isInfoExpanded ? "Expanded" : "Collapsed")
+        .accessibilityHint("Opens the unit, mission, playtest, log, economy, diplomacy, and AI panels.")
     }
 
     private func infoOverlay(isLandscape: Bool, size: CGSize) -> some View {

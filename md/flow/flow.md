@@ -1305,9 +1305,13 @@ handleBoardTap(coord)
   - `Contact`
   - `Brigade`
 - `Observer` toggle。
-- `[ INFO ]` 面板，内含：
-  - Formation + Sector + Command
+- `Info` / `Hide Info` toggle：44pt 最小触控区，只打开/关闭信息面板，不覆盖整张地图点击区。
+- Info 面板 tabs：
+  - Formation
+  - Tasks
+  - Playtest
   - Sector
+  - Command
   - Log
   - Sustainment
   - ROE
