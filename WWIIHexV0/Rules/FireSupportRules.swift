@@ -68,6 +68,15 @@ struct FireSupportRules {
            !targetDivision.faction.isHostile(to: issuer.faction) {
             return .invalid(.invalidTargetFaction)
         }
+        if isRestrictedFireZone(at: plan.targetCoord, for: issuer.faction, in: state),
+           !canEngageRestrictedFireZone(
+               plan: plan,
+               issuer: issuer,
+               munitionClass: munitionClass,
+               in: state
+           ) {
+            return .invalid(.restrictedFireZone)
+        }
         guard !wouldCreateFriendlyProximityRejection(plan: plan, issuer: issuer, munitionClass: munitionClass, in: state) else {
             return .invalid(.friendlyProximityRisk)
         }
@@ -301,21 +310,31 @@ struct FireSupportRules {
         guard let resolved = resolveTarget(target, for: issuer.faction, in: state) else {
             return nil
         }
+        let targetCoord = currentTargetCoord(
+            targetDivisionId: resolved.targetDivisionId,
+            fallback: resolved.coord,
+            in: state
+        )
 
-        let adThreat = airDefenseThreat(near: resolved.coord, against: issuer.faction, in: state)
-        let ewPenalty = electronicWarfarePenalty(at: resolved.coord, against: issuer.faction.alignment, in: state)
+        let adThreat = airDefenseThreat(near: targetCoord, against: issuer.faction, in: state)
+        let ewPenalty = electronicWarfarePenalty(at: targetCoord, against: issuer.faction.alignment, in: state)
+        let restrictedFirePenalty = isRestrictedFireZone(at: targetCoord, for: issuer.faction, in: state) ? 1 : 0
         let risks = riskFlags(
             contact: resolved.contact,
-            targetCoord: resolved.coord,
+            targetCoord: targetCoord,
             issuer: issuer,
             munitionClass: munitionClass,
             airDefenseThreat: adThreat,
             electronicWarfarePenalty: ewPenalty,
+            restrictedFirePenalty: restrictedFirePenalty,
             in: state
         )
         let expectedEffect = max(
             0,
-            munitionClass.baseDamage + resolved.quality.rank - (munitionClass.usesAirTasking ? adThreat / 2 : 0) - ewPenalty
+            munitionClass.baseDamage + resolved.quality.rank
+                - (munitionClass.usesAirTasking ? adThreat / 2 : 0)
+                - ewPenalty
+                - restrictedFirePenalty
         )
         let mission = FireMission(
             id: "fm_\(state.turn)_\(issuer.id)_\(targetStableId(target))_\(munitionClass.rawValue)",
@@ -332,11 +351,23 @@ struct FireSupportRules {
         return FireMissionPlan(
             mission: mission,
             contact: resolved.contact,
-            targetCoord: resolved.coord,
+            targetCoord: targetCoord,
             targetDivisionId: resolved.targetDivisionId,
             airDefenseThreat: adThreat,
             electronicWarfarePenalty: ewPenalty
         )
+    }
+
+    private func currentTargetCoord(
+        targetDivisionId: String?,
+        fallback: HexCoord,
+        in state: GameState
+    ) -> HexCoord {
+        guard let targetDivisionId,
+              let division = state.division(id: targetDivisionId) else {
+            return fallback
+        }
+        return division.coord
     }
 
     private func resolveTarget(
@@ -388,12 +419,19 @@ struct FireSupportRules {
         }
 
         let airDefensePenalty = munitionClass.usesAirTasking ? plan.airDefenseThreat / 2 : 0
-        let rawDamage = munitionClass.baseDamage + plan.mission.targetQuality.rank - airDefensePenalty - plan.electronicWarfarePenalty
+        let restrictedFirePenalty = plan.mission.riskFlags.contains(.restrictedFireZone) ? 1 : 0
+        let rawDamage = munitionClass.baseDamage + plan.mission.targetQuality.rank
+            - airDefensePenalty
+            - plan.electronicWarfarePenalty
+            - restrictedFirePenalty
         if rawDamage <= 0 {
             return (0, .failed)
         }
         let damage = max(1, min(7, rawDamage))
-        let degraded = airDefensePenalty > 0 || plan.electronicWarfarePenalty > 0 || plan.mission.targetQuality == .medium
+        let degraded = airDefensePenalty > 0
+            || plan.electronicWarfarePenalty > 0
+            || restrictedFirePenalty > 0
+            || plan.mission.targetQuality == .medium
         return (damage, degraded ? .degraded : .success)
     }
 
@@ -509,6 +547,7 @@ struct FireSupportRules {
         munitionClass: MunitionClass,
         airDefenseThreat: Int,
         electronicWarfarePenalty: Int,
+        restrictedFirePenalty: Int,
         in state: GameState
     ) -> [FireRiskFlag] {
         var flags: [FireRiskFlag] = []
@@ -529,10 +568,43 @@ struct FireSupportRules {
         if electronicWarfarePenalty > 0 {
             flags.append(.electronicWarfare)
         }
+        if restrictedFirePenalty > 0 {
+            flags.append(.restrictedFireZone)
+        }
         if hasFriendlyNear(targetCoord, faction: issuer.faction, radius: 1, in: state) {
             flags.append(.friendlyProximity)
         }
         return stableUnique(flags)
+    }
+
+    private func isRestrictedFireZone(at coord: HexCoord, for faction: Faction, in state: GameState) -> Bool {
+        if let tileController = state.map.tile(at: coord)?.controller {
+            if tileController == faction || tileController.isHostile(to: faction) {
+                return false
+            }
+            return true
+        }
+
+        if let region = state.map.region(for: coord),
+           let regionController = state.map.region(id: region)?.controller {
+            return regionController != faction && !regionController.isHostile(to: faction)
+        }
+
+        return true
+    }
+
+    private func canEngageRestrictedFireZone(
+        plan: FireMissionPlan,
+        issuer: Division,
+        munitionClass: MunitionClass,
+        in state: GameState
+    ) -> Bool {
+        guard munitionClass.canOperateInRestrictedFireZone,
+              let targetDivisionId = plan.targetDivisionId,
+              let targetDivision = state.division(id: targetDivisionId) else {
+            return false
+        }
+        return targetDivision.faction.isHostile(to: issuer.faction)
     }
 
     private func wouldCreateFriendlyProximityRejection(

@@ -194,7 +194,7 @@ owner/controller 都缺省 -> neutral
 - `GamePhase` raw value 尚未重命名，当前只用 helper 把 red 映射到 AI phase、blue 映射到 player phase。
 - v6.2 已切入 `grey_tide_2030` 默认剧本种子；v6.10 已扩展为 120 hex / 30 region 的发布候选规模，但仍需运行时验证。
 - `Faction.opponent` 仍保留为旧接口兼容属性，但火力、可见性、前线和其他当前主路径 fallback 不再调用二元 opponent。
-- restricted / civilian region 的完整 ROE fire rule 仍未做成独立深水规则；ISR / EW 已在 v6.4 进入第一版命令系统，FireMission 已在 v6.5 做抽象首版。
+- restricted / civilian region 已有首版火力门禁：non-hostile 控制区内 tube / rocket area fires 会被 `restrictedFireZone` 拒绝，precision / loitering 只有解析到 linked hostile target 时才允许并以 restricted fire zone 风险降级结算；完整 no-fire zone、collateral 和授权链仍待后续版本细化。
 
 ## 0.4 v6.2 灰潮行动默认剧本种子
 
@@ -214,6 +214,8 @@ WWIIHexV0/Data/grey_tide_2030_regions.json
 - 关键点：East Airport、Harbor Terminal、Radar Ridge、River Bridge、Industrial Hub、Comms Center、Fuel Depot、Rail Junction、Coastal Battery、Highland Pass 等。
 - 初始任务编组：蓝/红各 8 个现代 formation，覆盖侦察、机械化、火力、防空/工程、后勤、特战与安全分队。
 - `VictoryRules` / `RegionVictoryRules` 对 `grey_tide_2030` 使用十个主目标判定：蓝方提前控制 7 个主目标获胜；最终回合蓝方控制至少 6 个主目标获胜，否则红方防御网络守成。
+- 十个主目标中有 6 个初始由 Neutral / Civilian 控制，必须通过地面移动占领进入胜负计数：Harbor Terminal、River Bridge、Comms Center、Fuel Depot、Rail Junction、Refinery District。
+- neutral / civilian 关键地点但不计入十个主目标的 key-only 节点包括 Industrial Hub、Urban Core、Civic Center、River Ford、Southern Causeway、Civilian Evac Zone；它们可影响态势、区域语义或后续任务设计，但不应被写成灰潮即时 / 终局胜利阈值来源。
 - v6.3 起默认单位改用 `modern_unit_templates.json`，旧 `unit_templates.json` 只作阿登数据集和 fallback 兼容。
 - `scripts/check_grey_tide_data.rb` 提供灰潮默认剧本的可复现静态一致性检查：只读取 JSON，核对 tile、region、objective、key location、initial unit、unit template、supply source 和 victory condition 引用，不启动 app。
 
@@ -350,6 +352,8 @@ GameState.fireSupportState: FireSupportState
 - 三类新命令全部经过 `CommandValidator -> CommandExecutor -> FireSupportRules`，不得绕过 `RuleEngine` 直接改 `GameState`。
 - validator 检查阶段、阵营、单位行动权、目标 hex、射程、source asset、目标质量、弹药、冷却、防空威胁和友军邻近风险。
 - fire mission 只对 medium+ contact 或 region/hex 内 medium+ contact 放行；low / missing contact 会被拒绝。
+- neutral / green / 同阵营协同方控制区会被视作 restricted fire zone：tube / rocket area fires 被拒绝，precision / loitering 需要 linked hostile target，且结算时加入 `restrictedFireZone` risk flag 和轻量效果惩罚。
+- restricted fire gate 只限制火力任务，不改变 Civilian Evac Zone 等 key-only / civilian 节点的胜负身份，也不把它们纳入十个主目标阈值。
 - executor 会消耗对应 `MunitionClass` 弹药、设置 source cooldown、记录 `FireMissionResult` / `AirSortie`，并写入 `fireSupport` 日志。
 - 命中目标时只施加有限 `strength` damage，必要时触发撤退或消灭；不会占领 hex，也不会替代地面推进。
 - `fireCoverage` 战术在 `WarCommandExecutor` 中会先尝试生成一次 contact-gated `fireMission`，再继续现有 ground attack / hold fallback。

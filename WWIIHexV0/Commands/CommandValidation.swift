@@ -21,6 +21,7 @@ enum CommandValidationError: String, Codable, Equatable {
     case invalidSourceAsset
     case airDefenseThreatTooHigh
     case friendlyProximityRisk
+    case restrictedFireZone
 }
 
 struct CommandValidation: Codable, Equatable {

@@ -204,7 +204,7 @@ flowchart LR
 flowchart LR
     CONTACT["ContactTrack<br/>medium+ target quality<br/>contact / hex / region target"]:::state
     CMD["Command.fireMission<br/>uavRecon<br/>suppressAirDefense"]:::command
-    VALID["CommandValidator<br/>source asset / ammo / cooldown<br/>target quality / range / ROE<br/>AD / EW / friendly risk"]:::rules
+    VALID["CommandValidator<br/>source asset / ammo / cooldown<br/>target quality / range / ROE<br/>restricted fire gate<br/>AD / EW / friendly risk"]:::rules
     FIRE["FireSupportRules<br/>FireMission plan<br/>MunitionClass<br/>FireMissionResult"]:::rules
     AIR["AirTaskingState<br/>sorties / AD threat<br/>airSuperiority / suppression"]:::state
     DAMAGE["有限效果<br/>strength damage<br/>retreat / destroyed<br/>no hex occupation"]:::rules

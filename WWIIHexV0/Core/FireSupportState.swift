@@ -47,6 +47,10 @@ enum MunitionClass: String, Codable, Equatable, CaseIterable {
     var usesAirTasking: Bool {
         self == .precision || self == .loitering
     }
+
+    var canOperateInRestrictedFireZone: Bool {
+        self == .precision || self == .loitering
+    }
 }
 
 enum FireMissionTarget: Codable, Equatable {
@@ -73,6 +77,7 @@ enum FireRiskFlag: String, Codable, Equatable, CaseIterable {
     case friendlyProximity
     case staleContact
     case unsuppressedAirDefense
+    case restrictedFireZone
 
     var displayName: String {
         switch self {
@@ -88,6 +93,8 @@ enum FireRiskFlag: String, Codable, Equatable, CaseIterable {
             return "stale contact"
         case .unsuppressedAirDefense:
             return "unsuppressed air defense"
+        case .restrictedFireZone:
+            return "restricted fire zone"
         }
     }
 }
