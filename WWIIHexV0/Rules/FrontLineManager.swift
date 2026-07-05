@@ -323,7 +323,12 @@ struct FrontLineManager {
                       neighborTheaterId != sourceTheaterId,
                       let neighborTheater = theaterState.theaters[neighborTheaterId],
                       neighborTheater.status != .inactive,
-                      sourceFaction(for: neighborTheater, theaterState: theaterState, map: map) != friendlyFaction else {
+                      let neighborFaction = sourceFaction(
+                        for: neighborTheater,
+                        theaterState: theaterState,
+                        map: map
+                      ),
+                      neighborFaction.isHostile(to: friendlyFaction) else {
                     continue
                 }
                 enemyRegions.insert(neighborRegionId)

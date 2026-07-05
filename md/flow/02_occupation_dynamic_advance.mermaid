@@ -4,10 +4,10 @@ flowchart TD
     C{"是否合法?"}:::decision
     R["CommandResult rejected<br/>state 不变"]:::stop
     M["CommandExecutor.executeMove<br/>更新 Division.coord / facing / hasActed"]:::rules
-    O{"OccupationRules.canOccupy?"}:::decision
+    O{"OccupationRules.canOccupy?<br/>可占、非己方控制、无其他单位<br/>neutral objective 可被地面移动夺取"}:::decision
     NO["只移动<br/>不改 controller"]:::state
     HC["目标 HexTile.controller = division.faction"]:::authority
-    SA{"是否需要动态战区推进?"}:::decision
+    SA{"是否需要动态战区推进?<br/>占领 / 目标控制与 ROE hostile 分开"}:::decision
     ET["TheaterSystem.expandDynamicTheater<br/>只改目标 hex 的 hexToTheater"]:::authority
     AF["WarDeploymentManager.advanceHex<br/>只改目标 hex 的 hexToFrontZone"]:::authority
     SS["StrategicStateSynchronizer"]:::rules
@@ -23,7 +23,7 @@ flowchart TD
     O -->|否| NO --> UI
     O -->|是| HC --> SA
     SA -->|目标已属己方动态 theater| SS
-    SA -->|敌方 zone 或敌控 hex| ET --> AF --> SS
+    SA -->|其他 zone 或非本方控制 hex| ET --> AF --> SS
     SS --> RO --> TU --> FU --> DU --> UI
 
     WARN1["禁止：占一个 hex 就改整个 regionToTheater"]:::warn

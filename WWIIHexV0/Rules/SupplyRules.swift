@@ -210,7 +210,7 @@ struct SupplyRules {
     }
 
     private func canSupplyPass(through coord: HexCoord, tile: HexTile, for faction: Faction, in state: GameState) -> Bool {
-        if let division = state.division(at: coord), division.faction != faction {
+        if let division = state.division(at: coord), division.faction.isHostile(to: faction) {
             return false
         }
 

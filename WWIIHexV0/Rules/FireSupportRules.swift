@@ -85,7 +85,7 @@ struct FireSupportRules {
         guard cooldown(for: "uav_\(issuer.id)", in: state.fireSupportState) <= 0 else {
             return .invalid(.assetOnCooldown)
         }
-        let threat = airDefenseThreat(near: target, against: issuer.faction.alignment, in: state)
+        let threat = airDefenseThreat(near: target, against: issuer.faction, in: state)
         guard threat < 6 else {
             return .invalid(.airDefenseThreatTooHigh)
         }
@@ -197,7 +197,7 @@ struct FireSupportRules {
             return next
         }
         let issuer = next.divisions[index]
-        let threat = airDefenseThreat(near: target, against: issuer.faction.alignment, in: next)
+        let threat = airDefenseThreat(near: target, against: issuer.faction, in: next)
         let ewPenalty = electronicWarfarePenalty(at: target, against: issuer.faction.alignment, in: next)
         let risk = threat + ewPenalty
         let status: FireMissionOutcomeStatus
@@ -302,7 +302,7 @@ struct FireSupportRules {
             return nil
         }
 
-        let adThreat = airDefenseThreat(near: resolved.coord, against: issuer.faction.alignment, in: state)
+        let adThreat = airDefenseThreat(near: resolved.coord, against: issuer.faction, in: state)
         let ewPenalty = electronicWarfarePenalty(at: resolved.coord, against: issuer.faction.alignment, in: state)
         let risks = riskFlags(
             contact: resolved.contact,
@@ -443,11 +443,12 @@ struct FireSupportRules {
 
     private func airDefenseThreat(
         near coord: HexCoord,
-        against side: OperationalSideAlignment,
+        against faction: Faction,
         in state: GameState
     ) -> Int {
+        let side = faction.alignment
         let hostileThreat = state.divisions
-            .filter { $0.faction.alignment != side && $0.faction.alignment != .neutral && !$0.isDestroyed }
+            .filter { $0.faction.isHostile(to: faction) && !$0.isDestroyed }
             .filter { $0.hasAirDefenseSupport && $0.coord.distance(to: coord) <= 2 }
             .map { max(1, $0.defense / 2) }
             .reduce(0, +)

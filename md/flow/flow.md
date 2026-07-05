@@ -166,13 +166,19 @@ alignment：
 
 已替换的核心二元敌我判断：
 
+- `CommandValidator` / `RegionCommandValidator` 攻击目标校验
+- `MovementRules` ZOC 判定
 - `SupplyRules`
 - `RegionSupplyRules`
 - `RegionCombatRules`
+- `EconomyRules` 邻敌补员 / 部署判定
 - `AgentContexts`
 - `WarCommandExecutor` 目标排序
 - `FrontLineManager` 前线对手推导
+- `WarDeploymentManager` enemy zone / enemy presence 判定
+- `FireSupportRules` 防空威胁判定
 - `ZoneCommanderAgent` lost objective 摘要
+- `AppContainer` 直接点击攻击目标和玩家宏观攻击 zone 判定
 
 `RegionDataSet.toRegions()` 已修正历史 fallback：
 
@@ -1520,6 +1526,7 @@ destination 没有其他单位
 - 只有移动会触发占领。
 - 攻击造成伤害/撤退/消灭，不会自动把攻击者推进到目标 hex。
 - 移动进敌控空 hex 时，先改 hex controller，再同步战略层。
+- 灰潮主目标里存在显式 neutral 控制区；地面移动可把这类 capturable 目标转为己方目标控制，但 neutral / green / 同阵营协同单位不能因此被攻击、生成敌 ZOC、阻断补给或算作敌防空威胁。
 - 移动进有敌单位的 hex 会在 validator 被 `destinationOccupied` 拒绝。
 
 ### 5.4 动态战区推进

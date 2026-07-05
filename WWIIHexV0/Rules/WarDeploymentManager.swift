@@ -337,7 +337,7 @@ struct WarDeploymentManager {
 
                 let hasEnemyPresence = divisions.contains { division in
                     guard !division.isDestroyed,
-                          division.faction != zone.faction else {
+                          division.faction.isHostile(to: zone.faction) else {
                         return false
                     }
                     return division.location(in: map) == regionId
@@ -520,7 +520,7 @@ struct WarDeploymentManager {
                 guard map.tile(at: neighborHex) != nil,
                       let enemyZoneId = hexToZone[neighborHex],
                       enemyZoneId != zoneId,
-                      zones[enemyZoneId]?.faction != faction else {
+                      zones[enemyZoneId]?.faction.isHostile(to: faction) == true else {
                     continue
                 }
                 enemyZoneIds.insert(enemyZoneId)
@@ -610,7 +610,7 @@ struct WarDeploymentManager {
                   let neighborFaction = zones[neighborZoneId]?.faction else {
                 return false
             }
-            return neighborFaction != faction
+            return neighborFaction.isHostile(to: faction)
         }
     }
 
@@ -632,7 +632,7 @@ struct WarDeploymentManager {
                   let neighborFaction = zones[neighborZoneId]?.faction else {
                 continue
             }
-            if neighborFaction != faction {
+            if neighborFaction.isHostile(to: faction) {
                 return true
             }
         }

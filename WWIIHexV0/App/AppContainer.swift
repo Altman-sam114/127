@@ -179,7 +179,7 @@ final class AppContainer: ObservableObject {
 
         let displayedDivisions = mapDisplayAdapter.divisions(displayedAt: coord, viewerFaction: playerFaction)
         if let attacker = selectedActionDivision,
-           let enemy = displayedDivisions.first(where: { $0.faction != attacker.faction }) {
+           let enemy = displayedDivisions.first(where: { $0.faction.isHostile(to: attacker.faction) }) {
             submit(.attack(attackerId: attacker.id, targetId: enemy.id))
             return
         }
@@ -799,7 +799,7 @@ final class AppContainer: ObservableObject {
         guard let selectedRegionId,
               let region = gameState.map.region(id: selectedRegionId),
               let targetZone = gameState.warDeploymentState.zone(for: selectedRegionId),
-              targetZone.faction != playerFaction else {
+              targetZone.faction.isHostile(to: playerFaction) else {
             return nil
         }
         return (region, targetZone)
@@ -885,7 +885,7 @@ final class AppContainer: ObservableObject {
         }
 
         guard let targetZone = selectedGeneralTargetZone,
-              targetZone.faction != playerFaction else {
+              targetZone.faction.isHostile(to: playerFaction) else {
             return nil
         }
 
