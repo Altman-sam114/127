@@ -49,7 +49,7 @@ struct UnitInspectorView: View {
                     Text(strategicState.dynamicTheaterId?.rawValue ?? "None")
                 }
 
-                LabeledContent("Brigade Sector") {
+                LabeledContent("Command Sector") {
                     Text(strategicState.frontZoneId?.rawValue ?? "None")
                 }
 
@@ -57,7 +57,7 @@ struct UnitInspectorView: View {
                     Text(strategicState.deploymentRole.displayName)
                 }
 
-                LabeledContent("FrontLine") {
+                LabeledContent("Contact Line") {
                     Text(frontLineSummary(strategicState.frontLineIds))
                         .multilineTextAlignment(.trailing)
                 }

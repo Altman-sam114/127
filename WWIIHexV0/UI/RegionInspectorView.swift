@@ -35,11 +35,11 @@ struct RegionInspectorView: View {
                     Text(state.selectedHexController?.displayName ?? "None")
                 }
 
-                LabeledContent("Hex Dynamic Theater") {
+                LabeledContent("Hex Operational Zone") {
                     Text(state.selectedHexDynamicTheaterId?.rawValue ?? "None")
                 }
 
-                LabeledContent("Hex FrontZone") {
+                LabeledContent("Hex Command Sector") {
                     Text(state.selectedHexFrontZoneId?.rawValue ?? "None")
                 }
             }
@@ -81,7 +81,7 @@ struct RegionInspectorView: View {
                 Text(state.theaterId?.rawValue ?? "None")
             }
 
-            LabeledContent("FrontZone") {
+            LabeledContent("Command Sector") {
                 Text(state.frontZoneId?.rawValue ?? "None")
             }
 

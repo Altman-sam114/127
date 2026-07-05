@@ -142,9 +142,18 @@ ruby -e 'require "yaml"; YAML.load_file(".github/workflows/ci-results.yml"); put
 jq empty WWIIHexV0/Data/ardennes_v0_scenario.json
 jq empty WWIIHexV0/Data/ardennes_v02_regions.json
 jq empty WWIIHexV0/Data/general_agents.json
+jq empty WWIIHexV0/Data/grey_tide_2030_scenario.json
+jq empty WWIIHexV0/Data/grey_tide_2030_regions.json
 jq empty WWIIHexV0/Data/terrain_rules.json
 jq empty WWIIHexV0/Data/unit_templates.json
 jq empty WWIIHexV0/Data/modern_unit_templates.json
+```
+
+当修改 `grey_tide_2030_scenario.json`、`grey_tide_2030_regions.json`、`modern_unit_templates.json` 或 `scripts/check_grey_tide_data.rb`，或交付中声明灰潮数据一致性已核对时，运行：
+
+```sh
+ruby -c scripts/check_grey_tide_data.rb
+ruby scripts/check_grey_tide_data.rb
 ```
 
 ### 4.4 Swift 单文件语法

@@ -406,13 +406,13 @@ struct TurnManager {
     private func directiveDiagnostics(for faction: Faction, state: GameState) -> [String] {
         var diagnostics: [String] = []
         if state.warDeploymentState.frontZones.isEmpty {
-            diagnostics.append("ZoneDirective pipeline selected but WarDeploymentState has no FrontZone data; legacy pipeline was not invoked.")
+            diagnostics.append("ZoneDirective pipeline selected but WarDeploymentState has no command sector data; legacy pipeline was not invoked.")
         }
 
         for division in state.divisions where division.faction == faction && !division.isDestroyed {
             guard let regionId = division.location(in: state.map),
                   state.warDeploymentState.regionToFrontZone[regionId] != nil else {
-                diagnostics.append("Division \(division.id) is not assigned to any FrontZone; no directive generated for this unit.")
+                diagnostics.append("Formation \(division.id) is not assigned to any command sector; no directive generated for this formation.")
                 continue
             }
         }
@@ -441,7 +441,7 @@ struct TurnManager {
     }
 
     static func contextSummary(_ context: AgentContext) -> String {
-        "\(context.agentId) turn \(context.turn): \(context.friendlyDivisions.count) friendly divisions, \(context.contactSummaries.count) visible contact(s), \(context.objectives.count) objectives visible."
+        "\(context.agentId) turn \(context.turn): \(context.friendlyDivisions.count) friendly formations, \(context.contactSummaries.count) visible contact(s), \(context.objectives.count) objectives visible."
     }
 
     static func canonicalJSON(_ envelope: AgentDecisionEnvelope) throws -> String {

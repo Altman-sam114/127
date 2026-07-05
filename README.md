@@ -8,6 +8,8 @@
 
 当前协作流程固定为 `main` 直推：Agent B 在本机只跑轻量检查，commit 后 push 到 `origin/main` 触发 GitHub Actions；Agent C 通过未加密 CI 结果包核对 `ci-artifact-manifest.json`、`junit.xml`、`xcodebuild.log` 和失败摘要。详细规则见 `AGENTS.md`、`md/test/test.md`、`md/prompt/README.md`。
 
+灰潮默认剧本的静态数据一致性可用 `ruby scripts/check_grey_tide_data.rb` 复查；该脚本只读取 JSON，核对 tile / region / objective / unit template 引用，不启动 app。
+
 ---
 
 ## 项目定位

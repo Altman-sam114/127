@@ -21,11 +21,11 @@ struct AgentPanelView: View {
                 .font(.headline)
 
             LabeledContent("Agent") {
-                Text(record?.agentId ?? "guderian")
+                Text(record?.agentId ?? "No active agent")
             }
 
             LabeledContent("Provider") {
-                Text(record?.provider ?? "MockAI")
+                Text(displayProvider(record?.provider))
             }
 
             LabeledContent("Intent") {
@@ -49,6 +49,13 @@ struct AgentPanelView: View {
                     ForEach(record.commandChainReplayItems) { item in
                         VStack(alignment: .leading, spacing: 3) {
                             HStack(spacing: 6) {
+                                Text("Advisory")
+                                    .font(.caption.bold())
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(PlatformStyles.tertiarySystemBackground)
+                                    .clipShape(RoundedRectangle(cornerRadius: 4))
+
                                 Text(item.role.displayName)
                                     .font(.caption.bold())
                                     .padding(.horizontal, 6)
@@ -209,6 +216,17 @@ struct AgentPanelView: View {
         return result.message
     }
 
+    private func displayProvider(_ provider: String?) -> String {
+        switch provider {
+        case "MockAI":
+            return "Local Planner"
+        case let provider?:
+            return provider
+        case nil:
+            return "System Planner"
+        }
+    }
+
     private func commandChainTargetLine(_ item: ModernCommandChainReplayItem) -> String {
         var targets: [String] = []
         if let zoneId = item.zoneId {
@@ -226,7 +244,7 @@ struct AgentPanelView: View {
     private var rawJSONPlaceholder: String {
         """
         {
-          "agentId": "guderian",
+          "agentId": "system_planner",
           "status": "placeholder",
           "orders": []
         }

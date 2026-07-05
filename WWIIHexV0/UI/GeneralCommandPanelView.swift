@@ -21,12 +21,12 @@ struct GeneralCommandPanelView: View {
                 .font(.headline)
 
             if let zone {
-                LabeledContent("Front Zone") {
+                LabeledContent("Command Sector") {
                     Text(zone.name)
                         .multilineTextAlignment(.trailing)
                 }
             } else {
-                Text("No allied front zone selected.")
+                Text("No command sector selected.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
@@ -71,7 +71,7 @@ struct GeneralCommandPanelView: View {
                         .buttonStyle(.bordered)
                 }
             } else if zone != nil {
-                Text("No general assigned to this zone.")
+                Text("No general assigned to this command sector.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
@@ -83,7 +83,7 @@ struct GeneralCommandPanelView: View {
             }
 
             if !assignedDivisions.isEmpty {
-                Text("Assigned Units")
+                Text("Assigned Formations")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.secondary)
                 VStack(alignment: .leading, spacing: 4) {

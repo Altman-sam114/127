@@ -161,7 +161,7 @@ final class AppContainer: ObservableObject {
                 self.lastCommandMessage = outcome.record.errors.isEmpty
                     ? "AI turn completed."
                     : "AI turn completed with \(outcome.record.errors.count) issue(s)."
-                self.appendInteractionEvent("AI \(outcome.record.provider) resolved \(outcome.record.commandResults.count) command result(s).")
+                self.appendInteractionEvent("AI \(Self.displayProviderName(outcome.record.provider)) resolved \(outcome.record.commandResults.count) command result(s).")
                 self.isRunningAI = false
                 self.refreshSelectionAfterStateChange()
             }
@@ -285,7 +285,7 @@ final class AppContainer: ObservableObject {
 
     func orderSelectedGeneralHoldLine() {
         guard let zone = selectedGeneralCommandZone else {
-            appendInteractionEvent("General order rejected: no player-controlled front zone selected.")
+            appendInteractionEvent("General order rejected: no player-controlled command sector selected.")
             return
         }
 
@@ -311,7 +311,7 @@ final class AppContainer: ObservableObject {
             return
         }
         guard let zone = selectedGeneralCommandZone else {
-            appendInteractionEvent("General order rejected: no player-controlled source front zone available.")
+            appendInteractionEvent("General order rejected: no player-controlled source command sector available.")
             return
         }
 
@@ -994,7 +994,7 @@ final class AppContainer: ObservableObject {
             diagnostics.append("\(rejected.count) command(s) were rejected by rules.")
         }
         if !lockedIds.isEmpty {
-            diagnostics.append("\(lockedIds.count) micromanaged division(s) excluded.")
+            diagnostics.append("\(lockedIds.count) manually controlled formation(s) excluded.")
         }
 
         let record = WarDirectiveRecord(
@@ -1157,6 +1157,10 @@ final class AppContainer: ObservableObject {
             commanderPool: Self.buildCommanderPool(state: state, registry: generalRegistry),
             marshalAgent: Self.buildMarshalAgent(faction: faction, state: state)
         )
+    }
+
+    private static func displayProviderName(_ provider: String) -> String {
+        provider == "MockAI" ? "Local Planner" : provider
     }
 
     private static func buildCommanderPool(
