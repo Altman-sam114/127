@@ -83,6 +83,8 @@ private enum LogDisplayCategory {
     case theaterChange
     case regionOwnerChange
     case diplomacy
+    case intelligence
+    case electronicWarfare
     case event
 
     init(entry: GameLogEntry) {
@@ -113,6 +115,12 @@ private enum LogDisplayCategory {
             return
         case .diplomacy:
             self = .diplomacy
+            return
+        case .intelligence:
+            self = .intelligence
+            return
+        case .electronicWarfare:
+            self = .electronicWarfare
             return
         case .event:
             break
@@ -156,6 +164,10 @@ private enum LogDisplayCategory {
             return "Region"
         case .diplomacy:
             return "Diplomacy"
+        case .intelligence:
+            return "Intel"
+        case .electronicWarfare:
+            return "EW"
         case .event:
             return "Event"
         }
@@ -181,6 +193,10 @@ private enum LogDisplayCategory {
             return .mint
         case .diplomacy:
             return .cyan
+        case .intelligence:
+            return .yellow
+        case .electronicWarfare:
+            return .pink
         case .event:
             return .secondary
         }
