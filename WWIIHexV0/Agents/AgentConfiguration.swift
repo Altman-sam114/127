@@ -41,11 +41,11 @@ extension GameAgent {
     static func guderianFallback(assignedDivisionIds: [String]) -> GameAgent {
         GameAgent(
             id: "guderian",
-            name: "Heinz Guderian",
+            name: "Legacy Local Planner",
             faction: .germany,
             role: .armyCommander,
             personality: AgentPersonality(
-                prompt: "Prioritize armored breakthrough, road movement, concentration of force, and rapid encirclement.",
+                prompt: "Compatibility planner for legacy Red Force fixtures. Keep orders structured and route them through rules.",
                 traits: ["breakthrough"],
                 aggression: 80,
                 riskTolerance: 75,

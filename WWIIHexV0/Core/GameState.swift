@@ -135,7 +135,7 @@ struct GameState: Codable, Equatable {
                     turn: 1,
                     faction: .germany,
                     phase: .germanAI,
-                    message: "Ardennes V0 scenario initialized."
+                    message: "Compatibility fallback scenario initialized."
                 )
             ]
         )

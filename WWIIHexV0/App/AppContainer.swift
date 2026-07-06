@@ -99,25 +99,30 @@ final class AppContainer: ObservableObject {
         let gameState = dataLoader.loadInitialGameState()
         let commandHandler = RuleEngine()
         let generalRegistry = (try? dataLoader.loadGeneralRegistry()) ?? .empty
-        let guderian = GameAgent.guderian(from: dataLoader, state: gameState)
         let bootstrappedState = Self.refreshGeneralAssignments(
             in: StrategicStateBootstrapper().bootstrapIfNeeded(gameState),
             registry: generalRegistry
         )
+        let playerFaction = Self.defaultPlayerFaction(for: bootstrappedState)
+        let defaultAIFaction = Self.defaultAIFaction(
+            for: bootstrappedState,
+            playerFaction: playerFaction
+        )
+        let agent = Self.localPlannerAgent(for: defaultAIFaction, state: bootstrappedState)
         let turnManager = TurnManager(
-            agent: guderian,
+            agent: agent,
             provider: MockAIClient(),
             providerName: "MockAI",
             commandHandler: commandHandler,
             commanderPool: Self.buildCommanderPool(state: bootstrappedState, registry: generalRegistry),
-            marshalAgent: Self.buildMarshalAgent(faction: .germany, state: bootstrappedState)
+            marshalAgent: Self.buildMarshalAgent(faction: defaultAIFaction, state: bootstrappedState)
         )
         return AppContainer(
             gameState: bootstrappedState,
             commandHandler: commandHandler,
             dataLoader: dataLoader,
             generalRegistry: generalRegistry,
-            playerFaction: Self.defaultPlayerFaction(for: bootstrappedState),
+            playerFaction: playerFaction,
             turnManager: turnManager,
             warPipelineMode: .marshalDirective
         )
@@ -1387,7 +1392,9 @@ final class AppContainer: ObservableObject {
     }
 
     private func turnManager(for faction: Faction, state: GameState) -> TurnManager {
-        if faction == .germany, let turnManager, generalRegistry.allGenerals.isEmpty {
+        if let turnManager,
+           turnManager.agent.faction == faction,
+           generalRegistry.allGenerals.isEmpty {
             return turnManager
         }
 
@@ -1396,16 +1403,7 @@ final class AppContainer: ObservableObject {
         case .germany:
             agent = GameAgent.guderian(from: dataLoader, state: state)
         case .allies, .blueForce, .redForce, .greenForce, .neutral:
-            let assignedIds = state.divisions
-                .filter { $0.faction == faction && !$0.isDestroyed }
-                .map(\.id)
-            agent = GameAgent.sample(
-                id: "\(faction.rawValue)_mock_commander",
-                name: "\(faction.shortDisplayName) Local Planner",
-                faction: faction,
-                role: .armyCommander,
-                assignedDivisionIds: assignedIds
-            )
+            agent = Self.localPlannerAgent(for: faction, state: state)
         }
 
         return TurnManager(
@@ -1450,6 +1448,19 @@ final class AppContainer: ObservableObject {
 
     private static func buildMarshalAgent(faction: Faction, state: GameState) -> MarshalAgent {
         MarshalAgent(config: MarshalAgentConfig.automatic(for: faction, state: state))
+    }
+
+    private static func localPlannerAgent(for faction: Faction, state: GameState) -> GameAgent {
+        let assignedIds = state.divisions
+            .filter { $0.faction == faction && !$0.isDestroyed }
+            .map(\.id)
+        return GameAgent.sample(
+            id: "\(faction.rawValue)_local_planner",
+            name: "\(faction.shortDisplayName) Local Planner",
+            faction: faction,
+            role: .armyCommander,
+            assignedDivisionIds: assignedIds
+        )
     }
 
     private func handleDivisionTap(_ division: Division) {
@@ -1604,6 +1615,31 @@ final class AppContainer: ObservableObject {
         return state.divisions
             .map(\.faction)
             .first(where: { $0.commandPhase == .alliedPlayer }) ?? .allies
+    }
+
+    private static func defaultAIFaction(for state: GameState, playerFaction: Faction) -> Faction {
+        if state.activeFaction != playerFaction,
+           state.activeFaction.isHostile(to: playerFaction),
+           state.activeFaction.commandPhase != nil {
+            return state.activeFaction
+        }
+
+        if let hostileFaction = state.divisions
+            .map(\.faction)
+            .sorted(by: { $0.rawValue < $1.rawValue })
+            .first(where: {
+                $0 != playerFaction &&
+                    $0.isHostile(to: playerFaction) &&
+                    $0.commandPhase != nil
+            }) {
+            return hostileFaction
+        }
+
+        if state.divisions.contains(where: { $0.faction == .germany }) {
+            return .germany
+        }
+
+        return state.activeFaction
     }
 
     private func appendInteractionEvent(_ message: String) {

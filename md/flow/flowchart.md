@@ -37,7 +37,7 @@ flowchart TD
     LOCAL["本机不主动跑检查<br/>仅确认分支 / 提交范围 / 工作区状态<br/>检查交给云端 artifact"]:::check
     COMMIT["main 本地提交<br/>commit 范围只含本轮文件"]:::git
     PUSH["推送 origin/main<br/>git push origin main"]:::git
-    GHA["GitHub Actions<br/>ci-results.yml<br/>diff / plist / xml / Ruby 脚本<br/>+ 云端 xcodebuild build<br/>+ Grey Tide AI half-turn probe<br/>+ Playtest / Recon / Observer state probes"]:::cloud
+    GHA["GitHub Actions<br/>ci-results.yml<br/>diff / plist / xml / Ruby 脚本<br/>+ 云端 xcodebuild build<br/>+ Grey Tide AI half-turn probe<br/>+ Playtest / Recon / Observer / restricted fire ROE probes"]:::cloud
     ART["未加密 CI 结果包<br/>manifest / junit / xcodebuild.log / probe-xctest.log<br/>failure summary / grey-tide / modern-visible logs / xcresult"]:::artifact
     C0["Agent C<br/>gh auth login<br/>下载 artifact 到 /private/tmp/wwiihexv0-c-review-run_id"]:::agent
     C1{"manifest 是否匹配<br/>branch=main<br/>commitSha/runId/runAttempt 最新?"}:::decision
@@ -371,7 +371,7 @@ flowchart LR
     TERMS["Visible terminology<br/>National Command / Operational Zone<br/>PER / MAT / LOG"]:::display
     REPORT["v6.10 release candidate report<br/>residual scan / evidence matrix"]:::doc
     RULES["规则权威不变<br/>Command / ZoneDirective<br/>WarCommandExecutor / RuleEngine"]:::rules
-    CLOUD["main push<br/>GitHub Actions artifact<br/>manifest / junit / xcodebuild.log<br/>probe-xctest.log / 10 AI half-turn probe"]:::cloud
+    CLOUD["main push<br/>GitHub Actions artifact<br/>manifest / junit / xcodebuild.log<br/>probe-xctest.log<br/>23/0 Probes: 10 AI half-turn / Playtest / Recon / Observer / restricted fire ROE"]:::cloud
     SIDE["Playtest side selector<br/>Blue / Red new operation<br/>AI controls non-player hostile side"]:::display
     GATE["Playtest Action Gate<br/>active side named<br/>player / AI / observer / end-turn state"]:::display
     OBJ["Playtest objective summary<br/>10 main objectives<br/>Blue threshold / Red denial condition"]:::display
