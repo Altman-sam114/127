@@ -1417,7 +1417,16 @@ final class AppContainer: ObservableObject {
     }
 
     private static func displayProviderName(_ provider: String) -> String {
-        provider == "MockAI" ? "Local Planner" : provider
+        switch provider {
+        case "MockAI":
+            return "Local Planner"
+        case "MockAI+MarshalDirective":
+            return "Local Planner + Operational Directive"
+        case "MockAI+Directive":
+            return "Local Planner + Directive"
+        default:
+            return provider
+        }
     }
 
     private static func buildCommanderPool(

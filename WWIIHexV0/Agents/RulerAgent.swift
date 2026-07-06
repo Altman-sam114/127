@@ -309,16 +309,16 @@ struct RulerStrategicSnapshot {
     }
 
     private static func enemyStrength(adjacentTo zone: FrontZone, state: GameState) -> Int {
-        let visibleEnemyRegions = Set(zone.frontSegments.map(\.regionId))
-        return state.divisions
-            .filter { $0.faction != zone.faction && !$0.isDestroyed }
-            .filter { division in
-                guard let regionId = division.location(in: state.map) else {
+        let contactLineRegions = Set(zone.frontSegments.map(\.regionId))
+        let visibility = VisibilityRules()
+        return state.operationalAwareness.visibleContacts(for: zone.faction)
+            .filter { contact in
+                guard let regionId = state.map.region(for: contact.lastKnownCoord) else {
                     return false
                 }
-                return visibleEnemyRegions.contains(regionId)
+                return contactLineRegions.contains(regionId)
             }
-            .reduce(0) { $0 + max(1, $1.strength) + max(1, $1.defense) }
+            .reduce(0) { $0 + visibility.contactStrengthEstimate($1) }
     }
 
     private static func staticDefenseStreak(for faction: Faction, records: [WarDirectiveRecord]) -> Int {
