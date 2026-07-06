@@ -42,7 +42,7 @@ struct UnitInspectorView: View {
                 }
 
                 LabeledContent("Region") {
-                    Text(strategicState.regionId?.rawValue ?? "None")
+                    Text(objectiveAreaDisplay(strategicState.regionId))
                 }
 
                 LabeledContent("Operational Zone") {
@@ -109,7 +109,16 @@ struct UnitInspectorView: View {
     }
 
     private func frontLineSummary(_ ids: [FrontLineId]) -> String {
-        ids.isEmpty ? "None" : ids.map(\.rawValue).joined(separator: ", ")
+        ids.isEmpty
+            ? "None"
+            : ids.indices.map { "Contact Line \($0 + 1)" }.joined(separator: ", ")
+    }
+
+    private func objectiveAreaDisplay(_ id: RegionId?) -> String {
+        guard let value = id?.rawValue else {
+            return "None"
+        }
+        return displayName(for: value, fallbackPrefix: "Objective")
     }
 
     private func operationalZoneDisplay(_ id: TheaterId?) -> String {
@@ -128,6 +137,8 @@ struct UnitInspectorView: View {
 
     private func displayName(for rawValue: String, fallbackPrefix: String) -> String {
         let cleaned = rawValue
+            .replacingOccurrences(of: "region_", with: "")
+            .replacingOccurrences(of: "objective_", with: "")
             .replacingOccurrences(of: "the" + "ater_", with: "")
             .replacingOccurrences(of: "front" + "_zone_", with: "")
             .replacingOccurrences(of: "zone_", with: "")

@@ -1262,7 +1262,7 @@ final class AppContainer: ObservableObject {
             playerDirectiveMessage(for: execution, diagnostics: diagnostics),
             tone: playerDirectiveFeedbackTone(for: execution)
         )
-        appendInteractionEvent("Commander directive submitted: \(directive.type.rawValue) \(directive.zoneId.rawValue).")
+        appendInteractionEvent("Commander directive submitted: \(directiveTypeDisplay(directive.type)) \(Self.commandSectorDisplay(directive.zoneId)).")
         refreshSelectionAfterStateChange()
     }
 
@@ -1428,7 +1428,7 @@ final class AppContainer: ObservableObject {
                 let factionName = zone.faction.shortDisplayName
                 let config = ZoneCommanderAgentConfig(
                     id: "auto_\(zone.id.rawValue)",
-                    name: "\(factionName) Commander (\(zone.id.rawValue))",
+                    name: "\(factionName) Commander (\(Self.commandSectorDisplay(zone.id)))",
                     faction: zone.faction,
                     assignedZoneId: zone.id,
                     skills: [],
@@ -1544,7 +1544,26 @@ final class AppContainer: ObservableObject {
               let region = gameState.map.region(id: selectedRegionId) else {
             return "Selected hex \(coord.q),\(coord.r)."
         }
-        return "Selected region: \(region.name) (\(selectedRegionId.rawValue))."
+        return "Selected objective area: \(region.name)."
+    }
+
+    private func directiveTypeDisplay(_ type: DirectiveType) -> String {
+        switch type {
+        case .attack:
+            return "Attack"
+        case .defend:
+            return "Defense"
+        }
+    }
+
+    private static func commandSectorDisplay(_ id: FrontZoneId) -> String {
+        let cleaned = id.rawValue
+            .replacingOccurrences(of: "front_zone_", with: "")
+            .replacingOccurrences(of: "zone_", with: "")
+            .replacingOccurrences(of: "theater_", with: "")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return cleaned.isEmpty ? "command sector" : "Sector \(cleaned.capitalized)"
     }
 
     private func configuredNewOperationState(

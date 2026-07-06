@@ -181,7 +181,42 @@ struct GeneralCommandPanelView: View {
     }
 
     private func operationSummary(_ operation: PlayerPlannedOperation) -> String {
-        let target = operation.targetRegionId?.rawValue ?? operation.sourceRegionId?.rawValue ?? operation.zoneId.rawValue
-        return "\(operation.directiveType.rawValue) / \(target)"
+        let target = operation.targetRegionId
+            .map(objectiveDisplay)
+            ?? operation.sourceRegionId.map(objectiveDisplay)
+            ?? commandSectorDisplay(operation.zoneId)
+        return "\(directiveTypeDisplay(operation.directiveType)) / \(target)"
+    }
+
+    private func directiveTypeDisplay(_ type: DirectiveType) -> String {
+        switch type {
+        case .attack:
+            return "Attack"
+        case .defend:
+            return "Defense"
+        }
+    }
+
+    private func objectiveDisplay(_ id: RegionId) -> String {
+        let cleaned = cleanIdentifier(id.rawValue)
+        return cleaned.isEmpty ? "Objective Area" : "Objective \(cleaned.capitalized)"
+    }
+
+    private func commandSectorDisplay(_ id: FrontZoneId) -> String {
+        let cleaned = cleanIdentifier(id.rawValue)
+            .replacingOccurrences(of: "Front Zone ", with: "")
+            .replacingOccurrences(of: "Zone ", with: "")
+        return cleaned.isEmpty ? "Command Sector" : "Sector \(cleaned.capitalized)"
+    }
+
+    private func cleanIdentifier(_ rawValue: String) -> String {
+        rawValue
+            .replacingOccurrences(of: "region_", with: "")
+            .replacingOccurrences(of: "objective_", with: "")
+            .replacingOccurrences(of: "front_zone_", with: "")
+            .replacingOccurrences(of: "zone_", with: "")
+            .replacingOccurrences(of: "theater_", with: "")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

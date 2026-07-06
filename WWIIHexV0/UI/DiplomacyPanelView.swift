@@ -35,7 +35,7 @@ struct DiplomacyPanelView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(country.name)
                             .font(.caption.weight(.semibold))
-                        Text("\(country.faction.displayName) | \(country.blocId.rawValue)")
+                        Text("\(country.faction.displayName) | \(blocDisplayName(country.blocId))")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -75,7 +75,7 @@ struct DiplomacyPanelView: View {
             } else {
                 ForEach(diplomacyState.relations) { relation in
                     HStack {
-                        Text("\(relation.firstCountryId.rawValue) - \(relation.secondCountryId.rawValue)")
+                        Text("\(countryDisplayName(relation.firstCountryId)) - \(countryDisplayName(relation.secondCountryId))")
                             .font(.caption)
                             .lineLimit(1)
                         Spacer()
@@ -128,5 +128,24 @@ struct DiplomacyPanelView: View {
             .replacingOccurrences(of: "_", with: " ")
             .trimmingCharacters(in: .whitespacesAndNewlines)
         return cleaned.isEmpty ? "Sector" : "Sector \(cleaned.capitalized)"
+    }
+
+    private func countryDisplayName(_ id: CountryId) -> String {
+        diplomacyState.countries.first { $0.id == id }?.name
+            ?? displayName(for: id.rawValue, fallbackPrefix: "Country")
+    }
+
+    private func blocDisplayName(_ id: DiplomaticBlocId) -> String {
+        diplomacyState.blocs.first { $0.id == id }?.name
+            ?? displayName(for: id.rawValue, fallbackPrefix: "Bloc")
+    }
+
+    private func displayName(for rawValue: String, fallbackPrefix: String) -> String {
+        let cleaned = rawValue
+            .replacingOccurrences(of: "bloc_", with: "")
+            .replacingOccurrences(of: "country_", with: "")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return cleaned.isEmpty ? fallbackPrefix : "\(fallbackPrefix) \(cleaned.capitalized)"
     }
 }

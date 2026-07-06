@@ -94,9 +94,10 @@ enum MapEditorExporter {
 
         let keyLocations = document.sortedHexes.compactMap { hex -> KeyLocationDefinition? in
             guard hex.cityName != nil || hex.fortressName != nil || hex.isSupplySource else { return nil }
-            let name = hex.cityName ?? hex.fortressName ?? "Supply \(hex.coord.mapEditorKey)"
+            let name = hex.cityName ?? hex.fortressName ?? "Logistics Node \(hex.coord.mapEditorKey)"
+            let idSource = hex.cityName ?? hex.fortressName ?? "Supply \(hex.coord.mapEditorKey)"
             return KeyLocationDefinition(
-                id: name.normalizedMapEditorIdentifier,
+                id: idSource.normalizedMapEditorIdentifier,
                 name: name,
                 kind: hex.isSupplySource ? ObjectiveType.supply.rawValue : hex.terrain.rawValue,
                 coord: HexCoordDefinition(q: hex.coord.q, r: hex.coord.r),

@@ -449,6 +449,7 @@ RootGameView
 
 - 面板按钮根据 `AppContainer` 暴露的 `canIssueSelectedReconMission`、`canIssueSelectedUAVMission`、`canIssueSelectedFireMission`、`canIssueSelectedSuppressAirDefenseMission`、`canIssueSelectedElectronicWarfareMission`、`canIssueSelectedResupplyRepairMission`、`canOrderModernAssaultObjective`、`canOrderModernHoldDelay` 和 observer mode 启用/禁用；这些任务按钮均复用 `CommandValidator` 预检当前 selected formation / target / preferred munition 和规则状态。Mission Status 会列出可用的 Ready Tasks 和可用 sector directive，或提前解释弹药、冷却、目标质量、ROE、防空、目标缺失、友邻风险等首个可读拒绝原因，避免宏观指令或 Fire Mission 缺目标遮住可用的侦察、EW 或后勤任务。
 - 任务拒绝同步写入 `lastCommandMessage`、`lastCommandFeedbackTone` 和 interaction log；`CommandValidationError.displayMessage` 是玩家、AI 回放和 directive diagnostics 的统一可读拒绝文案来源，避免 UI 直接显示 `targetOutOfRange`、`restrictedFireZone` 等 enum raw value。玩家宏观 directive 部分失败时，`lastCommandMessage` 会带出第一条规则拒绝原因，完整细节继续保留在 `WarDirectiveRecord`。
+- Commander、Unit Inspector、Diplomacy 和 MapEditor 默认导出文案只显示现代 display 文案：planned operation、commander fallback 名称、selection feedback、country/bloc relation、contact line 和无名 logistics node 都避免直接展示 `region_*`、`front_zone_*`、`blue_coalition` 等 raw id；底层 record id、Codable raw value、排序和映射仍保持兼容。
 - 计划线仍复用 v0.4 `PlayerPlannedOperation` 的 attack / defend 可视化；v6.8 已加入 sensor / contact / EW / fire support 只读态势 overlay 首版。
 - Playtest 面板已有 C2 Overlay 独立显示开关和只读图例，复用 C2 token 色标解释 sensor、jammed sensor、EW area、fire result、contact confidence、contact type code 和 logistics 标记；开关只控制 `BoardScene` 是否绘制现代态势 overlay，不写 `GameState`、不改变命令或规则。
 
