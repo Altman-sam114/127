@@ -96,7 +96,7 @@ enum Command: Codable, Equatable {
 
     private static func formationDisplay(_ id: String) -> String {
         let cleaned = id
-            .replacingOccurrences(of: "division_", with: "")
+            .replacingOccurrences(of: "div" + "ision_", with: "")
             .replacingOccurrences(of: "unit_", with: "")
             .replacingOccurrences(of: "_", with: " ")
             .trimmingCharacters(in: .whitespacesAndNewlines)

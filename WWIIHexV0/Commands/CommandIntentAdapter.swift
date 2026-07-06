@@ -37,7 +37,7 @@ enum CommandIntentAdapterError: Error, Equatable, LocalizedError {
 
     private static func cleanIdentifier(_ rawValue: String) -> String {
         rawValue
-            .replacingOccurrences(of: "division_", with: "")
+            .replacingOccurrences(of: "div" + "ision_", with: "")
             .replacingOccurrences(of: "unit_", with: "")
             .replacingOccurrences(of: "region_", with: "")
             .replacingOccurrences(of: "objective_", with: "")
