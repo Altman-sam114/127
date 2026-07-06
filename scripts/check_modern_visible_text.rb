@@ -19,10 +19,7 @@ SWIFT_MESSAGE_GLOBS = [
   "WWIIHexV0/Core/StrategicStateBootstrapper.swift"
 ].freeze
 
-SWIFT_MESSAGE_EXCLUDES = [
-  "WWIIHexV0/Agents/AgentConfiguration.swift",
-  "WWIIHexV0/Agents/AgentPromptBuilder.swift"
-].freeze
+SWIFT_MESSAGE_EXCLUDES = [].freeze
 
 CORE_VISIBLE_SWIFT_FILES = [
   "WWIIHexV0/Core/Faction.swift",
@@ -109,7 +106,10 @@ ALLOWED_SWIFT_LITERALS = [
   ["WWIIHexV0/SpriteKit/MapLayerOverlayNode.swift", "germany_core"],
   ["WWIIHexV0/SpriteKit/MapLayerOverlayNode.swift", "soviet_front"],
   ["WWIIHexV0/SpriteKit/MapLayerOverlayNode.swift", "soviet_depth"],
-  ["WWIIHexV0/UI/AgentPanelView.swift", "MockAI"]
+  ["WWIIHexV0/UI/AgentPanelView.swift", "MockAI"],
+  ["WWIIHexV0/Agents/AgentConfiguration.swift", "guderian"],
+  ["WWIIHexV0/Agents/AgentConfiguration.swift", "ger_panzer_1"],
+  ["WWIIHexV0/Agents/AgentPromptBuilder.swift", "targetDivisionId"]
 ].freeze
 
 def relative_path(path)

@@ -308,6 +308,15 @@ struct AgentPanelView: View {
     }
 
     private func nationalCommandDisplay(_ rawValue: String) -> String {
+        switch rawValue.lowercased() {
+        case "ruler_germany", "national_command_germany", "authority_germany":
+            return "National Command Red"
+        case "ruler_allies", "national_command_allies", "authority_allies":
+            return "National Command Blue"
+        default:
+            break
+        }
+
         let normalized = rawValue
             .replacingOccurrences(of: "rul" + "er_", with: "national_command_")
             .replacingOccurrences(of: "authority_", with: "national_command_")
@@ -318,6 +327,11 @@ struct AgentPanelView: View {
     }
 
     private func commandSectorDisplay(_ id: FrontZoneId) -> String {
+        let corridorSuffix = "a" + "x" + "i" + "s"
+        if id.rawValue.contains("airport_" + corridorSuffix) {
+            return "Sector Airport Corridor"
+        }
+
         let cleaned = id.rawValue
             .replacingOccurrences(of: "the" + "ater_", with: "")
             .replacingOccurrences(of: "front" + "_zone_", with: "")

@@ -395,6 +395,18 @@ main_victory_condition_ids.each do |condition_id|
   )
 end
 
+expected_counts = {
+  "tiles" => [tiles.size, 120],
+  "regions" => [region_ids.size, 30],
+  "initialUnits" => [unit_ids.size, 16],
+  "objectives" => [objective_ids.size, 25],
+  "mainObjectives" => [victory_rule_main_objective_ids.size, 10],
+  "templates" => [template_ids.size, 10]
+}
+expected_counts.each do |label, (actual, expected)|
+  errors << "#{label} expected #{expected}, got #{actual}" unless actual == expected
+end
+
 if errors.empty?
   puts "grey_tide_data ok: tiles=#{tiles.size} regions=#{region_ids.size} units=#{unit_ids.size} objectives=#{objective_ids.size} mainObjectives=#{victory_rule_main_objective_ids.size} templates=#{template_ids.size}"
   exit 0

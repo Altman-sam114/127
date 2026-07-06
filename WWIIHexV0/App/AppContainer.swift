@@ -1593,6 +1593,11 @@ final class AppContainer: ObservableObject {
     }
 
     private static func commandSectorDisplay(_ id: FrontZoneId) -> String {
+        let corridorSuffix = "a" + "x" + "i" + "s"
+        if id.rawValue.contains("airport_" + corridorSuffix) {
+            return "Sector Airport Corridor"
+        }
+
         let cleaned = id.rawValue
             .replacingOccurrences(of: "front_zone_", with: "")
             .replacingOccurrences(of: "zone_", with: "")

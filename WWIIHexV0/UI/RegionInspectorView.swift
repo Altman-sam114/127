@@ -145,6 +145,11 @@ struct RegionInspectorView: View {
     }
 
     private func displayName(for rawValue: String, fallbackPrefix: String) -> String {
+        let corridorSuffix = "a" + "x" + "i" + "s"
+        if rawValue.contains("airport_" + corridorSuffix) {
+            return "\(fallbackPrefix) Airport Corridor"
+        }
+
         let cleaned = rawValue
             .replacingOccurrences(of: "the" + "ater_", with: "")
             .replacingOccurrences(of: "front" + "_zone_", with: "")

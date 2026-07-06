@@ -106,7 +106,7 @@ Release Candidate Readiness
 - workflow：`.github/workflows/ci-results.yml`
 - 触发：`push` 到 `main` 或手动 `workflow_dispatch`
 - artifact：`WWIIHexV0-ci-cloud-flow-v1-main-<short_sha>-run<run_id>-attempt<run_attempt>`
-- 必含：`ci-artifact-manifest.json`、`ci-failure-summary.md`、`junit.xml`、`xcodebuild.log`、`probe-xctest.log`、`simulator.log`、`git-diff-check.log`、`plutil.log`、`xmllint.log`、`grey-tide-data.log`、`modern-visible-text.log`，以及可生成时的 `WWIIHexV0.xcresult` / `WWIIHexV0Probes.xcresult`；`probe-xctest.log` 需核对灰潮默认剧本 10 个 AI 半回合、Playtest 状态、Observer AI 容器入口和 restricted / civilian fire ROE probe
+- 必含：`ci-artifact-manifest.json`、`ci-failure-summary.md`、`junit.xml`、`xcodebuild.log`、`probe-xctest.log`、`simulator.log`、`git-diff-check.log`、`plutil.log`、`xmllint.log`、`grey-tide-data.log`、`modern-visible-text.log`，以及可生成时的 `WWIIHexV0.xcresult` / `WWIIHexV0Probes.xcresult`；`probe-xctest.log` 需核对灰潮默认剧本 10 个 AI 半回合、Playtest 状态、Modern Mission Recon 容器链路、Observer AI 容器入口和 restricted / civilian fire ROE probe
 - Agent C 缓存：`/private/tmp/wwiihexv0-c-review-<run_id>/`
 
 AITRANS 可复用项与不照搬项：
@@ -557,12 +557,12 @@ RootGameView
 
 - 没有多步骤新局向导或完整 AI 控制矩阵；当前只支持 Playtest tab 中的 Blue / Red 新局选择、observer mode 和只读 Action Gate。
 - 没有多存档槽、文件导出、iCloud、版本迁移 UI 或存档损坏修复面板。
-- 没有本机启动 app、模拟器、UI 点击、真实 App 10-20 回合观察者模式或截图验收；云端 `WWIIHexV0Probes` 已补灰潮 10 个 AI 半回合轻量运行时链路、Playtest 红/蓝新局、Action Gate、主目标摘要、本地快照状态链路、Observer AI 容器入口自动推进和 restricted / civilian fire ROE 规则入口，但它不等于真实 App observer 长跑或 UI 点击。
+- 没有本机启动 app、模拟器、UI 点击、真实 App 10-20 回合观察者模式或截图验收；云端 `WWIIHexV0Probes` 已补灰潮 10 个 AI 半回合轻量运行时链路、Playtest 红/蓝新局、Action Gate、主目标摘要、本地快照状态链路、Modern Mission Recon 容器链路、Observer AI 容器入口自动推进和 restricted / civilian fire ROE 规则入口，但它不等于真实 App observer 长跑或 UI 点击。
 - v6.10 已补发布候选残留扫描、资源检查口径和人工授权重验证清单。
 
 ## 0.12 v6.10 发布候选准备和残留扫描
 
-v6.10 当前不是正式发布，而是把现代战争迁移路线收口到可提交发布候选的状态：代码和文档准备好后继续通过 `origin/main` GitHub Actions artifact 做云端静态检查、通用 iOS build 和 `WWIIHexV0Probes` simulator probe 复核；当前 cloud Probe 已覆盖灰潮默认剧本 10 个 AI 半回合的轻量运行时链路，用于证明默认灰潮加载、AI 半回合推进、`end_turn` 规则链路和战略派生层刷新可在云端 simulator probe target 内跑通；也覆盖 Playtest 红/蓝新局选择、Action Gate、主目标摘要、本地快照状态恢复、Observer AI 容器入口自动推进的 `AppContainer` 状态链路，以及 restricted / civilian fire ROE 的 `RuleEngine -> CommandValidator -> FireSupportRules -> CommandExecutor` 规则入口。本机仍不主动跑 Xcode、模拟器、UI 点击、截图、真实 App observer 长回合或性能检查。`v6.10_release_candidate_evidence.md` 现在作为发布候选证据矩阵，逐项记录总提示词要求、代码依据、已核对 artifact 和未授权运行时风险。
+v6.10 当前不是正式发布，而是把现代战争迁移路线收口到可提交发布候选的状态：代码和文档准备好后继续通过 `origin/main` GitHub Actions artifact 做云端静态检查、通用 iOS build 和 `WWIIHexV0Probes` simulator probe 复核；当前 cloud Probe 已覆盖灰潮默认剧本 10 个 AI 半回合的轻量运行时链路，用于证明默认灰潮加载、AI 半回合推进、`end_turn` 规则链路和战略派生层刷新可在云端 simulator probe target 内跑通；也覆盖 Playtest 红/蓝新局选择、Action Gate、主目标摘要、本地快照状态恢复、Modern Mission Recon 经 `AppContainer -> CommandValidator -> RuleEngine / VisibilityRules` 的容器链路、Observer AI 容器入口自动推进的 `AppContainer` 状态链路，以及 restricted / civilian fire ROE 的 `RuleEngine -> CommandValidator -> FireSupportRules -> CommandExecutor` 规则入口。本机仍不主动跑 Xcode、模拟器、UI 点击、截图、真实 App observer 长回合或性能检查。`v6.10_release_candidate_evidence.md` 现在作为发布候选证据矩阵，逐项记录总提示词要求、代码依据、已核对 artifact 和未授权运行时风险。
 
 本轮明确处理的玩家可见项：
 

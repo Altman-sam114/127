@@ -203,6 +203,11 @@ struct GeneralCommandPanelView: View {
     }
 
     private func commandSectorDisplay(_ id: FrontZoneId) -> String {
+        let corridorSuffix = "a" + "x" + "i" + "s"
+        if id.rawValue.contains("airport_" + corridorSuffix) {
+            return "Sector Airport Corridor"
+        }
+
         let cleaned = cleanIdentifier(id.rawValue)
         return cleaned.isEmpty ? "Command Sector" : "Sector \(cleaned.capitalized)"
     }

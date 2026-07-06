@@ -1,6 +1,6 @@
 # 轻量检查与云端验证规范
 
-> 当前规则：默认云端重验证，本机不主动运行测试或检查命令。GitHub Actions 默认执行静态检查、通用 iOS build 和 `WWIIHexV0Probes` simulator probe；该 probe 覆盖灰潮默认剧本数据启动、战略派生层、既有 directive 执行探针、10 个 AI 半回合轻量运行时链路、Playtest 红/蓝新局、Action Gate、主目标摘要、本地快照状态链路、Observer AI 容器入口自动推进 2 个 AI 半回合，以及 restricted / civilian fire ROE 规则入口。完整 XCTest、Smoke、Stage Regression、Dynamic Theater Regression、Full、真实 App UI 点击 / 截图、真实 App 10-20 回合 observer 长跑和性能验证仍不在默认本机范围内。
+> 当前规则：默认云端重验证，本机不主动运行测试或检查命令。GitHub Actions 默认执行静态检查、通用 iOS build 和 `WWIIHexV0Probes` simulator probe；该 probe 覆盖灰潮默认剧本数据启动、战略派生层、既有 directive 执行探针、10 个 AI 半回合轻量运行时链路、Playtest 红/蓝新局、Action Gate、主目标摘要、本地快照状态链路、Modern Mission Recon 经 `AppContainer -> CommandValidator -> RuleEngine / VisibilityRules` 的容器链路、Observer AI 容器入口自动推进 2 个 AI 半回合，以及 restricted / civilian fire ROE 规则入口。完整 XCTest、Smoke、Stage Regression、Dynamic Theater Regression、Full、真实 App UI 点击 / 截图、真实 App 10-20 回合 observer 长跑和性能验证仍不在默认本机范围内。
 
 ## 0. 总原则
 
@@ -33,7 +33,7 @@ git push origin main
 - `ruby -c scripts/check_grey_tide_data.rb` 与 `ruby scripts/check_grey_tide_data.rb`
 - `ruby -c scripts/check_modern_visible_text.rb` 与 `ruby scripts/check_modern_visible_text.rb`
 - 云端 `xcodebuild build`
-- 云端 simulator 上执行 `WWIIHexV0Probes` probe target，其中包含灰潮默认剧本的 10 个 AI 半回合轻量运行时 probe、Playtest 红/蓝新局、Action Gate、主目标摘要、本地快照状态 probe、Observer AI 容器入口自动推进 probe，以及 restricted / civilian fire ROE probe
+- 云端 simulator 上执行 `WWIIHexV0Probes` probe target，其中包含灰潮默认剧本的 10 个 AI 半回合轻量运行时 probe、Playtest 红/蓝新局、Action Gate、主目标摘要、本地快照状态 probe、Modern Mission Recon 容器链路 probe、Observer AI 容器入口自动推进 probe，以及 restricted / civilian fire ROE probe
 
 云端 build 命令：
 
@@ -189,7 +189,7 @@ ruby -c scripts/check_modern_visible_text.rb
 ruby scripts/check_modern_visible_text.rb
 ```
 
-该脚本只做静态文本扫描，不启动 app，不跑 Xcode。扫描范围限定为主应用 `App` / `UI` / `SpriteKit` Swift 字符串、会进入命令结果 / 日志 / diagnostics 的 `Commands`、`Rules`、`Turn`、`Agents` 字符串、若干 Core 可见 displayName 映射，以及 `grey_tide_2030_*`、`modern_unit_templates.json`、`generals.json` 中的显示字段和地图 `cityName` / `fortressName`；旧阿登数据、历史文档、测试 fixture、target/module 名和源码兼容 raw value 不作为默认 hard fail。
+该脚本只做静态文本扫描，不启动 app，不跑 Xcode。扫描范围限定为主应用 `App` / `UI` / `SpriteKit` Swift 字符串、会进入命令结果 / 日志 / diagnostics / legacy prompt 的 `Commands`、`Rules`、`Turn`、`Agents` 字符串、若干 Core 可见 displayName 映射，以及 `grey_tide_2030_*`、`modern_unit_templates.json`、`generals.json` 中的显示字段和地图 `cityName` / `fortressName`；`AgentConfiguration.swift` 和 `AgentPromptBuilder.swift` 不再整文件排除，只对保留的 legacy id / schema key 做精确 allowlist；旧阿登数据、历史文档、测试 fixture、target/module 名和源码兼容 raw value 不作为默认 hard fail。
 
 ### 4.5 Swift 单文件语法
 

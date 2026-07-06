@@ -371,7 +371,7 @@ flowchart LR
     TERMS["Visible terminology<br/>National Command / Operational Zone<br/>PER / MAT / LOG"]:::display
     REPORT["v6.10 release candidate report<br/>residual scan / evidence matrix"]:::doc
     RULES["规则权威不变<br/>Command / ZoneDirective<br/>WarCommandExecutor / RuleEngine"]:::rules
-    CLOUD["main push<br/>GitHub Actions artifact<br/>manifest / junit / xcodebuild.log<br/>probe-xctest.log<br/>23/0 Probes: 10 AI half-turn / Playtest / Recon / Observer / restricted fire ROE"]:::cloud
+    CLOUD["main push<br/>GitHub Actions artifact<br/>manifest / junit / xcodebuild.log<br/>probe-xctest.log<br/>latest Probe count from artifact<br/>10 AI half-turn / Playtest / Recon / Observer / restricted fire ROE"]:::cloud
     SIDE["Playtest side selector<br/>Blue / Red new operation<br/>AI controls non-player hostile side"]:::display
     GATE["Playtest Action Gate<br/>active side named<br/>player / AI / observer / end-turn state"]:::display
     OBJ["Playtest objective summary<br/>10 main objectives<br/>Blue threshold / Red denial condition"]:::display

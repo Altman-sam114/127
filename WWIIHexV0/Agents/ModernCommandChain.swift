@@ -573,7 +573,7 @@ struct ModernCommandChainOrchestrator {
                 role: .nationalCommand,
                 missionType: .setROE,
                 priority: 100,
-                rationale: "All downstream agents must emit Codable directives and never mutate state directly."
+                rationale: "Command teams must keep orders structured, auditable, and routed through validated execution."
             )
         )
 
