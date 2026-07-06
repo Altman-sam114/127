@@ -482,10 +482,17 @@ final class AppContainer: ObservableObject {
         case "grey_tide_2030":
             return "Grey Tide 2030"
         case "ardennes_v0":
-            return "Legacy Fallback Scenario"
+            return "Compatibility Scenario"
         default:
-            return gameState.scenarioId
+            return scenarioTitle(from: gameState.scenarioId)
         }
+    }
+
+    private func scenarioTitle(from scenarioId: String) -> String {
+        let cleaned = scenarioId
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return cleaned.isEmpty ? "Operation" : cleaned.capitalized
     }
 
     var playerRoleDisplayName: String {

@@ -21,7 +21,7 @@ struct AgentPanelView: View {
                 .font(.headline)
 
             LabeledContent("Agent") {
-                Text(record?.agentId ?? "No active agent")
+                Text(agentDisplayName(record?.agentId))
             }
 
             LabeledContent("Provider") {
@@ -335,6 +335,19 @@ struct AgentPanelView: View {
             .replacingOccurrences(of: "contact_", with: "")
             .replacingOccurrences(of: "_", with: " ")
             .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func agentDisplayName(_ agentId: String?) -> String {
+        guard let agentId else { return "No active agent" }
+        let cleaned = agentId
+            .replacingOccurrences(of: "mock_commander", with: "command planner")
+            .replacingOccurrences(of: "marshal", with: "joint command")
+            .replacingOccurrences(of: "guderian", with: "legacy planner")
+            .replacingOccurrences(of: "blueForce", with: "Blue Force")
+            .replacingOccurrences(of: "redForce", with: "Red Force")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return cleaned.isEmpty ? "Command Planner" : cleaned.capitalized
     }
 
     private var rawJSONPlaceholder: String {

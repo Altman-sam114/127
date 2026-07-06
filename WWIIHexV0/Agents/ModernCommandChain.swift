@@ -603,7 +603,7 @@ struct ModernCommandChainOrchestrator {
                     role: .logistics,
                     missionType: .resupply,
                     priority: 85,
-                    rationale: "Supply state reports \(summary.friendlyLowSupplyCount) low-supply and \(summary.friendlyEncircledCount) encircled friendly unit(s)."
+                    rationale: "Sustainment report flags \(summary.friendlyLowSupplyCount) logistics-constrained and \(summary.friendlyEncircledCount) isolated friendly formation(s)."
                 )
             )
         }

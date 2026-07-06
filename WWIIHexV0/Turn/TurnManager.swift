@@ -441,7 +441,19 @@ struct TurnManager {
     }
 
     static func contextSummary(_ context: AgentContext) -> String {
-        "\(context.agentId) turn \(context.turn): \(context.friendlyDivisions.count) friendly formations, \(context.contactSummaries.count) visible contact(s), \(context.objectives.count) objectives visible."
+        "\(agentDisplayName(context.agentId)) turn \(context.turn): \(context.friendlyDivisions.count) friendly formations, \(context.contactSummaries.count) visible contact(s), \(context.objectives.count) objectives visible."
+    }
+
+    private static func agentDisplayName(_ agentId: String) -> String {
+        let cleaned = agentId
+            .replacingOccurrences(of: "mock_commander", with: "command planner")
+            .replacingOccurrences(of: "marshal", with: "joint command")
+            .replacingOccurrences(of: "guderian", with: "legacy planner")
+            .replacingOccurrences(of: "blueForce", with: "Blue Force")
+            .replacingOccurrences(of: "redForce", with: "Red Force")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return cleaned.isEmpty ? "Command Planner" : cleaned.capitalized
     }
 
     static func canonicalJSON(_ envelope: AgentDecisionEnvelope) throws -> String {

@@ -22,9 +22,9 @@ struct AgentPromptBuilder {
 
     private func systemPrompt(context: AgentContext) -> String {
         """
-        You are the local LLM decision layer for a turn-based WWII hex strategy prototype.
+        You are the local LLM decision layer for a turn-based modern joint command prototype.
         Agent: \(context.agentId)
-        Faction: \(context.faction.rawValue)
+        Side: \(context.faction.displayName)
         Personality: \(context.personality)
 
         Return only valid JSON matching the schema. Do not include prose, markdown, comments, or extra keys.
@@ -52,7 +52,7 @@ struct AgentPromptBuilder {
 
         return """
         Current task:
-        Issue operational orders for this agent's assigned divisions on turn \(context.turn), phase \(context.phase.rawValue).
+        Issue operational orders for this agent's assigned formations on turn \(context.turn), phase \(context.phase.displayName).
 
         Available commands:
         - move: requires divisionId and toRegionId
@@ -62,7 +62,7 @@ struct AgentPromptBuilder {
         Recon and EW are modeled by the rules layer, but this legacy JSON schema cannot issue them yet.
 
         Battlefield summary:
-        Friendly divisions:
+        Friendly formations:
         \(friendly)
 
         Visible contacts:
@@ -74,8 +74,8 @@ struct AgentPromptBuilder {
         Visible regions:
         \(regions)
 
-        Supply:
-        friendly supplied \(context.supplySummary.friendlySupplied), low supply \(context.supplySummary.friendlyLowSupply), encircled \(context.supplySummary.friendlyEncircled)
+        Sustainment:
+        ready logistics \(context.supplySummary.friendlySupplied), constrained logistics \(context.supplySummary.friendlyLowSupply), isolated formations \(context.supplySummary.friendlyEncircled)
 
         Recent events:
         \(recentEvents)
