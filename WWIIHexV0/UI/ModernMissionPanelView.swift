@@ -7,8 +7,12 @@ struct ModernMissionPanelView: View {
     let visibleContactCount: Int
     let fireBudgetSummary: String
     let missionAvailabilityText: String
-    let canIssueUnitMission: Bool
+    let canIssueReconMission: Bool
+    let canIssueUAVMission: Bool
     let canIssueFireMission: Bool
+    let canIssueSuppressAirDefenseMission: Bool
+    let canIssueElectronicWarfareMission: Bool
+    let canIssueResupplyRepairMission: Bool
     let canAssaultObjective: Bool
     let canHoldDelay: Bool
     let observerModeEnabled: Bool
@@ -39,8 +43,8 @@ struct ModernMissionPanelView: View {
             missionSection(
                 title: "ISR",
                 actions: [
-                    MissionAction(label: "Recon Area", icon: "scope", enabled: canIssueUnitMission, action: onReconArea),
-                    MissionAction(label: "UAV Orbit", icon: "airplane.circle", enabled: canIssueUnitMission, action: onUAVOrbit)
+                    MissionAction(label: "Recon Area", icon: "scope", enabled: canIssueReconMission, action: onReconArea),
+                    MissionAction(label: "UAV Orbit", icon: "airplane.circle", enabled: canIssueUAVMission, action: onUAVOrbit)
                 ]
             )
 
@@ -48,7 +52,7 @@ struct ModernMissionPanelView: View {
                 title: "Fires",
                 actions: [
                     MissionAction(label: "Fire Mission", icon: "target", enabled: canIssueFireMission, action: onFireMission),
-                    MissionAction(label: "Air Support / SEAD", icon: "shield.lefthalf.filled", enabled: canIssueUnitMission, action: onSuppressAirDefense)
+                    MissionAction(label: "Air Support / SEAD", icon: "shield.lefthalf.filled", enabled: canIssueSuppressAirDefenseMission, action: onSuppressAirDefense)
                 ]
             )
 
@@ -63,8 +67,8 @@ struct ModernMissionPanelView: View {
             missionSection(
                 title: "Sustainment / EW",
                 actions: [
-                    MissionAction(label: "Resupply / Repair", icon: "cross.circle", enabled: canIssueUnitMission, action: onResupplyRepair),
-                    MissionAction(label: "Jam / Counter-Drone", icon: "antenna.radiowaves.left.and.right", enabled: canIssueUnitMission, action: onElectronicWarfare)
+                    MissionAction(label: "Resupply / Repair", icon: "cross.circle", enabled: canIssueResupplyRepairMission, action: onResupplyRepair),
+                    MissionAction(label: "Jam / Counter-Drone", icon: "antenna.radiowaves.left.and.right", enabled: canIssueElectronicWarfareMission, action: onElectronicWarfare)
                 ]
             )
         }
@@ -90,7 +94,16 @@ struct ModernMissionPanelView: View {
     }
 
     private var hasAvailableMission: Bool {
-        !observerModeEnabled && (canIssueUnitMission || canIssueFireMission || canAssaultObjective || canHoldDelay)
+        !observerModeEnabled && (
+            canIssueReconMission ||
+                canIssueUAVMission ||
+                canIssueFireMission ||
+                canIssueSuppressAirDefenseMission ||
+                canIssueElectronicWarfareMission ||
+                canIssueResupplyRepairMission ||
+                canAssaultObjective ||
+                canHoldDelay
+        )
     }
 
     private var missionSummary: some View {

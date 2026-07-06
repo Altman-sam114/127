@@ -427,7 +427,7 @@ RootGameView
   -> CompactInfoPanel.mission / "Tasks"
   -> ModernMissionPanelView
       - Formation / Target / Logistics / Contacts / Ammo 摘要
-      - Mission Status：解释 observer、未选单位、非玩家 phase、已行动、缺少 fire target、Fire Mission validator 拒绝原因或宏观指令可用状态
+      - Mission Status：解释 observer、未选单位、非玩家 phase、已行动、Ready Tasks、缺少 fire target、各任务 validator 拒绝原因或宏观指令可用状态
       - ISR: Recon Area / UAV Orbit
       - Fires: Fire Mission / Air Support / SEAD
       - Maneuver: Assault Objective / Hold / Delay
@@ -447,7 +447,7 @@ RootGameView
 
 交互边界：
 
-- 面板按钮根据 `AppContainer` 暴露的 `canIssueSelectedModernUnitMission`、`canIssueSelectedFireMission`、`canOrderModernAssaultObjective`、`canOrderModernHoldDelay` 和 observer mode 启用/禁用；Fire Mission 会用 `CommandValidator` 预检当前 selected target / preferred munition，因此按钮和 Mission Status 能提前解释弹药、冷却、目标质量、ROE、防空或友邻风险等拒绝原因。
+- 面板按钮根据 `AppContainer` 暴露的 `canIssueSelectedReconMission`、`canIssueSelectedUAVMission`、`canIssueSelectedFireMission`、`canIssueSelectedSuppressAirDefenseMission`、`canIssueSelectedElectronicWarfareMission`、`canIssueSelectedResupplyRepairMission`、`canOrderModernAssaultObjective`、`canOrderModernHoldDelay` 和 observer mode 启用/禁用；这些任务按钮均复用 `CommandValidator` 预检当前 selected formation / target / preferred munition 和规则状态。Mission Status 会列出可用的 Ready Tasks，或提前解释弹药、冷却、目标质量、ROE、防空、目标缺失、友邻风险等首个可读拒绝原因，避免 Fire Mission 缺目标遮住可用的侦察、EW 或后勤任务。
 - 任务拒绝同步写入 `lastCommandMessage` 和 interaction log；`CommandValidationError.displayMessage` 是玩家、AI 回放和 directive diagnostics 的统一可读拒绝文案来源，避免 UI 直接显示 `targetOutOfRange`、`restrictedFireZone` 等 enum raw value。玩家宏观 directive 部分失败时，`lastCommandMessage` 会带出第一条规则拒绝原因，完整细节继续保留在 `WarDirectiveRecord`。
 - 计划线仍复用 v0.4 `PlayerPlannedOperation` 的 attack / defend 可视化；v6.8 已加入 sensor / contact / EW / fire support 只读态势 overlay 首版。
 
@@ -541,8 +541,8 @@ RootGameView
 
 引导边界：
 
-- `playtestActionGateTitle` 与 `playtestActionGateDetail` 根据 victory、observer、玩家可下令状态和 `shouldRunAI` 派生，告诉玩家当前是 `Player orders open`、`Red/Blue AI ready`、`Advance turn` 还是胜负已达成；它只读状态，不执行 AI 或命令。
-- `playtestObjectiveSummaryText` 与 `playtestObjectiveThresholdText` 从 `VictoryRules.greyTideObjectiveControlCounts(in:)` 派生，显示 Blue / Red / Neutral 对十个主目标的控制数和蓝方胜利阈值；它只读 `GameState`，不写胜负状态。
+- `playtestActionGateTitle` 与 `playtestActionGateDetail` 根据 victory、observer、玩家可下令状态和 `shouldRunAI` 派生，告诉玩家当前是哪个阵营 orders open、哪个 active faction 可由 AI 解析、需要 advance turn，还是胜负已达成；它只读状态，不执行 AI 或命令。
+- `playtestObjectiveSummaryText` 与 `playtestObjectiveThresholdText` 从 `VictoryRules.greyTideObjectiveControlCounts(in:)` 派生，显示 Blue / Red / Neutral 对十个主目标的控制数；Blue 玩家看到 Blue 胜利阈值，Red 玩家看到阻止 Blue 达标的阈值口径。它只读 `GameState`，不写胜负状态。
 - `playtestGuidanceItems` 根据当前选择、可行动状态、visible contacts、fire support result 和 phase 生成最多 4 条短提示。
 - 提示显示在 Playtest tab 内，不遮挡地图核心交互。
 - 本轮不做全屏 onboarding、弹窗教程、截图检查或 UI 点击自动化。

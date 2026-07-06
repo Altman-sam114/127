@@ -325,8 +325,8 @@ flowchart LR
     UI["ModernPlaytestPanelView<br/>Playtest tab<br/>Blue / Red selector<br/>New / Save / Continue / Clear"]:::display
     SETTINGS["试玩设置<br/>Observer AI toggle<br/>Default Layer picker"]:::display
     ROLE["红蓝新局与扮演方<br/>New Operation Side<br/>Player Side / Opposition<br/>Control Mode"]:::display
-    GATE["Action Gate<br/>Player orders open<br/>AI ready / advance turn"]:::display
-    OBJECTIVE["主目标控制摘要<br/>Blue / Red / Neutral count<br/>Victory threshold"]:::display
+    GATE["Action Gate<br/>active side named<br/>orders open / AI ready / advance turn"]:::display
+    OBJECTIVE["主目标控制摘要<br/>Blue / Red / Neutral count<br/>Blue threshold / Red denial"]:::display
     GUIDE["短引导<br/>playtestGuidanceItems<br/>lastCommandMessage"]:::display
     APP["AppContainer<br/>resetGame(playerFaction:)<br/>save / load / clear snapshot"]:::app
     SNAP["UserDefaults 本地快照<br/>LocalPlaytestSnapshot envelope<br/>schemaVersion / playerFaction / GameState<br/>legacy GameState fallback"]:::data
@@ -368,8 +368,9 @@ flowchart LR
     RULES["规则权威不变<br/>Command / ZoneDirective<br/>WarCommandExecutor / RuleEngine"]:::rules
     CLOUD["main push<br/>GitHub Actions artifact<br/>manifest / junit / xcodebuild.log"]:::cloud
     SIDE["Playtest side selector<br/>Blue / Red new operation<br/>AI controls non-player hostile side"]:::display
-    GATE["Playtest Action Gate<br/>player / AI / observer / end-turn state"]:::display
-    OBJ["Playtest objective summary<br/>10 main objectives<br/>Blue threshold / Red hold condition"]:::display
+    GATE["Playtest Action Gate<br/>active side named<br/>player / AI / observer / end-turn state"]:::display
+    OBJ["Playtest objective summary<br/>10 main objectives<br/>Blue threshold / Red denial condition"]:::display
+    MISSION["Mission Status<br/>per-task validator precheck<br/>Ready Tasks / blocked reason"]:::display
     RUNTIME["人工授权后再做<br/>launch / UI smoke / screenshot<br/>10-20 observer turns / performance"]:::risk
 
     DISPLAY --> REPORT
@@ -380,6 +381,7 @@ flowchart LR
     SIDE --> REPORT
     GATE --> REPORT
     OBJ --> REPORT
+    MISSION --> REPORT
     RULES --> REPORT
     REPORT --> CLOUD
     REPORT --> RUNTIME

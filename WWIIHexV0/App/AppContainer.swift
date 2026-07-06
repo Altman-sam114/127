@@ -520,12 +520,12 @@ final class AppContainer: ObservableObject {
 
         if observerModeEnabled {
             return shouldRunAI(for: gameState.activeFaction, phase: gameState.phase)
-                ? "AI can resolve active side"
+                ? "\(gameState.activeFaction.shortDisplayName) AI can resolve"
                 : "Advance turn to continue"
         }
 
         if canIssuePlayerDirective {
-            return "Player orders open"
+            return "\(playerFaction.shortDisplayName) orders open"
         }
 
         if shouldRunAI(for: gameState.activeFaction, phase: gameState.phase) {
@@ -555,10 +555,16 @@ final class AppContainer: ObservableObject {
         }
 
         let remaining = max(0, 7 - control.blue)
+        if playerFaction.alignment == .red {
+            if remaining == 0 {
+                return "Break Blue below 7 objectives immediately; hold Blue below 6 by final turn."
+            }
+            return "Deny Blue \(remaining) more objectives for instant win; hold below 6 by final turn."
+        }
+
         if remaining == 0 {
             return "Blue immediate victory threshold is met."
         }
-
         return "Blue needs \(remaining) more for instant win; final turn needs 6."
     }
 
@@ -577,8 +583,8 @@ final class AppContainer: ObservableObject {
             appendGuidance("Command sector directive is ready in Tasks.", to: &items)
         } else if selectedDivision == nil {
             appendGuidance("Select a friendly formation or command sector on the map.", to: &items)
-        } else if canIssueSelectedModernUnitMission {
-            appendGuidance("Use Tasks for recon, fires, EW, sustainment, or maneuver.", to: &items)
+        } else if !availableModernMissionNames.isEmpty {
+            appendGuidance("Ready Tasks: \(availableModernMissionNames.joined(separator: ", ")).", to: &items)
             if canIssueSelectedFireMission {
                 appendGuidance("Fire Mission has a valid target.", to: &items)
             } else {
@@ -751,24 +757,56 @@ final class AppContainer: ObservableObject {
             return "\(selectedDivision.operationalDisplayName) has already acted this turn."
         }
 
-        if let fireValidation = selectedFireMissionValidation,
-           !fireValidation.isValid {
-            return "Formation missions are ready; Fire Mission blocked: \(fireValidation.displayMessage)."
+        let availableMissionNames = availableModernMissionNames
+        if !availableMissionNames.isEmpty {
+            let readyText = "Ready Tasks: \(availableMissionNames.joined(separator: ", "))."
+            if selectedFireMissionTarget() == nil && !canIssueSelectedFireMission {
+                return "\(readyText) Select a target hex, sector, or contact before precision fires."
+            }
+            return readyText
+        }
+
+        if let blockedMission = firstBlockedModernMissionStatus {
+            return blockedMission
         }
 
         if selectedFireMissionTarget() == nil {
-            return "Formation missions are ready; select a target hex, sector, or contact before precision fires."
+            return "Select a target hex, sector, or contact before precision fires."
         }
 
-        return "Mission orders are ready for \(selectedDivision.operationalDisplayName)."
+        return "No mission is currently available for \(selectedDivision.operationalDisplayName)."
     }
 
     var canIssueSelectedModernUnitMission: Bool {
-        selectedActionDivision != nil
+        canIssueSelectedReconMission ||
+            canIssueSelectedUAVMission ||
+            canIssueSelectedSuppressAirDefenseMission ||
+            canIssueSelectedElectronicWarfareMission ||
+            canIssueSelectedResupplyRepairMission
+    }
+
+    var canIssueSelectedReconMission: Bool {
+        selectedReconMissionValidation?.isValid == true
+    }
+
+    var canIssueSelectedUAVMission: Bool {
+        selectedUAVMissionValidation?.isValid == true
     }
 
     var canIssueSelectedFireMission: Bool {
         selectedFireMissionValidation?.isValid == true
+    }
+
+    var canIssueSelectedSuppressAirDefenseMission: Bool {
+        selectedSuppressAirDefenseMissionValidation?.isValid == true
+    }
+
+    var canIssueSelectedElectronicWarfareMission: Bool {
+        selectedElectronicWarfareMissionValidation?.isValid == true
+    }
+
+    var canIssueSelectedResupplyRepairMission: Bool {
+        selectedResupplyRepairMissionValidation?.isValid == true
     }
 
     var canOrderModernAssaultObjective: Bool {
@@ -777,6 +815,19 @@ final class AppContainer: ObservableObject {
 
     var canOrderModernHoldDelay: Bool {
         canOrderSelectedGeneralHoldLine
+    }
+
+    private var availableModernMissionNames: [String] {
+        [
+            (canIssueSelectedReconMission, "Recon Area"),
+            (canIssueSelectedUAVMission, "UAV Orbit"),
+            (canIssueSelectedFireMission, "Fire Mission"),
+            (canIssueSelectedSuppressAirDefenseMission, "Air Support / SEAD"),
+            (canIssueSelectedElectronicWarfareMission, "Jam / Counter-Drone"),
+            (canIssueSelectedResupplyRepairMission, "Resupply / Repair")
+        ].compactMap { mission in
+            mission.0 ? mission.1 : nil
+        }
     }
 
     private var selectedActionDivision: Division? {
@@ -794,6 +845,37 @@ final class AppContainer: ObservableObject {
         return division
     }
 
+    private var firstBlockedModernMissionStatus: String? {
+        let validations: [(String, CommandValidation?)] = [
+            ("Recon Area", selectedReconMissionValidation),
+            ("UAV Orbit", selectedUAVMissionValidation),
+            ("Fire Mission", selectedFireMissionValidation),
+            ("Air Support / SEAD", selectedSuppressAirDefenseMissionValidation),
+            ("Jam / Counter-Drone", selectedElectronicWarfareMissionValidation),
+            ("Resupply / Repair", selectedResupplyRepairMissionValidation)
+        ]
+
+        return validations.compactMap { missionName, validation in
+            guard let validation,
+                  !validation.isValid else {
+                return nil
+            }
+            return "\(missionName) blocked: \(validation.displayMessage)."
+        }.first
+    }
+
+    private var selectedReconMissionValidation: CommandValidation? {
+        selectedHexMissionValidation { division, target in
+            .recon(divisionId: division.id, target: target)
+        }
+    }
+
+    private var selectedUAVMissionValidation: CommandValidation? {
+        selectedHexMissionValidation { division, target in
+            .uavRecon(divisionId: division.id, target: target)
+        }
+    }
+
     private var selectedFireMissionValidation: CommandValidation? {
         guard let division = selectedActionDivision,
               let target = selectedFireMissionTarget() else {
@@ -808,6 +890,35 @@ final class AppContainer: ObservableObject {
             ),
             in: gameState
         )
+    }
+
+    private var selectedSuppressAirDefenseMissionValidation: CommandValidation? {
+        selectedHexMissionValidation { division, target in
+            .suppressAirDefense(divisionId: division.id, target: target)
+        }
+    }
+
+    private var selectedElectronicWarfareMissionValidation: CommandValidation? {
+        selectedHexMissionValidation { division, target in
+            .electronicWarfare(divisionId: division.id, target: target)
+        }
+    }
+
+    private var selectedResupplyRepairMissionValidation: CommandValidation? {
+        guard let division = selectedActionDivision else {
+            return nil
+        }
+        return CommandValidator().validate(.resupply(divisionId: division.id), in: gameState)
+    }
+
+    private func selectedHexMissionValidation(
+        command: (Division, HexCoord) -> Command
+    ) -> CommandValidation? {
+        guard let division = selectedActionDivision,
+              let target = selectedMissionTargetHex() else {
+            return nil
+        }
+        return CommandValidator().validate(command(division, target), in: gameState)
     }
 
     private var canIssuePlayerDirective: Bool {
