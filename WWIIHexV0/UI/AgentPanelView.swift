@@ -232,17 +232,26 @@ struct AgentPanelView: View {
     }
 
     private func displayProvider(_ provider: String?) -> String {
-        switch provider {
-        case "MockAI":
-            return "Local Planner"
-        case "MockAI+MarshalDirective":
-            return "Local Planner + Operational Directive"
-        case "MockAI+Directive":
-            return "Local Planner + Directive"
-        case let provider?:
-            return provider
-        case nil:
+        guard let provider else {
             return "System Planner"
+        }
+
+        let parts = provider.split(separator: "+", maxSplits: 1).map(String.init)
+        guard parts.first == "MockAI" else {
+            return provider
+        }
+
+        guard parts.count == 2 else {
+            return "Local Planner"
+        }
+
+        switch parts[1] {
+        case "MarshalDirective":
+            return "Local Planner + Operational Directive"
+        case "Directive":
+            return "Local Planner + Directive"
+        default:
+            return provider
         }
     }
 

@@ -109,9 +109,7 @@ ALLOWED_SWIFT_LITERALS = [
   ["WWIIHexV0/SpriteKit/MapLayerOverlayNode.swift", "germany_core"],
   ["WWIIHexV0/SpriteKit/MapLayerOverlayNode.swift", "soviet_front"],
   ["WWIIHexV0/SpriteKit/MapLayerOverlayNode.swift", "soviet_depth"],
-  ["WWIIHexV0/UI/AgentPanelView.swift", "MockAI"],
-  ["WWIIHexV0/UI/AgentPanelView.swift", "MockAI+MarshalDirective"],
-  ["WWIIHexV0/UI/AgentPanelView.swift", "MockAI+Directive"]
+  ["WWIIHexV0/UI/AgentPanelView.swift", "MockAI"]
 ].freeze
 
 def relative_path(path)
