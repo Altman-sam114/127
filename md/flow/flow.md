@@ -450,12 +450,13 @@ RootGameView
 - 面板按钮根据 `AppContainer` 暴露的 `canIssueSelectedReconMission`、`canIssueSelectedUAVMission`、`canIssueSelectedFireMission`、`canIssueSelectedSuppressAirDefenseMission`、`canIssueSelectedElectronicWarfareMission`、`canIssueSelectedResupplyRepairMission`、`canOrderModernAssaultObjective`、`canOrderModernHoldDelay` 和 observer mode 启用/禁用；这些任务按钮均复用 `CommandValidator` 预检当前 selected formation / target / preferred munition 和规则状态。Mission Status 会列出可用的 Ready Tasks 和可用 sector directive，或提前解释弹药、冷却、目标质量、ROE、防空、目标缺失、友邻风险等首个可读拒绝原因，避免宏观指令或 Fire Mission 缺目标遮住可用的侦察、EW 或后勤任务。
 - 任务拒绝同步写入 `lastCommandMessage`、`lastCommandFeedbackTone` 和 interaction log；`CommandValidationError.displayMessage` 是玩家、AI 回放和 directive diagnostics 的统一可读拒绝文案来源，避免 UI 直接显示 `targetOutOfRange`、`restrictedFireZone` 等 enum raw value。玩家宏观 directive 部分失败时，`lastCommandMessage` 会带出第一条规则拒绝原因，完整细节继续保留在 `WarDirectiveRecord`。
 - 计划线仍复用 v0.4 `PlayerPlannedOperation` 的 attack / defend 可视化；v6.8 已加入 sensor / contact / EW / fire support 只读态势 overlay 首版。
+- Playtest 面板已有只读 C2 Overlay Legend，复用 C2 token 色标解释 sensor、jammed sensor、EW area、fire result、contact confidence、contact type code 和 logistics 标记；该图例只读，不写 `GameState`。
 
 仍未完成：
 
 - 没有专门 readiness / fuel / signature 字段；`Division` 现在只读派生 readiness、fuel posture 和 signature posture，任务面板、单位详情和 tooltip 会展示这些态势，同时继续显示 logistics 状态、visible contact 数和 fire support ammo 摘要。
 - 任务按钮没有单独的 plan edit / preview / cancel 流程；点击即提交到规则系统。
-- Recon / Fires / EW 的地图 overlay 仍是首版轻量标记，未做完整图层开关、动画、tooltip 或视觉截图验收。
+- Recon / Fires / EW 的地图 overlay 仍是首版轻量标记；Playtest 面板已有只读图例，但未做完整图层开关、动画、tooltip 或视觉截图验收。
 - 未做本机 UI 点击或模拟器烟测，等待云端 build 和后续人工授权。
 
 ---
@@ -478,7 +479,7 @@ GameState
 
 SwiftUI 首轮：
 
-- `ModernCommandDesignTokens` 统一 8pt 圆角、间距、44pt 最小触控区，以及 blue/red/green/neutral、sensor、fires、EW、sustainment、warning 色标。
+- `ModernCommandDesignTokens` 统一 8pt 圆角、间距、44pt 最小触控区，以及 blue/red/green/neutral、sensor、fires、EW、sustainment、warning 和 contact confidence 色标。
 - `HUDView` 从旧资源格子升级为现代 C2 状态条，显示 turn、side、phase、victory、visible contacts、EW zones、ammo、air、logistics risk 和 C2 queue。
 - `ModernMissionPanelView` 继续只调用 `AppContainer` 的任务方法，但使用 token 化样式、`Label` / SF Symbols、44pt 按钮和更清晰的 Logistics / Contacts / Ammo 摘要。
 - `NewGameButton` 使用同一触控尺寸约束。
@@ -490,10 +491,11 @@ SpriteKit 首轮：
 - EW effects 以紫色 hex 区域表示。
 - Fire support 最近结果以火力环和 `F` / `!` 标记表示。
 - Visible contacts 以稳定尺寸圆点标记，按 confidence 改变颜色，并用 A/I/F/AD/L/? 表示估计类型。
+- `ModernPlaytestPanelView` 的 C2 Overlay Legend 对上述 sensor / jammed / EW / fire / contact / logistics 标记做只读解释。
 
 边界和未完成：
 
-- overlay 当前没有独立图层开关、legend、tooltip、Reduce Motion 动画策略或截图验收。
+- overlay 当前已有只读 legend；仍没有独立图层开关、tooltip、Reduce Motion 动画策略或截图验收。
 - v6.8 没有新增 readiness / fuel / signature / electronicProtection 字段；后续 v6.10 收口增加的是派生显示，不是独立持久字段。
 - 没有改 `Command`、`ZoneDirective`、`WarCommandExecutor` 或 `RuleEngine` 执行语义。
 - 未在本机启动 app、模拟器或 UI 点击烟测；视觉正确性等待后续人工授权或专门 UI 验收。
@@ -518,6 +520,7 @@ RootGameView
       - Save / Continue / Clear Snapshot
       - Observer AI toggle
       - Default Layer picker
+      - C2 Overlay Legend
       - Field Prompts / last command feedback tone
   -> AppContainer
       - resetGame(playerFaction:)

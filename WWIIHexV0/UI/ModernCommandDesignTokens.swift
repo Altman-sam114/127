@@ -31,6 +31,10 @@ enum ModernCommandDesignTokens {
     static let electronicWarfare = Color(red: 0.62, green: 0.28, blue: 0.84)
     static let sustainment = Color(red: 0.17, green: 0.62, blue: 0.46)
     static let warning = Color(red: 0.91, green: 0.42, blue: 0.18)
+    static let contactLow = Color(red: 0.72, green: 0.76, blue: 0.78)
+    static let contactMedium = Color(red: 0.95, green: 0.66, blue: 0.22)
+    static let contactHigh = Color(red: 0.96, green: 0.42, blue: 0.20)
+    static let contactConfirmed = Color(red: 0.86, green: 0.16, blue: 0.16)
 
     static func sideColor(for alignment: OperationalSideAlignment) -> Color {
         switch alignment {

@@ -130,7 +130,7 @@ struct AgentPanelView: View {
                     ForEach(directiveRecords) { directive in
                         VStack(alignment: .leading, spacing: 3) {
                             HStack(spacing: 6) {
-                                Text(directive.zoneId?.rawValue ?? "global")
+                                Text(directive.zoneId.map(commandSectorDisplay) ?? "Global Coordination")
                                     .font(.caption.bold())
                                     .padding(.horizontal, 6)
                                     .padding(.vertical, 2)
@@ -195,8 +195,9 @@ struct AgentPanelView: View {
         let tactic = directive.tacticDisplayName ?? directive.category?.rawValue ?? "none"
         let executed = directive.commandResults.filter(\.executed).count
         let rejected = directive.commandResults.count - executed
-        let targets = directive.targetRegionIds.map(\.rawValue).joined(separator: ", ")
-        let targetText = targets.isEmpty ? "no target" : targets
+        let targetText = directive.targetRegionIds.isEmpty
+            ? "no target"
+            : "\(directive.targetRegionIds.count) objective area\(directive.targetRegionIds.count == 1 ? "" : "s")"
         return "\(type) / \(tactic) / \(executed) ok, \(rejected) rejected / \(targetText)"
     }
 

@@ -379,7 +379,7 @@ struct CommandExecutor {
         }
 
         state.appendEvent(
-            "Hex \(hex.q),\(hex.r) reassigned to operational zone \(advancingTheaterId.rawValue).",
+            "Sector control updated at hex \(hex.q),\(hex.r).",
             category: .theaterChange,
             relatedRecordId: nil
         )

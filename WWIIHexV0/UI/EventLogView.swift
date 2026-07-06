@@ -57,8 +57,8 @@ struct EventLogView: View {
     private func metadata(for entry: GameLogEntry) -> String {
         let faction = entry.faction?.displayName ?? "System"
         let phase = entry.phase?.displayName ?? "Setup"
-        if let relatedRecordId = entry.relatedRecordId {
-            return "Turn \(entry.turn) - \(faction) - \(phase) - \(relatedRecordId)"
+        if entry.relatedRecordId != nil {
+            return "Turn \(entry.turn) - \(faction) - \(phase) - Directive linked"
         }
         return "Turn \(entry.turn) - \(faction) - \(phase)"
     }

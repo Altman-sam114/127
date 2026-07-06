@@ -104,6 +104,8 @@ struct ModernPlaytestPanelView: View {
                 .pickerStyle(.menu)
             }
 
+            c2LegendSection
+
             VStack(alignment: .leading, spacing: ModernCommandDesignTokens.compactSpacing) {
                 Label("Field Prompts", systemImage: "lightbulb")
                     .font(.subheadline.bold())
@@ -178,6 +180,55 @@ struct ModernPlaytestPanelView: View {
         item.hasPrefix("Ready Tasks:") || item.contains("ready")
             ? "checkmark.circle"
             : "info.circle"
+    }
+
+    private var c2LegendSection: some View {
+        VStack(alignment: .leading, spacing: ModernCommandDesignTokens.compactSpacing) {
+            Label("C2 Overlay Legend", systemImage: "map")
+                .font(.subheadline.bold())
+
+            LazyVGrid(columns: legendColumns, alignment: .leading, spacing: ModernCommandDesignTokens.compactSpacing) {
+                legendItem("Sensor", color: ModernCommandDesignTokens.sensor, systemImage: "dot.scope")
+                legendItem("Jammed", color: ModernCommandDesignTokens.electronicWarfare, systemImage: "waveform.path.ecg")
+                legendItem("EW Area", color: ModernCommandDesignTokens.electronicWarfare, systemImage: "antenna.radiowaves.left.and.right")
+                legendItem("Fire Result", color: ModernCommandDesignTokens.fires, systemImage: "scope")
+                legendItem("Low Contact", color: ModernCommandDesignTokens.contactLow, systemImage: "smallcircle.filled.circle")
+                legendItem("Medium Contact", color: ModernCommandDesignTokens.contactMedium, systemImage: "smallcircle.filled.circle")
+                legendItem("High Contact", color: ModernCommandDesignTokens.contactHigh, systemImage: "smallcircle.filled.circle")
+                legendItem("Confirmed", color: ModernCommandDesignTokens.contactConfirmed, systemImage: "smallcircle.filled.circle")
+                legendItem("Logistics", color: ModernCommandDesignTokens.sustainment, systemImage: "fuelpump")
+            }
+
+            Text("Contact codes: A armor, I infantry, F fires, AD air defense, L logistics, ? unknown.")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .font(.caption)
+        .padding(ModernCommandDesignTokens.compactSpacing)
+        .background(ModernCommandDesignTokens.insetPanelBackground)
+        .clipShape(RoundedRectangle(cornerRadius: ModernCommandDesignTokens.cornerRadius))
+        .accessibilityElement(children: .contain)
+    }
+
+    private var legendColumns: [GridItem] {
+        [
+            GridItem(.adaptive(minimum: 104), spacing: ModernCommandDesignTokens.compactSpacing)
+        ]
+    }
+
+    private func legendItem(_ title: String, color: Color, systemImage: String) -> some View {
+        Label {
+            Text(title)
+                .lineLimit(1)
+                .minimumScaleFactor(0.85)
+        } icon: {
+            Image(systemName: systemImage)
+                .symbolRenderingMode(.hierarchical)
+                .foregroundStyle(color)
+                .frame(width: 18, alignment: .center)
+        }
+        .foregroundStyle(.secondary)
     }
 
     private func guidanceColor(for item: String) -> Color {

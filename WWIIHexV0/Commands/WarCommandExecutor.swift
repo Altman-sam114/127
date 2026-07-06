@@ -1279,12 +1279,12 @@ struct WarCommandExecutor {
             )
         }
         state.appendEvent(
-            "Hex \(hex.q),\(hex.r) reassigned to operational zone \(advancingTheaterId.rawValue).",
+            "Sector control updated at hex \(hex.q),\(hex.r).",
             category: .theaterChange,
             relatedRecordId: relatedRecordId
         )
         state.appendEvent(
-            "Front changed around region \(regionId.rawValue).",
+            "Contact line changed near the objective area.",
             category: .frontChange,
             relatedRecordId: relatedRecordId
         )

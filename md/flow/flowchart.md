@@ -296,10 +296,11 @@ flowchart LR
     AWARE["OperationalAwarenessState<br/>contacts / sensorCoverage / ewEffects"]:::state
     FIRE["FireSupportState<br/>ammo / airTasking / lastMissionResults"]:::state
     ECON["EconomyState + Division.supplyState<br/>C2 queue / logistics risk"]:::state
-    TOKENS["ModernCommandDesignTokens<br/>spacing / radius / 44pt tap<br/>side / sensor / fires / EW colors"]:::display
+    TOKENS["ModernCommandDesignTokens<br/>spacing / radius / 44pt tap<br/>side / sensor / fires / EW / contact colors"]:::display
     HUD["HUDView<br/>C2 status strip<br/>contacts / EW / ammo / air / logistics"]:::display
     TASKS["ModernMissionPanelView<br/>tokenized mission controls<br/>Label + SF Symbols"]:::display
     MAP["BoardScene.drawModernC2Overlays<br/>sensor heatmap / contact marker<br/>EW area / fire result ring"]:::display
+    LEGEND["ModernPlaytestPanelView<br/>C2 Overlay Legend<br/>sensor / jammed / EW / fire / contact / logistics"]:::display
     RULES["Command / ZoneDirective<br/>WarCommandExecutor / RuleEngine<br/>仍是唯一写状态路径"]:::rules
 
     GS --> AWARE --> HUD
@@ -307,8 +308,10 @@ flowchart LR
     GS --> ECON --> HUD
     TOKENS --> HUD
     TOKENS --> TASKS
+    TOKENS --> LEGEND
     AWARE --> MAP
     FIRE --> MAP
+    MAP --> LEGEND
     TASKS --> RULES --> GS
 
     classDef state fill:#e0f2fe,stroke:#0284c7,color:#082f49
