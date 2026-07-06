@@ -167,7 +167,7 @@ struct MockAIClient: DecisionProvider {
                             divisionId: unitId,
                             toRegionId: targetRegion,
                             stance: "depthReinforce",
-                            reason: "v0.33 deployment: DEPTH reserve reinforces nearest FRONT segment."
+                            reason: "Deployment planner moves reserve strength toward the nearest safe contact line."
                         )
                     )
                 } else {
@@ -177,7 +177,7 @@ struct MockAIClient: DecisionProvider {
                             divisionId: unitId,
                             toRegionId: division.regionId,
                             stance: "depthReserve",
-                            reason: "v0.33 deployment: DEPTH reserve has no adjacent safe front target."
+                            reason: "Deployment planner keeps reserve strength in place because no safe contact line reinforcement route is available."
                         )
                     )
                 }
@@ -197,7 +197,7 @@ struct MockAIClient: DecisionProvider {
                     divisionId: unitId,
                     toRegionId: division.regionId,
                     stance: "garrison",
-                    reason: "v0.33 deployment: GARRISON unit does not leave core or city region."
+                    reason: "Deployment planner keeps security elements on key terrain."
                 )
             )
             usedDivisionIds.insert(unitId)
@@ -216,7 +216,7 @@ struct MockAIClient: DecisionProvider {
                     divisionId: division.id,
                     toRegionId: regionId,
                     stance: stance,
-                    reason: "v0.33 deployment: unit outside deployment pool holds."
+                    reason: "Deployment planner keeps unassigned formation in place."
                 )
             )
         }
@@ -226,7 +226,7 @@ struct MockAIClient: DecisionProvider {
             schemaVersion: 2,
             agentId: context.agentId,
             turn: context.turn,
-            intent: "Use v0.33 FrontZone deployment: front units hold or attack, depth reserves reinforce, garrisons hold.",
+            intent: "Use deployment planner assignments: contact-line units act, reserves reinforce, security elements hold key terrain.",
             orders: orders
         )
     }

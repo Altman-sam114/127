@@ -1264,7 +1264,7 @@ struct SimulatedMarshalLLMClient: MarshalLLMClient {
                     intensity: front.strengthRatio >= 1.8 ? .allOut : .limitedCounter,
                     maxCommittedUnits: front.frontUnitCount + max(0, front.depthUnitCount / 2),
                     exploitDepth: front.strengthRatio >= 1.8 ? 1 : 0,
-                    rationale: "Simulated marshal JSON: \(tactic.rawValue) selected from strength ratio \(String(format: "%.2f", front.strengthRatio))."
+                    rationale: "Simulated marshal plan selects \(tactic.displayName) from strength ratio \(String(format: "%.2f", front.strengthRatio))."
                 )
             }
 
@@ -1280,7 +1280,7 @@ struct SimulatedMarshalLLMClient: MarshalLLMClient {
                 supportRegionIds: front.enemyRegionIds,
                 reserveBias: max(1, min(3, front.depthUnitCount)),
                 maxCommittedUnits: front.frontUnitCount,
-                rationale: "Simulated marshal JSON: \(tactic.rawValue) selected for front status \(front.status)."
+                rationale: "Simulated marshal plan selects \(tactic.displayName) for contact line status \(front.status)."
             )
         }
 
