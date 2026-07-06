@@ -327,7 +327,7 @@ flowchart LR
     ROLE["红蓝新局与扮演方<br/>New Operation Side<br/>Player Side / Opposition<br/>Control Mode"]:::display
     GATE["Action Gate<br/>active side named<br/>orders open / AI ready / advance turn"]:::display
     OBJECTIVE["主目标控制摘要<br/>Blue / Red / Neutral count<br/>Blue threshold / Red denial"]:::display
-    GUIDE["短引导<br/>playtestGuidanceItems<br/>lastCommandMessage"]:::display
+    GUIDE["短引导<br/>playtestGuidanceItems<br/>feedback tone / accessibility hints"]:::display
     APP["AppContainer<br/>resetGame(playerFaction:)<br/>save / load / clear snapshot"]:::app
     SNAP["UserDefaults 本地快照<br/>LocalPlaytestSnapshot envelope<br/>schemaVersion / playerFaction / GameState<br/>legacy GameState fallback"]:::data
     BOOT["StrategicStateBootstrapper<br/>refreshGeneralAssignments<br/>清空选择/高亮/临时日志"]:::rules
@@ -370,7 +370,7 @@ flowchart LR
     SIDE["Playtest side selector<br/>Blue / Red new operation<br/>AI controls non-player hostile side"]:::display
     GATE["Playtest Action Gate<br/>active side named<br/>player / AI / observer / end-turn state"]:::display
     OBJ["Playtest objective summary<br/>10 main objectives<br/>Blue threshold / Red denial condition"]:::display
-    MISSION["Mission Status<br/>per-task validator precheck<br/>Ready Tasks / blocked reason"]:::display
+    MISSION["Mission Status<br/>per-task validator precheck<br/>Ready Tasks / explicit fire target"]:::display
     RUNTIME["人工授权后再做<br/>launch / UI smoke / screenshot<br/>10-20 observer turns / performance"]:::risk
 
     DISPLAY --> REPORT

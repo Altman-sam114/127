@@ -13,6 +13,7 @@ struct ModernPlaytestPanelView: View {
     let localSnapshotSummary: String?
     let canLoadSnapshot: Bool
     let lastCommandMessage: String?
+    let lastCommandFeedbackTone: CommandFeedbackTone?
     let guidanceItems: [String]
     let playableSides: [Faction]
     @Binding var nextOperationPlayerFaction: Faction
@@ -65,22 +66,26 @@ struct ModernPlaytestPanelView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .frame(maxWidth: .infinity, minHeight: ModernCommandDesignTokens.minimumTapSize, alignment: .leading)
+                .accessibilityHint("Starts a new Grey Tide operation for the selected side.")
 
                 HStack(spacing: ModernCommandDesignTokens.compactSpacing) {
                     Button("Save", systemImage: "square.and.arrow.down", action: onSaveSnapshot)
                         .buttonStyle(.bordered)
                         .frame(maxWidth: .infinity, minHeight: ModernCommandDesignTokens.minimumTapSize)
+                        .accessibilityHint("Saves the current playtest state locally.")
 
                     Button("Continue", systemImage: "play.fill", action: onLoadSnapshot)
                         .buttonStyle(.bordered)
                         .disabled(!canLoadSnapshot)
                         .frame(maxWidth: .infinity, minHeight: ModernCommandDesignTokens.minimumTapSize)
+                        .accessibilityHint("Loads the saved local playtest snapshot.")
                 }
 
-                Button("Clear Snapshot", systemImage: "trash", action: onClearSnapshot)
+                Button("Clear Snapshot", systemImage: "trash", role: .destructive, action: onClearSnapshot)
                     .buttonStyle(.bordered)
                     .disabled(!canLoadSnapshot)
                     .frame(maxWidth: .infinity, minHeight: ModernCommandDesignTokens.minimumTapSize, alignment: .leading)
+                    .accessibilityHint("Deletes the saved local playtest snapshot.")
 
                 Text(localSnapshotSummary ?? "No local snapshot")
                     .font(.caption)
@@ -104,16 +109,17 @@ struct ModernPlaytestPanelView: View {
                     .font(.subheadline.bold())
 
                 ForEach(guidanceItems, id: \.self) { item in
-                    Label(item, systemImage: "checkmark.circle")
+                    Label(item, systemImage: guidanceIcon(for: item))
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(guidanceColor(for: item))
                 }
             }
 
             if let lastCommandMessage {
-                Label(lastCommandMessage, systemImage: "exclamationmark.bubble")
+                Label(lastCommandMessage, systemImage: commandFeedbackIcon)
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(commandFeedbackColor)
+                    .accessibilityLabel(commandFeedbackAccessibilityLabel(for: lastCommandMessage))
             }
         }
         .padding(ModernCommandDesignTokens.padding)
@@ -123,5 +129,60 @@ struct ModernPlaytestPanelView: View {
             RoundedRectangle(cornerRadius: ModernCommandDesignTokens.cornerRadius)
                 .stroke(ModernCommandDesignTokens.panelStroke, lineWidth: 1)
         }
+    }
+
+    private var resolvedCommandFeedbackTone: CommandFeedbackTone {
+        lastCommandFeedbackTone ?? .info
+    }
+
+    private var commandFeedbackIcon: String {
+        switch resolvedCommandFeedbackTone {
+        case .info:
+            return "bubble.left.and.text.bubble"
+        case .success:
+            return "checkmark.circle"
+        case .warning:
+            return "exclamationmark.triangle"
+        case .failure:
+            return "xmark.octagon"
+        }
+    }
+
+    private var commandFeedbackColor: Color {
+        switch resolvedCommandFeedbackTone {
+        case .info:
+            return .secondary
+        case .success:
+            return .green
+        case .warning:
+            return .orange
+        case .failure:
+            return .red
+        }
+    }
+
+    private func commandFeedbackAccessibilityLabel(for message: String) -> String {
+        switch resolvedCommandFeedbackTone {
+        case .info:
+            return "Status: \(message)"
+        case .success:
+            return "Success: \(message)"
+        case .warning:
+            return "Warning: \(message)"
+        case .failure:
+            return "Failure: \(message)"
+        }
+    }
+
+    private func guidanceIcon(for item: String) -> String {
+        item.hasPrefix("Ready Tasks:") || item.contains("ready")
+            ? "checkmark.circle"
+            : "info.circle"
+    }
+
+    private func guidanceColor(for item: String) -> Color {
+        item.hasPrefix("Ready Tasks:") || item.contains("ready")
+            ? .green
+            : .secondary
     }
 }

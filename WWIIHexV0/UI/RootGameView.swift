@@ -277,6 +277,7 @@ struct RootGameView: View {
             localSnapshotSummary: container.localSnapshotSummary,
             canLoadSnapshot: container.canLoadLocalSnapshot,
             lastCommandMessage: container.lastCommandMessage,
+            lastCommandFeedbackTone: container.lastCommandFeedbackTone,
             guidanceItems: container.playtestGuidanceItems,
             playableSides: container.playableOperationSides,
             nextOperationPlayerFaction: Binding(

@@ -1,6 +1,13 @@
 import Combine
 import Foundation
 
+enum CommandFeedbackTone: Equatable {
+    case info
+    case success
+    case warning
+    case failure
+}
+
 final class AppContainer: ObservableObject {
     @Published private(set) var gameState: GameState
     @Published private(set) var selectedUnitId: String?
@@ -10,6 +17,7 @@ final class AppContainer: ObservableObject {
     @Published private(set) var attackHighlights: Set<HexCoord>
     @Published private(set) var interactionLog: [GameLogEntry]
     @Published private(set) var lastCommandMessage: String?
+    @Published private(set) var lastCommandFeedbackTone: CommandFeedbackTone?
     @Published private(set) var lastAgentDecisionRecord: AgentDecisionRecord?
     @Published private(set) var lastWarDirectiveRecords: [WarDirectiveRecord]
     @Published private(set) var observerModeEnabled: Bool
@@ -75,6 +83,7 @@ final class AppContainer: ObservableObject {
         self.attackHighlights = []
         self.interactionLog = []
         self.lastCommandMessage = nil
+        self.lastCommandFeedbackTone = nil
         self.lastAgentDecisionRecord = nil
         self.lastWarDirectiveRecords = []
         self.observerModeEnabled = observerModeEnabled
@@ -123,7 +132,7 @@ final class AppContainer: ObservableObject {
             )
         }
         gameState = refreshGeneralAssignments(in: nextState)
-        lastCommandMessage = result.message
+        setCommandFeedback(result.message, tone: result.succeeded ? .success : .failure)
 
         let status = result.succeeded ? "accepted" : "rejected"
         appendInteractionEvent("Command \(status): \(command.displayName). \(result.message)")
@@ -158,9 +167,12 @@ final class AppContainer: ObservableObject {
                 self.gameState = self.refreshedRuntimeState(outcome.state)
                 self.lastAgentDecisionRecord = outcome.record
                 self.lastWarDirectiveRecords = outcome.directiveRecords
-                self.lastCommandMessage = outcome.record.errors.isEmpty
-                    ? "AI turn completed."
-                    : "AI turn completed with \(outcome.record.errors.count) issue(s)."
+                self.setCommandFeedback(
+                    outcome.record.errors.isEmpty
+                        ? "AI turn completed."
+                        : "AI turn completed with \(outcome.record.errors.count) issue(s).",
+                    tone: outcome.record.errors.isEmpty ? .success : .warning
+                )
                 self.appendInteractionEvent("AI \(Self.displayProviderName(outcome.record.provider)) resolved \(outcome.record.commandResults.count) command result(s).")
                 self.isRunningAI = false
                 self.refreshSelectionAfterStateChange()
@@ -389,7 +401,7 @@ final class AppContainer: ObservableObject {
             )
         )
         resetTransientSessionState()
-        lastCommandMessage = "New Grey Tide 2030 operation loaded for \(resolvedPlayerFaction.shortDisplayName)."
+        setCommandFeedback("New Grey Tide 2030 operation loaded for \(resolvedPlayerFaction.shortDisplayName).", tone: .success)
         appendInteractionEvent("New operation loaded: \(scenarioDisplayName), player side \(resolvedPlayerFaction.displayName).")
         runAIIfNeeded()
     }
@@ -406,17 +418,17 @@ final class AppContainer: ObservableObject {
             UserDefaults.standard.set(summary, forKey: Self.localSnapshotSummaryKey)
             UserDefaults.standard.set(playerFaction.rawValue, forKey: Self.localSnapshotPlayerFactionKey)
             localSnapshotSummary = summary
-            lastCommandMessage = "Local snapshot saved."
+            setCommandFeedback("Local snapshot saved.", tone: .success)
             appendInteractionEvent("Local snapshot saved: \(summary).")
         } catch {
-            lastCommandMessage = "Save failed: \(error.localizedDescription)"
+            setCommandFeedback("Save failed: \(error.localizedDescription)", tone: .failure)
             appendInteractionEvent("Save failed: \(error.localizedDescription)")
         }
     }
 
     func loadLocalSnapshot() {
         guard let data = UserDefaults.standard.data(forKey: Self.localSnapshotKey) else {
-            lastCommandMessage = "Continue rejected: no local snapshot found."
+            setCommandFeedback("Continue rejected: no local snapshot found.", tone: .failure)
             appendInteractionEvent("Continue rejected: no local snapshot found.")
             return
         }
@@ -432,11 +444,11 @@ final class AppContainer: ObservableObject {
             localSnapshotSummary = summary
             UserDefaults.standard.set(summary, forKey: Self.localSnapshotSummaryKey)
             UserDefaults.standard.set(playerFaction.rawValue, forKey: Self.localSnapshotPlayerFactionKey)
-            lastCommandMessage = "Local snapshot loaded."
+            setCommandFeedback("Local snapshot loaded.", tone: .success)
             appendInteractionEvent("Local snapshot loaded: \(summary).")
             runAIIfNeeded()
         } catch {
-            lastCommandMessage = "Continue failed: \(error.localizedDescription)"
+            setCommandFeedback("Continue failed: \(error.localizedDescription)", tone: .failure)
             appendInteractionEvent("Continue failed: \(error.localizedDescription)")
         }
     }
@@ -446,7 +458,7 @@ final class AppContainer: ObservableObject {
         UserDefaults.standard.removeObject(forKey: Self.localSnapshotSummaryKey)
         UserDefaults.standard.removeObject(forKey: Self.localSnapshotPlayerFactionKey)
         localSnapshotSummary = nil
-        lastCommandMessage = "Local snapshot cleared."
+        setCommandFeedback("Local snapshot cleared.", tone: .success)
         appendInteractionEvent("Local snapshot cleared.")
     }
 
@@ -579,17 +591,17 @@ final class AppContainer: ObservableObject {
             appendGuidance(playtestActionGateDetail, to: &items)
         }
 
-        if canOrderModernAssaultObjective || canOrderModernHoldDelay {
-            appendGuidance("Command sector directive is ready in Tasks.", to: &items)
-        } else if selectedDivision == nil {
-            appendGuidance("Select a friendly formation or command sector on the map.", to: &items)
-        } else if !availableModernMissionNames.isEmpty {
-            appendGuidance("Ready Tasks: \(availableModernMissionNames.joined(separator: ", ")).", to: &items)
+        if !availableModernMissionNames.isEmpty {
+            appendGuidance(combinedModernReadyText(unitTasks: availableModernMissionNames), to: &items)
             if canIssueSelectedFireMission {
                 appendGuidance("Fire Mission has a valid target.", to: &items)
             } else {
                 appendGuidance("Select a target hex, sector, or contact before Fire Mission.", to: &items)
             }
+        } else if !availableModernSectorDirectiveNames.isEmpty {
+            appendGuidance("Sector directive ready: \(availableModernSectorDirectiveNames.joined(separator: ", ")).", to: &items)
+        } else if selectedDivision == nil {
+            appendGuidance("Select a friendly formation or command sector on the map.", to: &items)
         } else {
             appendGuidance(modernMissionAvailabilityText, to: &items)
         }
@@ -624,6 +636,7 @@ final class AppContainer: ObservableObject {
         attackHighlights = []
         interactionLog = []
         lastCommandMessage = nil
+        lastCommandFeedbackTone = nil
         lastAgentDecisionRecord = nil
         lastWarDirectiveRecords = []
     }
@@ -736,11 +749,10 @@ final class AppContainer: ObservableObject {
             return "Observer mode is read-only; disable Observer AI to issue player missions."
         }
 
-        if canOrderModernAssaultObjective || canOrderModernHoldDelay {
-            return "Command sector directive is ready; assault or hold orders will route through WarCommandExecutor."
-        }
-
         guard let selectedDivision else {
+            if canOrderModernAssaultObjective || canOrderModernHoldDelay {
+                return "Sector directive ready: \(availableModernSectorDirectiveNames.joined(separator: ", "))."
+            }
             return "Select a friendly formation before issuing recon, fires, EW, sustainment, or maneuver."
         }
 
@@ -759,11 +771,15 @@ final class AppContainer: ObservableObject {
 
         let availableMissionNames = availableModernMissionNames
         if !availableMissionNames.isEmpty {
-            let readyText = "Ready Tasks: \(availableMissionNames.joined(separator: ", "))."
+            let readyText = combinedModernReadyText(unitTasks: availableMissionNames)
             if selectedFireMissionTarget() == nil && !canIssueSelectedFireMission {
                 return "\(readyText) Select a target hex, sector, or contact before precision fires."
             }
             return readyText
+        }
+
+        if canOrderModernAssaultObjective || canOrderModernHoldDelay {
+            return "Sector directive ready: \(availableModernSectorDirectiveNames.joined(separator: ", "))."
         }
 
         if let blockedMission = firstBlockedModernMissionStatus {
@@ -828,6 +844,24 @@ final class AppContainer: ObservableObject {
         ].compactMap { mission in
             mission.0 ? mission.1 : nil
         }
+    }
+
+    private var availableModernSectorDirectiveNames: [String] {
+        [
+            (canOrderModernAssaultObjective, "Assault Objective"),
+            (canOrderModernHoldDelay, "Hold / Delay")
+        ].compactMap { directive in
+            directive.0 ? directive.1 : nil
+        }
+    }
+
+    private func combinedModernReadyText(unitTasks: [String]) -> String {
+        let taskText = "Ready Tasks: \(unitTasks.joined(separator: ", "))."
+        let sectorDirectives = availableModernSectorDirectiveNames
+        guard !sectorDirectives.isEmpty else {
+            return taskText
+        }
+        return "\(taskText) Sector directives: \(sectorDirectives.joined(separator: ", "))."
     }
 
     private var selectedActionDivision: Division? {
@@ -1109,7 +1143,7 @@ final class AppContainer: ObservableObject {
            let contact = contacts.first(where: { gameState.map.region(for: $0.lastKnownCoord) == selectedRegionId }) {
             return contact
         }
-        return contacts.first
+        return nil
     }
 
     private func preferredMunitionClass(for division: Division) -> MunitionClass {
@@ -1217,7 +1251,10 @@ final class AppContainer: ObservableObject {
 
         gameState = nextState
         lastWarDirectiveRecords = Array((lastWarDirectiveRecords + [record]).suffix(12))
-        lastCommandMessage = playerDirectiveMessage(for: execution, diagnostics: diagnostics)
+        setCommandFeedback(
+            playerDirectiveMessage(for: execution, diagnostics: diagnostics),
+            tone: playerDirectiveFeedbackTone(for: execution)
+        )
         appendInteractionEvent("Commander directive submitted: \(directive.type.rawValue) \(directive.zoneId.rawValue).")
         refreshSelectionAfterStateChange()
     }
@@ -1239,6 +1276,20 @@ final class AppContainer: ObservableObject {
             return "Commander directive executed \(acceptedCount)/\(totalCount) command(s); first rejection: \(firstRejected.validation.displayMessage)."
         }
         return "Commander directive executed \(acceptedCount)/\(totalCount) command(s); \(diagnostics.first ?? "review Log for details")."
+    }
+
+    private func playerDirectiveFeedbackTone(
+        for execution: WarCommandExecutionResult
+    ) -> CommandFeedbackTone {
+        let acceptedCount = execution.commandResults.filter(\.succeeded).count
+        let totalCount = execution.generatedCommands.count
+        if totalCount == 0 || acceptedCount == 0 {
+            return .failure
+        }
+        if acceptedCount == totalCount {
+            return .success
+        }
+        return .warning
     }
 
     private func shouldRunAI(for faction: Faction, phase: GamePhase) -> Bool {
@@ -1537,8 +1588,13 @@ final class AppContainer: ObservableObject {
     }
 
     private func rejectPlayerAction(_ message: String) {
-        lastCommandMessage = message
+        setCommandFeedback(message, tone: .failure)
         appendInteractionEvent(message)
+    }
+
+    private func setCommandFeedback(_ message: String, tone: CommandFeedbackTone) {
+        lastCommandMessage = message
+        lastCommandFeedbackTone = tone
     }
 
     private func snapshotSummary(for state: GameState) -> String {

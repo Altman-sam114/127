@@ -438,7 +438,7 @@ RootGameView
 
 - `Recon Area` -> `Command.recon` -> `CommandValidator` -> `VisibilityRules.performRecon`。
 - `UAV Orbit` -> `Command.uavRecon` -> `FireSupportRules.validateUAVRecon` / `executeUAVRecon`。
-- `Fire Mission` -> `Command.fireMission`，优先使用选中 hex / region 的 visible contact；否则落到 selected region / hex，仍由 validator 判定目标质量和弹药。
+- `Fire Mission` -> `Command.fireMission`，优先使用选中 hex / region 命中的 visible contact；否则落到 selected region / hex，仍由 validator 判定目标质量和弹药；不再在未选目标时自动回退到第一个 visible contact。
 - `Air Support / SEAD` -> `Command.suppressAirDefense` -> `FireSupportRules.validateSuppressAirDefense` / `executeSuppressAirDefense`。
 - `Jam / Counter-Drone` -> `Command.electronicWarfare` -> `VisibilityRules.applyElectronicWarfare`。
 - `Resupply / Repair` -> `Command.resupply` -> `SupplyRules.applyResupplyRest`。
@@ -447,8 +447,8 @@ RootGameView
 
 交互边界：
 
-- 面板按钮根据 `AppContainer` 暴露的 `canIssueSelectedReconMission`、`canIssueSelectedUAVMission`、`canIssueSelectedFireMission`、`canIssueSelectedSuppressAirDefenseMission`、`canIssueSelectedElectronicWarfareMission`、`canIssueSelectedResupplyRepairMission`、`canOrderModernAssaultObjective`、`canOrderModernHoldDelay` 和 observer mode 启用/禁用；这些任务按钮均复用 `CommandValidator` 预检当前 selected formation / target / preferred munition 和规则状态。Mission Status 会列出可用的 Ready Tasks，或提前解释弹药、冷却、目标质量、ROE、防空、目标缺失、友邻风险等首个可读拒绝原因，避免 Fire Mission 缺目标遮住可用的侦察、EW 或后勤任务。
-- 任务拒绝同步写入 `lastCommandMessage` 和 interaction log；`CommandValidationError.displayMessage` 是玩家、AI 回放和 directive diagnostics 的统一可读拒绝文案来源，避免 UI 直接显示 `targetOutOfRange`、`restrictedFireZone` 等 enum raw value。玩家宏观 directive 部分失败时，`lastCommandMessage` 会带出第一条规则拒绝原因，完整细节继续保留在 `WarDirectiveRecord`。
+- 面板按钮根据 `AppContainer` 暴露的 `canIssueSelectedReconMission`、`canIssueSelectedUAVMission`、`canIssueSelectedFireMission`、`canIssueSelectedSuppressAirDefenseMission`、`canIssueSelectedElectronicWarfareMission`、`canIssueSelectedResupplyRepairMission`、`canOrderModernAssaultObjective`、`canOrderModernHoldDelay` 和 observer mode 启用/禁用；这些任务按钮均复用 `CommandValidator` 预检当前 selected formation / target / preferred munition 和规则状态。Mission Status 会列出可用的 Ready Tasks 和可用 sector directive，或提前解释弹药、冷却、目标质量、ROE、防空、目标缺失、友邻风险等首个可读拒绝原因，避免宏观指令或 Fire Mission 缺目标遮住可用的侦察、EW 或后勤任务。
+- 任务拒绝同步写入 `lastCommandMessage`、`lastCommandFeedbackTone` 和 interaction log；`CommandValidationError.displayMessage` 是玩家、AI 回放和 directive diagnostics 的统一可读拒绝文案来源，避免 UI 直接显示 `targetOutOfRange`、`restrictedFireZone` 等 enum raw value。玩家宏观 directive 部分失败时，`lastCommandMessage` 会带出第一条规则拒绝原因，完整细节继续保留在 `WarDirectiveRecord`。
 - 计划线仍复用 v0.4 `PlayerPlannedOperation` 的 attack / defend 可视化；v6.8 已加入 sensor / contact / EW / fire support 只读态势 overlay 首版。
 
 仍未完成：
@@ -518,7 +518,7 @@ RootGameView
       - Save / Continue / Clear Snapshot
       - Observer AI toggle
       - Default Layer picker
-      - Field Prompts / last command feedback
+      - Field Prompts / last command feedback tone
   -> AppContainer
       - resetGame(playerFaction:)
       - saveLocalSnapshot()
@@ -536,7 +536,7 @@ RootGameView
 - 玩家方 raw value 仍冗余写入 `modernCommandAgent.localSnapshot.playerFaction.v1`，用于兼容旧裸 `GameState` 快照；新 envelope 以 `playerFaction` 字段为准。
 - `decodeLocalSnapshot(_:)` 先按 envelope 解码，schemaVersion 不高于当前版本时直接恢复；若失败则按旧裸 `GameState` 解码，并从旧 playerFaction key 或当前默认作战方推断玩家方。
 - `loadLocalSnapshot()` 解码后仍经过 `StrategicStateBootstrapper().bootstrapIfNeeded` 和 `refreshGeneralAssignments`，并清空选择、高亮、临时交互日志和最近 AI/指令记录。
-- 保存/继续失败会写 `lastCommandMessage` 和 interaction log，给玩家可读反馈。
+- 保存/继续失败会写 `lastCommandMessage`、`lastCommandFeedbackTone` 和 interaction log，给玩家可读反馈。
 - 本地快照不修改 `grey_tide_2030_scenario.json`、`grey_tide_2030_regions.json` 或旧阿登 fallback 资源。
 
 引导边界：
@@ -544,6 +544,7 @@ RootGameView
 - `playtestActionGateTitle` 与 `playtestActionGateDetail` 根据 victory、observer、玩家可下令状态和 `shouldRunAI` 派生，告诉玩家当前是哪个阵营 orders open、哪个 active faction 可由 AI 解析、需要 advance turn，还是胜负已达成；它只读状态，不执行 AI 或命令。
 - `playtestObjectiveSummaryText` 与 `playtestObjectiveThresholdText` 从 `VictoryRules.greyTideObjectiveControlCounts(in:)` 派生，显示 Blue / Red / Neutral 对十个主目标的控制数；Blue 玩家看到 Blue 胜利阈值，Red 玩家看到阻止 Blue 达标的阈值口径。它只读 `GameState`，不写胜负状态。
 - `playtestGuidanceItems` 根据当前选择、可行动状态、visible contacts、fire support result 和 phase 生成最多 4 条短提示。
+- `ModernPlaytestPanelView` 对 command feedback 使用 success / warning / failure tone 区分图标、颜色和 VoiceOver 标签；Field Prompts 默认使用 info 图标，只对 Ready Tasks / ready 状态使用完成态图标；New / Save / Continue / Clear Snapshot 带 accessibility hint，Clear Snapshot 使用 destructive role。
 - 提示显示在 Playtest tab 内，不遮挡地图核心交互。
 - 本轮不做全屏 onboarding、弹窗教程、截图检查或 UI 点击自动化。
 
