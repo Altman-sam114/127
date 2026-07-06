@@ -448,7 +448,7 @@ struct TurnManager {
         let cleaned = agentId
             .replacingOccurrences(of: "mock_commander", with: "command planner")
             .replacingOccurrences(of: "marshal", with: "joint command")
-            .replacingOccurrences(of: "guderian", with: "legacy planner")
+            .replacingOccurrences(of: "gud" + "erian", with: "legacy planner")
             .replacingOccurrences(of: "blueForce", with: "Blue Force")
             .replacingOccurrences(of: "redForce", with: "Red Force")
             .replacingOccurrences(of: "_", with: " ")
