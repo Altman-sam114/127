@@ -300,7 +300,7 @@ flowchart LR
     HUD["HUDView<br/>C2 status strip<br/>contacts / EW / ammo / air / logistics"]:::display
     TASKS["ModernMissionPanelView<br/>tokenized mission controls<br/>Label + SF Symbols"]:::display
     MAP["BoardScene.drawModernC2Overlays<br/>sensor heatmap / contact marker<br/>EW area / fire result ring"]:::display
-    LEGEND["ModernPlaytestPanelView<br/>C2 Overlay Legend<br/>sensor / jammed / EW / fire / contact / logistics"]:::display
+    LEGEND["ModernPlaytestPanelView<br/>C2 Overlay toggle + Legend<br/>sensor / jammed / EW / fire / contact / logistics"]:::display
     RULES["Command / ZoneDirective<br/>WarCommandExecutor / RuleEngine<br/>仍是唯一写状态路径"]:::rules
 
     GS --> AWARE --> HUD
@@ -326,7 +326,7 @@ flowchart LR
 ```mermaid
 flowchart LR
     UI["ModernPlaytestPanelView<br/>Playtest tab<br/>Blue / Red selector<br/>New / Save / Continue / Clear"]:::display
-    SETTINGS["试玩设置<br/>Observer AI toggle<br/>Default Layer picker"]:::display
+    SETTINGS["试玩设置<br/>Observer AI toggle<br/>Default Layer picker<br/>C2 Overlay toggle"]:::display
     ROLE["红蓝新局与扮演方<br/>New Operation Side<br/>Player Side / Opposition<br/>Control Mode"]:::display
     GATE["Action Gate<br/>active side named<br/>orders open / AI ready / advance turn"]:::display
     OBJECTIVE["主目标控制摘要<br/>Blue / Red / Neutral count<br/>Blue threshold / Red denial"]:::display

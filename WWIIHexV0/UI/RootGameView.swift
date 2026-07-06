@@ -292,6 +292,10 @@ struct RootGameView: View {
                 get: { container.mapDisplayLayer },
                 set: { container.setMapDisplayLayer($0) }
             ),
+            modernC2OverlayEnabled: Binding(
+                get: { container.modernC2OverlayEnabled },
+                set: { container.setModernC2OverlayEnabled($0) }
+            ),
             onNewOperation: container.resetGame(playerFaction:),
             onSaveSnapshot: container.saveLocalSnapshot,
             onLoadSnapshot: container.loadLocalSnapshot,

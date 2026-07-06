@@ -22,6 +22,7 @@ final class AppContainer: ObservableObject {
     @Published private(set) var lastWarDirectiveRecords: [WarDirectiveRecord]
     @Published private(set) var observerModeEnabled: Bool
     @Published private(set) var mapDisplayLayer: MapDisplayLayer
+    @Published private(set) var modernC2OverlayEnabled: Bool
     @Published private(set) var localSnapshotSummary: String?
     @Published private(set) var playerFaction: Faction
     @Published private(set) var nextOperationPlayerFaction: Faction
@@ -65,7 +66,8 @@ final class AppContainer: ObservableObject {
         turnManager: TurnManager? = nil,
         warPipelineMode: WarPipelineMode = .marshalDirective,
         observerModeEnabled: Bool = false,
-        mapDisplayLayer: MapDisplayLayer = .hex
+        mapDisplayLayer: MapDisplayLayer = .hex,
+        modernC2OverlayEnabled: Bool = true
     ) {
         let bootstrappedState = StrategicStateBootstrapper().bootstrapIfNeeded(gameState)
         self.gameState = Self.refreshGeneralAssignments(in: bootstrappedState, registry: generalRegistry)
@@ -88,6 +90,7 @@ final class AppContainer: ObservableObject {
         self.lastWarDirectiveRecords = []
         self.observerModeEnabled = observerModeEnabled
         self.mapDisplayLayer = mapDisplayLayer
+        self.modernC2OverlayEnabled = modernC2OverlayEnabled
         self.localSnapshotSummary = Self.storedLocalSnapshotSummary()
     }
 
@@ -374,6 +377,10 @@ final class AppContainer: ObservableObject {
 
     func setMapDisplayLayer(_ layer: MapDisplayLayer) {
         mapDisplayLayer = layer
+    }
+
+    func setModernC2OverlayEnabled(_ enabled: Bool) {
+        modernC2OverlayEnabled = enabled
     }
 
     func setNextOperationPlayerFaction(_ faction: Faction) {

@@ -19,6 +19,7 @@ struct ModernPlaytestPanelView: View {
     @Binding var nextOperationPlayerFaction: Faction
     @Binding var observerModeEnabled: Bool
     @Binding var mapDisplayLayer: MapDisplayLayer
+    @Binding var modernC2OverlayEnabled: Bool
     let onNewOperation: (Faction) -> Void
     let onSaveSnapshot: () -> Void
     let onLoadSnapshot: () -> Void
@@ -95,6 +96,10 @@ struct ModernPlaytestPanelView: View {
             VStack(alignment: .leading, spacing: ModernCommandDesignTokens.compactSpacing) {
                 Toggle("Observer AI", isOn: $observerModeEnabled)
                     .toggleStyle(.switch)
+
+                Toggle("C2 Overlay", isOn: $modernC2OverlayEnabled)
+                    .toggleStyle(.switch)
+                    .accessibilityHint("Shows or hides sensor, electronic warfare, fire result, contact, and logistics markers on the map.")
 
                 Picker("Default Layer", selection: $mapDisplayLayer) {
                     ForEach(MapDisplayLayer.allCases) { layer in
@@ -208,6 +213,7 @@ struct ModernPlaytestPanelView: View {
         .padding(ModernCommandDesignTokens.compactSpacing)
         .background(ModernCommandDesignTokens.insetPanelBackground)
         .clipShape(RoundedRectangle(cornerRadius: ModernCommandDesignTokens.cornerRadius))
+        .opacity(modernC2OverlayEnabled ? 1 : 0.55)
         .accessibilityElement(children: .contain)
     }
 

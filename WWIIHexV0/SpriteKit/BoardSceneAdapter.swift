@@ -9,6 +9,7 @@ struct BoardRenderState: Equatable {
     let movementHighlights: Set<HexCoord>
     let attackHighlights: Set<HexCoord>
     let mapDisplayLayer: MapDisplayLayer
+    let modernC2OverlayEnabled: Bool
     let observerModeEnabled: Bool
 
     var displayAdapter: MapDisplayAdapter {
@@ -27,6 +28,7 @@ enum BoardSceneAdapter {
             movementHighlights: container.movementHighlights,
             attackHighlights: container.attackHighlights,
             mapDisplayLayer: container.mapDisplayLayer,
+            modernC2OverlayEnabled: container.modernC2OverlayEnabled,
             observerModeEnabled: container.observerModeEnabled
         )
     }

@@ -322,7 +322,8 @@ final class BoardScene: SKScene {
     }
 
     private func drawModernC2Overlays(renderState: BoardRenderState, layout: HexLayout) {
-        guard renderState.mapDisplayLayer != .frontLine else {
+        guard renderState.modernC2OverlayEnabled,
+              renderState.mapDisplayLayer != .frontLine else {
             return
         }
 
