@@ -1,6 +1,6 @@
 # 轻量检查与云端验证规范
 
-> 当前规则：默认云端重验证，本机不主动运行测试或检查命令。GitHub Actions 默认执行静态检查、通用 iOS build 和 `WWIIHexV0Probes` simulator probe；该 probe 覆盖灰潮默认剧本数据启动、战略派生层、directive 执行和 10 个 AI 半回合轻量运行时链路。完整 XCTest、Smoke、Stage Regression、Dynamic Theater Regression、Full、真实 App UI / 截图、10-20 回合 observer 长跑和性能验证仍不在默认本机范围内。
+> 当前规则：默认云端重验证，本机不主动运行测试或检查命令。GitHub Actions 默认执行静态检查、通用 iOS build 和 `WWIIHexV0Probes` simulator probe；该 probe 覆盖灰潮默认剧本数据启动、战略派生层、既有 directive 执行探针和 10 个 AI 半回合轻量运行时链路。完整 XCTest、Smoke、Stage Regression、Dynamic Theater Regression、Full、真实 App UI / 截图、10-20 回合 observer 长跑和性能验证仍不在默认本机范围内。
 
 ## 0. 总原则
 
@@ -63,7 +63,7 @@ xcodebuild \
   test
 ```
 
-当前默认云端 workflow 只跑 `WWIIHexV0Probes` 作为轻量运行时 probe。该 probe 可作为默认灰潮数据加载、AI 半回合推进、指令编译和统一规则管线的 cloud Probe 证据；它不等于真实 App observer 模式长跑，也不跑完整 `WWIIHexV0Tests`、Smoke、Stage Regression、Dynamic Theater Regression、Full、UI test、截图或性能检查；这些结果统一通过 JUnit `ci.tests` skipped 摘要说明，或不列入默认结果。
+当前默认云端 workflow 只跑 `WWIIHexV0Probes` 作为轻量运行时 probe。该 probe 可作为默认灰潮数据加载、AI 半回合推进、`end_turn` 规则链路和战略派生层刷新的 cloud Probe 证据；它不等于真实 App observer 模式长跑，也不跑完整 `WWIIHexV0Tests`、Smoke、Stage Regression、Dynamic Theater Regression、Full、UI test、截图或性能检查；这些结果统一通过 JUnit `ci.tests` skipped 摘要说明，或不列入默认结果。
 
 ## 2. Agent C 结果包验收
 

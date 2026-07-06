@@ -562,7 +562,7 @@ RootGameView
 
 ## 0.12 v6.10 发布候选准备和残留扫描
 
-v6.10 当前不是正式发布，而是把现代战争迁移路线收口到可提交发布候选的状态：代码和文档准备好后继续通过 `origin/main` GitHub Actions artifact 做云端静态检查、通用 iOS build 和 `WWIIHexV0Probes` simulator probe 复核；当前 cloud Probe 已覆盖灰潮默认剧本 10 个 AI 半回合的轻量运行时链路，用于证明默认灰潮加载、AI 半回合推进、指令编译和统一命令 / 规则管线可在云端 simulator probe target 内跑通。本机仍不主动跑 Xcode、模拟器、UI 点击、截图、真实 App observer 长回合或性能检查。`v6.10_release_candidate_evidence.md` 现在作为发布候选证据矩阵，逐项记录总提示词要求、代码依据、已核对 artifact 和未授权运行时风险。
+v6.10 当前不是正式发布，而是把现代战争迁移路线收口到可提交发布候选的状态：代码和文档准备好后继续通过 `origin/main` GitHub Actions artifact 做云端静态检查、通用 iOS build 和 `WWIIHexV0Probes` simulator probe 复核；当前 cloud Probe 已覆盖灰潮默认剧本 10 个 AI 半回合的轻量运行时链路，用于证明默认灰潮加载、AI 半回合推进、`end_turn` 规则链路和战略派生层刷新可在云端 simulator probe target 内跑通。本机仍不主动跑 Xcode、模拟器、UI 点击、截图、真实 App observer 长回合或性能检查。`v6.10_release_candidate_evidence.md` 现在作为发布候选证据矩阵，逐项记录总提示词要求、代码依据、已核对 artifact 和未授权运行时风险。
 
 本轮明确处理的玩家可见项：
 

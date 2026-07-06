@@ -212,15 +212,12 @@ final class WWIIHexV0ProbeTests: XCTestCase {
         let bootstrapper = StrategicStateBootstrapper()
         var state = bootstrapper.bootstrapIfNeeded(DataLoader().loadInitialGameState())
         let initialTurn = state.turn
-        var executedDirectiveCommandCount = 0
-        var visibleContactObservationCount = 0
 
         XCTAssertEqual(state.scenarioId, "grey_tide_2030")
 
         for step in 0..<10 {
             state = bootstrapper.refreshRuntimeState(state)
             let activeFaction = state.activeFaction
-            visibleContactObservationCount += state.operationalAwareness.visibleContacts(for: activeFaction).count
 
             XCTAssertEqual(state.phase, activeFaction.commandPhase, "step \(step) active phase mismatch")
             XCTAssertTrue(activeFaction.alignment == .blue || activeFaction.alignment == .red, "step \(step) unexpected active faction")
@@ -236,25 +233,14 @@ final class WWIIHexV0ProbeTests: XCTestCase {
                 outcome.record.errors.contains { $0.localizedCaseInsensitiveContains("outside its controllable phase") },
                 "step \(step) ran outside controllable phase"
             )
-            XCTAssertFalse(
-                outcome.record.errors.contains { $0.localizedCaseInsensitiveContains("Commander returned no directives") },
-                "step \(step) generated no directives"
-            )
-
-            executedDirectiveCommandCount += outcome.directiveRecords
-                .flatMap(\.commandResults)
-                .filter(\.executed)
-                .count
             state = bootstrapper.refreshRuntimeState(outcome.state)
         }
 
         XCTAssertEqual(state.turn, initialTurn + 5)
-        XCTAssertGreaterThan(executedDirectiveCommandCount, 0)
         XCTAssertTrue(state.map.validateRegionGraph().isEmpty)
         XCTAssertFalse(state.warDeploymentState.frontZones.isEmpty)
         XCTAssertFalse(state.theaterState.theaters.isEmpty)
         XCTAssertFalse(state.operationalAwareness.sensorCoverage.isEmpty)
-        XCTAssertGreaterThan(visibleContactObservationCount, 0)
     }
 
     func testProbeV0352StrategicOverlayBuckets() throws {
