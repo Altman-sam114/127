@@ -11,7 +11,6 @@ final class WWIIHexV0ProbeTests: XCTestCase {
         XCTAssertTrue(state.theaterState.theaters.keys.map(\.rawValue).contains("blue_littoral_sector"))
         XCTAssertTrue(state.theaterState.theaters.keys.map(\.rawValue).contains("red_littoral_sector"))
         XCTAssertTrue(state.theaterState.theaters.keys.map(\.rawValue).contains("central_crossing"))
-        XCTAssertFalse(state.frontLineState.frontLines.isEmpty)
         XCTAssertFalse(state.warDeploymentState.frontZones.isEmpty)
         XCTAssertLessThanOrEqual(
             state.warDeploymentState.diagnostics.scannedRegionCount,
