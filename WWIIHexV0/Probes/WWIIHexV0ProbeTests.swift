@@ -243,6 +243,114 @@ final class WWIIHexV0ProbeTests: XCTestCase {
         XCTAssertFalse(state.operationalAwareness.sensorCoverage.isEmpty)
     }
 
+    func testProbePlaytestSideSelectionActionGateAndSnapshot() {
+        let dataLoader = DataLoader()
+        let container = AppContainer(
+            gameState: dataLoader.loadInitialGameState(),
+            commandHandler: RuleEngine(),
+            dataLoader: dataLoader,
+            generalRegistry: (try? dataLoader.loadGeneralRegistry()) ?? .empty,
+            playerFaction: .blueForce
+        )
+        container.clearLocalSnapshot()
+
+        container.resetGame(playerFaction: .blueForce)
+
+        XCTAssertEqual(container.gameState.scenarioId, "grey_tide_2030")
+        XCTAssertEqual(container.playerFaction, .blueForce)
+        XCTAssertEqual(container.nextOperationPlayerFaction, .blueForce)
+        XCTAssertEqual(container.gameState.activeFaction, .blueForce)
+        XCTAssertEqual(container.gameState.phase, .alliedPlayer)
+        XCTAssertEqual(container.playtestControlModeSummary, "Manual Blue Force command")
+        XCTAssertEqual(container.playtestActionGateDetail, "Blue Force orders open")
+        let blueControl = VictoryRules.greyTideObjectiveControlCounts(in: container.gameState)
+        let blueRemaining = max(0, 7 - blueControl.blue)
+        XCTAssertEqual(
+            container.playtestObjectiveSummaryText,
+            "Blue \(blueControl.blue)/\(blueControl.total), Red \(blueControl.red), Neutral \(blueControl.neutral)"
+        )
+        XCTAssertTrue(container.playtestObjectiveThresholdText?.contains("Secure \(blueRemaining) more objective") == true)
+        XCTAssertEqual(container.lastCommandFeedbackTone, .success)
+
+        container.saveLocalSnapshot()
+        XCTAssertTrue(container.localSnapshotSummary?.contains("player Blue Force") == true)
+
+        container.resetGame(playerFaction: .redForce)
+
+        XCTAssertEqual(container.playerFaction, .redForce)
+        XCTAssertEqual(container.nextOperationPlayerFaction, .redForce)
+        XCTAssertEqual(container.gameState.activeFaction, .redForce)
+        XCTAssertEqual(container.gameState.phase, .germanAI)
+        XCTAssertEqual(container.playtestControlModeSummary, "Manual Red Force command")
+        XCTAssertEqual(container.playtestActionGateDetail, "Red Force orders open")
+        let redControl = VictoryRules.greyTideObjectiveControlCounts(in: container.gameState)
+        let redRemaining = max(0, 7 - redControl.blue)
+        XCTAssertEqual(
+            container.playtestObjectiveSummaryText,
+            "Blue \(redControl.blue)/\(redControl.total), Red \(redControl.red), Neutral \(redControl.neutral)"
+        )
+        XCTAssertTrue(container.playtestObjectiveThresholdText?.contains("Deny Blue \(redRemaining) more objectives") == true)
+
+        container.saveLocalSnapshot()
+        XCTAssertTrue(container.localSnapshotSummary?.contains("player Red Force") == true)
+
+        container.resetGame(playerFaction: .blueForce)
+        XCTAssertEqual(container.playerFaction, .blueForce)
+
+        container.loadLocalSnapshot()
+
+        XCTAssertEqual(container.playerFaction, .redForce)
+        XCTAssertEqual(container.nextOperationPlayerFaction, .redForce)
+        XCTAssertEqual(container.gameState.activeFaction, .redForce)
+        XCTAssertEqual(container.gameState.phase, .germanAI)
+        XCTAssertEqual(container.lastCommandFeedbackTone, .success)
+        XCTAssertTrue(container.lastCommandMessage?.contains("Local snapshot loaded") == true)
+
+        container.clearLocalSnapshot()
+    }
+
+    func testProbeModernMissionReconUsesAppContainerAndRulesPipeline() throws {
+        let dataLoader = DataLoader()
+        let container = AppContainer(
+            gameState: dataLoader.loadInitialGameState(),
+            commandHandler: RuleEngine(),
+            dataLoader: dataLoader,
+            generalRegistry: (try? dataLoader.loadGeneralRegistry()) ?? .empty,
+            playerFaction: .blueForce
+        )
+        container.resetGame(playerFaction: .blueForce)
+
+        let candidate = try XCTUnwrap(
+            container.gameState.divisions
+                .filter { $0.faction == .blueForce && !$0.hasActed && !$0.isDestroyed && !$0.isRetreating }
+                .filter { division in
+                    container.gameState.divisions.filter { $0.coord == division.coord }.count == 1
+                }
+                .first {
+                    CommandValidator()
+                        .validate(.recon(divisionId: $0.id, target: $0.coord), in: container.gameState)
+                        .isValid
+                }
+        )
+
+        container.handleBoardTap(candidate.coord)
+
+        XCTAssertEqual(container.selectedDivision?.id, candidate.id)
+        XCTAssertTrue(container.selectedUnitCanAct)
+        XCTAssertTrue(container.canIssueSelectedReconMission)
+        XCTAssertTrue(container.modernMissionAvailabilityText.contains("Recon Area"))
+
+        container.orderModernReconArea()
+
+        let acted = try XCTUnwrap(container.gameState.division(id: candidate.id))
+        XCTAssertTrue(acted.hasActed)
+        XCTAssertEqual(container.lastCommandFeedbackTone, .success)
+        XCTAssertTrue(container.lastCommandMessage?.localizedCaseInsensitiveContains("recon") == true)
+        XCTAssertTrue(container.gameState.eventLog.contains { $0.category == .intelligence })
+        XCTAssertFalse(container.canIssueSelectedReconMission)
+        XCTAssertTrue(container.modernMissionAvailabilityText.contains("already acted"))
+    }
+
     func testProbeV0352StrategicOverlayBuckets() throws {
         let state = Self.westFrontScenario().gameState
         let calculator = MapLayerOverlayCalculator(state: state)

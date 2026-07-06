@@ -37,7 +37,7 @@ flowchart TD
     LOCAL["本机不主动跑检查<br/>仅确认分支 / 提交范围 / 工作区状态<br/>检查交给云端 artifact"]:::check
     COMMIT["main 本地提交<br/>commit 范围只含本轮文件"]:::git
     PUSH["推送 origin/main<br/>git push origin main"]:::git
-    GHA["GitHub Actions<br/>ci-results.yml<br/>diff / plist / xml / Ruby 脚本<br/>+ 云端 xcodebuild build<br/>+ 10 AI half-turn Grey Tide probe"]:::cloud
+    GHA["GitHub Actions<br/>ci-results.yml<br/>diff / plist / xml / Ruby 脚本<br/>+ 云端 xcodebuild build<br/>+ Grey Tide AI half-turn probe<br/>+ Playtest / Recon state probes"]:::cloud
     ART["未加密 CI 结果包<br/>manifest / junit / xcodebuild.log / probe-xctest.log<br/>failure summary / grey-tide / modern-visible logs / xcresult"]:::artifact
     C0["Agent C<br/>gh auth login<br/>下载 artifact 到 /private/tmp/wwiihexv0-c-review-run_id"]:::agent
     C1{"manifest 是否匹配<br/>branch=main<br/>commitSha/runId/runAttempt 最新?"}:::decision
