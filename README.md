@@ -8,7 +8,7 @@
 
 当前协作流程固定为 `main` 直推：Agent B 在本机只跑轻量检查，commit 后 push 到 `origin/main` 触发 GitHub Actions；Agent C 通过未加密 CI 结果包核对 `ci-artifact-manifest.json`、`junit.xml`、`xcodebuild.log` 和失败摘要。详细规则见 `AGENTS.md`、`md/test/test.md`、`md/prompt/README.md`。
 
-灰潮默认剧本的静态数据一致性可用 `ruby scripts/check_grey_tide_data.rb` 复查；该脚本只读取 JSON 和 `VictoryRules.swift`，核对 tile / region / objective / unit template 引用、objective 与 key location 一一映射、region edges 与 neighbors 一致、补给源 faction / controller 对齐、初始单位不落敌控区，并确认 VictoryRules、scenario victoryConditions 和 region `mainObjective` 的十个主目标集合一致，不启动 app。
+灰潮默认剧本的静态数据一致性可用 `ruby scripts/check_grey_tide_data.rb` 复查；该脚本只读取 JSON 和 `VictoryRules.swift`，核对 tile / region / objective / unit template 引用、objective 与 key location 一一映射、region edges 与 neighbors 一致、补给源 faction / controller 对齐、初始单位不落敌控区，并确认 VictoryRules、scenario victoryConditions 和 region `mainObjective` 的十个主目标集合一致，不启动 app。主路径玩家可见现代文案可用 `ruby scripts/check_modern_visible_text.rb` 复查；该脚本扫描 App / UI / SpriteKit 字符串、命令结果 / 日志 / diagnostics 字符串、Core 可见 displayName 映射和默认现代 JSON 显示字段，防止 WWII / Ardennes / Panzer / Guderian / Germany / Allies / SUP A / SUP G 等旧口径重新进入默认现代 UI 或数据。
 
 ---
 

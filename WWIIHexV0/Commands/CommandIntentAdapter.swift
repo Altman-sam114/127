@@ -15,9 +15,9 @@ enum CommandIntentAdapterError: Error, Equatable, LocalizedError {
         case .regionNotFound(let regionId):
             return "Region \(regionId.rawValue) was not found."
         case .divisionNotFound(let divisionId):
-            return "Division \(divisionId) was not found."
+            return "Formation \(divisionId) was not found."
         case .divisionHasNoRegion(let divisionId):
-            return "Division \(divisionId) is not inside a mapped region."
+            return "Formation \(divisionId) is not inside a mapped region."
         case .destinationRegionHasNoUsableHex(let regionId):
             return "Region \(regionId.rawValue) has no usable tactical hex."
         case .targetRegionMismatch(let targetDivisionId, let expected, let actual):
@@ -131,4 +131,3 @@ struct CommandIntentAdapter {
         throw CommandIntentAdapterError.destinationRegionHasNoUsableHex(regionId: regionId)
     }
 }
-

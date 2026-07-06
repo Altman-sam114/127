@@ -50,7 +50,7 @@ enum AgentCommandMappingError: Error, Equatable, LocalizedError {
         case .missingRegionDestination(let divisionId):
             return "Move order for \(divisionId) is missing toRegionId."
         case .missingTarget(let divisionId):
-            return "Attack order for \(divisionId) is missing targetDivisionId."
+            return "Attack order for \(divisionId) is missing target formation id."
         case .regionMappingFailed(let detail):
             return detail
         }

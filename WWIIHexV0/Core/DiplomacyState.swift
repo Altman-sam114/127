@@ -67,7 +67,7 @@ enum DiplomaticStatus: String, Codable, Equatable, CaseIterable {
     var displayName: String {
         switch self {
         case .allied:
-            return "Allied"
+            return "Aligned"
         case .coBelligerent:
             return "Co-belligerent"
         case .neutral:

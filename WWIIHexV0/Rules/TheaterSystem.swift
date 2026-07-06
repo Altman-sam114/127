@@ -216,7 +216,7 @@ struct TheaterSystem {
         to targetTheaterId: TheaterId,
         in state: TheaterState,
         policy: SpilloverPolicy = .interfaceOnly,
-        reason: String = "Support requested by theater interface."
+        reason: String = "Support requested by operational zone interface."
     ) -> TheaterSupportRequest? {
         guard let source = state.theaters[theaterId],
               state.theaters[targetTheaterId] != nil else {
@@ -229,7 +229,7 @@ struct TheaterSystem {
             toTheaterId: targetTheaterId,
             availableUnitIds: getAvailableForces(theaterId, in: state),
             policy: policy,
-            reason: source.status == .inactive ? "Inactive theater has no available support." : reason
+            reason: source.status == .inactive ? "Inactive operational zone has no available support." : reason
         )
     }
 

@@ -124,7 +124,7 @@ extension DirectiveTarget: Codable {
             return
         }
         throw DecodingError.dataCorrupted(
-            DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "DirectiveTarget requires theater or region.")
+            DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "DirectiveTarget requires operational zone or region.")
         )
     }
 

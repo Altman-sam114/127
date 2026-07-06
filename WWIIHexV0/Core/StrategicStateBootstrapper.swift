@@ -28,7 +28,7 @@ struct StrategicStateBootstrapper {
                 turn: next.turn
             )
             next.appendEvent(
-                "Theater state bootstrapped from region data.",
+                "Operational zone state bootstrapped from region data.",
                 category: .theaterChange,
                 relatedRecordId: nil
             )
@@ -46,7 +46,7 @@ struct StrategicStateBootstrapper {
                 turn: next.turn
             )
             next.appendEvent(
-                "Front line state bootstrapped from theater data.",
+                "Contact line state bootstrapped from operational zone data.",
                 category: .frontChange,
                 relatedRecordId: nil
             )
@@ -60,7 +60,7 @@ struct StrategicStateBootstrapper {
                 turn: next.turn
             )
             next.appendEvent(
-                "FrontZone deployment state bootstrapped from theater data.",
+                "Command sector deployment state bootstrapped from operational zone data.",
                 category: .frontChange,
                 relatedRecordId: nil
             )

@@ -156,7 +156,18 @@ ruby -c scripts/check_grey_tide_data.rb
 ruby scripts/check_grey_tide_data.rb
 ```
 
-### 4.4 Swift 单文件语法
+### 4.4 现代玩家可见文案
+
+当修改主应用玩家可见文案、默认现代剧本显示字段、默认 commander 数据、现代模板显示名、UI 面板、SpriteKit 标记、AppContainer 反馈文案、Core displayName 映射或 `scripts/check_modern_visible_text.rb`，或交付中声明“主路径无主要二战文案残留”时，运行：
+
+```sh
+ruby -c scripts/check_modern_visible_text.rb
+ruby scripts/check_modern_visible_text.rb
+```
+
+该脚本只做静态文本扫描，不启动 app，不跑 Xcode。扫描范围限定为主应用 `App` / `UI` / `SpriteKit` Swift 字符串、会进入命令结果 / 日志 / diagnostics 的 `Commands`、`Rules`、`Turn`、`Agents` 字符串、若干 Core 可见 displayName 映射，以及 `grey_tide_2030_*`、`modern_unit_templates.json`、`generals.json` 中的显示字段和地图 `cityName` / `fortressName`；旧阿登数据、历史文档、测试 fixture、target/module 名和源码兼容 raw value 不作为默认 hard fail。
+
+### 4.5 Swift 单文件语法
 
 默认不做全项目编译。若只改了少量纯 Swift 文件，并且单文件语法检查不会触发项目构建，可以只针对改动文件做轻量 parse；如果命令需要 SDK、SwiftUI/SpriteKit 依赖或变慢，立即停止并记录未检查。
 
