@@ -2,6 +2,8 @@
 
 > 本文是交给后续实现 Agent 的总提示词。它不是本轮代码实现记录，而是后续多版本迁移的路线、边界、并发分工和发布级验收标准。执行前必须先读 `AGENTS.md`、`update_log.md`、`md/flow/flow.md`、`md/flow/flowchart.md`、`md/test/test.md` 和本文件。
 
+> 当前验证口径以 `md/test/test.md` 为准：默认通过 `origin/main` GitHub Actions artifact 做静态检查、通用 iOS build 和 `WWIIHexV0Probes` simulator probe 复核；本文各历史版本小节里的 `jq`、`plutil`、`swiftc -parse`、`git diff --check` 等“轻量检查”写法是早期计划或人工授权时参考，不代表当前 Agent 默认可在本机主动执行。
+
 ---
 
 ## 0. 当前项目判断
