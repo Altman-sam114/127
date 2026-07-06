@@ -16,14 +16,15 @@ struct CommandResultSummary: Identifiable, Codable, Equatable {
         orderIndex: Int,
         order: AgentOrder,
         command: Command,
-        result: CommandResult
+        result: CommandResult,
+        displayState: GameState
     ) -> CommandResultSummary {
         CommandResultSummary(
             id: "order_\(orderIndex)_\(order.divisionId)_\(order.type.rawValue)",
             orderIndex: orderIndex,
             divisionId: order.divisionId,
             orderType: order.type,
-            commandDisplayName: command.userDisplayName,
+            commandDisplayName: command.contextualDisplayName(in: displayState),
             mappingSucceeded: true,
             validationSucceeded: result.validation.isValid,
             executed: result.succeeded,
@@ -71,14 +72,15 @@ struct CommandResultSummary: Identifiable, Codable, Equatable {
         commandIndex: Int,
         directive: ZoneDirective,
         command: Command,
-        result: CommandResult
+        result: CommandResult,
+        displayState: GameState
     ) -> CommandResultSummary {
         CommandResultSummary(
             id: "directive_\(directiveIndex)_command_\(commandIndex)_\(directive.type.rawValue)",
             orderIndex: commandIndex,
             divisionId: command.actingDivisionId,
             orderType: nil,
-            commandDisplayName: command.userDisplayName,
+            commandDisplayName: command.contextualDisplayName(in: displayState),
             mappingSucceeded: true,
             validationSucceeded: result.validation.isValid,
             executed: result.succeeded,

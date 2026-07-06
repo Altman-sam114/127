@@ -130,10 +130,17 @@ struct TurnManager {
             for (index, order) in parsedDecision.orders.enumerated() {
                 do {
                     let issuedCommand = try mapper.map(order, agentId: parsedDecision.agentId, state: nextState)
+                    let displayState = nextState
                     let result = commandHandler.execute(issuedCommand.command, in: nextState)
                     nextState = result.state
                     commandResults.append(
-                        .mapped(orderIndex: index, order: order, command: issuedCommand.command, result: result)
+                        .mapped(
+                            orderIndex: index,
+                            order: order,
+                            command: issuedCommand.command,
+                            result: result,
+                            displayState: displayState
+                        )
                     )
 
                     if !result.succeeded {
@@ -316,12 +323,14 @@ struct TurnManager {
             }
 
             for (commandIndex, pair) in zip(execution.generatedCommands, execution.commandResults).enumerated() {
+                let displayState = commandIndex == 0 ? nextState : execution.commandResults[commandIndex - 1].state
                 let summary = CommandResultSummary.directiveCommand(
                     directiveIndex: directiveIndex,
                     commandIndex: commandIndex,
                     directive: directive,
                     command: pair.0,
-                    result: pair.1
+                    result: pair.1,
+                    displayState: displayState
                 )
                 commandResults.append(summary)
                 perDirectiveResults.append(summary)
@@ -412,7 +421,7 @@ struct TurnManager {
         for division in state.divisions where division.faction == faction && !division.isDestroyed {
             guard let regionId = division.location(in: state.map),
                   state.warDeploymentState.regionToFrontZone[regionId] != nil else {
-                diagnostics.append("Formation \(division.id) is not assigned to any command sector; no directive generated for this formation.")
+                diagnostics.append("\(division.operationalDisplayName) is not assigned to any command sector; no directive generated for this formation.")
                 continue
             }
         }

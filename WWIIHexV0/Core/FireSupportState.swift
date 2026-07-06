@@ -69,6 +69,20 @@ enum FireMissionTarget: Codable, Equatable {
         }
     }
 
+    func contextualDisplayName(in state: GameState) -> String {
+        switch self {
+        case .contact(let id):
+            guard let track = state.operationalAwareness.contacts[id] else {
+                return displayName
+            }
+            return "\(track.confidence.displayName) \(track.estimatedType.displayName) contact at hex \(track.lastKnownCoord.q),\(track.lastKnownCoord.r)"
+        case .hex:
+            return displayName
+        case .region(let regionId):
+            return state.map.regions[regionId]?.name ?? displayName
+        }
+    }
+
     private static func trackDisplay(_ id: String) -> String {
         let cleaned = id
             .replacingOccurrences(of: "contact_", with: "")

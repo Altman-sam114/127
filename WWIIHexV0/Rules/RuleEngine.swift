@@ -21,7 +21,7 @@ struct RuleEngine {
             command: command,
             validation: validation,
             state: nextState,
-            message: "Command executed: \(command.userDisplayName)."
+            message: "Command executed: \(command.contextualDisplayName(in: preparedState))."
         )
     }
 

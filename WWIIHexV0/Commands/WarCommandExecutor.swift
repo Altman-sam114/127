@@ -1098,7 +1098,7 @@ struct WarCommandExecutor {
 
         if !result.succeeded {
             state.appendEvent(
-                "Directive command rejected: \(result.validation.displayMessage) for \(command.userDisplayName).",
+                "Directive command rejected: \(result.validation.displayMessage) for \(command.contextualDisplayName(in: state)).",
                 category: .frontChange,
                 relatedRecordId: relatedRecordId
             )
@@ -1141,7 +1141,7 @@ struct WarCommandExecutor {
                 continue
             }
             state.appendEvent(
-                "\(region.name) controller changed to \(region.controller.displayName) via \(command.userDisplayName).",
+                "\(region.name) controller changed to \(region.controller.displayName) via \(command.contextualDisplayName(in: state)).",
                 category: .regionOwnerChange,
                 relatedRecordId: relatedRecordId
             )

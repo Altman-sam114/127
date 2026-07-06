@@ -38,7 +38,7 @@ struct EconomyRules {
         let factions = next.divisions.map(\.faction) + Faction.legacyBelligerents
         next.economyState = makeInitialState(map: next.map, factions: factions, turn: next.turn)
         next.appendEvent(
-            "Economy state bootstrapped from controlled cities, factories, supply hubs, and regions.",
+            "Operational sustainment state bootstrapped from controlled cities, facilities, logistics hubs, and regions.",
             category: .supply
         )
         return next

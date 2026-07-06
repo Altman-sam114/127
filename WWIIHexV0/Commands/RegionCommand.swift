@@ -18,7 +18,7 @@ enum RegionCommand: Codable, Equatable {
             return "Hold \(objective) with \(Self.formationDisplay(divisionId))"
         case .resupply(let divisionId, let regionId):
             let objective = regionId.map(Self.objectiveDisplay) ?? "an assigned objective"
-            return "Resupply \(Self.formationDisplay(divisionId)) near \(objective)"
+            return "Sustain \(Self.formationDisplay(divisionId)) near \(objective)"
         }
     }
 

@@ -67,7 +67,7 @@ struct ModernMissionPanelView: View {
             missionSection(
                 title: "Sustainment / EW",
                 actions: [
-                    MissionAction(label: "Resupply / Repair", icon: "cross.circle", enabled: canIssueResupplyRepairMission, action: onResupplyRepair),
+                    MissionAction(label: "Sustain / Repair", icon: "cross.circle", enabled: canIssueResupplyRepairMission, action: onResupplyRepair),
                     MissionAction(label: "Jam / Counter-Drone", icon: "antenna.radiowaves.left.and.right", enabled: canIssueElectronicWarfareMission, action: onElectronicWarfare)
                 ]
             )

@@ -71,7 +71,7 @@ enum ModernMissionType: String, Codable, Equatable, CaseIterable {
         case .electronicWarfare:
             return "Electronic Warfare"
         case .resupply:
-            return "Resupply"
+            return "Sustainment"
         case .assault:
             return "Assault"
         case .hold:

@@ -138,7 +138,7 @@ final class AppContainer: ObservableObject {
         setCommandFeedback(result.message, tone: result.succeeded ? .success : .failure)
 
         let status = result.succeeded ? "accepted" : "rejected"
-        appendInteractionEvent("Command \(status): \(command.userDisplayName). \(result.message)")
+        appendInteractionEvent("Command \(status): \(command.contextualDisplayName(in: stateBeforeCommand)). \(result.message)")
         refreshSelectionAfterStateChange()
         runAIIfNeeded()
     }
@@ -238,7 +238,7 @@ final class AppContainer: ObservableObject {
 
     func resupplySelected() {
         guard let division = selectedActionDivision else {
-            rejectPlayerAction("Resupply rejected: no active player-controlled unit selected.")
+            rejectPlayerAction("Sustainment rejected: no active player-controlled formation selected.")
             return
         }
 
@@ -854,7 +854,7 @@ final class AppContainer: ObservableObject {
             (canIssueSelectedFireMission, "Fire Mission"),
             (canIssueSelectedSuppressAirDefenseMission, "Air Support / SEAD"),
             (canIssueSelectedElectronicWarfareMission, "Jam / Counter-Drone"),
-            (canIssueSelectedResupplyRepairMission, "Resupply / Repair")
+            (canIssueSelectedResupplyRepairMission, "Sustain / Repair")
         ].compactMap { mission in
             mission.0 ? mission.1 : nil
         }
@@ -900,7 +900,7 @@ final class AppContainer: ObservableObject {
             ("Fire Mission", selectedFireMissionValidation),
             ("Air Support / SEAD", selectedSuppressAirDefenseMissionValidation),
             ("Jam / Counter-Drone", selectedElectronicWarfareMissionValidation),
-            ("Resupply / Repair", selectedResupplyRepairMissionValidation)
+            ("Sustain / Repair", selectedResupplyRepairMissionValidation)
         ]
 
         return validations.compactMap { missionName, validation in
@@ -1213,12 +1213,14 @@ final class AppContainer: ObservableObject {
 
         var nextState = refreshGeneralAssignments(in: execution.finalState)
         let commandSummaries = execution.commandResults.enumerated().map { index, result in
+            let displayState = index == 0 ? startState : execution.commandResults[index - 1].state
             CommandResultSummary.directiveCommand(
                 directiveIndex: 0,
                 commandIndex: index,
                 directive: directive,
                 command: execution.generatedCommands[index],
-                result: result
+                result: result,
+                displayState: displayState
             )
         }
         var diagnostics: [String] = []

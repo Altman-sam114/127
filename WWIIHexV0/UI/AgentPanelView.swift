@@ -294,7 +294,7 @@ struct AgentPanelView: View {
         case .hold:
             return "Hold Order"
         case .resupply:
-            return "Resupply Order"
+            return "Sustainment Order"
         }
     }
 

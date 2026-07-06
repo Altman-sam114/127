@@ -33,7 +33,7 @@ enum Command: Codable, Equatable {
         case .allowRetreat(let divisionId):
             return "Authorize fallback for \(Self.formationDisplay(divisionId))"
         case .resupply(let divisionId):
-            return "Resupply \(Self.formationDisplay(divisionId))"
+            return "Sustain \(Self.formationDisplay(divisionId))"
         case .recon(let divisionId, let target):
             return "Recon \(Self.coordDisplay(target)) with \(Self.formationDisplay(divisionId))"
         case .uavRecon(let divisionId, let target):
@@ -52,6 +52,35 @@ enum Command: Codable, Equatable {
     }
 
     var userDisplayName: String { displayName }
+
+    func contextualDisplayName(in state: GameState) -> String {
+        switch self {
+        case .move(let divisionId, let destination):
+            return "Move \(Self.formationDisplay(divisionId, in: state)) to \(Self.coordDisplay(destination))"
+        case .attack(let attackerId, let targetId):
+            return "Attack with \(Self.formationDisplay(attackerId, in: state)) against \(Self.formationDisplay(targetId, in: state))"
+        case .hold(let divisionId):
+            return "Hold \(Self.formationDisplay(divisionId, in: state))"
+        case .allowRetreat(let divisionId):
+            return "Authorize fallback for \(Self.formationDisplay(divisionId, in: state))"
+        case .resupply(let divisionId):
+            return "Sustain \(Self.formationDisplay(divisionId, in: state))"
+        case .recon(let divisionId, let target):
+            return "Recon \(Self.coordDisplay(target)) with \(Self.formationDisplay(divisionId, in: state))"
+        case .uavRecon(let divisionId, let target):
+            return "UAV orbit over \(Self.coordDisplay(target)) from \(Self.formationDisplay(divisionId, in: state))"
+        case .electronicWarfare(let divisionId, let target):
+            return "Electronic warfare at \(Self.coordDisplay(target)) from \(Self.formationDisplay(divisionId, in: state))"
+        case .fireMission(let issuerId, let target, let munitionClass):
+            return "\(munitionClass.displayName) fire mission from \(Self.formationDisplay(issuerId, in: state)) to \(target.contextualDisplayName(in: state))"
+        case .suppressAirDefense(let divisionId, let target):
+            return "Suppress air defenses at \(Self.coordDisplay(target)) from \(Self.formationDisplay(divisionId, in: state))"
+        case .queueProduction(let kind):
+            return "Queue \(kind.displayName)"
+        case .endTurn:
+            return "End Turn"
+        }
+    }
 
     var actingDivisionId: String? {
         switch self {
@@ -101,6 +130,10 @@ enum Command: Codable, Equatable {
             .replacingOccurrences(of: "_", with: " ")
             .trimmingCharacters(in: .whitespacesAndNewlines)
         return cleaned.isEmpty ? "formation" : "formation \(cleaned.capitalized)"
+    }
+
+    private static func formationDisplay(_ id: String, in state: GameState) -> String {
+        state.division(id: id)?.operationalDisplayName ?? formationDisplay(id)
     }
 
     private static func coordDisplay(_ coord: HexCoord) -> String {
