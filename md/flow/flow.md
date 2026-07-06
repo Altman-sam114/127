@@ -427,7 +427,7 @@ RootGameView
   -> CompactInfoPanel.mission / "Tasks"
   -> ModernMissionPanelView
       - Formation / Target / Logistics / Contacts / Ammo 摘要
-      - Mission Status：解释 observer、未选单位、非玩家 phase、已行动、缺少 fire target 或宏观指令可用状态
+      - Mission Status：解释 observer、未选单位、非玩家 phase、已行动、缺少 fire target、Fire Mission validator 拒绝原因或宏观指令可用状态
       - ISR: Recon Area / UAV Orbit
       - Fires: Fire Mission / Air Support / SEAD
       - Maneuver: Assault Objective / Hold / Delay
@@ -447,8 +447,8 @@ RootGameView
 
 交互边界：
 
-- 面板按钮根据 `AppContainer` 暴露的 `canIssueSelectedModernUnitMission`、`canIssueSelectedFireMission`、`canOrderModernAssaultObjective`、`canOrderModernHoldDelay` 和 observer mode 启用/禁用；Fire Mission 额外要求已有 target hex / sector / contact。
-- 任务拒绝同步写入 `lastCommandMessage` 和 interaction log；玩家宏观 directive 部分失败时，`lastCommandMessage` 会带出第一条规则拒绝原因，完整细节继续保留在 `WarDirectiveRecord`。
+- 面板按钮根据 `AppContainer` 暴露的 `canIssueSelectedModernUnitMission`、`canIssueSelectedFireMission`、`canOrderModernAssaultObjective`、`canOrderModernHoldDelay` 和 observer mode 启用/禁用；Fire Mission 会用 `CommandValidator` 预检当前 selected target / preferred munition，因此按钮和 Mission Status 能提前解释弹药、冷却、目标质量、ROE、防空或友邻风险等拒绝原因。
+- 任务拒绝同步写入 `lastCommandMessage` 和 interaction log；`CommandValidationError.displayMessage` 是玩家、AI 回放和 directive diagnostics 的统一可读拒绝文案来源，避免 UI 直接显示 `targetOutOfRange`、`restrictedFireZone` 等 enum raw value。玩家宏观 directive 部分失败时，`lastCommandMessage` 会带出第一条规则拒绝原因，完整细节继续保留在 `WarDirectiveRecord`。
 - 计划线仍复用 v0.4 `PlayerPlannedOperation` 的 attack / defend 可视化；v6.8 已加入 sensor / contact / EW / fire support 只读态势 overlay 首版。
 
 仍未完成：

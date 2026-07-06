@@ -137,7 +137,7 @@ struct TurnManager {
                     )
 
                     if !result.succeeded {
-                        errors.append("Order \(index) rejected: \(result.validation.errors.map(\.rawValue).joined(separator: ", ")).")
+                        errors.append("Order \(index) rejected: \(result.validation.displayMessage).")
                     }
                 } catch {
                     errors.append("Order \(index) mapping failed: \(error.localizedDescription)")
@@ -149,7 +149,7 @@ struct TurnManager {
             nextState = endTurnResult.state
             commandResults.append(.endTurn(result: endTurnResult))
             if !endTurnResult.succeeded {
-                errors.append("AI end turn failed: \(endTurnResult.validation.errors.map(\.rawValue).joined(separator: ", ")).")
+                errors.append("AI end turn failed: \(endTurnResult.validation.displayMessage).")
             }
 
             let record = AgentDecisionRecord(
@@ -326,7 +326,7 @@ struct TurnManager {
                 commandResults.append(summary)
                 perDirectiveResults.append(summary)
                 if !pair.1.succeeded {
-                    let diagnostic = "Directive \(directiveIndex) command \(commandIndex) rejected: \(pair.1.validation.errors.map(\.rawValue).joined(separator: ", "))."
+                    let diagnostic = "Directive \(directiveIndex) command \(commandIndex) rejected: \(pair.1.validation.displayMessage)."
                     errors.append(diagnostic)
                     perDirectiveDiagnostics.append(diagnostic)
                 }
@@ -355,7 +355,7 @@ struct TurnManager {
         nextState = endTurnResult.state
         commandResults.append(.endTurn(result: endTurnResult))
         if !endTurnResult.succeeded {
-            errors.append("AI end turn failed: \(endTurnResult.validation.errors.map(\.rawValue).joined(separator: ", ")).")
+            errors.append("AI end turn failed: \(endTurnResult.validation.displayMessage).")
         }
 
         if envelope.directives.isEmpty || !additionalDiagnostics.isEmpty {

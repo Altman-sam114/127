@@ -28,7 +28,7 @@ struct CommandResultSummary: Identifiable, Codable, Equatable {
             validationSucceeded: result.validation.isValid,
             executed: result.succeeded,
             message: result.message,
-            errors: result.validation.errors.map(\.rawValue)
+            errors: result.validation.displayMessages
         )
     }
 
@@ -62,7 +62,7 @@ struct CommandResultSummary: Identifiable, Codable, Equatable {
             validationSucceeded: result.validation.isValid,
             executed: result.succeeded,
             message: result.message,
-            errors: result.validation.errors.map(\.rawValue)
+            errors: result.validation.displayMessages
         )
     }
 
@@ -83,7 +83,7 @@ struct CommandResultSummary: Identifiable, Codable, Equatable {
             validationSucceeded: result.validation.isValid,
             executed: result.succeeded,
             message: result.message,
-            errors: result.validation.errors.map(\.rawValue)
+            errors: result.validation.displayMessages
         )
     }
 }

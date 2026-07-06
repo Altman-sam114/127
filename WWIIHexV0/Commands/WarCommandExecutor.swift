@@ -1097,9 +1097,8 @@ struct WarCommandExecutor {
         results.append(result)
 
         if !result.succeeded {
-            let rejectionReasons = result.validation.errors.map(\.rawValue).joined(separator: ", ")
             state.appendEvent(
-                "Directive command rejected: \(rejectionReasons) for \(command.displayName).",
+                "Directive command rejected: \(result.validation.displayMessage) for \(command.displayName).",
                 category: .frontChange,
                 relatedRecordId: relatedRecordId
             )

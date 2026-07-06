@@ -751,7 +751,12 @@ final class AppContainer: ObservableObject {
             return "\(selectedDivision.operationalDisplayName) has already acted this turn."
         }
 
-        if !canIssueSelectedFireMission {
+        if let fireValidation = selectedFireMissionValidation,
+           !fireValidation.isValid {
+            return "Formation missions are ready; Fire Mission blocked: \(fireValidation.displayMessage)."
+        }
+
+        if selectedFireMissionTarget() == nil {
             return "Formation missions are ready; select a target hex, sector, or contact before precision fires."
         }
 
@@ -763,7 +768,7 @@ final class AppContainer: ObservableObject {
     }
 
     var canIssueSelectedFireMission: Bool {
-        selectedActionDivision != nil && selectedFireMissionTarget() != nil
+        selectedFireMissionValidation?.isValid == true
     }
 
     var canOrderModernAssaultObjective: Bool {
@@ -787,6 +792,22 @@ final class AppContainer: ObservableObject {
         }
 
         return division
+    }
+
+    private var selectedFireMissionValidation: CommandValidation? {
+        guard let division = selectedActionDivision,
+              let target = selectedFireMissionTarget() else {
+            return nil
+        }
+
+        return CommandValidator().validate(
+            .fireMission(
+                issuerId: division.id,
+                target: target,
+                munitionClass: preferredMunitionClass(for: division)
+            ),
+            in: gameState
+        )
     }
 
     private var canIssuePlayerDirective: Bool {
@@ -1104,8 +1125,7 @@ final class AppContainer: ObservableObject {
         }
         if let firstRejected = execution.commandResults.first(where: { !$0.succeeded }),
            !firstRejected.validation.errors.isEmpty {
-            let reason = firstRejected.validation.errors.map(\.rawValue).joined(separator: ", ")
-            return "Commander directive executed \(acceptedCount)/\(totalCount) command(s); first rejection: \(reason)."
+            return "Commander directive executed \(acceptedCount)/\(totalCount) command(s); first rejection: \(firstRejected.validation.displayMessage)."
         }
         return "Commander directive executed \(acceptedCount)/\(totalCount) command(s); \(diagnostics.first ?? "review Log for details")."
     }

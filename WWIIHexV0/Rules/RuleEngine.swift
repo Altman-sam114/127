@@ -8,12 +8,11 @@ struct RuleEngine {
         let preparedState = EconomyRules().bootstrapIfNeeded(state)
         let validation = validator.validate(command, in: preparedState)
         guard validation.isValid else {
-            let errorMessage = validation.errors.map(\.rawValue).joined(separator: ", ")
             return CommandResult(
                 command: command,
                 validation: validation,
                 state: preparedState,
-                message: "Command rejected: \(errorMessage)."
+                message: "Command rejected: \(validation.displayMessage)."
             )
         }
 
