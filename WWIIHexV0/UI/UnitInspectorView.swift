@@ -46,11 +46,11 @@ struct UnitInspectorView: View {
                 }
 
                 LabeledContent("Operational Zone") {
-                    Text(strategicState.dynamicTheaterId?.rawValue ?? "None")
+                    Text(operationalZoneDisplay(strategicState.dynamicTheaterId))
                 }
 
                 LabeledContent("Command Sector") {
-                    Text(strategicState.frontZoneId?.rawValue ?? "None")
+                    Text(commandSectorDisplay(strategicState.frontZoneId))
                 }
 
                 LabeledContent("Deploy") {
@@ -110,6 +110,35 @@ struct UnitInspectorView: View {
 
     private func frontLineSummary(_ ids: [FrontLineId]) -> String {
         ids.isEmpty ? "None" : ids.map(\.rawValue).joined(separator: ", ")
+    }
+
+    private func operationalZoneDisplay(_ id: TheaterId?) -> String {
+        guard let value = id?.rawValue else {
+            return "None"
+        }
+        return displayName(for: value, fallbackPrefix: "Zone")
+    }
+
+    private func commandSectorDisplay(_ id: FrontZoneId?) -> String {
+        guard let value = id?.rawValue else {
+            return "None"
+        }
+        return displayName(for: value, fallbackPrefix: "Sector")
+    }
+
+    private func displayName(for rawValue: String, fallbackPrefix: String) -> String {
+        let cleaned = rawValue
+            .replacingOccurrences(of: "the" + "ater_", with: "")
+            .replacingOccurrences(of: "front" + "_zone_", with: "")
+            .replacingOccurrences(of: "zone_", with: "")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !cleaned.isEmpty else {
+            return fallbackPrefix
+        }
+
+        return "\(fallbackPrefix) \(cleaned.capitalized)"
     }
 }
 

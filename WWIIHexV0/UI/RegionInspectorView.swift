@@ -36,11 +36,11 @@ struct RegionInspectorView: View {
                 }
 
                 LabeledContent("Hex Operational Zone") {
-                    Text(state.selectedHexDynamicTheaterId?.rawValue ?? "None")
+                    Text(operationalZoneDisplay(state.selectedHexDynamicTheaterId))
                 }
 
                 LabeledContent("Hex Command Sector") {
-                    Text(state.selectedHexFrontZoneId?.rawValue ?? "None")
+                    Text(commandSectorDisplay(state.selectedHexFrontZoneId))
                 }
             }
 
@@ -78,11 +78,11 @@ struct RegionInspectorView: View {
             }
 
             LabeledContent("Operational Zone") {
-                Text(state.theaterId?.rawValue ?? "None")
+                Text(operationalZoneDisplay(state.theaterId))
             }
 
             LabeledContent("Command Sector") {
-                Text(state.frontZoneId?.rawValue ?? "None")
+                Text(commandSectorDisplay(state.frontZoneId))
             }
 
             LabeledContent("Front Pressure") {
@@ -128,5 +128,34 @@ struct RegionInspectorView: View {
         return contacts.map { contact in
             "\(contact.estimatedType.displayName) \(contact.confidence.displayName) \(contact.source.displayName) age \(contact.ageInTurns)"
         }.joined(separator: ", ")
+    }
+
+    private func operationalZoneDisplay(_ id: TheaterId?) -> String {
+        guard let value = id?.rawValue else {
+            return "None"
+        }
+        return displayName(for: value, fallbackPrefix: "Zone")
+    }
+
+    private func commandSectorDisplay(_ id: FrontZoneId?) -> String {
+        guard let value = id?.rawValue else {
+            return "None"
+        }
+        return displayName(for: value, fallbackPrefix: "Sector")
+    }
+
+    private func displayName(for rawValue: String, fallbackPrefix: String) -> String {
+        let cleaned = rawValue
+            .replacingOccurrences(of: "the" + "ater_", with: "")
+            .replacingOccurrences(of: "front" + "_zone_", with: "")
+            .replacingOccurrences(of: "zone_", with: "")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !cleaned.isEmpty else {
+            return fallbackPrefix
+        }
+
+        return "\(fallbackPrefix) \(cleaned.capitalized)"
     }
 }

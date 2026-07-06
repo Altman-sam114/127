@@ -68,7 +68,7 @@ factions = scenario.fetch("factions").to_set
 ensure_same_set(errors, "grey_tide factions", ["blueForce", "redForce", "neutral"], factions.to_a)
 errors << "playerFaction must be blueForce" unless scenario["playerFaction"] == "blueForce"
 errors << "aiFaction must be redForce" unless scenario["aiFaction"] == "redForce"
-errors << "initialPhase must be alliedPlayer" unless scenario["initialPhase"] == "alliedPlayer"
+errors << "initialPhase must be blueCommand" unless scenario["initialPhase"] == "blueCommand"
 
 tiles = scenario.fetch("map").fetch("tiles")
 tile_keys = tiles.map { |tile| coord_key(tile) }

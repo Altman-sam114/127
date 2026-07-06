@@ -575,9 +575,9 @@ final class AppContainer: ObservableObject {
         }
 
         if remaining == 0 {
-            return "Blue immediate victory threshold is met."
+            return "Immediate victory threshold is met."
         }
-        return "Blue needs \(remaining) more for instant win; final turn needs 6."
+        return "Secure \(remaining) more objective\(remaining == 1 ? "" : "s") for instant win; final turn needs 6."
     }
 
     var playtestGuidanceItems: [String] {

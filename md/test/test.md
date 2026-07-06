@@ -155,6 +155,8 @@ jq empty WWIIHexV0/Data/modern_unit_templates.json
 
 当修改 `grey_tide_2030_scenario.json`、`grey_tide_2030_regions.json`、`modern_unit_templates.json`、`WWIIHexV0/Rules/VictoryRules.swift` 或 `scripts/check_grey_tide_data.rb`，或交付中声明灰潮数据一致性已核对时，运行：
 
+该脚本会核对灰潮默认 `initialPhase=blueCommand` 现代 phase alias、tile / region / objective / key location / initial unit / unit template / supply source / victory condition 引用、十个主目标三源一致性、objective 与 key location 映射、region edge / neighbor、补给源和初始单位落点语义。
+
 ```sh
 ruby -c scripts/check_grey_tide_data.rb
 ruby scripts/check_grey_tide_data.rb

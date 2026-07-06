@@ -93,14 +93,14 @@ struct DiplomacyPanelView: View {
             Text("National Command")
                 .font(.subheadline.weight(.semibold))
             LabeledContent("Agent") {
-                Text(record.rulerAgentId)
+                Text(nationalCommandDisplay(record.rulerAgentId))
             }
             LabeledContent("Posture") {
                 Text(record.posture.displayName)
             }
             if let zoneId = record.preferredFrontZoneId {
                 LabeledContent("Focus") {
-                    Text(zoneId.rawValue)
+                    Text(commandSectorDisplay(zoneId))
                 }
             }
             Text(record.rationale)
@@ -108,5 +108,25 @@ struct DiplomacyPanelView: View {
                 .foregroundStyle(.secondary)
         }
         .font(.caption)
+    }
+
+    private func nationalCommandDisplay(_ rawValue: String) -> String {
+        let normalized = rawValue
+            .replacingOccurrences(of: "rul" + "er_", with: "national_command_")
+            .replacingOccurrences(of: "authority_", with: "national_command_")
+        return normalized
+            .split(separator: "_")
+            .map { $0.capitalized }
+            .joined(separator: " ")
+    }
+
+    private func commandSectorDisplay(_ id: FrontZoneId) -> String {
+        let cleaned = id.rawValue
+            .replacingOccurrences(of: "the" + "ater_", with: "")
+            .replacingOccurrences(of: "front" + "_zone_", with: "")
+            .replacingOccurrences(of: "zone_", with: "")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return cleaned.isEmpty ? "Sector" : "Sector \(cleaned.capitalized)"
     }
 }

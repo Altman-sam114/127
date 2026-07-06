@@ -140,7 +140,7 @@ struct DataLoader {
             turn: turn,
             maxTurns: scenario.maxTurns,
             activeFaction: initialActiveFaction(for: scenario),
-            phase: GamePhase(rawValue: scenario.initialPhase) ?? .germanAI,
+            phase: GamePhase.dataValue(scenario.initialPhase) ?? .germanAI,
             map: map,
             theaterState: theaterState,
             frontLineState: frontLineState,
@@ -153,7 +153,7 @@ struct DataLoader {
                 GameLogEntry(
                     turn: turn,
                     faction: initialActiveFaction(for: scenario),
-                    phase: GamePhase(rawValue: scenario.initialPhase) ?? .germanAI,
+                    phase: GamePhase.dataValue(scenario.initialPhase) ?? .germanAI,
                     message: "Loaded \(scenario.id) from MapEditor-compatible JSON."
                 )
             ]
@@ -161,7 +161,7 @@ struct DataLoader {
     }
 
     private func initialActiveFaction(for scenario: ScenarioDefinition) -> Faction {
-        let phase = GamePhase(rawValue: scenario.initialPhase) ?? .alliedPlayer
+        let phase = GamePhase.dataValue(scenario.initialPhase) ?? .alliedPlayer
         switch phase {
         case .alliedPlayer:
             return Faction.dataValue(scenario.playerFaction) ?? .allies

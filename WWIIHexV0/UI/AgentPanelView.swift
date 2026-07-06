@@ -89,14 +89,14 @@ struct AgentPanelView: View {
             if let rulerRecord {
                 Divider()
                 LabeledContent("National Command") {
-                    Text(rulerRecord.rulerAgentId)
+                    Text(nationalCommandDisplay(rulerRecord.rulerAgentId))
                 }
                 LabeledContent("Posture") {
                     Text(rulerRecord.posture.displayName)
                 }
                 if let zoneId = rulerRecord.preferredFrontZoneId {
                     LabeledContent("Focus") {
-                        Text(zoneId.rawValue)
+                        Text(commandSectorDisplay(zoneId))
                     }
                 }
             }
@@ -234,7 +234,7 @@ struct AgentPanelView: View {
     private func commandChainTargetLine(_ item: ModernCommandChainReplayItem) -> String {
         var targets: [String] = []
         if let zoneId = item.zoneId {
-            targets.append("command sector \(zoneId.rawValue)")
+            targets.append(commandSectorDisplay(zoneId))
         }
         if let regionId = item.regionId {
             targets.append("objective \(regionId.rawValue)")
@@ -243,6 +243,26 @@ struct AgentPanelView: View {
             targets.append("contact \(contactId)")
         }
         return targets.isEmpty ? "global coordination" : targets.joined(separator: " / ")
+    }
+
+    private func nationalCommandDisplay(_ rawValue: String) -> String {
+        let normalized = rawValue
+            .replacingOccurrences(of: "rul" + "er_", with: "national_command_")
+            .replacingOccurrences(of: "authority_", with: "national_command_")
+        return normalized
+            .split(separator: "_")
+            .map { $0.capitalized }
+            .joined(separator: " ")
+    }
+
+    private func commandSectorDisplay(_ id: FrontZoneId) -> String {
+        let cleaned = id.rawValue
+            .replacingOccurrences(of: "the" + "ater_", with: "")
+            .replacingOccurrences(of: "front" + "_zone_", with: "")
+            .replacingOccurrences(of: "zone_", with: "")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return cleaned.isEmpty ? "Sector" : "Sector \(cleaned.capitalized)"
     }
 
     private var rawJSONPlaceholder: String {

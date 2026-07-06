@@ -145,7 +145,7 @@ enum MapEditorExporter {
             factions: exportedFactions,
             maxTurns: 12,
             initialTurn: 1,
-            initialPhase: GamePhase.alliedPlayer.rawValue,
+            initialPhase: GamePhase.alliedPlayer.dataValue,
             playerFaction: Faction.blueForce.rawValue,
             aiFaction: Faction.redForce.rawValue,
             keyLocations: keyLocations,

@@ -191,7 +191,7 @@ owner/controller 都缺省 -> neutral
 
 仍未完成：
 
-- `GamePhase` raw value 尚未重命名，当前只用 helper 把 red 映射到 AI phase、blue 映射到 player phase。
+- `GamePhase` Swift case 仍保留 `.germanAI` / `.alliedPlayer` 兼容旧代码和测试，但 Codable 与 `GamePhase.dataValue(_:)` 已支持现代 `redCommand` / `blueCommand` alias；新保存的 `GameState` phase 和灰潮默认 `initialPhase` 使用现代 alias，旧阿登 fallback 的 `alliedPlayer` 仍可解码。
 - v6.2 已切入 `grey_tide_2030` 默认剧本种子；v6.10 已扩展为 120 hex / 30 region 的发布候选规模，但仍需运行时验证。
 - `Faction.opponent` 仍保留为旧接口兼容属性，但火力、可见性、前线和其他当前主路径 fallback 不再调用二元 opponent。
 - restricted / civilian region 已有首版火力门禁：non-hostile 控制区内 tube / rocket area fires 会被 `restrictedFireZone` 拒绝，precision / loitering 只有解析到 linked hostile target 时才允许并以 restricted fire zone 风险降级结算；完整 no-fire zone、collateral 和授权链仍待后续版本细化。
@@ -533,7 +533,7 @@ RootGameView
 
 - 快照内容是 `LocalPlaytestSnapshot` envelope，存入 `UserDefaults` 的 `modernCommandAgent.localSnapshot.v1` key；当前 schemaVersion 为 2，包含 `savedAt`、`playerFaction` 和 `gameState`。
 - 快照摘要单独存入 `modernCommandAgent.localSnapshot.summary.v1`，用于 UI 显示。
-- 玩家方 raw value 仍冗余写入 `modernCommandAgent.localSnapshot.playerFaction.v1`，用于兼容旧裸 `GameState` 快照；新 envelope 以 `playerFaction` 字段为准。
+- 玩家方 raw value 仍冗余写入 `modernCommandAgent.localSnapshot.playerFaction.v1`，用于兼容旧裸 `GameState` 快照；新 envelope 以 `playerFaction` 字段为准，`GamePhase` 通过自定义 Codable 写出现代 `blueCommand` / `redCommand` alias。
 - `decodeLocalSnapshot(_:)` 先按 envelope 解码，schemaVersion 不高于当前版本时直接恢复；若失败则按旧裸 `GameState` 解码，并从旧 playerFaction key 或当前默认作战方推断玩家方。
 - `loadLocalSnapshot()` 解码后仍经过 `StrategicStateBootstrapper().bootstrapIfNeeded` 和 `refreshGeneralAssignments`，并清空选择、高亮、临时交互日志和最近 AI/指令记录。
 - 保存/继续失败会写 `lastCommandMessage`、`lastCommandFeedbackTone` 和 interaction log，给玩家可读反馈。

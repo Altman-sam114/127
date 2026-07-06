@@ -9,7 +9,7 @@
   ],
   "maxTurns": 20,
   "initialTurn": 1,
-  "initialPhase": "alliedPlayer",
+  "initialPhase": "blueCommand",
   "playerFaction": "blueForce",
   "aiFaction": "redForce",
   "dataNotes": [
