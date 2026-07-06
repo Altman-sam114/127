@@ -217,7 +217,7 @@ WWIIHexV0/Data/grey_tide_2030_regions.json
 - 十个主目标中有 6 个初始由 Neutral / Civilian 控制，必须通过地面移动占领进入胜负计数：Harbor Terminal、River Bridge、Comms Center、Fuel Depot、Rail Junction、Refinery District。
 - neutral / civilian 关键地点但不计入十个主目标的 key-only 节点包括 Industrial Hub、Urban Core、Civic Center、River Ford、Southern Causeway、Civilian Evac Zone；它们可影响态势、区域语义或后续任务设计，但不应被写成灰潮即时 / 终局胜利阈值来源。
 - v6.3 起默认单位改用 `modern_unit_templates.json`，旧 `unit_templates.json` 只作阿登数据集和 fallback 兼容。
-- `scripts/check_grey_tide_data.rb` 提供灰潮默认剧本的可复现静态一致性检查：只读取 JSON 和 `VictoryRules.swift`，核对 tile、region、objective、key location、initial unit、unit template、supply source、victory condition 引用，并校验 `VictoryRules.greyTideMainObjectiveIds`、scenario victoryConditions 的 `objectiveIds` 和 region `mainObjective=true` 三套主目标集合一致，不启动 app。
+- `scripts/check_grey_tide_data.rb` 提供灰潮默认剧本的可复现静态一致性检查：只读取 JSON 和 `VictoryRules.swift`，核对 tile、region、objective、key location、initial unit、unit template、supply source、victory condition 引用；校验 objective 与 key location 一一链接且坐标 / 名称一致、region edges 与 neighbors 集合一致、补给源 tile / region faction 与 controller 不冲突、初始单位不落敌控 hex；并校验 `VictoryRules.greyTideMainObjectiveIds`、scenario victoryConditions 的 `objectiveIds` 和 region `mainObjective=true` 三套主目标集合一致，不启动 app。
 
 默认启动顺序现在是：
 
