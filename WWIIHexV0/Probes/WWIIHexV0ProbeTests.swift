@@ -208,6 +208,55 @@ final class WWIIHexV0ProbeTests: XCTestCase {
         XCTAssertTrue(outcome.record.commandResults.contains { $0.executed })
     }
 
+    func testProbeGreyTideObserverTenAIHalfTurns() async throws {
+        let bootstrapper = StrategicStateBootstrapper()
+        var state = bootstrapper.bootstrapIfNeeded(DataLoader().loadInitialGameState())
+        let initialTurn = state.turn
+        var executedDirectiveCommandCount = 0
+        var visibleContactObservationCount = 0
+
+        XCTAssertEqual(state.scenarioId, "grey_tide_2030")
+
+        for step in 0..<10 {
+            state = bootstrapper.refreshRuntimeState(state)
+            let activeFaction = state.activeFaction
+            visibleContactObservationCount += state.operationalAwareness.visibleContacts(for: activeFaction).count
+
+            XCTAssertEqual(state.phase, activeFaction.commandPhase, "step \(step) active phase mismatch")
+            XCTAssertTrue(activeFaction.alignment == .blue || activeFaction.alignment == .red, "step \(step) unexpected active faction")
+
+            let outcome = await Self.greyTideProbeTurnManager(for: activeFaction, state: state)
+                .runAITurn(state: state, faction: activeFaction, pipelineMode: .marshalDirective)
+
+            XCTAssertTrue(
+                outcome.record.commandResults.contains { $0.id == "end_turn" && $0.executed },
+                "step \(step) did not execute end turn: \(outcome.record.errors.joined(separator: "; "))"
+            )
+            XCTAssertFalse(
+                outcome.record.errors.contains { $0.localizedCaseInsensitiveContains("outside its controllable phase") },
+                "step \(step) ran outside controllable phase"
+            )
+            XCTAssertFalse(
+                outcome.record.errors.contains { $0.localizedCaseInsensitiveContains("Commander returned no directives") },
+                "step \(step) generated no directives"
+            )
+
+            executedDirectiveCommandCount += outcome.directiveRecords
+                .flatMap(\.commandResults)
+                .filter(\.executed)
+                .count
+            state = bootstrapper.refreshRuntimeState(outcome.state)
+        }
+
+        XCTAssertEqual(state.turn, initialTurn + 5)
+        XCTAssertGreaterThan(executedDirectiveCommandCount, 0)
+        XCTAssertTrue(state.map.validateRegionGraph().isEmpty)
+        XCTAssertFalse(state.warDeploymentState.frontZones.isEmpty)
+        XCTAssertFalse(state.theaterState.theaters.isEmpty)
+        XCTAssertFalse(state.operationalAwareness.sensorCoverage.isEmpty)
+        XCTAssertGreaterThan(visibleContactObservationCount, 0)
+    }
+
     func testProbeV0352StrategicOverlayBuckets() throws {
         let state = Self.westFrontScenario().gameState
         let calculator = MapLayerOverlayCalculator(state: state)
@@ -573,6 +622,28 @@ final class WWIIHexV0ProbeTests: XCTestCase {
             assignedZoneId: zoneId,
             skills: [],
             commandStyle: .balanced
+        )
+    }
+
+    private static func greyTideProbeTurnManager(for faction: Faction, state: GameState) -> TurnManager {
+        let assignedDivisionIds = state.divisions
+            .filter { $0.faction == faction && !$0.isDestroyed }
+            .map(\.id)
+        let agent = GameAgent.sample(
+            id: "probe_\(faction.rawValue)_observer_commander",
+            name: "\(faction.shortDisplayName) Observer Commander",
+            faction: faction,
+            role: .armyCommander,
+            assignedDivisionIds: assignedDivisionIds
+        )
+
+        return TurnManager(
+            agent: agent,
+            provider: MockAIClient(),
+            providerName: "ProbeAI",
+            commandHandler: RuleEngine(),
+            commanderPool: TheaterCommanderPool.automatic(for: state),
+            marshalAgent: MarshalAgent(config: MarshalAgentConfig.automatic(for: faction, state: state))
         )
     }
 }
