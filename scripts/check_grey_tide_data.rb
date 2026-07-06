@@ -6,6 +6,7 @@ require "set"
 
 ROOT = File.expand_path("..", __dir__)
 DATA_DIR = File.join(ROOT, "WWIIHexV0", "Data")
+RULES_DIR = File.join(ROOT, "WWIIHexV0", "Rules")
 
 def load_json(filename)
   JSON.parse(File.read(File.join(DATA_DIR, filename)))
@@ -20,10 +21,29 @@ def ensure_unique(errors, label, values)
   errors << "#{label} duplicates: #{duplicates.join(", ")}" unless duplicates.empty?
 end
 
+def ensure_same_set(errors, label, expected, actual)
+  expected_set = expected.to_set
+  actual_set = actual.to_set
+  missing = expected_set - actual_set
+  extra = actual_set - expected_set
+  errors << "#{label} missing: #{missing.to_a.sort.join(", ")}" unless missing.empty?
+  errors << "#{label} extra: #{extra.to_a.sort.join(", ")}" unless extra.empty?
+end
+
+def load_grey_tide_victory_rule_objectives
+  source = File.read(File.join(RULES_DIR, "VictoryRules.swift"))
+  match = source.match(/greyTideMainObjectiveIds:\s*Set<String>\s*=\s*\[(.*?)\]/m)
+  raise "VictoryRules.greyTideMainObjectiveIds not found" unless match
+
+  match[1].scan(/"([^"]+)"/).flatten
+end
+
 scenario = load_json("grey_tide_2030_scenario.json")
 regions = load_json("grey_tide_2030_regions.json")
 templates = load_json("modern_unit_templates.json")
+victory_rule_main_objective_ids = load_grey_tide_victory_rule_objectives
 errors = []
+ensure_unique(errors, "VictoryRules main objective ids", victory_rule_main_objective_ids)
 
 errors << "scenario id must be grey_tide_2030" unless scenario["id"] == "grey_tide_2030"
 errors << "regions scenarioId must be grey_tide_2030" unless regions["scenarioId"] == "grey_tide_2030"
@@ -158,6 +178,9 @@ end
 
 region_objective_ids = regions.fetch("objectives").map { |objective| objective.fetch("id") }
 region_objective_id_set = region_objective_ids.to_set
+region_main_objective_ids = regions.fetch("objectives")
+  .select { |objective| objective["mainObjective"] }
+  .map { |objective| objective.fetch("id") }
 ensure_unique(errors, "region objective ids", region_objective_ids)
 regions.fetch("objectives").each do |objective|
   objective_id = objective.fetch("id")
@@ -168,6 +191,11 @@ end
 objective_ids.each do |objective_id|
   errors << "scenario objective #{objective_id} missing from region objectives" unless region_objective_id_set.include?(objective_id)
 end
+victory_rule_main_objective_ids.each do |objective_id|
+  errors << "VictoryRules main objective #{objective_id} missing from scenario objectives" unless objective_id_set.include?(objective_id)
+  errors << "VictoryRules main objective #{objective_id} missing from region objectives" unless region_objective_id_set.include?(objective_id)
+end
+ensure_same_set(errors, "region main objectives vs VictoryRules", victory_rule_main_objective_ids, region_main_objective_ids)
 
 scenario.fetch("victoryConditions").each do |condition|
   faction = condition["faction"]
@@ -181,8 +209,27 @@ scenario.fetch("victoryConditions").each do |condition|
   end
 end
 
+main_victory_condition_ids = [
+  "vc_blue_key_nodes",
+  "vc_red_defense_network"
+]
+victory_conditions_by_id = scenario.fetch("victoryConditions").to_h { |condition| [condition.fetch("id"), condition] }
+main_victory_condition_ids.each do |condition_id|
+  condition = victory_conditions_by_id[condition_id]
+  unless condition
+    errors << "victory #{condition_id} missing"
+    next
+  end
+  ensure_same_set(
+    errors,
+    "victory #{condition_id} objectives vs VictoryRules",
+    victory_rule_main_objective_ids,
+    Array(condition["objectiveIds"])
+  )
+end
+
 if errors.empty?
-  puts "grey_tide_data ok: tiles=#{tiles.size} regions=#{region_ids.size} units=#{unit_ids.size} objectives=#{objective_ids.size} templates=#{template_ids.size}"
+  puts "grey_tide_data ok: tiles=#{tiles.size} regions=#{region_ids.size} units=#{unit_ids.size} objectives=#{objective_ids.size} mainObjectives=#{victory_rule_main_objective_ids.size} templates=#{template_ids.size}"
   exit 0
 end
 

@@ -149,7 +149,7 @@ jq empty WWIIHexV0/Data/unit_templates.json
 jq empty WWIIHexV0/Data/modern_unit_templates.json
 ```
 
-当修改 `grey_tide_2030_scenario.json`、`grey_tide_2030_regions.json`、`modern_unit_templates.json` 或 `scripts/check_grey_tide_data.rb`，或交付中声明灰潮数据一致性已核对时，运行：
+当修改 `grey_tide_2030_scenario.json`、`grey_tide_2030_regions.json`、`modern_unit_templates.json`、`WWIIHexV0/Rules/VictoryRules.swift` 或 `scripts/check_grey_tide_data.rb`，或交付中声明灰潮数据一致性已核对时，运行：
 
 ```sh
 ruby -c scripts/check_grey_tide_data.rb
