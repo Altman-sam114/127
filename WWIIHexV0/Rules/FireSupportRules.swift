@@ -600,6 +600,9 @@ struct FireSupportRules {
         in state: GameState
     ) -> Bool {
         guard munitionClass.canOperateInRestrictedFireZone,
+              let contact = plan.contact,
+              contact.confidence >= .high,
+              contact.ageInTurns == 0,
               let targetDivisionId = plan.targetDivisionId,
               let targetDivision = state.division(id: targetDivisionId) else {
             return false

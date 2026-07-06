@@ -194,7 +194,7 @@ owner/controller 都缺省 -> neutral
 - `GamePhase` Swift case 仍保留 `.germanAI` / `.alliedPlayer` 兼容旧代码和测试，但 Codable 与 `GamePhase.dataValue(_:)` 已支持现代 `redCommand` / `blueCommand` alias；新保存的 `GameState` phase 和灰潮默认 `initialPhase` 使用现代 alias，旧阿登 fallback 的 `alliedPlayer` 仍可解码。
 - v6.2 已切入 `grey_tide_2030` 默认剧本种子；v6.10 已扩展为 120 hex / 30 region 的发布候选规模，但仍需运行时验证。
 - `Faction.opponent` 仍保留为旧接口兼容属性，但火力、可见性、前线和其他当前主路径 fallback 不再调用二元 opponent。
-- restricted / civilian region 已有首版火力门禁：non-hostile 控制区内 tube / rocket area fires 会被 `restrictedFireZone` 拒绝，precision / loitering 只有解析到 linked hostile target 时才允许并以 restricted fire zone 风险降级结算；完整 no-fire zone、collateral 和授权链仍待后续版本细化。
+- restricted / civilian region 已有首版火力门禁：non-hostile 控制区内 tube / rocket area fires 会被 `restrictedFireZone` 拒绝，precision / loitering 只有解析到 current high-confidence linked hostile contact 时才允许并以 restricted fire zone 风险降级结算；stale 或 medium contact 在 restricted 区不会放行；完整 no-fire zone、collateral 和授权链仍待后续版本细化。
 
 ## 0.4 v6.2 灰潮行动默认剧本种子
 
@@ -352,7 +352,7 @@ GameState.fireSupportState: FireSupportState
 - 三类新命令全部经过 `CommandValidator -> CommandExecutor -> FireSupportRules`，不得绕过 `RuleEngine` 直接改 `GameState`。
 - validator 检查阶段、阵营、单位行动权、目标 hex、射程、source asset、目标质量、弹药、冷却、防空威胁和友军邻近风险。
 - fire mission 只对 medium+ contact 或 region/hex 内 medium+ contact 放行；low / missing contact 会被拒绝。
-- neutral / green / 同阵营协同方控制区会被视作 restricted fire zone：tube / rocket area fires 被拒绝，precision / loitering 需要 linked hostile target，且结算时加入 `restrictedFireZone` risk flag 和轻量效果惩罚。
+- neutral / green / 同阵营协同方控制区会被视作 restricted fire zone：tube / rocket area fires 被拒绝，precision / loitering 需要 current high-confidence linked hostile contact，且结算时加入 `restrictedFireZone` risk flag 和轻量效果惩罚；stale 或 medium contact 会继续被 restricted gate 拒绝。
 - restricted fire gate 只限制火力任务，不改变 Civilian Evac Zone 等 key-only / civilian 节点的胜负身份，也不把它们纳入十个主目标阈值。
 - executor 会消耗对应 `MunitionClass` 弹药、设置 source cooldown、记录 `FireMissionResult` / `AirSortie`，并写入 `fireSupport` 日志。
 - 命中目标时只施加有限 `strength` damage，必要时触发撤退或消灭；不会占领 hex，也不会替代地面推进。
@@ -2303,7 +2303,7 @@ MapEditorGameResourceBridge.loadDefaultDocument
   - v6.10 灰潮默认剧本 10 个 AI 半回合轻量运行时链路。
   - v6.10 Playtest 红/蓝新局、Action Gate、主目标摘要和本地快照状态链路。
   - v6.10 Observer AI 容器入口自动推进两个 AI 半回合。
-  - v6.10 restricted / civilian fire ROE：area fires 拒绝，precision linked hostile target 降级放行。
+  - v6.10 restricted / civilian fire ROE：area fires 拒绝，precision current high-confidence linked hostile contact 降级放行，stale / medium contact 拒绝。
 - Dynamic Theater Regression：`WWIIHexV0Tests/Stage0355DynamicTheaterTests`
   - 守住 `regionToTheater` 不动态推进、`hexToTheater` 单 hex 推进、split region front、deployment split。
 - MapEditor：`WWIIHexV0Tests/MapEditorOutputTests`

@@ -66,7 +66,7 @@ enum CommandValidationError: String, Codable, Equatable {
         case .friendlyProximityRisk:
             return "friendly proximity risk is too high"
         case .restrictedFireZone:
-            return "restricted fire zone requires a linked hostile target and precision-capable munition"
+            return "restricted fire zone requires a current high-confidence linked hostile target and precision-capable munition"
         }
     }
 }

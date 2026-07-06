@@ -367,7 +367,7 @@ final class WWIIHexV0ProbeTests: XCTestCase {
         XCTAssertFalse(rocketResult.succeeded)
         XCTAssertEqual(rocketResult.validation, .invalid(.restrictedFireZone))
         XCTAssertTrue(
-            rocketResult.message.contains("restricted fire zone requires a linked hostile target and precision-capable munition")
+            rocketResult.message.contains("restricted fire zone requires a current high-confidence linked hostile target and precision-capable munition")
         )
         XCTAssertTrue(rocketResult.state.fireSupportState.lastMissionResults.isEmpty)
         XCTAssertEqual(rocketResult.state.division(id: "blue_fires")?.hasActed, false)
@@ -402,6 +402,38 @@ final class WWIIHexV0ProbeTests: XCTestCase {
                 $0.category == .fireSupport && $0.message.contains("restricted fire zone")
             }
         )
+
+        var staleState = state
+        staleState.operationalAwareness.contacts["contact_restricted_red_armor"]?.ageInTurns = 1
+        let staleResult = ruleEngine.execute(
+            .fireMission(
+                issuerId: "blue_fires",
+                target: .contact(id: "contact_restricted_red_armor"),
+                munitionClass: .precision
+            ),
+            in: staleState
+        )
+
+        XCTAssertFalse(staleResult.succeeded)
+        XCTAssertEqual(staleResult.validation, .invalid(.restrictedFireZone))
+        XCTAssertTrue(staleResult.state.fireSupportState.lastMissionResults.isEmpty)
+        XCTAssertEqual(staleResult.state.division(id: "blue_fires")?.hasActed, false)
+
+        var mediumState = state
+        mediumState.operationalAwareness.contacts["contact_restricted_red_armor"]?.confidence = .medium
+        let mediumResult = ruleEngine.execute(
+            .fireMission(
+                issuerId: "blue_fires",
+                target: .contact(id: "contact_restricted_red_armor"),
+                munitionClass: .precision
+            ),
+            in: mediumState
+        )
+
+        XCTAssertFalse(mediumResult.succeeded)
+        XCTAssertEqual(mediumResult.validation, .invalid(.restrictedFireZone))
+        XCTAssertTrue(mediumResult.state.fireSupportState.lastMissionResults.isEmpty)
+        XCTAssertEqual(mediumResult.state.division(id: "blue_fires")?.hasActed, false)
     }
 
     @MainActor
