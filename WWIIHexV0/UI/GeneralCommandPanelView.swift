@@ -204,8 +204,6 @@ struct GeneralCommandPanelView: View {
 
     private func commandSectorDisplay(_ id: FrontZoneId) -> String {
         let cleaned = cleanIdentifier(id.rawValue)
-            .replacingOccurrences(of: "Front Zone ", with: "")
-            .replacingOccurrences(of: "Zone ", with: "")
         return cleaned.isEmpty ? "Command Sector" : "Sector \(cleaned.capitalized)"
     }
 
