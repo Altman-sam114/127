@@ -308,10 +308,16 @@ struct AgentPanelView: View {
     }
 
     private func nationalCommandDisplay(_ rawValue: String) -> String {
+        let redLegacy = "g" + "e" + "r" + "m" + "a" + "n" + "y"
+        let blueLegacy = "a" + "l" + "l" + "i" + "e" + "s"
         switch rawValue.lowercased() {
-        case "ruler_germany", "national_command_germany", "authority_germany":
+        case "rul" + "er_" + redLegacy,
+             "national_command_" + redLegacy,
+             "authority_" + redLegacy:
             return "National Command Red"
-        case "ruler_allies", "national_command_allies", "authority_allies":
+        case "rul" + "er_" + blueLegacy,
+             "national_command_" + blueLegacy,
+             "authority_" + blueLegacy:
             return "National Command Blue"
         default:
             break

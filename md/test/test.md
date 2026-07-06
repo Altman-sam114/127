@@ -189,7 +189,7 @@ ruby -c scripts/check_modern_visible_text.rb
 ruby scripts/check_modern_visible_text.rb
 ```
 
-该脚本只做静态文本扫描，不启动 app，不跑 Xcode。扫描范围限定为主应用 `App` / `UI` / `SpriteKit` Swift 字符串、会进入命令结果 / 日志 / diagnostics / legacy prompt 的 `Commands`、`Rules`、`Turn`、`Agents` 字符串、若干 Core 可见 displayName 映射，以及 `grey_tide_2030_*`、`modern_unit_templates.json`、`generals.json` 中的显示字段和地图 `cityName` / `fortressName`；`AgentConfiguration.swift` 和 `AgentPromptBuilder.swift` 不再整文件排除，只对保留的 legacy id / schema key 做精确 allowlist；旧阿登数据、历史文档、测试 fixture、target/module 名和源码兼容 raw value 不作为默认 hard fail。
+该脚本只做静态文本扫描，不启动 app，不跑 Xcode。扫描范围限定为主应用 `App` / `UI` / `SpriteKit` Swift 字符串、会进入命令结果 / 日志 / diagnostics / legacy prompt 的 `Commands`、`Rules`、`Turn`、`Agents` 字符串、若干 Core 可见 displayName 映射，以及 `grey_tide_2030_*`、`modern_unit_templates.json`、`generals.json` 中的显示字段和地图 `cityName` / `fortressName`；`AgentConfiguration.swift` 和 `AgentPromptBuilder.swift` 不再整文件排除，只对保留的 legacy id / legacy prompt schema key 做精确 allowlist；旧阿登数据、历史文档、测试 fixture、target/module 名和源码兼容 raw value 不作为默认 hard fail。
 
 ### 4.5 Swift 单文件语法
 

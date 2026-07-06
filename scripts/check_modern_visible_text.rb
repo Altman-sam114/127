@@ -109,6 +109,8 @@ ALLOWED_SWIFT_LITERALS = [
   ["WWIIHexV0/UI/AgentPanelView.swift", "MockAI"],
   ["WWIIHexV0/Agents/AgentConfiguration.swift", "guderian"],
   ["WWIIHexV0/Agents/AgentConfiguration.swift", "ger_panzer_1"],
+  ["WWIIHexV0/Agents/AgentPromptBuilder.swift", "divisionId"],
+  ["WWIIHexV0/Agents/AgentPromptBuilder.swift", "existing division id"],
   ["WWIIHexV0/Agents/AgentPromptBuilder.swift", "targetDivisionId"]
 ].freeze
 
