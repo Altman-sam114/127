@@ -240,7 +240,7 @@ flowchart LR
     COMP["TheaterDirectiveCompiler<br/>编译 ZoneDirective"]:::command
     EXEC["WarCommandExecutor<br/>RuleEngine"]:::rules
     RECORD["AgentDecisionRecord<br/>rawJSON + commandChainReplayItems<br/>raw invalid JSON retained when available"]:::display
-    PANEL["AgentPanelView<br/>role / mission / priority<br/>target / rationale<br/>Technical Replay 折叠审计"]:::display
+    PANEL["AgentPanelView<br/>role / mission / priority<br/>target / rationale<br/>普通面板隐藏 raw JSON"]:::display
 
     MARSHAL --> TDEC --> ORCH --> CJSON --> CDEC
     CDEC -->|通过| COMP --> EXEC
@@ -744,7 +744,7 @@ flowchart TD
     STATE["运行时状态<br/>GameState + EventLog + WarDirectiveRecord"]:::state
     ROOT["主界面<br/>RootGameView<br/>HUD + Info tabs"]:::ui
     LOG["日志面板<br/>EventLogView<br/>最近 60 条 LogDisplayEntry"]:::ui
-    AIUI["AI 面板<br/>AgentPanelView<br/>command chain + command results<br/>Technical Replay 折叠明细"]:::ui
+    AIUI["AI 面板<br/>AgentPanelView<br/>command chain + command results<br/>raw JSON 保留记录层"]:::ui
     BOARD["地图场景<br/>BoardScene<br/>缓存 unit display hex 后排序绘制"]:::ui
     MARSHAL["Local Planner<br/>MockAIClient implementation<br/>MarshalAgent + SimulatedMarshalLLMClient"]:::ai
     ZD["战区指令<br/>ZoneDirective<br/>tactic / focus / intensity"]:::command

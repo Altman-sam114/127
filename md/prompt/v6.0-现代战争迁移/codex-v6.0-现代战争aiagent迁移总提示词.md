@@ -992,7 +992,7 @@ Mock / 本地 LLM 要求：
 验收：
 
 - AI 回合能解释“国家约束是什么、联合司令部想要什么、ISR/EW/火力/旅级指挥官做了什么”。
-- 玩家能在 AI 面板看到 raw JSON、编译后的 directive、命令结果和拒绝原因。
+- 审计记录保留 raw JSON；玩家能在 AI 面板看到结构化 AI replay、编译后的 directive 摘要、命令结果和拒绝原因，普通玩家面板不默认暴露 raw JSON。
 - Agent 决策失败不会破坏回合。
 - 仍未绕过 `RuleEngine`。
 
@@ -1408,7 +1408,7 @@ swiftc -parse path/to/ChangedFile.swift
 - `regionToTheater` 仍是初始/基础映射，不表示运行时推进。
 - `hexToTheater` 和 `hexToFrontZone` 仍是动态权威。
 - 侦察、contact、EW、火力、防空、补给至少有一个可解释的首版闭环。
-- AI 面板能展示 raw JSON、编译后 directive、命令结果、拒绝原因。
+- AI 面板能展示结构化 replay、编译后 directive 摘要、命令结果、拒绝原因；raw JSON 保留在审计记录层，不作为普通玩家默认面板内容。
 - 战报能解释关键侦察、contact 更新、火力任务、EW 影响、补给变化、占领、撤退、命令失败。
 - UI 没有主要二战文案残留。
 - 新 JSON 都通过 `jq empty`。

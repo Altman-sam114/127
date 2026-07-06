@@ -4,15 +4,18 @@ struct AgentPanelView: View {
     let record: AgentDecisionRecord?
     let rulerRecord: RulerDecisionRecord?
     let directiveRecords: [WarDirectiveRecord]
+    let showsTechnicalReplay: Bool
 
     init(
         record: AgentDecisionRecord?,
         rulerRecord: RulerDecisionRecord? = nil,
-        directiveRecords: [WarDirectiveRecord] = []
+        directiveRecords: [WarDirectiveRecord] = [],
+        showsTechnicalReplay: Bool = false
     ) {
         self.record = record
         self.rulerRecord = rulerRecord
         self.directiveRecords = directiveRecords
+        self.showsTechnicalReplay = showsTechnicalReplay
     }
 
     var body: some View {
@@ -135,12 +138,14 @@ struct AgentPanelView: View {
                 }
             }
 
-            DisclosureGroup {
-                technicalReplayContent
-            } label: {
-                Text("Technical Replay")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            if showsTechnicalReplay {
+                DisclosureGroup {
+                    technicalReplayContent
+                } label: {
+                    Text("Technical Replay")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
         }
         .padding(12)

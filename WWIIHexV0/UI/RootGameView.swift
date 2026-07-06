@@ -226,7 +226,8 @@ struct RootGameView: View {
                     AgentPanelView(
                         record: container.lastAgentDecisionRecord,
                         rulerRecord: container.gameState.diplomacyState.latestRulerRecord,
-                        directiveRecords: container.lastWarDirectiveRecords
+                        directiveRecords: container.lastWarDirectiveRecords,
+                        showsTechnicalReplay: false
                     )
                 }
             }
