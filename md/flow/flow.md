@@ -402,7 +402,7 @@ ModernCommandChainPlan
 - 校验成功后，plan 写入 `MarshalDirectiveResolution.commandChainPlan`；校验失败只添加 diagnostics，不执行半成品。operational directive 或 advisory JSON 失败时，`MarshalDirectiveResolution` 仍尽量保留原始 JSON，供 `AgentPanelView` 审计。
 - `TheaterDirectiveCompiler` 仍把元帅 TheaterDirective 编译成 `ZoneDirective`，再由 `WarCommandExecutor -> RuleEngine` 执行。
 - `TurnManager` 将 Operational Directive JSON、Modern Command Chain JSON 和最终 Compiled ZoneDirective JSON 合并写入 `AgentDecisionRecord.rawJSON`，`parsedIntent` 增加现代指挥链 summary，并把已验证 sub-directive 派生成 `ModernCommandChainReplayItem`。
-- `AgentPanelView` 在 Raw JSON 之外显示结构化 Command Chain 回放项：角色、任务、优先级、zone / region / contact 目标和 rationale；卡片标注 `Advisory`，只读 `AgentDecisionRecord`，不执行 sub-directive。
+- `AgentPanelView` 默认展示结构化 Command Chain 回放项：角色、任务、优先级、可读目标和 rationale；卡片标注 `Advisory`，只读 `AgentDecisionRecord`，不执行 sub-directive。完整 Operational Directive 明细、diagnostics 和 raw JSON 保留在折叠的 Technical Replay 区，供审计和排错使用。
 
 安全边界：
 
@@ -412,7 +412,7 @@ ModernCommandChainPlan
 
 仍未完成：
 
-- UI 已能通过现有 AI 面板查看结构化 Command Chain 摘要和 raw JSON，但还没有专门的多 Agent 决策复盘全屏视图。
+- UI 已能通过现有 AI 面板查看结构化 Command Chain 摘要，并在折叠 Technical Replay 中查看 directive 明细和 raw JSON；但还没有专门的多 Agent 决策复盘全屏视图。
 - sub-directive 还没有独立调参 UI，也不会直接编译成 FireMission / Recon / EW command。
 - ChiefOfStaff 当前是 deterministic notes / deconflict 说明，未做复杂冲突仲裁搜索。
 
@@ -2320,7 +2320,7 @@ v1.0 分支名：`v1.0-ui-ai-playtest`。
 GameState / WarDirectiveRecord / EventLog
   -> RootGameView
   -> HUD + Info tabs
-  -> AgentPanelView 展示 raw JSON / command results / zone directives
+  -> AgentPanelView 展示 command chain / command results / 折叠 Technical Replay
   -> EventLogView 展示最近 60 条分类日志
 
 BoardScene
@@ -2337,7 +2337,7 @@ Marshal / ZoneDirective
 
 算法变化：
 
-- AI 面板从只展示 `AgentDecisionRecord` 扩展为同时展示 `WarDirectiveRecord`，每条 directive 可看到 zone、attack/defend、tactic、命令成功/拒绝数量和目标 region。
+- AI 面板从只展示 `AgentDecisionRecord` 扩展为同时展示 `WarDirectiveRecord`；默认主视图显示结构化 command chain、command results 和 errors，完整 directive 明细、diagnostics 与 raw JSON 收在 Technical Replay 中。
 - 日志面板用 `LogDisplayEntry` 保存 entry + category，避免 body 内对同一条日志重复分类。
 - 单位绘制先缓存 `unitDisplayHex` 再排序，避免 comparator 重复计算。
 - `AttackIntensity.infiltration` 在无显式 `maxCommittedUnits` 时默认只投入约半数前线/纵深候选单位，避免渗透/袭扰全线压上。
@@ -2346,7 +2346,7 @@ Marshal / ZoneDirective
 
 - UI：HUD、Info tabs、Economy、Diplomacy、AI panel 是否可读。
 - 地图：hex/province/initial/dynamic/front/deploy 图层是否清晰。
-- AI：raw JSON、zone directive、diagnostics 是否能解释 AI 回合。
+- AI：结构化 command chain、折叠 Technical Replay、directive diagnostics 是否能解释 AI 回合。
 - 规则：玩家和 AI 行动是否仍能追溯到 `CommandResultSummary` / `WarDirectiveRecord`。
 - 性能体感：地图拖动、图层切换、日志面板滚动是否有明显卡顿。
 

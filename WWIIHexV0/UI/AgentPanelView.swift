@@ -121,6 +121,36 @@ struct AgentPanelView: View {
                 }
             }
 
+            if let record, !record.errors.isEmpty {
+                Text("Errors")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(record.errors, id: \.self) { error in
+                        Text(error)
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                    }
+                }
+            }
+
+            DisclosureGroup {
+                technicalReplayContent
+            } label: {
+                Text("Technical Replay")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(12)
+        .background(PlatformStyles.systemBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+
+    @ViewBuilder
+    private var technicalReplayContent: some View {
+        VStack(alignment: .leading, spacing: 8) {
             if !directiveRecords.isEmpty {
                 Text("Operational Directives")
                     .font(.caption)
@@ -158,21 +188,7 @@ struct AgentPanelView: View {
                 }
             }
 
-            if let record, !record.errors.isEmpty {
-                Text("Errors")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
-                VStack(alignment: .leading, spacing: 4) {
-                    ForEach(record.errors, id: \.self) { error in
-                        Text(error)
-                            .font(.caption)
-                            .foregroundStyle(.red)
-                    }
-                }
-            }
-
-            Text("Raw JSON")
+            Text("Technical Replay JSON")
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
@@ -185,14 +201,12 @@ struct AgentPanelView: View {
                 .background(PlatformStyles.tertiarySystemBackground)
                 .clipShape(RoundedRectangle(cornerRadius: 6))
         }
-        .padding(12)
-        .background(PlatformStyles.systemBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .padding(.top, 4)
     }
 
     private func directiveSummary(_ directive: WarDirectiveRecord) -> String {
-        let type = directive.directiveType?.rawValue ?? "diagnostic"
-        let tactic = directive.tacticDisplayName ?? directive.category?.rawValue ?? "none"
+        let type = directiveTypeDisplay(directive.directiveType)
+        let tactic = directive.tacticDisplayName ?? categoryDisplay(directive.category)
         let executed = directive.commandResults.filter(\.executed).count
         let rejected = directive.commandResults.count - executed
         let targetText = directive.targetRegionIds.isEmpty
@@ -238,12 +252,34 @@ struct AgentPanelView: View {
             targets.append(commandSectorDisplay(zoneId))
         }
         if let regionId = item.regionId {
-            targets.append("objective \(regionId.rawValue)")
+            targets.append(objectiveDisplay(regionId))
         }
         if let contactId = item.contactId {
-            targets.append("contact \(contactId)")
+            targets.append(contactDisplay(contactId))
         }
         return targets.isEmpty ? "global coordination" : targets.joined(separator: " / ")
+    }
+
+    private func directiveTypeDisplay(_ type: DirectiveType?) -> String {
+        switch type {
+        case .attack:
+            return "Attack"
+        case .defend:
+            return "Defense"
+        case nil:
+            return "Diagnostic"
+        }
+    }
+
+    private func categoryDisplay(_ category: CommandCategory?) -> String {
+        switch category {
+        case .offense:
+            return "Offense"
+        case .defense:
+            return "Defense"
+        case nil:
+            return "Coordination"
+        }
     }
 
     private func nationalCommandDisplay(_ rawValue: String) -> String {
@@ -264,6 +300,25 @@ struct AgentPanelView: View {
             .replacingOccurrences(of: "_", with: " ")
             .trimmingCharacters(in: .whitespacesAndNewlines)
         return cleaned.isEmpty ? "Sector" : "Sector \(cleaned.capitalized)"
+    }
+
+    private func objectiveDisplay(_ id: RegionId) -> String {
+        let cleaned = cleanIdentifier(id.rawValue)
+        return cleaned.isEmpty ? "objective area" : "objective \(cleaned.capitalized)"
+    }
+
+    private func contactDisplay(_ id: String) -> String {
+        let cleaned = cleanIdentifier(id)
+        return cleaned.isEmpty ? "contact" : "contact \(cleaned.capitalized)"
+    }
+
+    private func cleanIdentifier(_ rawValue: String) -> String {
+        rawValue
+            .replacingOccurrences(of: "region_", with: "")
+            .replacingOccurrences(of: "objective_", with: "")
+            .replacingOccurrences(of: "contact_", with: "")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     private var rawJSONPlaceholder: String {

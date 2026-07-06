@@ -1,6 +1,6 @@
 # Modern Command Agent — iOS / macOS AI 战略战棋迁移工程
 
-> **当前状态：v6.10 发布候选准备。工程底座仍来自 WWIIHexV0，源码兼容名、target/module 名和旧阿登 fallback 数据仍保留；已完成 v6.0-v6.9 的现代作战方、灰潮种子、现代单位、ISR/EW/contact、火力/空中任务、现代 AI 指挥链、玩家任务入口、现代 C2 UI 和试玩闭环首轮。本轮把主游戏 iOS / macOS display name 收口为 `Modern Command Agent`，新增现代 C2 AppIcon 资产，Playtest 面板支持红/蓝新局选择并显示 Player Side / Opposition / Control Mode / Action Gate / 十个主目标控制摘要，任务面板显示 Mission Status 并按 Recon、UAV、Fire Mission、SEAD、EW 和 Resupply 各自的 validator 预检启用按钮，Playtest 命令反馈区分 success / warning / failure tone，HUD、任务、单位和事件日志主路径使用 Logistics / sustainment 口径，默认 commander 数据改为虚构 Blue / Red C2 staff，commander seed 会排除已分配 commander，地图补给源标签改为现代 Blue/Red 口径，灰潮默认剧本扩到 120 hex / 30 region，并加入现代目标控制胜负判断；同时新增发布候选残留扫描、验收证据矩阵与人工授权重验证清单。玩家任务仍经 `AppContainer -> Command / ZoneDirective -> WarCommandExecutor / RuleEngine`，Mission Status 会复用 validator 预检列出 Ready Tasks 或解释弹药、冷却、目标质量、ROE、防空、目标缺失和友邻风险等拒绝原因；玩家、AI 和 directive 回放的规则拒绝反馈使用可读文案和 tone，不再把 enum raw value 暴露给玩家。AI 失败路径尽量保留 raw JSON 供复盘。历史测试基线曾达到 v0.37 Probe 18/0、Stage Regression 69/0、Full 226/0；当前工作流默认不在本机跑测试或检查命令，静态检查和 build 由 GitHub Actions artifact 验证。**
+> **当前状态：v6.10 发布候选准备。工程底座仍来自 WWIIHexV0，源码兼容名、target/module 名和旧阿登 fallback 数据仍保留；已完成 v6.0-v6.9 的现代作战方、灰潮种子、现代单位、ISR/EW/contact、火力/空中任务、现代 AI 指挥链、玩家任务入口、现代 C2 UI 和试玩闭环首轮。本轮把主游戏 iOS / macOS display name 收口为 `Modern Command Agent`，新增现代 C2 AppIcon 资产，Playtest 面板支持红/蓝新局选择并显示 Player Side / Opposition / Control Mode / Action Gate / 十个主目标控制摘要，任务面板显示 Mission Status 并按 Recon、UAV、Fire Mission、SEAD、EW 和 Resupply 各自的 validator 预检启用按钮，Playtest 命令反馈区分 success / warning / failure tone，HUD、任务、单位和事件日志主路径使用 Logistics / sustainment 口径，默认 commander 数据改为虚构 Blue / Red C2 staff，commander seed 会排除已分配 commander，地图补给源标签改为现代 Blue/Red 口径，灰潮默认剧本扩到 120 hex / 30 region，并加入现代目标控制胜负判断；同时新增发布候选残留扫描、验收证据矩阵与人工授权重验证清单。玩家任务仍经 `AppContainer -> Command / ZoneDirective -> WarCommandExecutor / RuleEngine`，Mission Status 会复用 validator 预检列出 Ready Tasks 或解释弹药、冷却、目标质量、ROE、防空、目标缺失和友邻风险等拒绝原因；玩家、AI 和 directive 回放的规则拒绝反馈使用可读文案和 tone，不再把 enum raw value 暴露给玩家。AI 面板默认展示结构化 command chain、command results 和 errors，完整 directive 明细与 raw JSON 保留在折叠 Technical Replay 中供审计。历史测试基线曾达到 v0.37 Probe 18/0、Stage Regression 69/0、Full 226/0；当前工作流默认不在本机跑测试或检查命令，静态检查和 build 由 GitHub Actions artifact 验证。**
 
 ---
 
@@ -134,7 +134,7 @@ WWIIHexV0/
 | `UI/ModernCommandDesignTokens.swift` | v6.8+ C2 设计 token | 面板间距、圆角、44pt 触控尺寸、side / sensor / fires / EW / sustainment / contact 色标 |
 | `UI/ModernMissionPanelView.swift` | v6.7+ 玩家任务面板 | Recon / UAV / FireMission / SEAD / Assault / Hold / Resupply / EW 任务入口，v6.8 使用 C2 token 统一样式，所有 action 交给 `AppContainer` |
 | `UI/ModernPlaytestPanelView.swift` | v6.9+ 试玩闭环面板 | 新局、保存/继续本地快照、observer AI、地图图层、C2 overlay 图例和短引导入口，所有 action 交给 `AppContainer` |
-| `UI/AgentPanelView.swift` | 决策展示 | 读 `record`（agent/provider/intent/context/command-chain replay/command results/errors/raw JSON） |
+| `UI/AgentPanelView.swift` | 决策展示 | 读 `record`（agent/provider/intent/context/command-chain replay/command results/errors；directive 明细和 raw JSON 折叠在 Technical Replay） |
 | `UI/RootGameView.swift` | 主界面接线 | HUD / command panels call `advanceOrRunAI()`；命令提交、重置和继续后由 `AppContainer.runAIIfNeeded()` 受控触发 |
 
 **Local Planner 行为：**
@@ -147,7 +147,7 @@ WWIIHexV0/
 `MarshalBattlefieldSummarizer` 把 `GameState` 降维为元帅摘要，只包含 front zone、strength ratio、补给警告、目标和事件，不把全量 hex 网格喂给模型。`SimulatedMarshalLLMClient` 生成 fenced JSON 形式的 `TheaterDirectiveEnvelope`；`TheaterDirectiveDecoder` 提取并校验 JSON；`TheaterDirectiveCompiler` 把元帅意图编译成现有 `ZoneDirective`。v0.7 后 `TheaterDirective` 可携带 `convergenceRegionId` / `coordinatedZoneIds` 支持钳形会师意图；解码或编译失败时 fallback 到 `TheaterCommanderPool`，不执行半成品 LLM 输出。
 
 **v6.6 ModernCommandChain 行为：**
-`MarshalAgent` 在成功解码 operational directive envelope 后生成 `ModernCommandChainPlan`，并把 fenced JSON 交给 `ModernCommandChainDecoder` 复核。decoder 会检查顶层和嵌套 envelope 的 schema、issuer、turn、faction、role，以及每条 sub-directive 的 zone / region / contact / mission 合法性；失败只写 diagnostics。`TurnManager` 将 Operational Directive JSON、Modern Command Chain JSON 和最终 Compiled ZoneDirective JSON 一起写入 `AgentDecisionRecord.rawJSON`；即使 operational 或 advisory JSON 校验失败，原始 JSON 也会尽量保留给 AI 面板审计。已验证的 sub-directive 会派生成 `ModernCommandChainReplayItem`，让 AI 面板直接列出 ISR / Fires / Air / EW / Logistics / Brigade 任务、目标和理由。
+`MarshalAgent` 在成功解码 operational directive envelope 后生成 `ModernCommandChainPlan`，并把 fenced JSON 交给 `ModernCommandChainDecoder` 复核。decoder 会检查顶层和嵌套 envelope 的 schema、issuer、turn、faction、role，以及每条 sub-directive 的 zone / region / contact / mission 合法性；失败只写 diagnostics。`TurnManager` 将 Operational Directive JSON、Modern Command Chain JSON 和最终 Compiled ZoneDirective JSON 一起写入 `AgentDecisionRecord.rawJSON`；即使 operational 或 advisory JSON 校验失败，原始 JSON 也会尽量保留给 AI 面板审计。已验证的 sub-directive 会派生成 `ModernCommandChainReplayItem`，让 AI 面板直接列出 ISR / Fires / Air / EW / Logistics / Brigade 任务、目标和理由；完整 directive 明细、diagnostics 和 JSON 在折叠的 Technical Replay 中保留。
 
 **后续 Ruler / Diplomacy 边界：**
 统治者层不在当前执行主链路中。后续如要加入国家、集团、外交关系或统治者 agent，必须先设计独立 schema，并保持底层战争规则仍由 `Faction`、`ZoneDirective`、`WarCommandExecutor` 和 `RuleEngine` 收口。
