@@ -1214,7 +1214,7 @@ final class AppContainer: ObservableObject {
         var nextState = refreshGeneralAssignments(in: execution.finalState)
         let commandSummaries = execution.commandResults.enumerated().map { index, result in
             let displayState = index == 0 ? startState : execution.commandResults[index - 1].state
-            CommandResultSummary.directiveCommand(
+            return CommandResultSummary.directiveCommand(
                 directiveIndex: 0,
                 commandIndex: index,
                 directive: directive,
