@@ -34,11 +34,11 @@ flowchart TD
     A["Agent A<br/>读取 AGENTS / flow / test / prompt<br/>写版本化实现提示词"]:::agent
     B0["Agent B 开始<br/>git fetch origin<br/>git switch main<br/>git pull --ff-only origin main"]:::git
     B1["Agent B 实现<br/>只改本轮相关文件<br/>不改业务范围外逻辑"]:::agent
-    LOCAL["本机轻量检查<br/>git diff --check / plutil / xmllint / jq / YAML<br/>不跑本机 xcodebuild"]:::check
+    LOCAL["本机不主动跑检查<br/>仅确认分支 / 提交范围 / 工作区状态<br/>检查交给云端 artifact"]:::check
     COMMIT["main 本地提交<br/>commit 范围只含本轮文件"]:::git
     PUSH["推送 origin/main<br/>git push origin main"]:::git
-    GHA["GitHub Actions<br/>ci-results.yml<br/>静态检查 + 云端 xcodebuild build"]:::cloud
-    ART["未加密 CI 结果包<br/>manifest / junit / xcodebuild.log / failure summary / xcresult"]:::artifact
+    GHA["GitHub Actions<br/>ci-results.yml<br/>diff / plist / xml / Ruby 脚本<br/>+ 云端 xcodebuild build"]:::cloud
+    ART["未加密 CI 结果包<br/>manifest / junit / xcodebuild.log / failure summary<br/>grey-tide / modern-visible logs / xcresult"]:::artifact
     C0["Agent C<br/>gh auth login<br/>下载 artifact 到 /private/tmp/wwiihexv0-c-review-run_id"]:::agent
     C1{"manifest 是否匹配<br/>branch=main<br/>commitSha/runId/runAttempt 最新?"}:::decision
     C2{"CI 和日志是否通过?"}:::decision

@@ -1,13 +1,13 @@
 # 轻量检查与云端验证规范
 
-> 当前规则：默认云端重验证，本机只做轻量语法、格式和配置文件检查。历史 Probe、Smoke、Stage Regression、Dynamic Theater Regression、Full 记录只作回归参考，不再是每轮任务的默认本机要求。
+> 当前规则：默认云端重验证，本机不主动运行测试或检查命令。历史 Probe、Smoke、Stage Regression、Dynamic Theater Regression、Full 记录只作回归参考，不再是每轮任务的默认本机要求。
 
 ## 0. 总原则
 
-- 每轮实现或验收前仍要读本文件，确认本机轻量检查、云端重验证和禁止本机执行项。
-- 默认不在本机跑任何耗费性能的测试、构建、模拟器启动或 app 启动。
+- 每轮实现或验收前仍要读本文件，确认云端重验证和禁止本机执行项。
+- 默认不在本机跑任何测试、检查、构建、模拟器启动或 app 启动。
 - 默认不新增或修改测试文件；可以阅读既有测试理解历史语义。
-- 若某风险必须依靠重测试才能确认，默认通过 `main` push 触发 GitHub Actions；本机只在人工明确授权时运行完整 build/test。
+- 若某风险必须依靠检查或重测试才能确认，默认通过 `main` push 触发 GitHub Actions；本机只在人工明确授权时运行检查、build 或 test。
 - 若云端环境缺依赖或 workflow 失败，必须记录哪个检查没跑、缺什么依赖、是否影响验收、需要人工提供什么。
 - 不得用“已验证”代替具体命令和结果；不得伪造测试、构建或模拟器结果。
 
@@ -30,6 +30,8 @@ git push origin main
 - `git diff --check HEAD^ HEAD`；仅根提交 fallback 到 `git diff-tree --check --no-commit-id --root -r HEAD`
 - `plutil -lint WWIIHexV0.xcodeproj/project.pbxproj`
 - `xmllint --noout` 检查两个共享 scheme
+- `ruby -c scripts/check_grey_tide_data.rb` 与 `ruby scripts/check_grey_tide_data.rb`
+- `ruby -c scripts/check_modern_visible_text.rb` 与 `ruby scripts/check_modern_visible_text.rb`
 - 云端 `xcodebuild build`
 
 云端 build 命令：
@@ -70,6 +72,7 @@ gh auth login
 - `ci-failure-summary.md`：成功时应写明无失败；失败时应包含失败命令和日志路径。
 - `junit.xml`：至少含静态检查、build、默认 skipped 的测试摘要。
 - `xcodebuild.log`：主构建日志。
+- `grey-tide-data.log` 与 `modern-visible-text.log`：项目静态脚本检查日志。
 - `WWIIHexV0.xcresult`：若 Xcode 成功产出或失败时仍生成，则保留在结果包内。
 
 ## 3. 禁止主动在本机执行
@@ -85,13 +88,14 @@ gh auth login
 - 启动 iOS Simulator
 - 启动 app 做人工烟测
 - 全项目 Swift 编译、全量 lint、全量格式化
+- `git diff --check`、`plutil -lint`、`xmllint --noout`、`jq empty`、Ruby 项目脚本、workflow YAML 解析等本地检查命令，除非人工明确授权
 - 会长时间占用 CPU、内存、磁盘或 DerivedData 的命令
 
 如果旧文档、历史 prompt 或 README 仍要求跑这些命令，以本文件和 `AGENTS.md` 的当前规则为准。
 
-## 4. 默认允许的本机轻量检查
+## 4. 云端静态检查与人工授权本机参考命令
 
-本机轻量检查用于提交前快速发现格式、配置和 manifest 问题，不替代云端 build。
+以下命令默认由 `.github/workflows/ci-results.yml` 在云端执行，并写入 artifact。Agent 本机默认不主动运行；只有人工明确授权本机检查时，才可按对应场景运行这些参考命令。
 
 ### 4.1 Markdown / 文本
 
@@ -195,7 +199,7 @@ xcodebuild \
 未获授权时，交付统一写明：
 
 ```text
-未在本机跑 Xcode / XCTest / 模拟器 / 性能测试；本机仅做轻量检查，重验证由 GitHub Actions 结果包承担。
+未在本机跑测试或检查命令；验证由 GitHub Actions 结果包承担。
 ```
 
 ## 6. 多分支 / 并发后的整合检查
@@ -233,24 +237,24 @@ rg -n "hexToTheater|hexToFrontZone|regionToTheater|ZoneDirective|WarCommandExecu
 当前交付中若没有人工授权，统一写明：
 
 ```text
-未在本机跑 Xcode / XCTest / 模拟器 / 性能测试；按当前规范本机仅做轻量检查，重验证看 GitHub Actions artifact。
+未在本机跑测试或检查命令；按当前规范重验证看 GitHub Actions artifact。
 ```
 
 ## 8. 决策表
 
 | 场景 | 默认允许做什么 | 禁止默认做什么 |
 |---|---|---|
-| 文档改动 | 尾随空白、旧口径残留、`git diff --check`、必要的 Markdown 人工阅读检查 | 本机 Xcode / XCTest |
-| JSON 改动 | `jq empty` 查改动文件 | 启动游戏加载全场景 |
-| project / scheme 改动 | 本机 `plutil` / `xmllint`，push 后看云端 build | 本机 build-for-testing |
-| 少量 Swift 改动 | 必要时单文件 `swiftc -parse` | 全项目 build / test |
-| workflow 改动 | YAML 解析、push 后核对 artifact | 伪造旧 artifact |
-| 大任务并发 | 文件/API/schema/文档冲突检查，push 后看云端结果 | 以测试通过代替冲突检查 |
+| 文档改动 | push 后核对云端 artifact；人工授权时可跑尾随空白、旧口径残留、`git diff --check` | 本机 Xcode / XCTest / 未授权本地检查 |
+| JSON 改动 | push 后核对云端 artifact；人工授权时可跑 `jq empty` 或项目脚本 | 启动游戏加载全场景 |
+| project / scheme 改动 | push 后核对云端 artifact；人工授权时可跑 `plutil` / `xmllint` | 本机 build-for-testing |
+| 少量 Swift 改动 | push 后核对云端 build；人工授权时可跑单文件 `swiftc -parse` | 全项目 build / test |
+| workflow 改动 | push 后核对 artifact 中 workflow 产物；人工授权时可跑 YAML 解析 | 伪造旧 artifact |
+| 大任务并发 | 文件/API/schema/文档冲突审查，push 后看云端结果 | 以测试通过代替冲突检查 |
 | main 直推 | commit 后 push 到 `origin/main` 触发 Actions | PR / 候选分支作为默认流程 |
 
 ## 9. 交付写法
 
-最终回复必须区分“本机轻量检查”“云端 workflow”“未跑本机重测试”：
+最终回复必须区分“本机是否跑过检查”“云端 workflow”“未跑本机重测试”：
 
 - 已跑：写具体命令和结果。
 - 云端：写 commit SHA、run id、run attempt、artifact 名称、manifest 核对结果。

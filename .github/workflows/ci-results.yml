@@ -81,7 +81,27 @@ jobs:
           xmllint --noout "${XCODE_PROJECT}/xcshareddata/xcschemes/WWIIHexV0Probes.xcscheme" >> ci-results/xmllint.log 2>&1
           XML_PROBES_EXIT=$?
 
-          if [ "${DIFF_EXIT}" -ne 0 ] || [ "${PLUTIL_EXIT}" -ne 0 ] || [ "${XML_MAIN_EXIT}" -ne 0 ] || [ "${XML_PROBES_EXIT}" -ne 0 ]; then
+          : > ci-results/grey-tide-data.log
+          ruby -c scripts/check_grey_tide_data.rb >> ci-results/grey-tide-data.log 2>&1
+          GREY_TIDE_SYNTAX_EXIT=$?
+          if [ "${GREY_TIDE_SYNTAX_EXIT}" -eq 0 ]; then
+            ruby scripts/check_grey_tide_data.rb >> ci-results/grey-tide-data.log 2>&1
+            GREY_TIDE_DATA_EXIT=$?
+          else
+            GREY_TIDE_DATA_EXIT=1
+          fi
+
+          : > ci-results/modern-visible-text.log
+          ruby -c scripts/check_modern_visible_text.rb >> ci-results/modern-visible-text.log 2>&1
+          MODERN_VISIBLE_SYNTAX_EXIT=$?
+          if [ "${MODERN_VISIBLE_SYNTAX_EXIT}" -eq 0 ]; then
+            ruby scripts/check_modern_visible_text.rb >> ci-results/modern-visible-text.log 2>&1
+            MODERN_VISIBLE_TEXT_EXIT=$?
+          else
+            MODERN_VISIBLE_TEXT_EXIT=1
+          fi
+
+          if [ "${DIFF_EXIT}" -ne 0 ] || [ "${PLUTIL_EXIT}" -ne 0 ] || [ "${XML_MAIN_EXIT}" -ne 0 ] || [ "${XML_PROBES_EXIT}" -ne 0 ] || [ "${GREY_TIDE_SYNTAX_EXIT}" -ne 0 ] || [ "${GREY_TIDE_DATA_EXIT}" -ne 0 ] || [ "${MODERN_VISIBLE_SYNTAX_EXIT}" -ne 0 ] || [ "${MODERN_VISIBLE_TEXT_EXIT}" -ne 0 ]; then
             STATIC_CHECKS_OUTCOME="failure"
             FAIL=1
             FAILURE_COUNT=$((FAILURE_COUNT + 1))
@@ -92,6 +112,10 @@ jobs:
               echo "- plutil exit: ${PLUTIL_EXIT}"
               echo "- xmllint main scheme exit: ${XML_MAIN_EXIT}"
               echo "- xmllint probes scheme exit: ${XML_PROBES_EXIT}"
+              echo "- grey tide data syntax exit: ${GREY_TIDE_SYNTAX_EXIT}"
+              echo "- grey tide data check exit: ${GREY_TIDE_DATA_EXIT}"
+              echo "- modern visible text syntax exit: ${MODERN_VISIBLE_SYNTAX_EXIT}"
+              echo "- modern visible text check exit: ${MODERN_VISIBLE_TEXT_EXIT}"
               echo
             } >> "${FAILURE_SUMMARY_PATH}"
           fi
@@ -130,9 +154,9 @@ jobs:
           {
             echo '<?xml version="1.0" encoding="UTF-8"?>'
             echo "<testsuite name=\"WWIIHexV0 CI\" tests=\"3\" failures=\"${FAILURE_COUNT}\">"
-            echo "  <testcase classname=\"ci.static\" name=\"git-plutil-xmllint\">"
+            echo "  <testcase classname=\"ci.static\" name=\"git-plutil-xmllint-project-scripts\">"
             if [ "${STATIC_CHECKS_OUTCOME}" = "failure" ]; then
-              echo "    <failure message=\"static checks failed\">See ci-results/git-diff-check.log, plutil.log and xmllint.log.</failure>"
+              echo "    <failure message=\"static checks failed\">See ci-results/git-diff-check.log, plutil.log, xmllint.log, grey-tide-data.log and modern-visible-text.log.</failure>"
             fi
             echo "  </testcase>"
             echo "  <testcase classname=\"ci.build\" name=\"xcodebuild-build\">"
@@ -183,7 +207,9 @@ jobs:
               "projectSpecificReports": [
                   "ci-results/git-diff-check.log",
                   "ci-results/plutil.log",
-                  "ci-results/xmllint.log"
+                  "ci-results/xmllint.log",
+                  "ci-results/grey-tide-data.log",
+                  "ci-results/modern-visible-text.log"
               ]
           }
 

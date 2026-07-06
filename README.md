@@ -1,12 +1,12 @@
 # Modern Command Agent — iOS / macOS AI 战略战棋迁移工程
 
-> **当前状态：v6.10 发布候选准备。工程底座仍来自 WWIIHexV0，源码兼容名、target/module 名和旧阿登 fallback 数据仍保留；已完成 v6.0-v6.9 的现代作战方、灰潮种子、现代单位、ISR/EW/contact、火力/空中任务、现代 AI 指挥链、玩家任务入口、现代 C2 UI 和试玩闭环首轮。本轮把主游戏 iOS / macOS display name 收口为 `Modern Command Agent`，新增现代 C2 AppIcon 资产，Playtest 面板支持红/蓝新局选择并显示 Player Side / Opposition / Control Mode / Action Gate / 十个主目标控制摘要，任务面板显示 Mission Status 并按 Recon、UAV、Fire Mission、SEAD、EW 和 Resupply 各自的 validator 预检启用按钮，Playtest 命令反馈区分 success / warning / failure tone，HUD、任务、单位和事件日志主路径使用 Logistics / sustainment 口径，默认 commander 数据改为虚构 Blue / Red C2 staff，commander seed 会排除已分配 commander，地图补给源标签改为现代 Blue/Red 口径，灰潮默认剧本扩到 120 hex / 30 region，并加入现代目标控制胜负判断；同时新增发布候选残留扫描、验收证据矩阵与人工授权重验证清单。玩家任务仍经 `AppContainer -> Command / ZoneDirective -> WarCommandExecutor / RuleEngine`，Mission Status 会复用 validator 预检列出 Ready Tasks 或解释弹药、冷却、目标质量、ROE、防空、目标缺失和友邻风险等拒绝原因；玩家、AI 和 directive 回放的规则拒绝反馈使用可读文案和 tone，不再把 enum raw value 暴露给玩家。AI 失败路径尽量保留 raw JSON 供复盘。历史测试基线曾达到 v0.37 Probe 18/0、Stage Regression 69/0、Full 226/0；当前工作流默认不跑 Xcode / XCTest / 模拟器测试，只按 `md/test/test.md` 做轻量检查，重验证看 GitHub Actions artifact。**
+> **当前状态：v6.10 发布候选准备。工程底座仍来自 WWIIHexV0，源码兼容名、target/module 名和旧阿登 fallback 数据仍保留；已完成 v6.0-v6.9 的现代作战方、灰潮种子、现代单位、ISR/EW/contact、火力/空中任务、现代 AI 指挥链、玩家任务入口、现代 C2 UI 和试玩闭环首轮。本轮把主游戏 iOS / macOS display name 收口为 `Modern Command Agent`，新增现代 C2 AppIcon 资产，Playtest 面板支持红/蓝新局选择并显示 Player Side / Opposition / Control Mode / Action Gate / 十个主目标控制摘要，任务面板显示 Mission Status 并按 Recon、UAV、Fire Mission、SEAD、EW 和 Resupply 各自的 validator 预检启用按钮，Playtest 命令反馈区分 success / warning / failure tone，HUD、任务、单位和事件日志主路径使用 Logistics / sustainment 口径，默认 commander 数据改为虚构 Blue / Red C2 staff，commander seed 会排除已分配 commander，地图补给源标签改为现代 Blue/Red 口径，灰潮默认剧本扩到 120 hex / 30 region，并加入现代目标控制胜负判断；同时新增发布候选残留扫描、验收证据矩阵与人工授权重验证清单。玩家任务仍经 `AppContainer -> Command / ZoneDirective -> WarCommandExecutor / RuleEngine`，Mission Status 会复用 validator 预检列出 Ready Tasks 或解释弹药、冷却、目标质量、ROE、防空、目标缺失和友邻风险等拒绝原因；玩家、AI 和 directive 回放的规则拒绝反馈使用可读文案和 tone，不再把 enum raw value 暴露给玩家。AI 失败路径尽量保留 raw JSON 供复盘。历史测试基线曾达到 v0.37 Probe 18/0、Stage Regression 69/0、Full 226/0；当前工作流默认不在本机跑测试或检查命令，静态检查和 build 由 GitHub Actions artifact 验证。**
 
 ---
 
 ## 协作与云端验证
 
-当前协作流程固定为 `main` 直推：Agent B 在本机只跑轻量检查，commit 后 push 到 `origin/main` 触发 GitHub Actions；Agent C 通过未加密 CI 结果包核对 `ci-artifact-manifest.json`、`junit.xml`、`xcodebuild.log` 和失败摘要。详细规则见 `AGENTS.md`、`md/test/test.md`、`md/prompt/README.md`。
+当前协作流程固定为 `main` 直推：Agent B 默认不在本机跑测试或检查命令，commit 后 push 到 `origin/main` 触发 GitHub Actions；Agent C 通过未加密 CI 结果包核对 `ci-artifact-manifest.json`、`junit.xml`、`xcodebuild.log`、`grey-tide-data.log`、`modern-visible-text.log` 和失败摘要。详细规则见 `AGENTS.md`、`md/test/test.md`、`md/prompt/README.md`。
 
 灰潮默认剧本的静态数据一致性可用 `ruby scripts/check_grey_tide_data.rb` 复查；该脚本只读取 JSON 和 `VictoryRules.swift`，核对 tile / region / objective / unit template 引用、objective 与 key location 一一映射、region edges 与 neighbors 一致、补给源 faction / controller 对齐、初始单位不落敌控区，并确认 VictoryRules、scenario victoryConditions 和 region `mainObjective` 的十个主目标集合一致，不启动 app。主路径玩家可见现代文案可用 `ruby scripts/check_modern_visible_text.rb` 复查；该脚本扫描 App / UI / SpriteKit 字符串、命令结果 / 日志 / diagnostics 字符串、Core 可见 displayName 映射和默认现代 JSON 显示字段，防止 WWII / Ardennes / Panzer / Guderian / Germany / Allies / SUP A / SUP G 等旧口径重新进入默认现代 UI 或数据。
 
@@ -305,7 +305,7 @@ WWIIHexV0/
 - **不要给 Division 加回 organization**：v0.1 已移除，只看兵力
 - **不要引入 v0.5 Cabinet/StrategicDirective/Minister 污染**：v0.5 误删事件已发生，GameAgent 保持精简版
 - 新增系统通过 `DecisionProvider` / `RuleEngine` / `Command` 接入，不直接改核心规则
-- 保持核心语义不退步；默认只做轻量检查，Xcode / XCTest / 模拟器等重测试必须由人工明确授权。
+- 保持核心语义不退步；默认不在本机跑检查或重测试，静态检查和 build 由 GitHub Actions artifact 验证。
 
 ---
 
@@ -337,7 +337,7 @@ md/
 ## 给后续 Claude Code 的提示
 
 **你接手时的代码库状态：**
-- v0.5 分支已引入元帅层与模拟 LLM JSON/decoder/ compiler；历史测试基线曾达到 v0.37 Probe 18/0、Stage Regression 69/0、Full 226/0。当前默认不跑重测试，只做 `md/test/test.md` 允许的轻量检查。
+- v0.5 分支已引入元帅层与模拟 LLM JSON/decoder/ compiler；历史测试基线曾达到 v0.37 Probe 18/0、Stage Regression 69/0、Full 226/0。当前默认不在本机跑检查或重测试，验证看 GitHub Actions artifact。
 - 战斗模型：兵力伤害为主，`RetreatMode`（retreatable/hold）控制撤退，无 organization。
 - 默认战争 AI 管线：`MarshalAgent` 读取摘要并模拟输出 `TheaterDirectiveEnvelope` JSON，经 `TheaterDirectiveDecoder` 校验后进入 `ModernCommandChainOrchestrator / ModernCommandChainDecoder` 生成只读 advisory 复盘，再由 `TheaterDirectiveCompiler` 降级成 `ZoneDirective`，最后走 `WarCommandExecutor`。`TheaterCommanderPool` / `ZoneCommanderAgent` 仍作为 fallback 和显式 `.zoneDirective` 路径。
 - Legacy Agent D 管线保留但默认不调用。
@@ -361,8 +361,5 @@ md/
 - 元帅层和未来统治者层不得绕过 `ZoneDirective -> WarCommandExecutor -> RuleEngine`。
 - 当前 v0.5 只模拟 LLM JSON 接口，不接真实模型；真实 LLM 接入必须保留 decoder 校验与 fallback。
 
-**轻量检查**（每轮先读 [`md/test/test.md`](md/test/test.md)，默认禁止 Xcode / XCTest / 模拟器 / 性能类测试）：
-```bash
-rg -n "[[:blank:]]+$" AGENTS.md README.md update_log.md md/test/test.md md/flow/flow.md
-```
-旧测试口径残留、JSON / project / scheme 检查按 `md/test/test.md` 追加执行。未获人工授权时，不跑历史 Probe / Stage / Full。
+**云端检查**（每轮先读 [`md/test/test.md`](md/test/test.md)，默认不在本机跑检查 / Xcode / XCTest / 模拟器 / 性能类测试）：
+push 到 `origin/main` 后核对 GitHub Actions artifact；旧测试口径残留、JSON / project / scheme / Ruby 脚本检查由 workflow 执行并写入结果包。未获人工授权时，不跑本机检查、历史 Probe / Stage / Full。

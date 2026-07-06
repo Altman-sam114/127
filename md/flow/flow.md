@@ -85,7 +85,7 @@ Release Candidate Readiness
 人工提出目标
   -> Agent A 读取 AGENTS / update_log / flow / test / prompt，写版本化提示词
   -> Agent B 基于最新 origin/main 切到 main 小步实现
-  -> Agent B 本机只跑 md/test/test.md 允许的轻量检查
+  -> Agent B 默认不在本机跑检查命令
   -> Agent B commit 并 push 到 origin/main
   -> GitHub Actions 运行 .github/workflows/ci-results.yml
   -> Actions 上传未加密 CI 结果包
@@ -106,7 +106,7 @@ Release Candidate Readiness
 - workflow：`.github/workflows/ci-results.yml`
 - 触发：`push` 到 `main` 或手动 `workflow_dispatch`
 - artifact：`WWIIHexV0-ci-cloud-flow-v1-main-<short_sha>-run<run_id>-attempt<run_attempt>`
-- 必含：`ci-artifact-manifest.json`、`ci-failure-summary.md`、`junit.xml`、`xcodebuild.log`、`git-diff-check.log`、`plutil.log`、`xmllint.log`，以及可生成时的 `WWIIHexV0.xcresult`
+- 必含：`ci-artifact-manifest.json`、`ci-failure-summary.md`、`junit.xml`、`xcodebuild.log`、`git-diff-check.log`、`plutil.log`、`xmllint.log`、`grey-tide-data.log`、`modern-visible-text.log`，以及可生成时的 `WWIIHexV0.xcresult`
 - Agent C 缓存：`/private/tmp/wwiihexv0-c-review-<run_id>/`
 
 AITRANS 可复用项与不照搬项：
