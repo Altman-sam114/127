@@ -37,7 +37,7 @@ flowchart TD
     LOCAL["本机不主动跑检查<br/>仅确认分支 / 提交范围 / 工作区状态<br/>检查交给云端 artifact"]:::check
     COMMIT["main 本地提交<br/>commit 范围只含本轮文件"]:::git
     PUSH["推送 origin/main<br/>git push origin main"]:::git
-    GHA["GitHub Actions<br/>ci-results.yml<br/>diff / plist / xml / Ruby 脚本<br/>+ 云端 xcodebuild build<br/>+ Grey Tide AI half-turn probe<br/>+ Playtest / Recon state probes"]:::cloud
+    GHA["GitHub Actions<br/>ci-results.yml<br/>diff / plist / xml / Ruby 脚本<br/>+ 云端 xcodebuild build<br/>+ Grey Tide AI half-turn probe<br/>+ Playtest / Recon / Observer state probes"]:::cloud
     ART["未加密 CI 结果包<br/>manifest / junit / xcodebuild.log / probe-xctest.log<br/>failure summary / grey-tide / modern-visible logs / xcresult"]:::artifact
     C0["Agent C<br/>gh auth login<br/>下载 artifact 到 /private/tmp/wwiihexv0-c-review-run_id"]:::agent
     C1{"manifest 是否匹配<br/>branch=main<br/>commitSha/runId/runAttempt 最新?"}:::decision
@@ -327,6 +327,7 @@ flowchart LR
 flowchart LR
     UI["ModernPlaytestPanelView<br/>Playtest tab<br/>Blue / Red selector<br/>New / Save / Continue / Clear"]:::display
     SETTINGS["试玩设置<br/>Observer AI toggle<br/>Default Layer picker<br/>C2 Overlay toggle"]:::display
+    OBSRUN["Observer 推进入口<br/>advanceOrRunAI<br/>最多连续 2 个 AI half-turn"]:::app
     ROLE["红蓝新局与扮演方<br/>New Operation Side<br/>Player Side / Opposition<br/>Control Mode"]:::display
     GATE["Action Gate<br/>active side named<br/>orders open / AI ready / advance turn"]:::display
     OBJECTIVE["主目标控制摘要<br/>Blue / Red / Neutral count<br/>Blue threshold / Red denial"]:::display
@@ -339,6 +340,7 @@ flowchart LR
 
     UI --> APP
     SETTINGS --> APP
+    SETTINGS --> OBSRUN --> APP
     ROLE --> APP
     STATE --> ROLE
     STATE --> GATE

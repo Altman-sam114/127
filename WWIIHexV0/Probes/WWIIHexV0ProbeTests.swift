@@ -351,6 +351,52 @@ final class WWIIHexV0ProbeTests: XCTestCase {
         XCTAssertTrue(container.modernMissionAvailabilityText.contains("already acted"))
     }
 
+    @MainActor
+    func testProbeAppContainerObserverRunsTwoAIHalfTurns() async throws {
+        let dataLoader = DataLoader()
+        let container = AppContainer(
+            gameState: dataLoader.loadInitialGameState(),
+            commandHandler: RuleEngine(),
+            dataLoader: dataLoader,
+            generalRegistry: (try? dataLoader.loadGeneralRegistry()) ?? .empty,
+            playerFaction: .blueForce
+        )
+        container.resetGame(playerFaction: .blueForce)
+        let initialTurn = container.gameState.turn
+
+        container.setObserverModeEnabled(true)
+
+        XCTAssertEqual(container.playtestControlModeSummary, "Observer AI")
+        XCTAssertEqual(container.playtestActionGateTitle, "Automation")
+        XCTAssertEqual(container.playtestActionGateDetail, "Blue Force AI can resolve")
+
+        container.advanceOrRunAI()
+        try await Self.waitForContainerAI(
+            container,
+            expectedTurn: initialTurn + 1,
+            expectedActiveFaction: .blueForce,
+            expectedPhase: .alliedPlayer
+        )
+
+        XCTAssertEqual(container.gameState.turn, initialTurn + 1)
+        XCTAssertEqual(container.gameState.activeFaction, .blueForce)
+        XCTAssertEqual(container.gameState.phase, .alliedPlayer)
+        XCTAssertTrue(
+            container.lastAgentDecisionRecord?.commandResults.contains { $0.id == "end_turn" && $0.executed } == true
+        )
+        XCTAssertTrue(container.lastWarDirectiveRecords.contains { $0.faction == .blueForce })
+        XCTAssertTrue(container.lastWarDirectiveRecords.contains { $0.faction == .redForce })
+        XCTAssertFalse(
+            container.lastAgentDecisionRecord?.errors.contains {
+                $0.localizedCaseInsensitiveContains("outside its controllable phase")
+            } == true
+        )
+        XCTAssertTrue(container.gameState.map.validateRegionGraph().isEmpty)
+        XCTAssertFalse(container.gameState.warDeploymentState.frontZones.isEmpty)
+        XCTAssertFalse(container.gameState.theaterState.theaters.isEmpty)
+        XCTAssertFalse(container.gameState.operationalAwareness.sensorCoverage.isEmpty)
+    }
+
     func testProbeV0352StrategicOverlayBuckets() throws {
         let state = Self.westFrontScenario().gameState
         let calculator = MapLayerOverlayCalculator(state: state)
@@ -738,6 +784,33 @@ final class WWIIHexV0ProbeTests: XCTestCase {
             commandHandler: RuleEngine(),
             commanderPool: TheaterCommanderPool.automatic(for: state),
             marshalAgent: MarshalAgent(config: MarshalAgentConfig.automatic(for: faction, state: state))
+        )
+    }
+
+    @MainActor
+    private static func waitForContainerAI(
+        _ container: AppContainer,
+        expectedTurn: Int,
+        expectedActiveFaction: Faction,
+        expectedPhase: GamePhase,
+        timeoutNanoseconds: UInt64 = 10_000_000_000
+    ) async throws {
+        let stepNanoseconds: UInt64 = 100_000_000
+        var waited: UInt64 = 0
+        while waited < timeoutNanoseconds {
+            if container.gameState.turn == expectedTurn,
+               container.gameState.activeFaction == expectedActiveFaction,
+               container.gameState.phase == expectedPhase,
+               container.lastAgentDecisionRecord != nil {
+                return
+            }
+
+            try await Task.sleep(nanoseconds: stepNanoseconds)
+            waited += stepNanoseconds
+        }
+
+        XCTFail(
+            "Timed out waiting for AppContainer AI: turn \(container.gameState.turn), active \(container.gameState.activeFaction), phase \(container.gameState.phase)"
         )
     }
 }
