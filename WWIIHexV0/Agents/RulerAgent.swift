@@ -212,11 +212,22 @@ struct RulerAgent {
     }
 
     private func appendRulerContext(_ context: String?, record: RulerDecisionRecord) -> String {
-        let rulerContext = "National command \(record.rulerAgentId): \(record.posture.displayName), target \(record.preferredFrontZoneId?.rawValue ?? "none")."
+        let target = record.preferredFrontZoneId.map(commandSectorDisplay) ?? "none"
+        let rulerContext = "National command \(record.rulerAgentId): \(record.posture.displayName), target \(target)."
         guard let context, !context.isEmpty else {
             return rulerContext
         }
         return "\(context) \(rulerContext)"
+    }
+
+    private func commandSectorDisplay(_ id: FrontZoneId) -> String {
+        let cleaned = id.rawValue
+            .replacingOccurrences(of: "front_zone_", with: "")
+            .replacingOccurrences(of: "zone_", with: "")
+            .replacingOccurrences(of: "theater_", with: "")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return cleaned.isEmpty ? "Sector" : "Sector \(cleaned.capitalized)"
     }
 
     private func stableUnique<T: Hashable>(_ values: [T]) -> [T] {

@@ -175,14 +175,7 @@ struct ModernMissionPanelView: View {
     }
 
     private func supplySummary(for division: Division) -> String {
-        switch division.supplyState {
-        case .supplied:
-            return "Ready"
-        case .lowSupply:
-            return "Low"
-        case .encircled:
-            return "Cut"
-        }
+        division.supplyState.shortDisplayName
     }
 
     private func missionSection(title: String, actions: [MissionAction]) -> some View {

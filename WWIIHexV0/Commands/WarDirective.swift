@@ -529,16 +529,51 @@ enum TheaterDirectiveDecoderError: Error, Equatable, LocalizedError {
         case .factionMismatch(let expected, let actual):
             return "Operational directive faction mismatch. Expected \(expected.displayName), got \(actual.displayName)."
         case .missingZone(let zoneId):
-            return "Operational directive references missing command sector \(zoneId.rawValue)."
+            return "Operational directive references missing \(Self.commandSectorDisplay(zoneId))."
         case .zoneFactionMismatch(let zoneId, let expected, let actual):
-            return "Operational directive command sector \(zoneId.rawValue) belongs to \(actual.displayName), expected \(expected.displayName)."
+            return "Operational directive \(Self.commandSectorDisplay(zoneId)) belongs to \(actual.displayName), expected \(expected.displayName)."
         case .missingTargetTheater(let theaterId):
-            return "Operational directive references missing target operational zone \(theaterId.rawValue)."
+            return "Operational directive references missing target \(Self.operationalZoneDisplay(theaterId))."
         case .missingRegion(let regionId):
-            return "Operational directive references missing sector \(regionId.rawValue)."
+            return "Operational directive references missing \(Self.objectiveDisplay(regionId))."
         case .tacticCategoryMismatch(let directiveId, let tactic, let category):
-            return "Operational directive \(directiveId) uses tactic \(tactic.rawValue) outside category \(category.rawValue)."
+            return "Operational directive \(directiveId) uses \(tactic.displayName) outside \(Self.categoryDisplay(category)) missions."
         }
+    }
+
+    private static func commandSectorDisplay(_ id: FrontZoneId) -> String {
+        let cleaned = cleanIdentifier(id.rawValue)
+        return cleaned.isEmpty ? "command sector" : "Sector \(cleaned.capitalized)"
+    }
+
+    private static func operationalZoneDisplay(_ id: TheaterId) -> String {
+        let cleaned = cleanIdentifier(id.rawValue)
+        return cleaned.isEmpty ? "operational zone" : "Zone \(cleaned.capitalized)"
+    }
+
+    private static func objectiveDisplay(_ id: RegionId) -> String {
+        let cleaned = cleanIdentifier(id.rawValue)
+        return cleaned.isEmpty ? "objective area" : "Objective \(cleaned.capitalized)"
+    }
+
+    private static func categoryDisplay(_ category: CommandCategory) -> String {
+        switch category {
+        case .offense:
+            return "offensive"
+        case .defense:
+            return "defensive"
+        }
+    }
+
+    private static func cleanIdentifier(_ rawValue: String) -> String {
+        rawValue
+            .replacingOccurrences(of: "region_", with: "")
+            .replacingOccurrences(of: "objective_", with: "")
+            .replacingOccurrences(of: "front_zone_", with: "")
+            .replacingOccurrences(of: "zone_", with: "")
+            .replacingOccurrences(of: "theater_", with: "")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
 

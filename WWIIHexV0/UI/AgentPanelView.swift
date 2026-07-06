@@ -109,7 +109,7 @@ struct AgentPanelView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(record.commandResults) { result in
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(result.commandDisplayName ?? result.orderType?.rawValue ?? "Order")
+                            Text(result.commandDisplayName ?? orderTypeDisplay(result.orderType))
                                 .font(.caption)
                                 .bold()
                             Text(resultLine(result))
@@ -279,6 +279,22 @@ struct AgentPanelView: View {
             return "Defense"
         case nil:
             return "Coordination"
+        }
+    }
+
+    private func orderTypeDisplay(_ type: AgentOrderType?) -> String {
+        guard let type else {
+            return "Order"
+        }
+        switch type {
+        case .move:
+            return "Move Order"
+        case .attack:
+            return "Attack Order"
+        case .hold:
+            return "Hold Order"
+        case .resupply:
+            return "Resupply Order"
         }
     }
 

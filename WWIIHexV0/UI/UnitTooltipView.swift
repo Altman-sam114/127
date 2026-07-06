@@ -105,13 +105,6 @@ private extension RetreatMode {
 
 private extension SupplyState {
     var tooltipDisplayName: String {
-        switch self {
-        case .supplied:
-            return "Ready"
-        case .lowSupply:
-            return "Low"
-        case .encircled:
-            return "Encircled"
-        }
+        shortDisplayName
     }
 }

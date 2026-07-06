@@ -123,12 +123,12 @@ final class HexNode: SKNode {
 
     private func supplyLabel(for faction: Faction) -> String {
         if faction.alignment == .blue {
-            return "SUP B"
+            return "LOG B"
         }
         if faction.alignment == .red {
-            return "SUP R"
+            return "LOG R"
         }
-        return "SUP \(String(faction.shortDisplayName.prefix(1)).uppercased())"
+        return "LOG \(String(faction.shortDisplayName.prefix(1)).uppercased())"
     }
 
     private func addFog(for visibility: VisibilityState, path: CGPath) {

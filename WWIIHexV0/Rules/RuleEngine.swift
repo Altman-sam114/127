@@ -21,7 +21,7 @@ struct RuleEngine {
             command: command,
             validation: validation,
             state: nextState,
-            message: "Command executed: \(command.displayName)."
+            message: "Command executed: \(command.userDisplayName)."
         )
     }
 

@@ -27,7 +27,7 @@ struct MockAIClient: DecisionProvider {
                         divisionId: division.id,
                         toRegionId: division.regionId,
                         stance: "recover",
-                        reason: "Unit is \(division.supplyState.rawValue); recover supply before continuing the attack."
+                        reason: "Formation logistics are \(division.supplyState.displayName); recover before continuing the attack."
                     )
                 )
                 continue
@@ -108,7 +108,7 @@ struct MockAIClient: DecisionProvider {
                         divisionId: division.id,
                         toRegionId: division.regionId,
                         stance: "frontRecovery",
-                        reason: "v0.33 deployment: unit supply is \(division.supplyState.rawValue), recover before front action."
+                        reason: "Deployment planner sees \(division.supplyState.displayName); recover before contact line action."
                     )
                 )
                 usedDivisionIds.insert(division.id)

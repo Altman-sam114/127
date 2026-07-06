@@ -41,10 +41,10 @@ struct SupplyRules {
 
         if hpRecovered > 0 {
             state.appendEvent(
-                "\(after.operationalDisplayName) reinforced in \(after.supplyState.rawValue): +\(hpRecovered) strength."
+                "\(after.operationalDisplayName) reinforced with \(after.supplyState.displayName): +\(hpRecovered) strength."
             )
         } else {
-            state.appendEvent("\(after.operationalDisplayName) could not recover while \(after.supplyState.rawValue).")
+            state.appendEvent("\(after.operationalDisplayName) could not recover while \(after.supplyState.displayName).")
         }
     }
 

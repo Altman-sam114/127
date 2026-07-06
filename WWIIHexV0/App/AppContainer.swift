@@ -138,7 +138,7 @@ final class AppContainer: ObservableObject {
         setCommandFeedback(result.message, tone: result.succeeded ? .success : .failure)
 
         let status = result.succeeded ? "accepted" : "rejected"
-        appendInteractionEvent("Command \(status): \(command.displayName). \(result.message)")
+        appendInteractionEvent("Command \(status): \(command.userDisplayName). \(result.message)")
         refreshSelectionAfterStateChange()
         runAIIfNeeded()
     }

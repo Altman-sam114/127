@@ -11,18 +11,38 @@ enum CommandIntentAdapterError: Error, Equatable, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidRegionForHex(let hex):
-            return "Hex \(hex.q),\(hex.r) does not map to a region."
+            return "Hex \(hex.q),\(hex.r) does not map to an objective area."
         case .regionNotFound(let regionId):
-            return "Region \(regionId.rawValue) was not found."
+            return "\(Self.objectiveDisplay(regionId)) was not found."
         case .divisionNotFound(let divisionId):
-            return "Formation \(divisionId) was not found."
+            return "\(Self.formationDisplay(divisionId)) was not found."
         case .divisionHasNoRegion(let divisionId):
-            return "Formation \(divisionId) is not inside a mapped region."
+            return "\(Self.formationDisplay(divisionId)) is not inside a mapped objective area."
         case .destinationRegionHasNoUsableHex(let regionId):
-            return "Region \(regionId.rawValue) has no usable tactical hex."
+            return "\(Self.objectiveDisplay(regionId)) has no usable tactical hex."
         case .targetRegionMismatch(let targetDivisionId, let expected, let actual):
-            return "Target \(targetDivisionId) is in \(actual.rawValue), not \(expected.rawValue)."
+            return "Target \(Self.formationDisplay(targetDivisionId)) is in \(Self.objectiveDisplay(actual)), not \(Self.objectiveDisplay(expected))."
         }
+    }
+
+    private static func objectiveDisplay(_ id: RegionId) -> String {
+        let cleaned = cleanIdentifier(id.rawValue)
+        return cleaned.isEmpty ? "Objective area" : "Objective \(cleaned.capitalized)"
+    }
+
+    private static func formationDisplay(_ id: String) -> String {
+        let cleaned = cleanIdentifier(id)
+        return cleaned.isEmpty ? "Formation" : "Formation \(cleaned.capitalized)"
+    }
+
+    private static func cleanIdentifier(_ rawValue: String) -> String {
+        rawValue
+            .replacingOccurrences(of: "division_", with: "")
+            .replacingOccurrences(of: "unit_", with: "")
+            .replacingOccurrences(of: "region_", with: "")
+            .replacingOccurrences(of: "objective_", with: "")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
 

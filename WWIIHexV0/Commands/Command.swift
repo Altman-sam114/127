@@ -25,31 +25,33 @@ enum Command: Codable, Equatable {
     var displayName: String {
         switch self {
         case .move(let divisionId, let destination):
-            return "Move(\(divisionId) -> \(destination.q),\(destination.r))"
+            return "Move \(Self.formationDisplay(divisionId)) to \(Self.coordDisplay(destination))"
         case .attack(let attackerId, let targetId):
-            return "Attack(\(attackerId) -> \(targetId))"
+            return "Attack with \(Self.formationDisplay(attackerId)) against \(Self.formationDisplay(targetId))"
         case .hold(let divisionId):
-            return "Hold(\(divisionId))"
+            return "Hold \(Self.formationDisplay(divisionId))"
         case .allowRetreat(let divisionId):
-            return "AllowRetreat(\(divisionId))"
+            return "Authorize fallback for \(Self.formationDisplay(divisionId))"
         case .resupply(let divisionId):
-            return "Resupply(\(divisionId))"
+            return "Resupply \(Self.formationDisplay(divisionId))"
         case .recon(let divisionId, let target):
-            return "Recon(\(divisionId) -> \(target.q),\(target.r))"
+            return "Recon \(Self.coordDisplay(target)) with \(Self.formationDisplay(divisionId))"
         case .uavRecon(let divisionId, let target):
-            return "UAVRecon(\(divisionId) -> \(target.q),\(target.r))"
+            return "UAV orbit over \(Self.coordDisplay(target)) from \(Self.formationDisplay(divisionId))"
         case .electronicWarfare(let divisionId, let target):
-            return "EW(\(divisionId) -> \(target.q),\(target.r))"
+            return "Electronic warfare at \(Self.coordDisplay(target)) from \(Self.formationDisplay(divisionId))"
         case .fireMission(let issuerId, let target, let munitionClass):
-            return "FireMission(\(issuerId) -> \(target.displayName), \(munitionClass.displayName))"
+            return "\(munitionClass.displayName) fire mission from \(Self.formationDisplay(issuerId)) to \(target.displayName)"
         case .suppressAirDefense(let divisionId, let target):
-            return "SuppressAD(\(divisionId) -> \(target.q),\(target.r))"
+            return "Suppress air defenses at \(Self.coordDisplay(target)) from \(Self.formationDisplay(divisionId))"
         case .queueProduction(let kind):
-            return "QueueProduction(\(kind.displayName))"
+            return "Queue \(kind.displayName)"
         case .endTurn:
             return "End Turn"
         }
     }
+
+    var userDisplayName: String { displayName }
 
     var actingDivisionId: String? {
         switch self {
@@ -90,5 +92,18 @@ enum Command: Codable, Equatable {
              .endTurn:
             return false
         }
+    }
+
+    private static func formationDisplay(_ id: String) -> String {
+        let cleaned = id
+            .replacingOccurrences(of: "division_", with: "")
+            .replacingOccurrences(of: "unit_", with: "")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return cleaned.isEmpty ? "formation" : "formation \(cleaned.capitalized)"
+    }
+
+    private static func coordDisplay(_ coord: HexCoord) -> String {
+        "hex \(coord.q),\(coord.r)"
     }
 }

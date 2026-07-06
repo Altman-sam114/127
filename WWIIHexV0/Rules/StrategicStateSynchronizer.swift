@@ -61,7 +61,7 @@ struct StrategicStateSynchronizer {
             for regionId in changedRegionIds {
                 guard let region = state.map.region(id: regionId) else { continue }
                 state.appendEvent(
-                    "Region \(regionId.rawValue) controller changed to \(region.controller.displayName).",
+                    "\(region.name) controller changed to \(region.controller.displayName).",
                     category: .regionOwnerChange,
                     relatedRecordId: relatedRecordId
                 )

@@ -61,12 +61,30 @@ enum FireMissionTarget: Codable, Equatable {
     var displayName: String {
         switch self {
         case .contact(let id):
-            return "Contact \(id)"
+            return "Contact Track \(Self.trackDisplay(id))"
         case .hex(let coord):
             return "Hex \(coord.q),\(coord.r)"
         case .region(let regionId):
-            return "Region \(regionId.rawValue)"
+            return Self.objectiveDisplay(regionId)
         }
+    }
+
+    private static func trackDisplay(_ id: String) -> String {
+        let cleaned = id
+            .replacingOccurrences(of: "contact_", with: "")
+            .replacingOccurrences(of: "ct_", with: "")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return cleaned.isEmpty ? "Unknown" : cleaned.capitalized
+    }
+
+    private static func objectiveDisplay(_ id: RegionId) -> String {
+        let cleaned = id.rawValue
+            .replacingOccurrences(of: "region_", with: "")
+            .replacingOccurrences(of: "objective_", with: "")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return cleaned.isEmpty ? "Objective Area" : "Objective \(cleaned.capitalized)"
     }
 }
 

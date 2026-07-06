@@ -184,19 +184,6 @@ private extension RetreatMode {
     }
 }
 
-private extension SupplyState {
-    var displayName: String {
-        switch self {
-        case .supplied:
-            return "Ready"
-        case .lowSupply:
-            return "Low Logistics"
-        case .encircled:
-            return "Logistics Cut"
-        }
-    }
-}
-
 private extension UnitDeploymentRole {
     var displayName: String {
         switch self {

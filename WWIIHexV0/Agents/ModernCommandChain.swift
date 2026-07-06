@@ -253,20 +253,48 @@ enum ModernCommandChainDecoderError: Error, Equatable, LocalizedError {
         case .factionMismatch(let expected, let actual):
             return "Modern command chain faction mismatch. Expected \(expected.displayName), got \(actual.displayName)."
         case .missingZone(let zoneId):
-            return "Modern command chain references missing FrontZone \(zoneId.rawValue)."
+            return "Modern command chain references missing \(Self.commandSectorDisplay(zoneId))."
         case .zoneFactionMismatch(let zoneId, let expected, let actual):
-            return "Modern command chain zone \(zoneId.rawValue) belongs to \(actual.displayName), expected \(expected.displayName)."
+            return "Modern command chain \(Self.commandSectorDisplay(zoneId)) belongs to \(actual.displayName), expected \(expected.displayName)."
         case .missingRegion(let regionId):
-            return "Modern command chain references missing region \(regionId.rawValue)."
+            return "Modern command chain references missing \(Self.objectiveDisplay(regionId))."
         case .missingContact(let contactId):
-            return "Modern command chain references missing contact \(contactId)."
+            return "Modern command chain references missing \(Self.contactDisplay(contactId))."
         case .contactOwnerMismatch(let contactId, let expected):
-            return "Modern command chain contact \(contactId) is not visible to \(expected.displayName)."
+            return "Modern command chain \(Self.contactDisplay(contactId)) is not visible to \(expected.displayName)."
         case .invalidEnvelopeRole(let component, let expected, let actual):
-            return "Modern command chain \(component) role mismatch. Expected \(expected.rawValue), got \(actual.rawValue)."
+            return "Modern command chain \(component) role mismatch. Expected \(expected.displayName), got \(actual.displayName)."
         case .invalidRoleMission(let role, let missionType):
-            return "Modern command chain role \(role.rawValue) cannot issue \(missionType.rawValue)."
+            return "Modern command chain role \(role.displayName) cannot issue \(missionType.displayName)."
         }
+    }
+
+    private static func commandSectorDisplay(_ id: FrontZoneId) -> String {
+        let cleaned = cleanIdentifier(id.rawValue)
+        return cleaned.isEmpty ? "command sector" : "Sector \(cleaned.capitalized)"
+    }
+
+    private static func objectiveDisplay(_ id: RegionId) -> String {
+        let cleaned = cleanIdentifier(id.rawValue)
+        return cleaned.isEmpty ? "objective area" : "Objective \(cleaned.capitalized)"
+    }
+
+    private static func contactDisplay(_ id: String) -> String {
+        let cleaned = cleanIdentifier(id)
+        return cleaned.isEmpty ? "contact track" : "Contact Track \(cleaned.capitalized)"
+    }
+
+    private static func cleanIdentifier(_ rawValue: String) -> String {
+        rawValue
+            .replacingOccurrences(of: "region_", with: "")
+            .replacingOccurrences(of: "objective_", with: "")
+            .replacingOccurrences(of: "front_zone_", with: "")
+            .replacingOccurrences(of: "zone_", with: "")
+            .replacingOccurrences(of: "theater_", with: "")
+            .replacingOccurrences(of: "contact_", with: "")
+            .replacingOccurrences(of: "ct_", with: "")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
 
