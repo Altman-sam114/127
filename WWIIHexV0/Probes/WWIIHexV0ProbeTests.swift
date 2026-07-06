@@ -351,6 +351,59 @@ final class WWIIHexV0ProbeTests: XCTestCase {
         XCTAssertTrue(container.modernMissionAvailabilityText.contains("already acted"))
     }
 
+    func testProbeRestrictedFireZoneRequiresPrecisionLinkedHostileTarget() throws {
+        let state = Self.restrictedFireZoneProbeState()
+        let ruleEngine = RuleEngine()
+
+        let rocketResult = ruleEngine.execute(
+            .fireMission(
+                issuerId: "blue_fires",
+                target: .contact(id: "contact_restricted_red_armor"),
+                munitionClass: .rocket
+            ),
+            in: state
+        )
+
+        XCTAssertFalse(rocketResult.succeeded)
+        XCTAssertEqual(rocketResult.validation, .invalid(.restrictedFireZone))
+        XCTAssertTrue(
+            rocketResult.message.contains("restricted fire zone requires a linked hostile target and precision-capable munition")
+        )
+        XCTAssertTrue(rocketResult.state.fireSupportState.lastMissionResults.isEmpty)
+        XCTAssertEqual(rocketResult.state.division(id: "blue_fires")?.hasActed, false)
+
+        let precisionResult = ruleEngine.execute(
+            .fireMission(
+                issuerId: "blue_fires",
+                target: .contact(id: "contact_restricted_red_armor"),
+                munitionClass: .precision
+            ),
+            in: state
+        )
+
+        XCTAssertTrue(precisionResult.succeeded, precisionResult.message)
+        let missionResult = try XCTUnwrap(precisionResult.state.fireSupportState.lastMissionResults.last)
+        XCTAssertEqual(missionResult.targetDivisionId, "red_armor_restricted")
+        XCTAssertEqual(missionResult.munitionClass, .precision)
+        XCTAssertTrue(missionResult.riskFlags.contains(.restrictedFireZone))
+        XCTAssertEqual(missionResult.status, .degraded)
+        XCTAssertGreaterThan(missionResult.damage, 0)
+        XCTAssertLessThan(
+            precisionResult.state.division(id: "red_armor_restricted")?.strength ?? 10,
+            state.division(id: "red_armor_restricted")?.strength ?? 10
+        )
+        XCTAssertEqual(precisionResult.state.division(id: "blue_fires")?.hasActed, true)
+        XCTAssertEqual(
+            precisionResult.state.fireSupportState.budget(for: .blue).available(for: .precision),
+            state.fireSupportState.budget(for: .blue).available(for: .precision) - 1
+        )
+        XCTAssertTrue(
+            precisionResult.state.eventLog.contains {
+                $0.category == .fireSupport && $0.message.contains("restricted fire zone")
+            }
+        )
+    }
+
     @MainActor
     func testProbeAppContainerObserverRunsTwoAIHalfTurns() async throws {
         let dataLoader = DataLoader()
@@ -641,6 +694,122 @@ final class WWIIHexV0ProbeTests: XCTestCase {
             victoryState: .ongoing,
             selectedUnitSummary: nil,
             eventLog: []
+        )
+    }
+
+    private static func restrictedFireZoneProbeState() -> GameState {
+        let blueCoord = HexCoord(q: 0, r: 0)
+        let targetCoord = HexCoord(q: 2, r: 0)
+        let map = restrictedFireZoneProbeMap(blueCoord: blueCoord, targetCoord: targetCoord)
+        let divisions = [
+            Division(
+                id: "blue_fires",
+                name: "Blue Precision Fires",
+                faction: .blueForce,
+                coord: blueCoord,
+                facing: .east,
+                components: [
+                    DivisionComponent(type: .rocketArtillery, weight: 0.45),
+                    DivisionComponent(type: .loiteringMunition, weight: 0.25),
+                    DivisionComponent(type: .uav, weight: 0.15),
+                    DivisionComponent(type: .lightInfantry, weight: 0.15)
+                ]
+            ),
+            Division(
+                id: "red_armor_restricted",
+                name: "Red Armor in Civilian Zone",
+                faction: .redForce,
+                coord: targetCoord,
+                facing: .west,
+                components: [DivisionComponent(type: .armor, weight: 1.0)]
+            )
+        ]
+        let contact = ContactTrack(
+            id: "contact_restricted_red_armor",
+            ownerFaction: .blueForce,
+            observerSide: .blue,
+            lastKnownCoord: targetCoord,
+            confidence: .confirmed,
+            estimatedType: .armor,
+            source: .uav,
+            ageInTurns: 0,
+            linkedDivisionId: "red_armor_restricted"
+        )
+
+        return GameState(
+            scenarioId: "probe_restricted_fire_zone",
+            turn: 1,
+            maxTurns: 4,
+            activeFaction: .blueForce,
+            phase: .alliedPlayer,
+            map: map,
+            theaterState: .empty,
+            frontLineState: .empty,
+            warDeploymentState: .empty,
+            operationalAwareness: OperationalAwarenessState(
+                contacts: [contact.id: contact],
+                sensorCoverage: [],
+                ewEffects: []
+            ),
+            divisions: divisions,
+            victoryState: .ongoing,
+            selectedUnitSummary: nil,
+            eventLog: []
+        )
+    }
+
+    private static func restrictedFireZoneProbeMap(
+        blueCoord: HexCoord,
+        targetCoord: HexCoord
+    ) -> MapState {
+        let blueRegion = RegionId("blue_fires_sector")
+        let civilianRegion = RegionId("civilian_buffer")
+        let regions: [RegionId: RegionNode] = [
+            blueRegion: RegionNode(
+                id: blueRegion,
+                name: "Blue Fires Sector",
+                owner: .blueForce,
+                controller: .blueForce,
+                terrain: .plain,
+                neighbors: [civilianRegion],
+                displayHexes: [blueCoord],
+                representativeHex: blueCoord
+            ),
+            civilianRegion: RegionNode(
+                id: civilianRegion,
+                name: "Civilian Buffer",
+                owner: .neutral,
+                controller: .greenForce,
+                terrain: .plain,
+                neighbors: [blueRegion],
+                displayHexes: [HexCoord(q: 1, r: 0), targetCoord],
+                representativeHex: targetCoord
+            )
+        ]
+        let tiles: [HexCoord: HexTile] = [
+            blueCoord: HexTile(coord: blueCoord, baseTerrain: .plain, controller: .blueForce, regionId: blueRegion),
+            HexCoord(q: 1, r: 0): HexTile(
+                coord: HexCoord(q: 1, r: 0),
+                baseTerrain: .plain,
+                controller: .greenForce,
+                regionId: civilianRegion
+            ),
+            targetCoord: HexTile(coord: targetCoord, baseTerrain: .plain, controller: .greenForce, regionId: civilianRegion)
+        ]
+
+        return MapState(
+            width: 3,
+            height: 1,
+            tiles: tiles,
+            supplySources: [],
+            objectives: [],
+            regions: regions,
+            hexToRegion: [
+                blueCoord: blueRegion,
+                HexCoord(q: 1, r: 0): civilianRegion,
+                targetCoord: civilianRegion
+            ],
+            regionEdges: [RegionEdge(from: blueRegion, to: civilianRegion)]
         )
     }
 
