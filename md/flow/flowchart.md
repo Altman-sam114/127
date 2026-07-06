@@ -364,7 +364,7 @@ flowchart LR
 flowchart LR
     DISPLAY["App Display Name<br/>Modern Command Agent"]:::display
     ICON["AppIcon asset catalog<br/>iOS / iPadOS / macOS sizes"]:::display
-    MAP["HexNode supply marker<br/>SUP B / SUP R"]:::display
+    MAP["HexNode logistics marker<br/>LOG B / LOG R"]:::display
     COMMANDERS["Default commanders<br/>fictional Blue / Red C2 staff"]:::display
     TERMS["Visible terminology<br/>National Command / Operational Zone<br/>PER / MAT / LOG"]:::display
     REPORT["v6.10 release candidate report<br/>residual scan / evidence matrix"]:::doc
