@@ -596,7 +596,7 @@ struct DataLoader {
                 theaterId,
                 TheaterNode(
                     id: theaterId,
-                    name: theaterId.rawValue,
+                    name: theaterDisplayName(theaterId),
                     status: .active,
                     regionIds: sortedRegionIds,
                     controllingFaction: controllingFaction
@@ -611,6 +611,13 @@ struct DataLoader {
         var updated = TheaterSystem().updateTheaters(state: state, map: map, divisions: divisions, turn: turn)
         updated.initialSnapshot = TheaterInitialSnapshot.capture(from: updated)
         return updated
+    }
+
+    private func theaterDisplayName(_ id: TheaterId) -> String {
+        let cleaned = id.rawValue
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return cleaned.isEmpty ? "Operational Zone" : cleaned.capitalized
     }
 
     private func majorityController(regionIds: [RegionId], map: MapState) -> Faction? {
