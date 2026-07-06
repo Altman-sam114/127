@@ -271,8 +271,8 @@ specialForces / electronicWarfare
 
 仍未完成：
 
-- FireMission / AirTasking / 精确火力命令已在 v6.5 做抽象首版；真实武器库、fuel、readiness 和 signature 仍未独立建模。
-- fuel / ammo / readiness / signature / electronicProtection 尚未作为独立字段落库。
+- FireMission / AirTasking / 精确火力命令已在 v6.5 做抽象首版；真实武器库、真实 fuel 消耗、独立 readiness / signature 规则仍未完整建模。
+- ammo 已在 `FireSupportState` 中抽象为 side 预算；readiness / fuel posture / signature posture 目前从 `Division` 既有 strength、supply、行动/撤退状态和组件权重派生显示，尚未作为独立字段落库；electronicProtection 尚未作为独立字段落库。
 - 现代战役地图已扩到 120-hex / 30-region 发布候选规模，但未做运行时长回合验证。
 
 ## 0.6 v6.4 ISR、ContactTrack 和电子战基础
@@ -323,7 +323,7 @@ ContactTrack
 
 ## 0.7 v6.5 精确火力、空地协同、无人系统和防空抽象
 
-v6.5 第一批实现把“侦察 -> 确认 contact -> 防空压制 / 火力打击 -> 地面推进”的现代作战闭环接入统一命令管线。它是抽象任务模型，不做真实武器数据库、复杂实时空战、独立 fuel/readiness/signature 或完整空域模拟。
+v6.5 第一批实现把“侦察 -> 确认 contact -> 防空压制 / 火力打击 -> 地面推进”的现代作战闭环接入统一命令管线。它是抽象任务模型，不做真实武器数据库、复杂实时空战、独立 fuel/readiness/signature 规则或完整空域模拟。
 
 新增运行时状态：
 
@@ -360,7 +360,7 @@ GameState.fireSupportState: FireSupportState
 
 仍未完成：
 
-- 真实武器库、弹种库存分层、fuel、readiness、signature、electronic protection 尚未独立字段落库。
+- 真实武器库、弹种库存分层、真实 fuel 消耗、独立 readiness、独立 signature、electronic protection 尚未独立字段落库；UI 只展示从现有单位状态派生的 readiness / fuel posture / signature posture。
 - Air superiority 当前是抽象占位，未做持续空域争夺、截击、CAP 或机场出动率。
 - 火力 UI 仍主要通过日志可见，还没有独立火力范围 / 空中任务 overlay。
 - AI 只通过 `fireCoverage` 首版生成火力任务，尚未引入 FiresCoordinator / ISRCoordinator 独立 Agent。
@@ -453,7 +453,7 @@ RootGameView
 
 仍未完成：
 
-- 没有专门 readiness / fuel / signature 字段；面板当前只显示 logistics 状态、visible contact 数和 fire support ammo 摘要。
+- 没有专门 readiness / fuel / signature 字段；`Division` 现在只读派生 readiness、fuel posture 和 signature posture，任务面板、单位详情和 tooltip 会展示这些态势，同时继续显示 logistics 状态、visible contact 数和 fire support ammo 摘要。
 - 任务按钮没有单独的 plan edit / preview / cancel 流程；点击即提交到规则系统。
 - Recon / Fires / EW 的地图 overlay 仍是首版轻量标记，未做完整图层开关、动画、tooltip 或视觉截图验收。
 - 未做本机 UI 点击或模拟器烟测，等待云端 build 和后续人工授权。
@@ -494,7 +494,7 @@ SpriteKit 首轮：
 边界和未完成：
 
 - overlay 当前没有独立图层开关、legend、tooltip、Reduce Motion 动画策略或截图验收。
-- v6.8 没有新增 readiness / fuel / signature / electronicProtection 字段。
+- v6.8 没有新增 readiness / fuel / signature / electronicProtection 字段；后续 v6.10 收口增加的是派生显示，不是独立持久字段。
 - 没有改 `Command`、`ZoneDirective`、`WarCommandExecutor` 或 `RuleEngine` 执行语义。
 - 未在本机启动 app、模拟器或 UI 点击烟测；视觉正确性等待后续人工授权或专门 UI 验收。
 

@@ -118,6 +118,26 @@ struct ModernMissionPanelView: View {
             }
             HStack(spacing: ModernCommandDesignTokens.compactSpacing) {
                 ModernMissionMetricView(
+                    title: "Readiness",
+                    value: selectedDivision?.operationalReadinessDisplayText ?? "--",
+                    icon: "gauge",
+                    tint: selectedDivision.map(readinessTint) ?? .secondary
+                )
+                ModernMissionMetricView(
+                    title: "Fuel",
+                    value: selectedDivision?.fuelPostureDisplayText ?? "--",
+                    icon: "fuelpump",
+                    tint: selectedDivision.map(fuelTint) ?? .secondary
+                )
+                ModernMissionMetricView(
+                    title: "Signature",
+                    value: selectedDivision?.signaturePostureDisplayText ?? "--",
+                    icon: "dot.radiowaves.left.and.right",
+                    tint: ModernCommandDesignTokens.sensor
+                )
+            }
+            HStack(spacing: ModernCommandDesignTokens.compactSpacing) {
+                ModernMissionMetricView(
                     title: "Logistics",
                     value: selectedDivision.map(supplySummary) ?? "--",
                     icon: "cross.case",
@@ -194,6 +214,27 @@ struct ModernMissionPanelView: View {
                     )
                 }
             }
+        }
+    }
+
+    private func readinessTint(for division: Division) -> Color {
+        if division.operationalReadinessPercent >= 70 {
+            return ModernCommandDesignTokens.sustainment
+        }
+        if division.operationalReadinessPercent >= 40 {
+            return ModernCommandDesignTokens.warning
+        }
+        return .red
+    }
+
+    private func fuelTint(for division: Division) -> Color {
+        switch division.supplyState {
+        case .supplied:
+            return ModernCommandDesignTokens.sustainment
+        case .lowSupply:
+            return ModernCommandDesignTokens.warning
+        case .encircled:
+            return .red
         }
     }
 }

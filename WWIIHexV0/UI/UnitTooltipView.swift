@@ -20,8 +20,20 @@ struct UnitTooltipView: View {
                         value("\(division.strength)/\(division.maxStrength)")
                     }
                     GridRow {
+                        label("Ready")
+                        value(division.operationalReadinessDisplayText)
+                    }
+                    GridRow {
                         label("Logistics")
                         value(division.supplyState.tooltipDisplayName)
+                    }
+                    GridRow {
+                        label("Fuel")
+                        value(division.fuelPostureDisplayText)
+                    }
+                    GridRow {
+                        label("Signature")
+                        value(division.signaturePostureDisplayText)
                     }
                     GridRow {
                         label("Retreat")
@@ -42,7 +54,9 @@ struct UnitTooltipView: View {
             }
             .padding(10)
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("\(division.operationalDisplayName), \(division.tooltipTypeCode), strength \(division.strength) of \(division.maxStrength)")
+            .accessibilityLabel(
+                "\(division.operationalDisplayName), \(division.tooltipTypeCode), strength \(division.strength) of \(division.maxStrength), readiness \(division.operationalReadinessDisplayText), fuel \(division.fuelPostureDisplayText), signature \(division.signaturePostureDisplayText)"
+            )
         }
     }
 

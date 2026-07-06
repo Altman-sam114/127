@@ -499,6 +499,96 @@ struct Division: Identifiable, Codable, Equatable {
         componentWeight(where: \.isLightGroundFamily) >= 0.45
     }
 
+    var operationalReadinessPercent: Int {
+        guard !isDestroyed else {
+            return 0
+        }
+
+        var score = (Double(strength) / Double(maxStrength)) * 100.0
+        switch supplyState {
+        case .supplied:
+            break
+        case .lowSupply:
+            score -= hasLogisticsSupport ? 12 : 20
+        case .encircled:
+            score -= hasLogisticsSupport ? 32 : 45
+        }
+
+        if hasActed {
+            score -= 10
+        }
+        if isRetreating {
+            score -= 25
+        }
+
+        return Self.clamp(Int(score.rounded()), min: 0, max: 100)
+    }
+
+    var operationalReadinessDisplayText: String {
+        "\(operationalReadinessPercent)%"
+    }
+
+    var fuelPostureDisplayText: String {
+        if isDestroyed {
+            return "Offline"
+        }
+
+        switch supplyState {
+        case .encircled:
+            return "Critical"
+        case .lowSupply:
+            if isArmor || isMechanized {
+                return "Constrained"
+            }
+            return "Limited"
+        case .supplied:
+            if hasLogisticsSupport {
+                return "Buffered"
+            }
+            if isArmor || isMechanized {
+                return "Ready"
+            }
+            if hasUnmannedSupport {
+                return "Sortie Ready"
+            }
+            return "Low Demand"
+        }
+    }
+
+    var signaturePostureDisplayText: String {
+        if isDestroyed {
+            return "None"
+        }
+        if isRetreating {
+            return "Exposed"
+        }
+
+        let firesWeight = componentWeight(where: \.isFiresFamily)
+        let airDefenseWeight = componentWeight(where: \.isAirDefenseFamily)
+        let unmannedWeight = componentWeight(where: \.isUnmannedFamily)
+        let armorWeight = componentWeight(where: \.isArmorFamily)
+        let mechanizedWeight = componentWeight(where: \.isMechanizedFamily)
+        let lightWeight = componentWeight(where: \.isLightGroundFamily)
+        let reconWeight = componentWeight { $0 == .recon }
+
+        if airDefenseWeight >= 0.20 {
+            return "Emitter High"
+        }
+        if firesWeight >= 0.45 {
+            return "Fires High"
+        }
+        if armorWeight + mechanizedWeight >= 0.50 {
+            return "High"
+        }
+        if unmannedWeight + reconWeight >= 0.40 {
+            return "Low"
+        }
+        if lightWeight >= 0.45 {
+            return "Reduced"
+        }
+        return "Medium"
+    }
+
     var dominantComponentType: ComponentType? {
         components.sorted { lhs, rhs in
             if lhs.weight == rhs.weight {

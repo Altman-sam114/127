@@ -67,6 +67,18 @@ struct UnitInspectorView: View {
                 Text(division.inspectorStrengthText)
             }
 
+            LabeledContent("Readiness") {
+                Text(division.operationalReadinessDisplayText)
+            }
+
+            LabeledContent("Fuel") {
+                Text(division.fuelPostureDisplayText)
+            }
+
+            LabeledContent("Signature") {
+                Text(division.signaturePostureDisplayText)
+            }
+
             LabeledContent("Retreat Mode") {
                 Text(division.retreatMode.displayName)
             }
