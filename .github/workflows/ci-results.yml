@@ -21,8 +21,12 @@ jobs:
       XCODE_PROJECT: WWIIHexV0.xcodeproj
       XCODE_SCHEME: WWIIHexV0
       XCODE_DESTINATION: generic/platform=iOS
+      PROBE_SCHEME: WWIIHexV0Probes
       RESULT_BUNDLE_PATH: ci-results/WWIIHexV0.xcresult
+      PROBE_RESULT_BUNDLE_PATH: ci-results/WWIIHexV0Probes.xcresult
       BUILD_LOG_PATH: ci-results/xcodebuild.log
+      PROBE_LOG_PATH: ci-results/probe-xctest.log
+      SIMULATOR_LOG_PATH: ci-results/simulator.log
       JUNIT_PATH: ci-results/junit.xml
       FAILURE_SUMMARY_PATH: ci-results/ci-failure-summary.md
 
@@ -52,6 +56,8 @@ jobs:
           FAILURE_COUNT=0
           STATIC_CHECKS_OUTCOME="success"
           BUILD_OUTCOME="success"
+          PROBE_OUTCOME="skipped"
+          SIMULATOR_OUTCOME="skipped"
           TEST_OUTCOME="skipped"
 
           {
@@ -147,13 +153,107 @@ jobs:
             } >> "${FAILURE_SUMMARY_PATH}"
           fi
 
+          : > "${SIMULATOR_LOG_PATH}"
+          : > "${PROBE_LOG_PATH}"
+          if [ "${BUILD_EXIT}" -eq 0 ]; then
+            cat > ci-results/select-simulator.py <<'PY'
+          import json
+          import subprocess
+
+          raw = subprocess.check_output(["xcrun", "simctl", "list", "devices", "available", "-j"], text=True)
+          devices = json.loads(raw).get("devices", {})
+          candidates = []
+          for runtime, runtime_devices in devices.items():
+              if "iOS" not in runtime:
+                  continue
+              for device in runtime_devices:
+                  name = device.get("name", "")
+                  if device.get("isAvailable") and name.startswith("iPhone"):
+                      candidates.append((runtime, name, device["udid"]))
+          if candidates:
+              print(candidates[-1][2])
+          PY
+            if SIMULATOR_UDID="$(python3 ci-results/select-simulator.py 2>> "${SIMULATOR_LOG_PATH}")"; then
+              :
+            else
+              SIMULATOR_UDID=""
+            fi
+
+            if [ -z "${SIMULATOR_UDID}" ]; then
+              SIMULATOR_OUTCOME="failure"
+              PROBE_OUTCOME="failure"
+              FAIL=1
+              FAILURE_COUNT=$((FAILURE_COUNT + 1))
+              {
+                echo "## Probe simulator discovery failed"
+                echo
+                echo "- no available iPhone simulator was found"
+                echo "- log: ${SIMULATOR_LOG_PATH}"
+                echo
+              } >> "${FAILURE_SUMMARY_PATH}"
+            else
+              SIMULATOR_OUTCOME="success"
+              {
+                echo "Selected simulator UDID: ${SIMULATOR_UDID}"
+                xcrun simctl boot "${SIMULATOR_UDID}" || true
+                xcrun simctl bootstatus "${SIMULATOR_UDID}" -b
+              } >> "${SIMULATOR_LOG_PATH}" 2>&1
+              SIMULATOR_BOOT_EXIT=$?
+              if [ "${SIMULATOR_BOOT_EXIT}" -ne 0 ]; then
+                SIMULATOR_OUTCOME="failure"
+                PROBE_OUTCOME="failure"
+                FAIL=1
+                FAILURE_COUNT=$((FAILURE_COUNT + 1))
+                {
+                  echo "## Probe simulator boot failed"
+                  echo
+                  echo "- simulator boot exit: ${SIMULATOR_BOOT_EXIT}"
+                  echo "- simulator: ${SIMULATOR_UDID}"
+                  echo "- log: ${SIMULATOR_LOG_PATH}"
+                  echo
+                } >> "${FAILURE_SUMMARY_PATH}"
+              else
+                set -o pipefail
+                xcodebuild \
+                  -project "${XCODE_PROJECT}" \
+                  -scheme "${PROBE_SCHEME}" \
+                  -configuration Debug \
+                  -destination "id=${SIMULATOR_UDID}" \
+                  -derivedDataPath .derivedData-ci-probes \
+                  -resultBundlePath "${PROBE_RESULT_BUNDLE_PATH}" \
+                  CODE_SIGNING_ALLOWED=NO \
+                  test 2>&1 | tee "${PROBE_LOG_PATH}"
+                PROBE_EXIT=${PIPESTATUS[0]}
+                set +o pipefail
+
+                if [ "${PROBE_EXIT}" -ne 0 ]; then
+                  PROBE_OUTCOME="failure"
+                  FAIL=1
+                  FAILURE_COUNT=$((FAILURE_COUNT + 1))
+                  {
+                    echo "## Probe tests failed"
+                    echo
+                    echo "- xcodebuild test exit: ${PROBE_EXIT}"
+                    echo "- log: ${PROBE_LOG_PATH}"
+                    echo "- result bundle: ${PROBE_RESULT_BUNDLE_PATH}"
+                    echo
+                  } >> "${FAILURE_SUMMARY_PATH}"
+                else
+                  PROBE_OUTCOME="success"
+                fi
+              fi
+            fi
+          else
+            echo "Probe tests skipped because xcodebuild build failed." >> "${PROBE_LOG_PATH}"
+          fi
+
           if [ "${FAIL}" -eq 0 ]; then
             echo "No CI failures detected." >> "${FAILURE_SUMMARY_PATH}"
           fi
 
           {
             echo '<?xml version="1.0" encoding="UTF-8"?>'
-            echo "<testsuite name=\"WWIIHexV0 CI\" tests=\"3\" failures=\"${FAILURE_COUNT}\">"
+            echo "<testsuite name=\"WWIIHexV0 CI\" tests=\"4\" failures=\"${FAILURE_COUNT}\">"
             echo "  <testcase classname=\"ci.static\" name=\"git-plutil-xmllint-project-scripts\">"
             if [ "${STATIC_CHECKS_OUTCOME}" = "failure" ]; then
               echo "    <failure message=\"static checks failed\">See ci-results/git-diff-check.log, plutil.log, xmllint.log, grey-tide-data.log and modern-visible-text.log.</failure>"
@@ -164,14 +264,23 @@ jobs:
               echo "    <failure message=\"xcodebuild failed\">See ci-results/xcodebuild.log.</failure>"
             fi
             echo "  </testcase>"
+            echo "  <testcase classname=\"ci.probes\" name=\"xcodebuild-test-WWIIHexV0Probes\">"
+            if [ "${PROBE_OUTCOME}" = "failure" ]; then
+              echo "    <failure message=\"probe tests failed\">See ci-results/probe-xctest.log and simulator.log.</failure>"
+            elif [ "${PROBE_OUTCOME}" = "skipped" ]; then
+              echo "    <skipped message=\"Probe tests skipped because the app build did not complete.\" />"
+            fi
+            echo "  </testcase>"
             echo "  <testcase classname=\"ci.tests\" name=\"xctest\">"
-            echo "    <skipped message=\"XCTest is not run by the default cloud-flow policy.\" />"
+            echo "    <skipped message=\"Full XCTest, UI tests, Smoke, Stage and Full suites are not run by the default cloud-flow policy.\" />"
             echo "  </testcase>"
             echo "</testsuite>"
           } > "${JUNIT_PATH}"
 
           echo "STATIC_CHECKS_OUTCOME=${STATIC_CHECKS_OUTCOME}" >> "${GITHUB_ENV}"
           echo "BUILD_OUTCOME=${BUILD_OUTCOME}" >> "${GITHUB_ENV}"
+          echo "PROBE_OUTCOME=${PROBE_OUTCOME}" >> "${GITHUB_ENV}"
+          echo "SIMULATOR_OUTCOME=${SIMULATOR_OUTCOME}" >> "${GITHUB_ENV}"
           echo "TEST_OUTCOME=${TEST_OUTCOME}" >> "${GITHUB_ENV}"
           echo "CI_FAILED=${FAIL}" >> "${GITHUB_ENV}"
 
@@ -198,18 +307,26 @@ jobs:
               "scheme": os.environ["XCODE_SCHEME"],
               "destination": os.environ["XCODE_DESTINATION"],
               "resultBundlePath": os.environ["RESULT_BUNDLE_PATH"],
+              "probeScheme": os.environ["PROBE_SCHEME"],
+              "probeResultBundlePath": os.environ["PROBE_RESULT_BUNDLE_PATH"],
               "junitPath": os.environ["JUNIT_PATH"],
               "buildLogPath": os.environ["BUILD_LOG_PATH"],
+              "probeLogPath": os.environ["PROBE_LOG_PATH"],
+              "simulatorLogPath": os.environ["SIMULATOR_LOG_PATH"],
               "failureSummaryPath": os.environ["FAILURE_SUMMARY_PATH"],
               "staticChecksOutcome": os.environ.get("STATIC_CHECKS_OUTCOME", "failure"),
               "buildOutcome": os.environ.get("BUILD_OUTCOME", "failure"),
+              "probeOutcome": os.environ.get("PROBE_OUTCOME", "skipped"),
+              "simulatorOutcome": os.environ.get("SIMULATOR_OUTCOME", "skipped"),
               "testOutcome": os.environ.get("TEST_OUTCOME", "skipped"),
               "projectSpecificReports": [
                   "ci-results/git-diff-check.log",
                   "ci-results/plutil.log",
                   "ci-results/xmllint.log",
                   "ci-results/grey-tide-data.log",
-                  "ci-results/modern-visible-text.log"
+                  "ci-results/modern-visible-text.log",
+                  "ci-results/probe-xctest.log",
+                  "ci-results/simulator.log"
               ]
           }
 
