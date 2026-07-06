@@ -294,7 +294,7 @@ struct FireSupportRules {
             munitionClass: munitionClass,
             damage: 0,
             riskFlags: mission.riskFlags,
-            narrative: "\(issuer.operationalDisplayName) suppressed \(targetSide.rawValue) air defenses near \(target.q),\(target.r) for \(effect.remainingTurns) turns."
+            narrative: "\(issuer.operationalDisplayName) suppressed \(targetSide.displayName) air defenses near \(target.q),\(target.r) for \(effect.remainingTurns) turns."
         )
         next.fireSupportState.recordResult(result)
         next.appendEvent(result.narrative, category: .fireSupport)

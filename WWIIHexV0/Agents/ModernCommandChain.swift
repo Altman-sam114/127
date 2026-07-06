@@ -647,7 +647,7 @@ struct ModernCommandChainOrchestrator {
                     regionId: state.map.region(for: contact.lastKnownCoord),
                     contactId: contact.id,
                     priority: max(55, theaterDirective.priority - 5),
-                    rationale: "Contact \(contact.id) has \(contact.confidence.rawValue) confidence and can seed follow-on tasks."
+                    rationale: "\(contactDisplay(contact.id)) has \(contact.confidence.displayName) confidence and can seed follow-on tasks."
                 )
             )
         }
@@ -742,6 +742,15 @@ struct ModernCommandChainOrchestrator {
                 return regionSet.contains(regionId) && contact.confidence >= .medium
             }
             .first
+    }
+
+    private func contactDisplay(_ id: String) -> String {
+        let cleaned = id
+            .replacingOccurrences(of: "contact_", with: "")
+            .replacingOccurrences(of: "ct_", with: "")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return cleaned.isEmpty ? "Contact Track" : "Contact Track \(cleaned.capitalized)"
     }
 
     private func hasAirDefenseContact(

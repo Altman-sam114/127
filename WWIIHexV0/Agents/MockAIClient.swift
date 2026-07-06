@@ -123,6 +123,7 @@ struct MockAIClient: DecisionProvider {
                           !division.hasActed else {
                         continue
                     }
+                    let segmentDisplay = contactLineDisplay(segment.regionId)
                     if let target = frontAttackTarget(for: division, segment: segment, context: context) {
                         orders.append(
                             AgentOrder(
@@ -130,7 +131,7 @@ struct MockAIClient: DecisionProvider {
                                 divisionId: unitId,
                                 targetDivisionId: target.id,
                                 stance: segment.isEncircled ? "closePocket" : "frontAttack",
-                                reason: "v0.33 deployment: FRONT unit acts on segment \(segment.regionId.rawValue)."
+                                reason: "Deployment planner directs contact line action in \(segmentDisplay)."
                             )
                         )
                     } else {
@@ -140,7 +141,7 @@ struct MockAIClient: DecisionProvider {
                                 divisionId: unitId,
                                 toRegionId: division.regionId,
                                 stance: segment.isEncircled ? "containPocket" : "holdFront",
-                                reason: "v0.33 deployment: FRONT unit holds assigned segment \(segment.regionId.rawValue)."
+                                reason: "Deployment planner holds assigned contact line in \(segmentDisplay)."
                             )
                         )
                     }
@@ -398,5 +399,13 @@ struct MockAIClient: DecisionProvider {
 
     private func terrainMoveCost(_ terrain: BaseTerrain) -> Int {
         terrain.movementCost
+    }
+
+    private func contactLineDisplay(_ id: RegionId) -> String {
+        let cleaned = id.rawValue
+            .replacingOccurrences(of: "region_", with: "")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return cleaned.isEmpty ? "Contact Line" : "Contact Line \(cleaned.capitalized)"
     }
 }

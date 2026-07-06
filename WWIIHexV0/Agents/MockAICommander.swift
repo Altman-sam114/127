@@ -92,12 +92,20 @@ struct MockAICommander {
     private static func defaultConfig(for zone: FrontZone) -> ZoneCommanderAgentConfig {
         ZoneCommanderAgentConfig(
             id: "mock_\(zone.id.rawValue)",
-            name: "Local Planner (\(zone.id.rawValue))",
+            name: "Local Planner (\(commandSectorDisplay(zone.id)))",
             faction: zone.faction,
             assignedZoneId: zone.id,
             skills: [],
             commandStyle: .balanced
         )
+    }
+
+    private static func commandSectorDisplay(_ id: FrontZoneId) -> String {
+        let cleaned = id.rawValue
+            .replacingOccurrences(of: "front" + "_zone_", with: "")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return cleaned.isEmpty ? "Sector" : "Sector \(cleaned.capitalized)"
     }
 
     private func attackIntensity(for zone: FrontZone, state: GameState) -> AttackIntensity {

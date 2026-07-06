@@ -143,6 +143,19 @@ enum OperationalSideAlignment: String, Codable, Equatable, CaseIterable {
     case red
     case green
     case neutral
+
+    var displayName: String {
+        switch self {
+        case .blue:
+            return "Blue Force"
+        case .red:
+            return "Red Force"
+        case .green:
+            return "Green Force"
+        case .neutral:
+            return "Neutral / Civilian"
+        }
+    }
 }
 
 extension Faction {

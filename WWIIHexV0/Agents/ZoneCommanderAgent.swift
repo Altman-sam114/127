@@ -839,12 +839,20 @@ struct TheaterCommanderPool {
         let style: ZoneCommanderAgentConfig.CommandStyle = zone.faction == .germany ? .aggressive : .balanced
         return ZoneCommanderAgentConfig(
             id: "auto_\(zone.id.rawValue)",
-            name: "\(zone.faction.shortDisplayName) Commander (\(zone.id.rawValue))",
+            name: "\(zone.faction.shortDisplayName) Commander (\(commandSectorDisplay(zone.id)))",
             faction: zone.faction,
             assignedZoneId: zone.id,
             skills: [],
             commandStyle: style
         )
+    }
+
+    private static func commandSectorDisplay(_ id: FrontZoneId) -> String {
+        let cleaned = id.rawValue
+            .replacingOccurrences(of: "front" + "_zone_", with: "")
+            .replacingOccurrences(of: "_", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return cleaned.isEmpty ? "Sector" : "Sector \(cleaned.capitalized)"
     }
 
     private func contextSummary(for faction: Faction, directives: [ZoneDirective]) -> String {
