@@ -242,6 +242,13 @@ struct ModernSubDirectiveCommandCompiler {
             }
         }
         for directive in plan.jointPlan.subDirectives
+            where directive.role == .airTasking && directive.missionType == .suppressAirDefense {
+            let result = compileSuppressAirDefense(directive, in: state)
+            if let command = result.command {
+                return (directive, command, result.diagnostics)
+            }
+        }
+        for directive in plan.jointPlan.subDirectives
             where directive.role == .firesCoordinator && directive.missionType == .fireMission {
             let result = compileFireMission(directive, in: state)
             if let command = result.command {
@@ -359,6 +366,121 @@ struct ModernSubDirectiveCommandCompiler {
         }
 
         return (nil, ["Command-chain EW skipped: no Electronic Warfare command passed validation."])
+    }
+
+    private func compileSuppressAirDefense(
+        _ directive: ModernSubDirective,
+        in state: GameState
+    ) -> (command: Command?, diagnostics: [String]) {
+        let targetContacts = airDefenseContacts(for: directive, in: state)
+        guard !targetContacts.isEmpty else {
+            return (nil, ["Command-chain air tasking skipped: no current air-defense contact was assigned."])
+        }
+
+        let candidates = candidateAirDefenseSuppressionDivisions(for: directive, in: state)
+        guard !candidates.isEmpty else {
+            return (nil, ["Command-chain air tasking skipped: no available SEAD formation was in command range."])
+        }
+
+        for division in candidates {
+            let orderedContacts = targetContacts.sorted {
+                if $0.confidence != $1.confidence {
+                    return $0.confidence > $1.confidence
+                }
+                if $0.ageInTurns != $1.ageInTurns {
+                    return $0.ageInTurns < $1.ageInTurns
+                }
+                let lhsDistance = division.coord.distance(to: $0.lastKnownCoord)
+                let rhsDistance = division.coord.distance(to: $1.lastKnownCoord)
+                if lhsDistance == rhsDistance {
+                    if $0.lastKnownCoord.q == $1.lastKnownCoord.q {
+                        if $0.lastKnownCoord.r == $1.lastKnownCoord.r {
+                            return $0.id < $1.id
+                        }
+                        return $0.lastKnownCoord.r < $1.lastKnownCoord.r
+                    }
+                    return $0.lastKnownCoord.q < $1.lastKnownCoord.q
+                }
+                return lhsDistance < rhsDistance
+            }
+            for target in orderedContacts.map(\.lastKnownCoord) {
+                let command = Command.suppressAirDefense(divisionId: division.id, target: target)
+                if validator.validate(command, in: state).isValid {
+                    return (command, [])
+                }
+            }
+        }
+
+        return (nil, ["Command-chain air tasking skipped: no Suppress Air Defense command passed validation."])
+    }
+
+    private func airDefenseContacts(
+        for directive: ModernSubDirective,
+        in state: GameState
+    ) -> [ContactTrack] {
+        if let contactId = directive.contactId,
+           let contact = state.operationalAwareness.contacts[contactId],
+           isUsableAirDefenseContact(contact, for: directive, in: state) {
+            return [contact]
+        }
+
+        return state.operationalAwareness.contacts.values
+            .filter { isUsableAirDefenseContact($0, for: directive, in: state) }
+            .sorted {
+                if $0.confidence != $1.confidence {
+                    return $0.confidence > $1.confidence
+                }
+                if $0.ageInTurns != $1.ageInTurns {
+                    return $0.ageInTurns < $1.ageInTurns
+                }
+                if $0.lastKnownCoord.q == $1.lastKnownCoord.q {
+                    if $0.lastKnownCoord.r == $1.lastKnownCoord.r {
+                        return $0.id < $1.id
+                    }
+                    return $0.lastKnownCoord.r < $1.lastKnownCoord.r
+                }
+                return $0.lastKnownCoord.q < $1.lastKnownCoord.q
+            }
+    }
+
+    private func isUsableAirDefenseContact(
+        _ contact: ContactTrack,
+        for directive: ModernSubDirective,
+        in state: GameState
+    ) -> Bool {
+        guard contact.ownerFaction == state.activeFaction,
+              contact.estimatedType == .airDefense,
+              contact.confidence >= .medium,
+              contact.ageInTurns <= 1,
+              state.map.contains(contact.lastKnownCoord),
+              contactFallsInsideDirectiveArea(contact, for: directive, in: state) else {
+            return false
+        }
+
+        if let linkedDivisionId = contact.linkedDivisionId,
+           let linkedDivision = state.division(id: linkedDivisionId) {
+            return linkedDivision.faction.isHostile(to: state.activeFaction)
+        }
+
+        return state.map.tile(at: contact.lastKnownCoord)?.controller?.isHostile(to: state.activeFaction) == true
+    }
+
+    private func contactFallsInsideDirectiveArea(
+        _ contact: ContactTrack,
+        for directive: ModernSubDirective,
+        in state: GameState
+    ) -> Bool {
+        if let regionId = directive.regionId {
+            return state.map.region(for: contact.lastKnownCoord) == regionId
+        }
+
+        if let zoneId = directive.zoneId,
+           let zone = state.warDeploymentState.frontZones[zoneId] {
+            let regionIds = Set(zone.regionIds)
+            return state.map.region(for: contact.lastKnownCoord).map { regionIds.contains($0) } ?? false
+        }
+
+        return true
     }
 
     private func candidateDivisions(
@@ -550,6 +672,71 @@ struct ModernSubDirectiveCommandCompiler {
         return ewWeight * 100
             + division.componentWeight(where: { $0 == .uav }) * 25
             + division.componentWeight(where: { $0 == .recon }) * 15
+            + Double(division.vision)
+    }
+
+    private func candidateAirDefenseSuppressionDivisions(
+        for directive: ModernSubDirective,
+        in state: GameState
+    ) -> [Division] {
+        let zoneUnitPriority = directive.zoneId
+            .flatMap { state.warDeploymentState.frontZones[$0] }
+            .map { stableUnique($0.unitsDepth + $0.unitsGarrison + $0.unitsFront) } ?? []
+        let zoneRank = Dictionary(uniqueKeysWithValues: zoneUnitPriority.enumerated().map { index, id in
+            (id, index)
+        })
+
+        return state.divisions
+            .filter {
+                $0.faction == state.activeFaction &&
+                    !$0.isDestroyed &&
+                    !$0.isRetreating &&
+                    !$0.hasActed &&
+                    $0.canAct
+            }
+            .filter {
+                guard directive.zoneId != nil else {
+                    return true
+                }
+                return zoneRank[$0.id] != nil
+            }
+            .filter { airDefenseSuppressionScore($0) > 0 }
+            .sorted {
+                let lhsZoneRank = zoneRank[$0.id] ?? Int.max
+                let rhsZoneRank = zoneRank[$1.id] ?? Int.max
+                if lhsZoneRank != rhsZoneRank {
+                    return lhsZoneRank < rhsZoneRank
+                }
+
+                let lhsScore = airDefenseSuppressionScore($0)
+                let rhsScore = airDefenseSuppressionScore($1)
+                if lhsScore != rhsScore {
+                    return lhsScore > rhsScore
+                }
+
+                if $0.vision != $1.vision {
+                    return $0.vision > $1.vision
+                }
+
+                return $0.id < $1.id
+            }
+    }
+
+    private func airDefenseSuppressionScore(_ division: Division) -> Double {
+        let firesWeight = division.componentWeight(where: \.isFiresFamily)
+        let unmannedWeight = division.componentWeight(where: \.isUnmannedFamily)
+        let ewWeight = division.componentWeight(where: { $0 == .electronicWarfare })
+        let airDefenseWeight = division.componentWeight(where: \.isAirDefenseFamily)
+        let capabilityWeight = [firesWeight, unmannedWeight, ewWeight, airDefenseWeight].max() ?? 0
+        guard capabilityWeight >= 0.15 || division.isArtillery || division.hasUnmannedSupport else {
+            return 0
+        }
+
+        return division.componentWeight(where: { $0 == .rocketArtillery }) * 110
+            + division.componentWeight(where: { $0 == .artillery }) * 95
+            + unmannedWeight * 75
+            + ewWeight * 60
+            + airDefenseWeight * 40
             + Double(division.vision)
     }
 

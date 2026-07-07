@@ -24,7 +24,7 @@ MapEditor / JSON 数据
   -> MarshalAgent / Operational Directive JSON (`TheaterDirective` schema)
   -> TheaterDirectiveDecoder
   -> ModernCommandChainOrchestrator / ModernCommandChainDecoder
-  -> ModernSubDirectiveCommandCompiler (limited ISR Recon Area + Fires Fire Mission + EW Electronic Warfare bridge)
+  -> ModernSubDirectiveCommandCompiler (limited ISR Recon Area + Fires Fire Mission + EW Electronic Warfare + Air Tasking SEAD bridge)
   -> TheaterDirectiveCompiler
   -> ZoneCommanderAgent fallback / 手写 ZoneDirective
   -> WarCommandExecutor
@@ -70,7 +70,7 @@ Release Candidate Readiness
 - `EconomyState` 是 faction 级经济总账；收入来自受控 region、城市、工厂、基础设施和补给值，但战术占领仍以 hex 为准。
 - 玩家、AI、后续聊天命令最终都必须经过 `Command` / `ZoneDirective -> WarCommandExecutor -> RuleEngine`，不能直接改 `GameState`。
 - v6.6 默认战争 AI 上游是 `MarshalAgent -> Operational Directive JSON (TheaterDirective schema) -> ModernCommandChain JSON -> TheaterDirectiveCompiler`，下游执行收口到 `Command / ZoneDirective -> WarCommandExecutor / RuleEngine`。
-- `ModernCommandChainPlan` 主要做可审计分解、JSON 校验和复盘展示；当前 `ISR Coordinator / Recon Area`、`Fires Coordinator / Fire Mission` 与 `EW Coordinator / Electronic Warfare` 有受限执行桥，会在 ZoneDirective 执行前最多编译并执行 1 条 `Command`：ISR 生成 `Command.recon` 并经 `CommandValidator -> RuleEngine -> VisibilityRules` 刷新 contact 和 intelligence event；Fires 仅在存在 contact track 时生成 `Command.fireMission`，并继续经 `CommandValidator -> RuleEngine -> FireSupportRules` 校验弹药、冷却、目标质量、ROE、防空和友邻风险；EW 仅从当前 active faction、指定 zone 内、未行动且 EW 组件权重达标的 formation 中选 1 个候选，生成 `Command.electronicWarfare` 并经 `CommandValidator -> RuleEngine -> VisibilityRules` 写入 EW effect、刷新 awareness 和电子战日志。执行结果写入 `AgentDecisionRecord.commandResults`。Air / Logistics / Brigade sub-directive 仍为 advisory / ZoneDirective 路径，不直接执行。
+- `ModernCommandChainPlan` 主要做可审计分解、JSON 校验和复盘展示；当前 `ISR Coordinator / Recon Area`、`Fires Coordinator / Fire Mission`、`EW Coordinator / Electronic Warfare` 与 `Air Tasking / Suppress Air Defense` 有受限执行桥，会在 ZoneDirective 执行前最多编译并执行 1 条 `Command`：ISR 生成 `Command.recon` 并经 `CommandValidator -> RuleEngine -> VisibilityRules` 刷新 contact 和 intelligence event；Fires 仅在存在 contact track 时生成 `Command.fireMission`，并继续经 `CommandValidator -> RuleEngine -> FireSupportRules` 校验弹药、冷却、目标质量、ROE、防空和友邻风险；EW 仅从当前 active faction、指定 zone 内、未行动且 EW 组件权重达标的 formation 中选 1 个候选，生成 `Command.electronicWarfare` 并经 `CommandValidator -> RuleEngine -> VisibilityRules` 写入 EW effect、刷新 awareness 和电子战日志；Air Tasking 目前只桥接 SEAD，且只接受当前 active faction 可见的 medium+ 新鲜 hostile air-defense contact，选择当前 active faction、指定 zone 内、未行动且具备火力 / 无人 / EW / 防空压制能力的 formation，生成 `Command.suppressAirDefense` 并经 `CommandValidator -> RuleEngine -> FireSupportRules` 消耗弹药、设置冷却、写入 suppression effect 和 fireSupport 日志，禁止无 contact 的区域盲压制。执行结果写入 `AgentDecisionRecord.commandResults`。Logistics / Brigade sub-directive 仍为 advisory / ZoneDirective 路径，不直接执行。
 - v6.7 玩家现代任务 UI 只调用 `AppContainer` 方法；任务最终落成 `Command` 或 `ZoneDirective`，不得在 SwiftUI View 里直接改 `GameState`。
 - v6.8 只新增现代 C2 展示层和地图态势 overlay；HUD、任务面板和 SpriteKit 标记只读 `GameState`，不绕过规则系统写状态。
 - v6.9 Playtest tab 只通过 `AppContainer` 做新局、保存/继续本地快照、observer 和图层设置；本地快照是带 schemaVersion 的 envelope，不污染默认 JSON 资源，并兼容旧裸 `GameState` 快照读取。
@@ -410,14 +410,14 @@ ModernCommandChainPlan
 
 安全边界：
 
-- 现代 sub-directive 默认仍是 advisory；当前只有 ISR Recon Area、Fires Fire Mission 和 EW Electronic Warfare 三条受限 bridge 会各自最多编译 1 条 `Command`，且仍必须经 `CommandValidator -> RuleEngine` 执行，不能直接改 `GameState`。
+- 现代 sub-directive 默认仍是 advisory；当前只有 ISR Recon Area、Fires Fire Mission、EW Electronic Warfare 和 Air Tasking Suppress Air Defense 四条受限 bridge 会各自最多编译 1 条 `Command`，且仍必须经 `CommandValidator -> RuleEngine` 执行，不能直接改 `GameState`。
 - 任何模型输出失败、schema 不匹配、turn/faction/issuer 不匹配、引用不存在或 role/mission 不合法时，都不会执行半成品。
 - 没有新增 API key、模型路径或网络依赖；真实本地 LLM 多 Agent 接入仍留给后续单独版本。
 
 仍未完成：
 
 - UI 已能通过现有 AI 面板查看结构化 Command Chain 摘要；directive 明细和 raw JSON 仍保留在记录层供审计，但普通玩家面板默认隐藏 Technical Replay。当前还没有专门的多 Agent 决策复盘全屏视图。
-- sub-directive 还没有独立调参 UI；当前仅 ISR Recon Area、Fires Fire Mission 和 EW Electronic Warfare 三条最小路径会受限编译成 `Command`，Air / Logistics / Brigade 仍未接入直接执行桥。
+- sub-directive 还没有独立调参 UI；当前仅 ISR Recon Area、Fires Fire Mission、EW Electronic Warfare 和 Air Tasking Suppress Air Defense 四条最小路径会受限编译成 `Command`，Logistics / Brigade 仍未接入直接执行桥。
 - ChiefOfStaff 当前是 deterministic notes / deconflict 说明，未做复杂冲突仲裁搜索。
 
 ## 0.9 v6.7 玩家现代指挥 UI、任务计划和人机协同

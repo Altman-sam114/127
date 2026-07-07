@@ -39,7 +39,7 @@ flowchart TD
     LOCAL["本机不主动跑检查<br/>仅确认分支 / 提交范围 / 工作区状态<br/>检查交给云端 artifact"]:::check
     COMMIT["main 本地提交<br/>commit 范围只含本轮文件"]:::git
     PUSH["推送 origin/main<br/>git push origin main"]:::git
-    GHA["GitHub Actions<br/>ci-results.yml<br/>diff / plist / xml / Ruby 脚本<br/>+ 云端 xcodebuild build<br/>+ Grey Tide AI half-turn probe<br/>+ Playtest / objective victory / Recon / command-chain ISR/Fires/EW / Observer / restricted fire ROE probes"]:::cloud
+    GHA["GitHub Actions<br/>ci-results.yml<br/>diff / plist / xml / Ruby 脚本<br/>+ 云端 xcodebuild build<br/>+ Grey Tide AI half-turn probe<br/>+ Playtest / objective victory / Recon / command-chain ISR/Fires/EW/SEAD / Observer / restricted fire ROE probes"]:::cloud
     ART["未加密 CI 结果包<br/>manifest / junit / xcodebuild.log / probe-xctest.log<br/>failure summary / grey-tide / modern-visible logs / xcresult"]:::artifact
     C0["Agent C<br/>gh auth login<br/>下载 artifact 到 /private/tmp/wwiihexv0-c-review-run_id"]:::agent
     C1{"manifest 是否匹配<br/>branch=main<br/>commitSha/runId/runAttempt 最新?"}:::decision
@@ -227,7 +227,7 @@ flowchart LR
 
 ## 0.8 v6.6 现代 AI Agent 指挥链和审计复盘
 
-这张图描述当前 v6.6 第一批实现和后续 v6.10 收口状态。现代指挥链主要作为可审计 JSON 和复盘层接入；当前 `ISR Coordinator / Recon Area`、`Fires Coordinator / Fire Mission` 与 `EW Coordinator / Electronic Warfare` 有受限执行桥，会最多编译 1 条 `Command` 并经统一规则系统执行。ISR 走 `Command.recon -> VisibilityRules`，Fires 只针对 contact track 生成 `Command.fireMission -> FireSupportRules`，EW 只从 EW 组件达标的可行动 formation 中生成 `Command.electronicWarfare -> VisibilityRules`；Air / Logistics / Brigade sub-directive 仍为 advisory / ZoneDirective 路径。
+这张图描述当前 v6.6 第一批实现和后续 v6.10 收口状态。现代指挥链主要作为可审计 JSON 和复盘层接入；当前 `ISR Coordinator / Recon Area`、`Fires Coordinator / Fire Mission`、`EW Coordinator / Electronic Warfare` 与 `Air Tasking / Suppress Air Defense` 有受限执行桥，会最多编译 1 条 `Command` 并经统一规则系统执行。ISR 走 `Command.recon -> VisibilityRules`，Fires 只针对 contact track 生成 `Command.fireMission -> FireSupportRules`，EW 只从 EW 组件达标的可行动 formation 中生成 `Command.electronicWarfare -> VisibilityRules`，SEAD 只针对当前可见 medium+ 新鲜 air-defense contact 生成 `Command.suppressAirDefense -> FireSupportRules`；Logistics / Brigade sub-directive 仍为 advisory / ZoneDirective 路径。
 
 ```mermaid
 flowchart LR
@@ -375,7 +375,7 @@ flowchart LR
     TERMS["Visible terminology<br/>National Command / Operational Zone<br/>PER / MAT / LOG"]:::display
     REPORT["v6.10 release candidate report<br/>residual scan / evidence matrix"]:::doc
     RULES["规则权威不变<br/>Command / ZoneDirective<br/>WarCommandExecutor / RuleEngine"]:::rules
-    CLOUD["main push<br/>GitHub Actions artifact<br/>manifest / junit / xcodebuild.log<br/>probe-xctest.log<br/>latest Probe count from artifact<br/>10 AI half-turn / Playtest / Recon / command-chain ISR/Fires/EW / Observer / restricted fire ROE"]:::cloud
+    CLOUD["main push<br/>GitHub Actions artifact<br/>manifest / junit / xcodebuild.log<br/>probe-xctest.log<br/>latest Probe count from artifact<br/>10 AI half-turn / Playtest / Recon / command-chain ISR/Fires/EW/SEAD / Observer / restricted fire ROE"]:::cloud
     SIDE["Playtest side selector<br/>Blue / Red new operation<br/>AI controls non-player hostile side"]:::display
     GATE["Playtest Action Gate<br/>active side named<br/>player / AI / observer / end-turn state"]:::display
     OBJ["Playtest objective summary<br/>10 main objectives<br/>Blue threshold / Red denial condition"]:::display
@@ -614,7 +614,7 @@ flowchart TD
     LLM["模拟 LLM 客户端<br/>SimulatedMarshalLLMClient<br/>输出 fenced JSON，不接真实网络或模型"]:::ai
     DEC["元帅 JSON 解码器<br/>TheaterDirectiveDecoder<br/>提取 JSON、解码、校验 schema/zone/region/tactic"]:::command
     MCHAIN["现代指挥链<br/>ModernCommandChainOrchestrator / Decoder<br/>校验并记录 ISR/Fires/Air/EW/Logistics/Brigade 子任务"]:::command
-    ISRBRIDGE["受限 command bridge<br/>ModernSubDirectiveCommandCompiler<br/>ISR Recon Area -> Command.recon<br/>Fires Fire Mission -> Command.fireMission<br/>EW Electronic Warfare -> Command.electronicWarfare<br/>最多执行 1 条"]:::command
+    ISRBRIDGE["受限 command bridge<br/>ModernSubDirectiveCommandCompiler<br/>ISR Recon Area -> Command.recon<br/>Fires Fire Mission -> Command.fireMission<br/>EW Electronic Warfare -> Command.electronicWarfare<br/>Air Tasking SEAD -> Command.suppressAirDefense<br/>最多执行 1 条"]:::command
     COMP["元帅意图编译器<br/>TheaterDirectiveCompiler<br/>TheaterDirective -> ZoneDirective<br/>传递 focus/convergence/coordinated 参数"]:::command
     ENV["指令信封<br/>DirectiveEnvelope<br/>收集编译后的 ZoneDirective"]:::command
     TACTIC["高级战术路由<br/>TacticName<br/>blitzkrieg / spearhead / breakthrough / pincer / fire / feint / guerrilla / elastic / depth / lastStand"]:::command

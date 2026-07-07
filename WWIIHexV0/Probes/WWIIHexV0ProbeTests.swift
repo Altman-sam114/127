@@ -380,6 +380,55 @@ final class WWIIHexV0ProbeTests: XCTestCase {
         XCTAssertTrue(summary.executed)
     }
 
+    func testProbeModernCommandChainAirTaskingSuppressAirDefenseExecutesViaRuleEngine() throws {
+        let state = Self.modernCommandChainSEADProbeState()
+        let plan = Self.modernCommandChainSEADProbePlan()
+        let compiled = try XCTUnwrap(
+            ModernSubDirectiveCommandCompiler()
+                .compileFirstExecutableCommand(from: plan, in: state)
+        )
+
+        XCTAssertEqual(compiled.directive.id, "sead_probe")
+        switch compiled.command {
+        case .suppressAirDefense(let divisionId, let target):
+            XCTAssertEqual(divisionId, "blue_sead")
+            XCTAssertEqual(target, HexCoord(q: 2, r: 0))
+        default:
+            XCTFail("Expected command-chain air tasking to compile to Command.suppressAirDefense.")
+        }
+
+        let result = RuleEngine().execute(compiled.command, in: state)
+
+        XCTAssertTrue(result.succeeded, result.message)
+        XCTAssertEqual(result.validation, .valid)
+        XCTAssertEqual(result.state.division(id: "blue_sead")?.hasActed, true)
+        XCTAssertTrue(result.state.eventLog.contains { $0.category == .fireSupport })
+
+        let suppression = try XCTUnwrap(result.state.fireSupportState.airTaskingState.suppressionEffects.last)
+        XCTAssertEqual(suppression.coord, HexCoord(q: 2, r: 0))
+        XCTAssertEqual(suppression.side, .red)
+        XCTAssertEqual(suppression.reduction, 3)
+        XCTAssertEqual(suppression.remainingTurns, 3)
+        XCTAssertGreaterThan(result.state.fireSupportState.cooldownsByAsset["blue_sead"] ?? 0, 0)
+
+        let missionResult = try XCTUnwrap(result.state.fireSupportState.lastMissionResults.last)
+        XCTAssertEqual(missionResult.status, .suppressed)
+        XCTAssertEqual(missionResult.target, .hex(HexCoord(q: 2, r: 0)))
+        XCTAssertEqual(missionResult.damage, 0)
+
+        let summary = CommandResultSummary.commandChainCommand(
+            directive: compiled.directive,
+            command: compiled.command,
+            result: result,
+            displayState: state
+        )
+        XCTAssertEqual(summary.id, "command_chain_sead_probe")
+        XCTAssertEqual(summary.divisionId, "blue_sead")
+        XCTAssertTrue(summary.mappingSucceeded)
+        XCTAssertEqual(summary.validationSucceeded, true)
+        XCTAssertTrue(summary.executed)
+    }
+
     func testProbePlaytestSideSelectionActionGateAndSnapshot() {
         let dataLoader = DataLoader()
         let container = AppContainer(
@@ -1516,6 +1565,132 @@ final class WWIIHexV0ProbeTests: XCTestCase {
         )
     }
 
+    private static func modernCommandChainSEADProbeState() -> GameState {
+        let blueCoord = HexCoord(q: 0, r: 0)
+        let targetCoord = HexCoord(q: 2, r: 0)
+        let zoneId = FrontZoneId("blue_probe_zone")
+        let targetRegion = RegionId("target_area")
+        let map = modernCommandChainSEADProbeMap(
+            blueCoord: blueCoord,
+            targetCoord: targetCoord
+        )
+        let divisions = [
+            Division(
+                id: "blue_sead",
+                name: "Blue SEAD Team",
+                faction: .blueForce,
+                coord: blueCoord,
+                facing: .east,
+                components: [
+                    DivisionComponent(type: .rocketArtillery, weight: 0.45),
+                    DivisionComponent(type: .uav, weight: 0.35),
+                    DivisionComponent(type: .electronicWarfare, weight: 0.20)
+                ]
+            ),
+            Division(
+                id: "red_ad_probe_target",
+                name: "Red Air Defense Site",
+                faction: .redForce,
+                coord: targetCoord,
+                facing: .west,
+                components: [DivisionComponent(type: .airDefense, weight: 1.0)]
+            )
+        ]
+        let contact = ContactTrack(
+            id: "contact_sead_probe_red_ad",
+            ownerFaction: .blueForce,
+            observerSide: .blue,
+            lastKnownCoord: targetCoord,
+            confidence: .confirmed,
+            estimatedType: .airDefense,
+            source: .uav,
+            ageInTurns: 0,
+            linkedDivisionId: "red_ad_probe_target"
+        )
+        let deployment = WarDeploymentState(
+            frontZones: [
+                zoneId: FrontZone(
+                    id: zoneId,
+                    name: "Blue Probe Zone",
+                    faction: .blueForce,
+                    regionIds: [targetRegion],
+                    unitsDepth: ["blue_sead"]
+                )
+            ],
+            hexToFrontZone: [
+                blueCoord: zoneId,
+                targetCoord: zoneId
+            ],
+            regionToFrontZone: [
+                targetRegion: zoneId
+            ]
+        )
+
+        return GameState(
+            scenarioId: "probe_command_chain_sead",
+            turn: 1,
+            maxTurns: 4,
+            activeFaction: .blueForce,
+            phase: .alliedPlayer,
+            map: map,
+            theaterState: .empty,
+            frontLineState: .empty,
+            warDeploymentState: deployment,
+            operationalAwareness: OperationalAwarenessState(
+                contacts: [contact.id: contact],
+                sensorCoverage: [],
+                ewEffects: []
+            ),
+            divisions: divisions,
+            victoryState: .ongoing,
+            selectedUnitSummary: nil,
+            eventLog: []
+        )
+    }
+
+    private static func modernCommandChainSEADProbePlan() -> ModernCommandChainPlan {
+        let directive = ModernSubDirective(
+            id: "sead_probe",
+            role: .airTasking,
+            missionType: .suppressAirDefense,
+            zoneId: FrontZoneId("blue_probe_zone"),
+            regionId: RegionId("target_area"),
+            contactId: "contact_sead_probe_red_ad",
+            priority: 86,
+            rationale: "Probe SEAD execution bridge."
+        )
+        let constraints = StrategicConstraintEnvelope(
+            issuerId: "probe_national",
+            turn: 1,
+            faction: .blueForce,
+            roeSummary: "Hostile red air-defense site inside probe area.",
+            riskTolerance: "limited",
+            priorityObjectives: ["target_area"],
+            prohibitedActions: [],
+            rationale: "Synthetic command-chain SEAD probe."
+        )
+        let jointPlan = JointCommandPlan(
+            issuerId: "probe_joint",
+            turn: 1,
+            faction: .blueForce,
+            strategicIntent: "Suppress hostile air defenses around the target area.",
+            theaterDirectiveIds: [],
+            subDirectives: [directive],
+            rationale: "Route first executable air-tasking sub-directive through Command.suppressAirDefense."
+        )
+
+        return ModernCommandChainPlan(
+            issuerId: "probe_chain",
+            turn: 1,
+            faction: .blueForce,
+            strategicConstraints: constraints,
+            jointPlan: jointPlan,
+            chiefOfStaffNotes: [],
+            compiledZoneDirectiveCount: 0,
+            summary: "Synthetic Air Tasking SEAD bridge probe."
+        )
+    }
+
     private static func modernCommandChainReconProbeMap(
         blueCoord: HexCoord,
         targetCoord: HexCoord
@@ -1654,6 +1829,56 @@ final class WWIIHexV0ProbeTests: XCTestCase {
             regions: regions,
             hexToRegion: [
                 blueCoord: blueRegion,
+                targetCoord: targetRegion
+            ],
+            regionEdges: [RegionEdge(from: blueRegion, to: targetRegion)]
+        )
+    }
+
+    private static func modernCommandChainSEADProbeMap(
+        blueCoord: HexCoord,
+        targetCoord: HexCoord
+    ) -> MapState {
+        let blueRegion = RegionId("blue_sead_area")
+        let targetRegion = RegionId("target_area")
+        let bufferCoord = HexCoord(q: 1, r: 0)
+        let regions: [RegionId: RegionNode] = [
+            blueRegion: RegionNode(
+                id: blueRegion,
+                name: "Blue SEAD Area",
+                owner: .blueForce,
+                controller: .blueForce,
+                terrain: .plain,
+                neighbors: [targetRegion],
+                displayHexes: [blueCoord, bufferCoord],
+                representativeHex: blueCoord
+            ),
+            targetRegion: RegionNode(
+                id: targetRegion,
+                name: "Target Area",
+                owner: .redForce,
+                controller: .redForce,
+                terrain: .plain,
+                neighbors: [blueRegion],
+                displayHexes: [targetCoord],
+                representativeHex: targetCoord
+            )
+        ]
+
+        return MapState(
+            width: 3,
+            height: 1,
+            tiles: [
+                blueCoord: HexTile(coord: blueCoord, baseTerrain: .plain, controller: .blueForce, regionId: blueRegion),
+                bufferCoord: HexTile(coord: bufferCoord, baseTerrain: .plain, controller: .blueForce, regionId: blueRegion),
+                targetCoord: HexTile(coord: targetCoord, baseTerrain: .plain, controller: .redForce, regionId: targetRegion)
+            ],
+            supplySources: [],
+            objectives: [],
+            regions: regions,
+            hexToRegion: [
+                blueCoord: blueRegion,
+                bufferCoord: blueRegion,
                 targetCoord: targetRegion
             ],
             regionEdges: [RegionEdge(from: blueRegion, to: targetRegion)]
