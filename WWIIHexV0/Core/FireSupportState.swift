@@ -82,7 +82,7 @@ enum FireMissionTarget: Codable, Equatable {
             guard let regionName = state.map.regions[regionId]?.name else {
                 return displayName
             }
-            return visibleAreaName(regionName, fallbackPrefix: "Objective")
+            return Self.visibleAreaName(regionName, fallbackPrefix: "Objective")
         }
     }
 
