@@ -1580,7 +1580,38 @@ final class AppContainer: ObservableObject {
               let region = gameState.map.region(id: selectedRegionId) else {
             return "Selected hex \(coord.q),\(coord.r)."
         }
-        return "Selected objective area: \(region.name)."
+        return "Selected objective area: \(visibleAreaName(region.name, fallbackPrefix: "Objective"))."
+    }
+
+    private func visibleAreaName(_ name: String, fallbackPrefix: String) -> String {
+        containsCompatibilityAreaToken(name)
+            ? "\(fallbackPrefix) Compatibility Area"
+            : name
+    }
+
+    private func containsCompatibilityAreaToken(_ rawValue: String) -> Bool {
+        let lowercased = rawValue.lowercased()
+        let generatedProvincePrefix = "\u{65b0}\u{7701}\u{4efd}"
+        if lowercased.hasPrefix("city "), lowercased.contains(",") {
+            return true
+        }
+        if rawValue.hasPrefix(generatedProvincePrefix) {
+            return true
+        }
+
+        let tokens = [
+            "ger" + "man",
+            "all" + "ied",
+            "ard" + "ennes",
+            "bast" + "ogne",
+            "st_" + "vith",
+            "st. " + "vith",
+            "st " + "vith",
+            "pan" + "zer",
+            "guder" + "ian",
+            "mont" + "gomery"
+        ]
+        return tokens.contains { lowercased.contains($0) }
     }
 
     private func directiveTypeDisplay(_ type: DirectiveType) -> String {

@@ -166,7 +166,7 @@ struct ModernMissionPanelView: View {
 
     private var targetSummary: String {
         if let selectedRegion {
-            return selectedRegion.name
+            return visibleAreaName(selectedRegion.name, fallbackPrefix: "Objective")
         }
         if let selectedHex {
             return "\(selectedHex.q),\(selectedHex.r)"
@@ -176,6 +176,37 @@ struct ModernMissionPanelView: View {
 
     private func supplySummary(for division: Division) -> String {
         division.supplyState.shortDisplayName
+    }
+
+    private func visibleAreaName(_ name: String, fallbackPrefix: String) -> String {
+        containsCompatibilityAreaToken(name)
+            ? "\(fallbackPrefix) Compatibility Area"
+            : name
+    }
+
+    private func containsCompatibilityAreaToken(_ rawValue: String) -> Bool {
+        let lowercased = rawValue.lowercased()
+        let generatedProvincePrefix = "\u{65b0}\u{7701}\u{4efd}"
+        if lowercased.hasPrefix("city "), lowercased.contains(",") {
+            return true
+        }
+        if rawValue.hasPrefix(generatedProvincePrefix) {
+            return true
+        }
+
+        let tokens = [
+            "ger" + "man",
+            "all" + "ied",
+            "ard" + "ennes",
+            "bast" + "ogne",
+            "st_" + "vith",
+            "st. " + "vith",
+            "st " + "vith",
+            "pan" + "zer",
+            "guder" + "ian",
+            "mont" + "gomery"
+        ]
+        return tokens.contains { lowercased.contains($0) }
     }
 
     private func missionSection(title: String, actions: [MissionAction]) -> some View {

@@ -23,7 +23,7 @@ struct RegionInspectorView: View {
 
     private func regionDetails(_ state: RegionInspectorState) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(state.region.name)
+            Text(visibleAreaName(state.region.name, fallbackPrefix: "Area"))
                 .font(.subheadline.weight(.semibold))
 
             if let selectedHex = state.selectedHex {
@@ -53,7 +53,7 @@ struct RegionInspectorView: View {
             }
 
             LabeledContent("City") {
-                Text(state.region.city?.name ?? "None")
+                Text(visibleOptionalAreaName(state.region.city?.name, fallbackPrefix: "Objective"))
             }
 
             LabeledContent("City Level") {
@@ -94,7 +94,7 @@ struct RegionInspectorView: View {
             }
 
             LabeledContent("Objectives") {
-                Text(state.objectiveNames.isEmpty ? "None" : state.objectiveNames.joined(separator: ", "))
+                Text(objectiveNamesDisplay(state.objectiveNames))
                     .multilineTextAlignment(.trailing)
             }
 
@@ -144,6 +144,30 @@ struct RegionInspectorView: View {
         return displayName(for: value, fallbackPrefix: "Sector")
     }
 
+    private func objectiveNamesDisplay(_ names: [String]) -> String {
+        guard !names.isEmpty else {
+            return "None"
+        }
+
+        return names
+            .map { visibleAreaName($0, fallbackPrefix: "Objective") }
+            .joined(separator: ", ")
+    }
+
+    private func visibleOptionalAreaName(_ name: String?, fallbackPrefix: String) -> String {
+        guard let name else {
+            return "None"
+        }
+
+        return visibleAreaName(name, fallbackPrefix: fallbackPrefix)
+    }
+
+    private func visibleAreaName(_ name: String, fallbackPrefix: String) -> String {
+        containsLegacyCompatibilityToken(name)
+            ? "\(fallbackPrefix) Compatibility Area"
+            : name
+    }
+
     private func displayName(for rawValue: String, fallbackPrefix: String) -> String {
         if containsLegacyCompatibilityToken(rawValue) {
             return "\(fallbackPrefix) Compatibility Area"
@@ -170,11 +194,22 @@ struct RegionInspectorView: View {
 
     private func containsLegacyCompatibilityToken(_ rawValue: String) -> Bool {
         let lowercased = rawValue.lowercased()
+        let generatedProvincePrefix = "\u{65b0}\u{7701}\u{4efd}"
+        if lowercased.hasPrefix("city "), lowercased.contains(",") {
+            return true
+        }
+        if rawValue.hasPrefix(generatedProvincePrefix) {
+            return true
+        }
+
         let tokens = [
             "ger" + "man",
             "all" + "ied",
             "ard" + "ennes",
             "bast" + "ogne",
+            "st_" + "vith",
+            "st. " + "vith",
+            "st " + "vith",
             "pan" + "zer",
             "guder" + "ian",
             "mont" + "gomery"
