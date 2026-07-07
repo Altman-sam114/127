@@ -314,7 +314,7 @@ ContactTrack
 - `AgentContextBuilder` 不再把真实敌军 `enemyDivisions` 放进 AI 摘要，改为 `contactSummaries`；legacy prompt 也展示 Visible contacts，而不是 Known enemy divisions。
 - `ZoneCommanderAgent`、`MarshalBattlefieldSummarizer` 和 `MockAICommander` 的可见敌情强度改由 visible contacts 估算。
 - `WarCommandExecutor.visibleEnemyDivision` 只会把 medium+ contact 的内部 `linkedDivisionId` 解析成真实攻击目标；没有 contact 时不凭空选择隐藏敌军。
-- `CommandValidator.validateAttack` 对默认现代剧本 `grey_tide_2030` 增加 direct attack contact gate：攻击目标必须对应攻击方 medium+ visible linked contact；旧阿登 / 历史测试 fixture 仍走 legacy 兼容攻击校验，避免把现代迷雾规则反向套到旧数据集。本轮新增 `testProbeGreyTideDirectAttackRequiresVisibleLinkedContact`，用小型现代 `GameState` 锁定无 contact 拒绝、有 medium linked contact 放行，等待最新 artifact 核对。
+- `CommandValidator.validateAttack` 对默认现代剧本 `grey_tide_2030` 增加 direct attack contact gate：攻击目标必须对应攻击方 medium+ visible linked contact；旧阿登 / 历史测试 fixture 仍走 legacy 兼容攻击校验，避免把现代迷雾规则反向套到旧数据集。本轮新增 `testProbeGreyTideDirectAttackRequiresVisibleLinkedContact`，用小型现代 `GameState` 锁定无 contact 拒绝、有 medium linked contact 放行；已随 `ac3807155aedfea1b176c72d7894c0a488d48427` / GitHub Actions run `28838947643` artifact 核对通过，`WWIIHexV0Probes` 为 24 tests / 0 failures。
 - 普通 UI 视角不再显示敌军 `Division` 兵牌；Region inspector 显示 contact 类型、可信度、来源和年龄，不显示敌军真实单位名。Observer mode 仍保留调试全显。
 
 仍未完成：
