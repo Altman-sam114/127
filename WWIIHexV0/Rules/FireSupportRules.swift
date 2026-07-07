@@ -191,7 +191,7 @@ struct FireSupportRules {
                 munitionClass: munitionClass,
                 damage: 0,
                 riskFlags: plan.mission.riskFlags,
-                narrative: "\(munitionClass.displayName) failed to achieve effect on \(target.displayName)."
+                narrative: "\(munitionClass.displayName) failed to achieve effect on \(target.contextualDisplayName(in: next))."
             )
         }
 

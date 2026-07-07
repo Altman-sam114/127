@@ -61,7 +61,7 @@ enum FireMissionTarget: Codable, Equatable {
     var displayName: String {
         switch self {
         case .contact(let id):
-            return "Contact Track \(Self.trackDisplay(id))"
+            return Self.trackDisplay(id)
         case .hex(let coord):
             return "Hex \(coord.q),\(coord.r)"
         case .region(let regionId):
@@ -79,26 +79,50 @@ enum FireMissionTarget: Codable, Equatable {
         case .hex:
             return displayName
         case .region(let regionId):
-            return state.map.regions[regionId]?.name ?? displayName
+            guard let regionName = state.map.regions[regionId]?.name else {
+                return displayName
+            }
+            return visibleAreaName(regionName, fallbackPrefix: "Objective")
         }
     }
 
     private static func trackDisplay(_ id: String) -> String {
-        let cleaned = id
-            .replacingOccurrences(of: "contact_", with: "")
-            .replacingOccurrences(of: "ct_", with: "")
-            .replacingOccurrences(of: "_", with: " ")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-        return cleaned.isEmpty ? "Unknown" : cleaned.capitalized
+        id.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "Unknown Contact" : "Contact Track"
     }
 
     private static func objectiveDisplay(_ id: RegionId) -> String {
-        let cleaned = id.rawValue
-            .replacingOccurrences(of: "region_", with: "")
-            .replacingOccurrences(of: "objective_", with: "")
-            .replacingOccurrences(of: "_", with: " ")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-        return cleaned.isEmpty ? "Objective Area" : "Objective \(cleaned.capitalized)"
+        id.rawValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "Objective" : "Objective Area"
+    }
+
+    private static func visibleAreaName(_ name: String, fallbackPrefix: String) -> String {
+        containsCompatibilityAreaToken(name)
+            ? "\(fallbackPrefix) Compatibility Area"
+            : name
+    }
+
+    private static func containsCompatibilityAreaToken(_ rawValue: String) -> Bool {
+        let lowercased = rawValue.lowercased()
+        let generatedProvincePrefix = "\u{65b0}\u{7701}\u{4efd}"
+        if lowercased.hasPrefix("city "), lowercased.contains(",") {
+            return true
+        }
+        if rawValue.hasPrefix(generatedProvincePrefix) {
+            return true
+        }
+
+        let tokens = [
+            "ger" + "man",
+            "all" + "ied",
+            "ard" + "ennes",
+            "bast" + "ogne",
+            "st_" + "vith",
+            "st. " + "vith",
+            "st " + "vith",
+            "pan" + "zer",
+            "guder" + "ian",
+            "mont" + "gomery"
+        ]
+        return tokens.contains { lowercased.contains($0) }
     }
 }
 

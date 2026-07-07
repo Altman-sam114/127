@@ -243,7 +243,7 @@ struct AgentPanelView: View {
 
         let parts = provider.split(separator: "+", maxSplits: 1).map(String.init)
         guard parts.first == "MockAI" else {
-            return provider
+            return providerDisplayName(provider)
         }
 
         guard parts.count == 2 else {
@@ -256,8 +256,19 @@ struct AgentPanelView: View {
         case "Directive":
             return "Local Planner + Directive"
         default:
-            return provider
+            return "Local Planner + Planner Extension"
         }
+    }
+
+    private func providerDisplayName(_ provider: String) -> String {
+        let lowercased = provider.lowercased()
+        if lowercased.contains("local") || lowercased.contains("mock") {
+            return "Local Planner"
+        }
+        if lowercased.contains("llm") || lowercased.contains("openai") || lowercased.contains("remote") {
+            return "External Planner"
+        }
+        return provider.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "System Planner" : "External Planner"
     }
 
     private func commandChainTargetLine(_ item: ModernCommandChainReplayItem) -> String {
@@ -353,13 +364,11 @@ struct AgentPanelView: View {
     }
 
     private func objectiveDisplay(_ id: RegionId) -> String {
-        let cleaned = cleanIdentifier(id.rawValue)
-        return cleaned.isEmpty ? "objective area" : "objective \(cleaned.capitalized)"
+        id.rawValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "objective" : "objective area"
     }
 
     private func contactDisplay(_ id: String) -> String {
-        let cleaned = cleanIdentifier(id)
-        return cleaned.isEmpty ? "contact" : "contact \(cleaned.capitalized)"
+        id.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "contact" : "contact track"
     }
 
     private func cleanIdentifier(_ rawValue: String) -> String {
@@ -367,18 +376,27 @@ struct AgentPanelView: View {
             .replacingOccurrences(of: "region_", with: "")
             .replacingOccurrences(of: "objective_", with: "")
             .replacingOccurrences(of: "contact_", with: "")
+            .replacingOccurrences(of: "ct_", with: "")
+            .replacingOccurrences(of: "auto_", with: "")
+            .replacingOccurrences(of: "front_zone_", with: "")
+            .replacingOccurrences(of: "zone_", with: "")
             .replacingOccurrences(of: "_", with: " ")
             .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     private func agentDisplayName(_ agentId: String?) -> String {
         guard let agentId else { return "No active agent" }
+        let lowercased = agentId.lowercased()
+        if lowercased.contains("auto_") || lowercased.contains("front_zone_") || lowercased.contains("zone_") {
+            return "Command Planner"
+        }
         let cleaned = agentId
             .replacingOccurrences(of: "mock_commander", with: "command planner")
             .replacingOccurrences(of: "marshal", with: "joint command")
             .replacingOccurrences(of: "gud" + "erian", with: "legacy planner")
             .replacingOccurrences(of: "blueForce", with: "Blue Force")
             .replacingOccurrences(of: "redForce", with: "Red Force")
+            .replacingOccurrences(of: "greenForce", with: "Green Force")
             .replacingOccurrences(of: "_", with: " ")
             .trimmingCharacters(in: .whitespacesAndNewlines)
         return cleaned.isEmpty ? "Command Planner" : cleaned.capitalized

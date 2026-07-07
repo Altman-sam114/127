@@ -45,12 +45,12 @@ enum AgentCommandMappingError: Error, Equatable, LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .missingDestination(let divisionId):
-            return "Move order for \(divisionId) is missing destination."
-        case .missingRegionDestination(let divisionId):
-            return "Move order for \(divisionId) is missing toRegionId."
-        case .missingTarget(let divisionId):
-            return "Attack order for \(divisionId) is missing target formation id."
+        case .missingDestination(_):
+            return "Move order is missing a destination."
+        case .missingRegionDestination(_):
+            return "Move order is missing a destination objective."
+        case .missingTarget(_):
+            return "Attack order is missing a target formation."
         case .regionMappingFailed(let detail):
             return detail
         }

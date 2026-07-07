@@ -454,12 +454,17 @@ struct TurnManager {
     }
 
     private static func agentDisplayName(_ agentId: String) -> String {
+        let lowercased = agentId.lowercased()
+        if lowercased.contains("auto_") || lowercased.contains("front_zone_") || lowercased.contains("zone_") {
+            return "Command Planner"
+        }
         let cleaned = agentId
             .replacingOccurrences(of: "mock_commander", with: "command planner")
             .replacingOccurrences(of: "marshal", with: "joint command")
             .replacingOccurrences(of: "gud" + "erian", with: "legacy planner")
             .replacingOccurrences(of: "blueForce", with: "Blue Force")
             .replacingOccurrences(of: "redForce", with: "Red Force")
+            .replacingOccurrences(of: "greenForce", with: "Green Force")
             .replacingOccurrences(of: "_", with: " ")
             .trimmingCharacters(in: .whitespacesAndNewlines)
         return cleaned.isEmpty ? "Command Planner" : cleaned.capitalized
