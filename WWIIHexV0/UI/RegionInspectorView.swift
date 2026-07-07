@@ -145,6 +145,10 @@ struct RegionInspectorView: View {
     }
 
     private func displayName(for rawValue: String, fallbackPrefix: String) -> String {
+        if containsLegacyCompatibilityToken(rawValue) {
+            return "\(fallbackPrefix) Compatibility Area"
+        }
+
         let corridorSuffix = "a" + "x" + "i" + "s"
         if rawValue.contains("airport_" + corridorSuffix) {
             return "\(fallbackPrefix) Airport Corridor"
@@ -162,5 +166,19 @@ struct RegionInspectorView: View {
         }
 
         return "\(fallbackPrefix) \(cleaned.capitalized)"
+    }
+
+    private func containsLegacyCompatibilityToken(_ rawValue: String) -> Bool {
+        let lowercased = rawValue.lowercased()
+        let tokens = [
+            "ger" + "man",
+            "all" + "ied",
+            "ard" + "ennes",
+            "bast" + "ogne",
+            "pan" + "zer",
+            "guder" + "ian",
+            "mont" + "gomery"
+        ]
+        return tokens.contains { lowercased.contains($0) }
     }
 }

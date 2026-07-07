@@ -167,7 +167,7 @@ flowchart LR
 
 ## 0.6 v6.4 ISR、ContactTrack 和电子战基础
 
-这张图描述当前 v6.4 第一批实现。它让 AI/UI 读取 contact 摘要而不读取真实敌军列表；真实 `linkedDivisionId` 只在规则层内部用于把 medium+ contact 解析成可攻击目标。
+这张图描述当前 v6.4 第一批实现。它让 AI/UI 读取 contact 摘要而不读取真实敌军列表；真实 `linkedDivisionId` 只在规则层内部用于把 medium+ contact 解析成可攻击目标。默认现代剧本的 direct attack 也由 `CommandValidator` 要求 medium+ visible linked contact，旧阿登 / 历史 fixture 保留兼容攻击校验。
 
 ```mermaid
 flowchart LR
@@ -178,7 +178,7 @@ flowchart LR
     CMD["Command.recon / electronicWarfare<br/>CommandValidator<br/>CommandExecutor"]:::command
     AI["AI 摘要<br/>AgentContext.contactSummaries<br/>Zone / Marshal contact strength"]:::agent
     UI["UI 摘要<br/>Region inspector contacts<br/>contact-gated attack highlights"]:::display
-    EXEC["WarCommandExecutor<br/>medium+ contact -> internal linkedDivisionId<br/>再交 RuleEngine"]:::rules
+    EXEC["WarCommandExecutor / CommandValidator<br/>medium+ contact -> internal linkedDivisionId<br/>direct attack gate / RuleEngine"]:::rules
     FIRES["v6.5 火力接入<br/>FireMission / AirTasking<br/>防空压制 / UAV recon"]:::rules
 
     UNITS --> SENSOR --> CONTACT
@@ -206,7 +206,7 @@ flowchart LR
 flowchart LR
     CONTACT["ContactTrack<br/>medium+ target quality<br/>contact / hex / region target"]:::state
     CMD["Command.fireMission<br/>uavRecon<br/>suppressAirDefense"]:::command
-    VALID["CommandValidator<br/>source asset / ammo / cooldown<br/>target quality / range / ROE<br/>restricted fire gate<br/>AD / EW / friendly risk"]:::rules
+    VALID["CommandValidator<br/>source asset / ammo / cooldown<br/>target quality / range / ROE<br/>restricted fire gate<br/>direct attack contact gate<br/>AD / EW / friendly risk"]:::rules
     FIRE["FireSupportRules<br/>FireMission plan<br/>MunitionClass<br/>FireMissionResult"]:::rules
     AIR["AirTaskingState<br/>sorties / AD threat<br/>airSuperiority / suppression"]:::state
     DAMAGE["有限效果<br/>strength damage<br/>retreat / destroyed<br/>no hex occupation"]:::rules

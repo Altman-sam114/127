@@ -41,6 +41,8 @@ MapEditor / JSON
 - 当前默认数据和主 UI 已切到 `grey_tide_2030`、虚构 Blue / Red commander 和现代显示口径；旧阿登、Bastogne、Guderian、Montgomery、Panzer 等保留在 fallback、测试 fixture 或历史文档中。
 - 当前 `DataLoader.loadInitialGameState()` 默认优先加载 `grey_tide_2030_scenario` 与 `grey_tide_2030_regions`，失败才回退旧阿登资源。
 - 当前 `RegionDataSet.toRegions()` 对 nil owner/controller fallback 到 `.neutral`，不再把中立 region 错落到 `.allies`。
+- 当前默认现代剧本中的 direct attack 已进入 contact gate：`CommandValidator.validateAttack` 要求攻击目标具备攻击方 medium+ visible linked contact，避免 legacy order 或猜 id 攻击绕过迷雾；旧阿登 / 历史测试 fixture 保留兼容攻击校验。
+- 当前 `UnitInspectorView` / `RegionInspectorView` 对 legacy raw id 派生显示做 compatibility scrub，灰潮加载失败、旧快照或旧 fixture 进入 inspector 时不应把主要旧题材 token 标题化给玩家；`MapEditorExporter.export` 普通独立导出已声明不自动携带灰潮 RC 十个主目标胜负门，覆盖默认灰潮资源需走 `MapEditorGameResourceBridge`。
 - 当前工作树可能混有 v0.4、v0.5、v0.7、v0.8、v0.9、v1.0、v1.1、三国迁移、拿战迁移、隋唐迁移、明末迁移等未提交改动。任何实现前必须做分支和文件冲突审查，不能回滚他人改动。
 
 迁移目标不是“把二战文案换成现代文案”，而是把这个工程逐步迁移为一个可发布的 AI Agent 驱动现代战争策略游戏：玩家在现代作战态势图上指挥合成营、无人系统、精确火力、空地协同、电子战和后勤节点；AI Agent 以可审计 JSON 指令协作决策，所有行动仍被统一规则系统约束。
@@ -822,6 +824,7 @@ EWEffect
 
 - 侦察命令生成或刷新 contact，不直接造成伤害。
 - 火力任务只能打 confirmed 或足够 confidence 的 contact；低 confidence 允许低效果或高偏差，但必须有日志。
+- 默认现代剧本中的 direct attack 也必须有攻击方 medium+ visible linked contact；旧阿登 / 历史 fixture 可以保留 legacy 兼容攻击校验。
 - 电子战影响 sensor quality、drone control、command friction 或 fire mission accuracy。
 - AI summary 只能包含 visible contacts，不得读取真实敌军列表。
 - Contact 过期会降级或消失。

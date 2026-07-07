@@ -83,6 +83,15 @@ struct CommandValidator {
             return .invalid(.targetOutOfRange)
         }
 
+        if state.scenarioId == "grey_tide_2030",
+           state.operationalAwareness.visibleContact(
+               for: attacker.faction,
+               linkedTo: target.id,
+               minimumConfidence: .medium
+           ) == nil {
+            return .invalid(.insufficientTargetQuality)
+        }
+
         return .valid
     }
 

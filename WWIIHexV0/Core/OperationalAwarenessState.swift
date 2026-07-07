@@ -176,4 +176,24 @@ struct OperationalAwarenessState: Codable, Equatable {
                 return lhs.id < rhs.id
             }
     }
+
+    func visibleContact(
+        for faction: Faction,
+        linkedTo targetDivisionId: String,
+        minimumConfidence: ContactConfidence,
+        maximumAgeInTurns: Int? = nil
+    ) -> ContactTrack? {
+        visibleContacts(for: faction).first { contact in
+            guard contact.linkedDivisionId == targetDivisionId,
+                  contact.confidence >= minimumConfidence else {
+                return false
+            }
+
+            if let maximumAgeInTurns {
+                return contact.ageInTurns <= maximumAgeInTurns
+            }
+
+            return true
+        }
+    }
 }
