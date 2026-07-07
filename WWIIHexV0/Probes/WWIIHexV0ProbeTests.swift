@@ -436,6 +436,43 @@ final class WWIIHexV0ProbeTests: XCTestCase {
         XCTAssertEqual(mediumResult.state.division(id: "blue_fires")?.hasActed, false)
     }
 
+    func testProbeGreyTideDirectAttackRequiresVisibleLinkedContact() throws {
+        let state = Self.modernDirectAttackProbeState(includeContact: false)
+        let ruleEngine = RuleEngine()
+
+        let blindResult = ruleEngine.execute(
+            .attack(attackerId: "blue_attack_contact_gate", targetId: "red_target_contact_gate"),
+            in: state
+        )
+
+        XCTAssertFalse(blindResult.succeeded)
+        XCTAssertEqual(blindResult.validation, .invalid(.insufficientTargetQuality))
+        XCTAssertEqual(blindResult.state.division(id: "blue_attack_contact_gate")?.hasActed, false)
+        XCTAssertEqual(
+            blindResult.state.division(id: "red_target_contact_gate")?.strength,
+            state.division(id: "red_target_contact_gate")?.strength
+        )
+
+        let spottedState = Self.modernDirectAttackProbeState(includeContact: true)
+        let attackResult = ruleEngine.execute(
+            .attack(attackerId: "blue_attack_contact_gate", targetId: "red_target_contact_gate"),
+            in: spottedState
+        )
+
+        XCTAssertTrue(attackResult.succeeded, attackResult.message)
+        XCTAssertEqual(attackResult.validation, .valid)
+        XCTAssertEqual(attackResult.state.division(id: "blue_attack_contact_gate")?.hasActed, true)
+        XCTAssertLessThan(
+            attackResult.state.division(id: "red_target_contact_gate")?.strength ?? 10,
+            spottedState.division(id: "red_target_contact_gate")?.strength ?? 10
+        )
+        XCTAssertTrue(
+            attackResult.state.eventLog.contains {
+                $0.message.localizedCaseInsensitiveContains("attacked")
+            }
+        )
+    }
+
     @MainActor
     func testProbeAppContainerObserverRunsTwoAIHalfTurns() async throws {
         let dataLoader = DataLoader()
@@ -842,6 +879,112 @@ final class WWIIHexV0ProbeTests: XCTestCase {
                 targetCoord: civilianRegion
             ],
             regionEdges: [RegionEdge(from: blueRegion, to: civilianRegion)]
+        )
+    }
+
+    private static func modernDirectAttackProbeState(includeContact: Bool) -> GameState {
+        let blueCoord = HexCoord(q: 0, r: 0)
+        let targetCoord = HexCoord(q: 1, r: 0)
+        let map = modernDirectAttackProbeMap(blueCoord: blueCoord, targetCoord: targetCoord)
+        let divisions = [
+            Division(
+                id: "blue_attack_contact_gate",
+                name: "Blue Contact Gate Assault",
+                faction: .blueForce,
+                coord: blueCoord,
+                facing: .east,
+                components: [
+                    DivisionComponent(type: .armor, weight: 0.6),
+                    DivisionComponent(type: .mechanizedInfantry, weight: 0.4)
+                ]
+            ),
+            Division(
+                id: "red_target_contact_gate",
+                name: "Red Contact Gate Target",
+                faction: .redForce,
+                coord: targetCoord,
+                facing: .west,
+                components: [DivisionComponent(type: .lightInfantry, weight: 1.0)]
+            )
+        ]
+        let contact = ContactTrack(
+            id: "contact_red_target_contact_gate",
+            ownerFaction: .blueForce,
+            observerSide: .blue,
+            lastKnownCoord: targetCoord,
+            confidence: .medium,
+            estimatedType: .infantry,
+            source: .groundRecon,
+            ageInTurns: 0,
+            linkedDivisionId: "red_target_contact_gate"
+        )
+
+        return GameState(
+            scenarioId: "grey_tide_2030",
+            turn: 1,
+            maxTurns: 4,
+            activeFaction: .blueForce,
+            phase: .alliedPlayer,
+            map: map,
+            theaterState: .empty,
+            frontLineState: .empty,
+            warDeploymentState: .empty,
+            operationalAwareness: OperationalAwarenessState(
+                contacts: includeContact ? [contact.id: contact] : [:],
+                sensorCoverage: [],
+                ewEffects: []
+            ),
+            divisions: divisions,
+            victoryState: .ongoing,
+            selectedUnitSummary: nil,
+            eventLog: []
+        )
+    }
+
+    private static func modernDirectAttackProbeMap(
+        blueCoord: HexCoord,
+        targetCoord: HexCoord
+    ) -> MapState {
+        let blueRegion = RegionId("blue_attack_sector")
+        let targetRegion = RegionId("red_attack_sector")
+        let regions: [RegionId: RegionNode] = [
+            blueRegion: RegionNode(
+                id: blueRegion,
+                name: "Blue Attack Sector",
+                owner: .blueForce,
+                controller: .blueForce,
+                terrain: .plain,
+                neighbors: [targetRegion],
+                displayHexes: [blueCoord],
+                representativeHex: blueCoord
+            ),
+            targetRegion: RegionNode(
+                id: targetRegion,
+                name: "Red Attack Sector",
+                owner: .redForce,
+                controller: .redForce,
+                terrain: .plain,
+                neighbors: [blueRegion],
+                displayHexes: [targetCoord],
+                representativeHex: targetCoord
+            )
+        ]
+
+        return MapState(
+            width: 2,
+            height: 1,
+            tiles: [
+                blueCoord: HexTile(coord: blueCoord, baseTerrain: .plain, controller: .blueForce, regionId: blueRegion),
+                targetCoord: HexTile(coord: targetCoord, baseTerrain: .plain, controller: .redForce, regionId: targetRegion)
+            ],
+            supplySources: [],
+            objectives: [],
+            regions: regions,
+            hexToRegion: [
+                blueCoord: blueRegion,
+                targetCoord: targetRegion
+            ],
+            regionEdges: [RegionEdge(from: blueRegion, to: targetRegion)]
         )
     }
 

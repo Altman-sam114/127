@@ -31,7 +31,7 @@ enum Command: Codable, Equatable {
         case .hold(let divisionId):
             return "Hold \(Self.formationDisplay(divisionId))"
         case .allowRetreat(let divisionId):
-            return "Authorize fallback for \(Self.formationDisplay(divisionId))"
+            return "Authorize withdrawal for \(Self.formationDisplay(divisionId))"
         case .resupply(let divisionId):
             return "Sustain \(Self.formationDisplay(divisionId))"
         case .recon(let divisionId, let target):
@@ -62,7 +62,7 @@ enum Command: Codable, Equatable {
         case .hold(let divisionId):
             return "Hold \(Self.formationDisplay(divisionId, in: state))"
         case .allowRetreat(let divisionId):
-            return "Authorize fallback for \(Self.formationDisplay(divisionId, in: state))"
+            return "Authorize withdrawal for \(Self.formationDisplay(divisionId, in: state))"
         case .resupply(let divisionId):
             return "Sustain \(Self.formationDisplay(divisionId, in: state))"
         case .recon(let divisionId, let target):

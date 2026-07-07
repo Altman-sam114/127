@@ -106,7 +106,7 @@ Release Candidate Readiness
 - workflow：`.github/workflows/ci-results.yml`
 - 触发：`push` 到 `main` 或手动 `workflow_dispatch`
 - artifact：`WWIIHexV0-ci-cloud-flow-v1-main-<short_sha>-run<run_id>-attempt<run_attempt>`
-- 必含：`ci-artifact-manifest.json`、`ci-failure-summary.md`、`junit.xml`、`xcodebuild.log`、`probe-xctest.log`、`simulator.log`、`git-diff-check.log`、`plutil.log`、`xmllint.log`、`grey-tide-data.log`、`modern-visible-text.log`，以及可生成时的 `WWIIHexV0.xcresult` / `WWIIHexV0Probes.xcresult`；`probe-xctest.log` 需核对灰潮默认剧本 10 个 AI 半回合、Playtest 状态、Modern Mission Recon 容器链路、Observer AI 容器入口和 restricted / civilian fire ROE probe
+- 必含：`ci-artifact-manifest.json`、`ci-failure-summary.md`、`junit.xml`、`xcodebuild.log`、`probe-xctest.log`、`simulator.log`、`git-diff-check.log`、`plutil.log`、`xmllint.log`、`grey-tide-data.log`、`modern-visible-text.log`，以及可生成时的 `WWIIHexV0.xcresult` / `WWIIHexV0Probes.xcresult`；`probe-xctest.log` 需核对灰潮默认剧本 10 个 AI 半回合、Playtest 状态、Modern Mission Recon 容器链路、Observer AI 容器入口、restricted / civilian fire ROE 和 direct attack contact gate probe
 - Agent C 缓存：`/private/tmp/wwiihexv0-c-review-<run_id>/`
 
 AITRANS 可复用项与不照搬项：
@@ -314,7 +314,7 @@ ContactTrack
 - `AgentContextBuilder` 不再把真实敌军 `enemyDivisions` 放进 AI 摘要，改为 `contactSummaries`；legacy prompt 也展示 Visible contacts，而不是 Known enemy divisions。
 - `ZoneCommanderAgent`、`MarshalBattlefieldSummarizer` 和 `MockAICommander` 的可见敌情强度改由 visible contacts 估算。
 - `WarCommandExecutor.visibleEnemyDivision` 只会把 medium+ contact 的内部 `linkedDivisionId` 解析成真实攻击目标；没有 contact 时不凭空选择隐藏敌军。
-- `CommandValidator.validateAttack` 对默认现代剧本 `grey_tide_2030` 增加 direct attack contact gate：攻击目标必须对应攻击方 medium+ visible contact；旧阿登 / 历史测试 fixture 仍走 legacy 兼容攻击校验，避免把现代迷雾规则反向套到旧数据集。
+- `CommandValidator.validateAttack` 对默认现代剧本 `grey_tide_2030` 增加 direct attack contact gate：攻击目标必须对应攻击方 medium+ visible linked contact；旧阿登 / 历史测试 fixture 仍走 legacy 兼容攻击校验，避免把现代迷雾规则反向套到旧数据集。本轮新增 `testProbeGreyTideDirectAttackRequiresVisibleLinkedContact`，用小型现代 `GameState` 锁定无 contact 拒绝、有 medium linked contact 放行，等待最新 artifact 核对。
 - 普通 UI 视角不再显示敌军 `Division` 兵牌；Region inspector 显示 contact 类型、可信度、来源和年龄，不显示敌军真实单位名。Observer mode 仍保留调试全显。
 
 仍未完成：
@@ -559,12 +559,12 @@ RootGameView
 
 - 没有多步骤新局向导或完整 AI 控制矩阵；当前只支持 Playtest tab 中的 Blue / Red 新局选择、observer mode 和只读 Action Gate。
 - 没有多存档槽、文件导出、iCloud、版本迁移 UI 或存档损坏修复面板。
-- 没有本机启动 app、模拟器、UI 点击、真实 App 10-20 回合观察者模式或截图验收；云端 `WWIIHexV0Probes` 已补灰潮 10 个 AI 半回合轻量运行时链路、Playtest 红/蓝新局、Action Gate、主目标摘要、本地快照状态链路、Modern Mission Recon 容器链路、Observer AI 容器入口自动推进和 restricted / civilian fire ROE 规则入口，但它不等于真实 App observer 长跑或 UI 点击。
+- 没有本机启动 app、模拟器、UI 点击、真实 App 10-20 回合观察者模式或截图验收；云端 `WWIIHexV0Probes` 已补灰潮 10 个 AI 半回合轻量运行时链路、Playtest 红/蓝新局、Action Gate、主目标摘要、本地快照状态链路、Modern Mission Recon 容器链路、Observer AI 容器入口自动推进、restricted / civilian fire ROE 规则入口和 direct attack contact gate，但它不等于真实 App observer 长跑或 UI 点击。
 - v6.10 已补发布候选残留扫描、资源检查口径和人工授权重验证清单。
 
 ## 0.12 v6.10 发布候选准备和残留扫描
 
-v6.10 当前不是正式发布，而是把现代战争迁移路线收口到可提交发布候选的状态：代码和文档准备好后继续通过 `origin/main` GitHub Actions artifact 做云端静态检查、通用 iOS build 和 `WWIIHexV0Probes` simulator probe 复核；当前 cloud Probe 已覆盖灰潮默认剧本 10 个 AI 半回合的轻量运行时链路，用于证明默认灰潮加载、AI 半回合推进、`end_turn` 规则链路和战略派生层刷新可在云端 simulator probe target 内跑通；也覆盖 Playtest 红/蓝新局选择、Action Gate、主目标摘要、本地快照状态恢复、Modern Mission Recon 经 `AppContainer -> CommandValidator -> RuleEngine / VisibilityRules` 的容器链路、Observer AI 容器入口自动推进的 `AppContainer` 状态链路，以及 restricted / civilian fire ROE 的 `RuleEngine -> CommandValidator -> FireSupportRules -> CommandExecutor` 规则入口。本机仍不主动跑 Xcode、模拟器、UI 点击、截图、真实 App observer 长回合或性能检查。`v6.10_release_candidate_evidence.md` 现在作为发布候选证据矩阵，逐项记录总提示词要求、代码依据、已核对 artifact 和未授权运行时风险。
+v6.10 当前不是正式发布，而是把现代战争迁移路线收口到可提交发布候选的状态：代码和文档准备好后继续通过 `origin/main` GitHub Actions artifact 做云端静态检查、通用 iOS build 和 `WWIIHexV0Probes` simulator probe 复核；当前 cloud Probe 已覆盖灰潮默认剧本 10 个 AI 半回合的轻量运行时链路，用于证明默认灰潮加载、AI 半回合推进、`end_turn` 规则链路和战略派生层刷新可在云端 simulator probe target 内跑通；也覆盖 Playtest 红/蓝新局选择、Action Gate、主目标摘要、本地快照状态恢复、Modern Mission Recon 经 `AppContainer -> CommandValidator -> RuleEngine / VisibilityRules` 的容器链路、Observer AI 容器入口自动推进的 `AppContainer` 状态链路、restricted / civilian fire ROE 的 `RuleEngine -> CommandValidator -> FireSupportRules -> CommandExecutor` 规则入口，以及 direct attack contact gate 的 `CommandValidator -> RuleEngine -> CommandExecutor` 入口。本机仍不主动跑 Xcode、模拟器、UI 点击、截图、真实 App observer 长回合或性能检查。`v6.10_release_candidate_evidence.md` 现在作为发布候选证据矩阵，逐项记录总提示词要求、代码依据、已核对 artifact 和未授权运行时风险。
 
 历史阶段文档如 `v6.2_grey_tide_seed.md`、`v6.3_modern_units_progress.md`、`v6.4_isr_ew_contacts_progress.md` 等记录的是当轮完成状态，其中的地图规模、未接 FireMission、未接现代模板或本机轻量检查计划不代表当前 v6.10 发布候选状态。当前验证边界以 `md/test/test.md` 为准：默认云端重验证，本机检查只在人工明确授权后作为参考执行。
 
@@ -2299,7 +2299,7 @@ MapEditorGameResourceBridge.loadDefaultDocument
 
 ## 11. 轻量检查入口与历史回归参考
 
-检查规范以 `md/test/test.md` 为准。当前默认不在本机跑 Xcode / XCTest / 模拟器 / 性能类验证；云端默认执行静态检查、通用 iOS build 和 `WWIIHexV0Probes` simulator probe，且 Probe 覆盖灰潮 10 个 AI 半回合轻量运行时链路、Playtest 状态链路、Observer AI 容器入口链路和 restricted / civilian fire ROE 规则入口；完整 XCTest / UI / 截图 / 真实 App observer 长回合仍跳过。
+检查规范以 `md/test/test.md` 为准。当前默认不在本机跑 Xcode / XCTest / 模拟器 / 性能类验证；云端默认执行静态检查、通用 iOS build 和 `WWIIHexV0Probes` simulator probe，且 Probe 覆盖灰潮 10 个 AI 半回合轻量运行时链路、Playtest 状态链路、Observer AI 容器入口链路、restricted / civilian fire ROE 规则入口和 direct attack contact gate；完整 XCTest / UI / 截图 / 真实 App observer 长回合仍跳过。
 
 历史上这些回归曾用于守住核心语义；其中 `WWIIHexV0Probes` 已纳入默认云端 simulator probe，本机仍只作只读参考，不作为每轮默认本机执行项：
 
@@ -2312,6 +2312,7 @@ MapEditorGameResourceBridge.loadDefaultDocument
   - v6.10 Playtest 红/蓝新局、Action Gate、主目标摘要和本地快照状态链路。
   - v6.10 Observer AI 容器入口自动推进两个 AI 半回合。
   - v6.10 restricted / civilian fire ROE：area fires 拒绝，precision current high-confidence linked hostile contact 降级放行，stale / medium contact 拒绝。
+  - v6.10 direct attack contact gate：默认现代剧本 direct attack 无 visible linked contact 拒绝，medium linked contact 放行。
 - Dynamic Theater Regression：`WWIIHexV0Tests/Stage0355DynamicTheaterTests`
   - 守住 `regionToTheater` 不动态推进、`hexToTheater` 单 hex 推进、split region front、deployment split。
 - MapEditor：`WWIIHexV0Tests/MapEditorOutputTests`
