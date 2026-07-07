@@ -241,6 +241,13 @@ struct ModernSubDirectiveCommandCompiler {
                 return (directive, command, result.diagnostics)
             }
         }
+        for directive in plan.jointPlan.subDirectives
+            where directive.role == .firesCoordinator && directive.missionType == .fireMission {
+            let result = compileFireMission(directive, in: state)
+            if let command = result.command {
+                return (directive, command, result.diagnostics)
+            }
+        }
         return nil
     }
 
@@ -279,6 +286,35 @@ struct ModernSubDirectiveCommandCompiler {
         }
 
         return (nil, ["Command-chain ISR recon skipped: no Recon Area command passed validation."])
+    }
+
+    private func compileFireMission(
+        _ directive: ModernSubDirective,
+        in state: GameState
+    ) -> (command: Command?, diagnostics: [String]) {
+        guard let contactId = directive.contactId else {
+            return (nil, ["Command-chain fires skipped: no contact track was assigned."])
+        }
+
+        let candidates = candidateFireDivisions(for: directive, in: state)
+        guard !candidates.isEmpty else {
+            return (nil, ["Command-chain fires skipped: no available fires formation was in command range."])
+        }
+
+        for division in candidates {
+            for munitionClass in preferredMunitions(for: division) {
+                let command = Command.fireMission(
+                    issuerId: division.id,
+                    target: .contact(id: contactId),
+                    munitionClass: munitionClass
+                )
+                if validator.validate(command, in: state).isValid {
+                    return (command, [])
+                }
+            }
+        }
+
+        return (nil, ["Command-chain fires skipped: no Fire Mission command passed validation."])
     }
 
     private func candidateDivisions(
@@ -358,6 +394,78 @@ struct ModernSubDirectiveCommandCompiler {
             + division.componentWeight(where: { $0 == .specialForces }) * 70
             + division.componentWeight(where: \.isAirDefenseFamily) * 20
             + Double(division.vision)
+    }
+
+    private func candidateFireDivisions(
+        for directive: ModernSubDirective,
+        in state: GameState
+    ) -> [Division] {
+        let zoneUnitPriority = directive.zoneId
+            .flatMap { state.warDeploymentState.frontZones[$0] }
+            .map { stableUnique($0.unitsDepth + $0.unitsGarrison + $0.unitsFront) } ?? []
+        let zoneRank = Dictionary(uniqueKeysWithValues: zoneUnitPriority.enumerated().map { index, id in
+            (id, index)
+        })
+
+        return state.divisions
+            .filter {
+                $0.faction == state.activeFaction &&
+                    !$0.isDestroyed &&
+                    !$0.isRetreating &&
+                    !$0.hasActed &&
+                    $0.canAct
+            }
+            .filter {
+                guard directive.zoneId != nil else {
+                    return true
+                }
+                return zoneRank[$0.id] != nil
+            }
+            .filter { fireScore($0) > 0 }
+            .sorted {
+                let lhsZoneRank = zoneRank[$0.id] ?? Int.max
+                let rhsZoneRank = zoneRank[$1.id] ?? Int.max
+                if lhsZoneRank != rhsZoneRank {
+                    return lhsZoneRank < rhsZoneRank
+                }
+
+                let lhsScore = fireScore($0)
+                let rhsScore = fireScore($1)
+                if lhsScore != rhsScore {
+                    return lhsScore > rhsScore
+                }
+
+                if $0.range != $1.range {
+                    return $0.range > $1.range
+                }
+
+                return $0.id < $1.id
+            }
+    }
+
+    private func fireScore(_ division: Division) -> Double {
+        division.componentWeight(where: { $0 == .rocketArtillery }) * 100
+            + division.componentWeight(where: { $0 == .artillery }) * 90
+            + division.componentWeight(where: { $0 == .loiteringMunition }) * 70
+            + division.componentWeight(where: { $0 == .uav }) * 50
+            + Double(division.range)
+    }
+
+    private func preferredMunitions(for division: Division) -> [MunitionClass] {
+        let rocketWeight = division.componentWeight(where: { $0 == .rocketArtillery })
+        let tubeWeight = division.componentWeight(where: { $0 == .artillery })
+        let loiteringWeight = division.componentWeight(where: { $0 == .loiteringMunition })
+
+        if rocketWeight >= tubeWeight && rocketWeight >= 0.20 {
+            return [.rocket, .tubeArtillery, .precision, .loitering]
+        }
+        if tubeWeight >= 0.20 {
+            return [.tubeArtillery, .rocket, .precision, .loitering]
+        }
+        if loiteringWeight >= 0.10 {
+            return [.loitering, .precision, .rocket, .tubeArtillery]
+        }
+        return [.precision, .loitering, .rocket, .tubeArtillery]
     }
 
     private func stableUnique(_ values: [HexCoord]) -> [HexCoord] {

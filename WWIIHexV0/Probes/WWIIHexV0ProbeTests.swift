@@ -291,6 +291,53 @@ final class WWIIHexV0ProbeTests: XCTestCase {
         XCTAssertTrue(summary.executed)
     }
 
+    func testProbeModernCommandChainFiresFireMissionExecutesViaRuleEngine() throws {
+        let state = Self.modernCommandChainFiresProbeState()
+        let plan = Self.modernCommandChainFiresProbePlan()
+        let compiled = try XCTUnwrap(
+            ModernSubDirectiveCommandCompiler()
+                .compileFirstExecutableCommand(from: plan, in: state)
+        )
+
+        XCTAssertEqual(compiled.directive.id, "fires_probe")
+        switch compiled.command {
+        case .fireMission(let issuerId, let target, let munitionClass):
+            XCTAssertEqual(issuerId, "blue_fires")
+            XCTAssertEqual(target, .contact(id: "contact_fire_probe_red_target"))
+            XCTAssertEqual(munitionClass, .rocket)
+        default:
+            XCTFail("Expected command-chain fires to compile to Command.fireMission.")
+        }
+
+        let result = RuleEngine().execute(compiled.command, in: state)
+
+        XCTAssertTrue(result.succeeded, result.message)
+        XCTAssertEqual(result.validation, .valid)
+        XCTAssertEqual(result.state.division(id: "blue_fires")?.hasActed, true)
+
+        let missionResult = try XCTUnwrap(result.state.fireSupportState.lastMissionResults.last)
+        XCTAssertEqual(missionResult.targetDivisionId, "red_fire_probe_target")
+        XCTAssertEqual(missionResult.munitionClass, .rocket)
+        XCTAssertGreaterThan(missionResult.damage, 0)
+        XCTAssertLessThan(
+            result.state.division(id: "red_fire_probe_target")?.strength ?? 10,
+            state.division(id: "red_fire_probe_target")?.strength ?? 10
+        )
+        XCTAssertTrue(result.state.eventLog.contains { $0.category == .fireSupport })
+
+        let summary = CommandResultSummary.commandChainCommand(
+            directive: compiled.directive,
+            command: compiled.command,
+            result: result,
+            displayState: state
+        )
+        XCTAssertEqual(summary.id, "command_chain_fires_probe")
+        XCTAssertEqual(summary.divisionId, "blue_fires")
+        XCTAssertTrue(summary.mappingSucceeded)
+        XCTAssertEqual(summary.validationSucceeded, true)
+        XCTAssertTrue(summary.executed)
+    }
+
     func testProbePlaytestSideSelectionActionGateAndSnapshot() {
         let dataLoader = DataLoader()
         let container = AppContainer(
@@ -1191,6 +1238,132 @@ final class WWIIHexV0ProbeTests: XCTestCase {
         )
     }
 
+    private static func modernCommandChainFiresProbeState() -> GameState {
+        let blueCoord = HexCoord(q: 0, r: 0)
+        let targetCoord = HexCoord(q: 2, r: 0)
+        let zoneId = FrontZoneId("blue_probe_zone")
+        let targetRegion = RegionId("target_area")
+        let map = modernCommandChainFiresProbeMap(
+            blueCoord: blueCoord,
+            targetCoord: targetCoord
+        )
+        let divisions = [
+            Division(
+                id: "blue_fires",
+                name: "Blue Rocket Fires",
+                faction: .blueForce,
+                coord: blueCoord,
+                facing: .east,
+                components: [
+                    DivisionComponent(type: .rocketArtillery, weight: 0.60),
+                    DivisionComponent(type: .artillery, weight: 0.25),
+                    DivisionComponent(type: .uav, weight: 0.15)
+                ]
+            ),
+            Division(
+                id: "red_fire_probe_target",
+                name: "Red Fire Probe Target",
+                faction: .redForce,
+                coord: targetCoord,
+                facing: .west,
+                components: [DivisionComponent(type: .lightInfantry, weight: 1.0)]
+            )
+        ]
+        let contact = ContactTrack(
+            id: "contact_fire_probe_red_target",
+            ownerFaction: .blueForce,
+            observerSide: .blue,
+            lastKnownCoord: targetCoord,
+            confidence: .confirmed,
+            estimatedType: .infantry,
+            source: .uav,
+            ageInTurns: 0,
+            linkedDivisionId: "red_fire_probe_target"
+        )
+        let deployment = WarDeploymentState(
+            frontZones: [
+                zoneId: FrontZone(
+                    id: zoneId,
+                    name: "Blue Probe Zone",
+                    faction: .blueForce,
+                    regionIds: [targetRegion],
+                    unitsDepth: ["blue_fires"]
+                )
+            ],
+            hexToFrontZone: [
+                blueCoord: zoneId,
+                targetCoord: zoneId
+            ],
+            regionToFrontZone: [
+                targetRegion: zoneId
+            ]
+        )
+
+        return GameState(
+            scenarioId: "probe_command_chain_fires",
+            turn: 1,
+            maxTurns: 4,
+            activeFaction: .blueForce,
+            phase: .alliedPlayer,
+            map: map,
+            theaterState: .empty,
+            frontLineState: .empty,
+            warDeploymentState: deployment,
+            operationalAwareness: OperationalAwarenessState(
+                contacts: [contact.id: contact],
+                sensorCoverage: [],
+                ewEffects: []
+            ),
+            divisions: divisions,
+            victoryState: .ongoing,
+            selectedUnitSummary: nil,
+            eventLog: []
+        )
+    }
+
+    private static func modernCommandChainFiresProbePlan() -> ModernCommandChainPlan {
+        let directive = ModernSubDirective(
+            id: "fires_probe",
+            role: .firesCoordinator,
+            missionType: .fireMission,
+            zoneId: FrontZoneId("blue_probe_zone"),
+            regionId: RegionId("target_area"),
+            contactId: "contact_fire_probe_red_target",
+            priority: 90,
+            rationale: "Probe fires execution bridge."
+        )
+        let constraints = StrategicConstraintEnvelope(
+            issuerId: "probe_national",
+            turn: 1,
+            faction: .blueForce,
+            roeSummary: "Hostile red target confirmed inside probe area.",
+            riskTolerance: "limited",
+            priorityObjectives: ["target_area"],
+            prohibitedActions: [],
+            rationale: "Synthetic command-chain fires probe."
+        )
+        let jointPlan = JointCommandPlan(
+            issuerId: "probe_joint",
+            turn: 1,
+            faction: .blueForce,
+            strategicIntent: "Suppress confirmed target contact.",
+            theaterDirectiveIds: [],
+            subDirectives: [directive],
+            rationale: "Route first executable fires sub-directive through Command.fireMission."
+        )
+
+        return ModernCommandChainPlan(
+            issuerId: "probe_chain",
+            turn: 1,
+            faction: .blueForce,
+            strategicConstraints: constraints,
+            jointPlan: jointPlan,
+            chiefOfStaffNotes: [],
+            compiledZoneDirectiveCount: 0,
+            summary: "Synthetic Fires fire mission bridge probe."
+        )
+    }
+
     private static func modernCommandChainReconProbeMap(
         blueCoord: HexCoord,
         targetCoord: HexCoord
@@ -1232,6 +1405,56 @@ final class WWIIHexV0ProbeTests: XCTestCase {
             regions: regions,
             hexToRegion: [
                 blueCoord: blueRegion,
+                targetCoord: targetRegion
+            ],
+            regionEdges: [RegionEdge(from: blueRegion, to: targetRegion)]
+        )
+    }
+
+    private static func modernCommandChainFiresProbeMap(
+        blueCoord: HexCoord,
+        targetCoord: HexCoord
+    ) -> MapState {
+        let blueRegion = RegionId("blue_fires_area")
+        let targetRegion = RegionId("target_area")
+        let bufferCoord = HexCoord(q: 1, r: 0)
+        let regions: [RegionId: RegionNode] = [
+            blueRegion: RegionNode(
+                id: blueRegion,
+                name: "Blue Fires Area",
+                owner: .blueForce,
+                controller: .blueForce,
+                terrain: .plain,
+                neighbors: [targetRegion],
+                displayHexes: [blueCoord, bufferCoord],
+                representativeHex: blueCoord
+            ),
+            targetRegion: RegionNode(
+                id: targetRegion,
+                name: "Target Area",
+                owner: .redForce,
+                controller: .redForce,
+                terrain: .plain,
+                neighbors: [blueRegion],
+                displayHexes: [targetCoord],
+                representativeHex: targetCoord
+            )
+        ]
+
+        return MapState(
+            width: 3,
+            height: 1,
+            tiles: [
+                blueCoord: HexTile(coord: blueCoord, baseTerrain: .plain, controller: .blueForce, regionId: blueRegion),
+                bufferCoord: HexTile(coord: bufferCoord, baseTerrain: .plain, controller: .blueForce, regionId: blueRegion),
+                targetCoord: HexTile(coord: targetCoord, baseTerrain: .plain, controller: .redForce, regionId: targetRegion)
+            ],
+            supplySources: [],
+            objectives: [],
+            regions: regions,
+            hexToRegion: [
+                blueCoord: blueRegion,
+                bufferCoord: blueRegion,
                 targetCoord: targetRegion
             ],
             regionEdges: [RegionEdge(from: blueRegion, to: targetRegion)]

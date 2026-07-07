@@ -24,7 +24,7 @@ MapEditor / JSON 数据
   -> MarshalAgent / Operational Directive JSON (`TheaterDirective` schema)
   -> TheaterDirectiveDecoder
   -> ModernCommandChainOrchestrator / ModernCommandChainDecoder
-  -> ModernSubDirectiveCommandCompiler (limited ISR Recon Area bridge)
+  -> ModernSubDirectiveCommandCompiler (limited ISR Recon Area + Fires Fire Mission bridge)
   -> TheaterDirectiveCompiler
   -> ZoneCommanderAgent fallback / 手写 ZoneDirective
   -> WarCommandExecutor
@@ -70,7 +70,7 @@ Release Candidate Readiness
 - `EconomyState` 是 faction 级经济总账；收入来自受控 region、城市、工厂、基础设施和补给值，但战术占领仍以 hex 为准。
 - 玩家、AI、后续聊天命令最终都必须经过 `Command` / `ZoneDirective -> WarCommandExecutor -> RuleEngine`，不能直接改 `GameState`。
 - v6.6 默认战争 AI 上游是 `MarshalAgent -> Operational Directive JSON (TheaterDirective schema) -> ModernCommandChain JSON -> TheaterDirectiveCompiler`，下游执行收口到 `Command / ZoneDirective -> WarCommandExecutor / RuleEngine`。
-- `ModernCommandChainPlan` 主要做可审计分解、JSON 校验和复盘展示；当前只有 `ISR Coordinator / Recon Area` 有受限执行桥，会在 ZoneDirective 执行前最多编译并执行 1 条 `Command.recon`，经 `CommandValidator -> RuleEngine -> VisibilityRules` 刷新 contact 和 intelligence event，再写入 `AgentDecisionRecord.commandResults`。Fires / Air / EW / Logistics / Brigade sub-directive 仍为 advisory / ZoneDirective 路径，不直接执行。
+- `ModernCommandChainPlan` 主要做可审计分解、JSON 校验和复盘展示；当前 `ISR Coordinator / Recon Area` 与 `Fires Coordinator / Fire Mission` 有受限执行桥，会在 ZoneDirective 执行前最多编译并执行 1 条 `Command`：ISR 生成 `Command.recon` 并经 `CommandValidator -> RuleEngine -> VisibilityRules` 刷新 contact 和 intelligence event；Fires 仅在存在 contact track 时生成 `Command.fireMission`，并继续经 `CommandValidator -> RuleEngine -> FireSupportRules` 校验弹药、冷却、目标质量、ROE、防空和友邻风险。执行结果写入 `AgentDecisionRecord.commandResults`。Air / EW / Logistics / Brigade sub-directive 仍为 advisory / ZoneDirective 路径，不直接执行。
 - v6.7 玩家现代任务 UI 只调用 `AppContainer` 方法；任务最终落成 `Command` 或 `ZoneDirective`，不得在 SwiftUI View 里直接改 `GameState`。
 - v6.8 只新增现代 C2 展示层和地图态势 overlay；HUD、任务面板和 SpriteKit 标记只读 `GameState`，不绕过规则系统写状态。
 - v6.9 Playtest tab 只通过 `AppContainer` 做新局、保存/继续本地快照、observer 和图层设置；本地快照是带 schemaVersion 的 envelope，不污染默认 JSON 资源，并兼容旧裸 `GameState` 快照读取。
