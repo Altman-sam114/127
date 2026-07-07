@@ -248,6 +248,13 @@ struct ModernSubDirectiveCommandCompiler {
                 return (directive, command, result.diagnostics)
             }
         }
+        for directive in plan.jointPlan.subDirectives
+            where directive.role == .ewCoordinator && directive.missionType == .electronicWarfare {
+            let result = compileElectronicWarfare(directive, in: state)
+            if let command = result.command {
+                return (directive, command, result.diagnostics)
+            }
+        }
         return nil
     }
 
@@ -315,6 +322,43 @@ struct ModernSubDirectiveCommandCompiler {
         }
 
         return (nil, ["Command-chain fires skipped: no Fire Mission command passed validation."])
+    }
+
+    private func compileElectronicWarfare(
+        _ directive: ModernSubDirective,
+        in state: GameState
+    ) -> (command: Command?, diagnostics: [String]) {
+        let targetCoords = targetCoordinates(for: directive, in: state)
+        guard !targetCoords.isEmpty else {
+            return (nil, ["Command-chain EW skipped: no valid target area was available."])
+        }
+
+        let candidates = candidateEWDivisions(for: directive, in: state)
+        guard !candidates.isEmpty else {
+            return (nil, ["Command-chain EW skipped: no available EW formation was in command range."])
+        }
+
+        for division in candidates {
+            let orderedTargets = targetCoords.sorted {
+                let lhsDistance = division.coord.distance(to: $0)
+                let rhsDistance = division.coord.distance(to: $1)
+                if lhsDistance == rhsDistance {
+                    if $0.q == $1.q {
+                        return $0.r < $1.r
+                    }
+                    return $0.q < $1.q
+                }
+                return lhsDistance < rhsDistance
+            }
+            for target in orderedTargets {
+                let command = Command.electronicWarfare(divisionId: division.id, target: target)
+                if validator.validate(command, in: state).isValid {
+                    return (command, [])
+                }
+            }
+        }
+
+        return (nil, ["Command-chain EW skipped: no Electronic Warfare command passed validation."])
     }
 
     private func candidateDivisions(
@@ -449,6 +493,64 @@ struct ModernSubDirectiveCommandCompiler {
             + division.componentWeight(where: { $0 == .loiteringMunition }) * 70
             + division.componentWeight(where: { $0 == .uav }) * 50
             + Double(division.range)
+    }
+
+    private func candidateEWDivisions(
+        for directive: ModernSubDirective,
+        in state: GameState
+    ) -> [Division] {
+        let zoneUnitPriority = directive.zoneId
+            .flatMap { state.warDeploymentState.frontZones[$0] }
+            .map { stableUnique($0.unitsDepth + $0.unitsGarrison + $0.unitsFront) } ?? []
+        let zoneRank = Dictionary(uniqueKeysWithValues: zoneUnitPriority.enumerated().map { index, id in
+            (id, index)
+        })
+
+        return state.divisions
+            .filter {
+                $0.faction == state.activeFaction &&
+                    !$0.isDestroyed &&
+                    !$0.isRetreating &&
+                    !$0.hasActed &&
+                    $0.canAct
+            }
+            .filter {
+                guard directive.zoneId != nil else {
+                    return true
+                }
+                return zoneRank[$0.id] != nil
+            }
+            .filter { ewScore($0) > 0 }
+            .sorted {
+                let lhsZoneRank = zoneRank[$0.id] ?? Int.max
+                let rhsZoneRank = zoneRank[$1.id] ?? Int.max
+                if lhsZoneRank != rhsZoneRank {
+                    return lhsZoneRank < rhsZoneRank
+                }
+
+                let lhsScore = ewScore($0)
+                let rhsScore = ewScore($1)
+                if lhsScore != rhsScore {
+                    return lhsScore > rhsScore
+                }
+
+                if $0.vision != $1.vision {
+                    return $0.vision > $1.vision
+                }
+
+                return $0.id < $1.id
+            }
+    }
+
+    private func ewScore(_ division: Division) -> Double {
+        let ewWeight = division.componentWeight(where: { $0 == .electronicWarfare })
+        guard ewWeight >= 0.15 else {
+            return 0
+        }
+        return ewWeight * 100
+            + division.componentWeight(where: { $0 == .uav }) * 25
+            + division.componentWeight(where: { $0 == .recon }) * 15
+            + Double(division.vision)
     }
 
     private func preferredMunitions(for division: Division) -> [MunitionClass] {

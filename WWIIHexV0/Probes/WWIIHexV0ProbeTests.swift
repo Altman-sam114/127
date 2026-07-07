@@ -338,6 +338,48 @@ final class WWIIHexV0ProbeTests: XCTestCase {
         XCTAssertTrue(summary.executed)
     }
 
+    func testProbeModernCommandChainEWElectronicWarfareExecutesViaRuleEngine() throws {
+        let state = Self.modernCommandChainEWProbeState()
+        let plan = Self.modernCommandChainEWProbePlan()
+        let compiled = try XCTUnwrap(
+            ModernSubDirectiveCommandCompiler()
+                .compileFirstExecutableCommand(from: plan, in: state)
+        )
+
+        XCTAssertEqual(compiled.directive.id, "ew_probe")
+        switch compiled.command {
+        case .electronicWarfare(let divisionId, let target):
+            XCTAssertEqual(divisionId, "blue_ew")
+            XCTAssertEqual(target, HexCoord(q: 1, r: 0))
+        default:
+            XCTFail("Expected command-chain EW to compile to Command.electronicWarfare.")
+        }
+
+        let result = RuleEngine().execute(compiled.command, in: state)
+
+        XCTAssertTrue(result.succeeded, result.message)
+        XCTAssertEqual(result.validation, .valid)
+        XCTAssertEqual(result.state.division(id: "blue_ew")?.hasActed, true)
+        XCTAssertTrue(result.state.eventLog.contains { $0.category == .electronicWarfare })
+
+        let effect = try XCTUnwrap(result.state.operationalAwareness.ewEffects.last)
+        XCTAssertEqual(effect.side, .red)
+        XCTAssertTrue(effect.area.contains(HexCoord(q: 1, r: 0)))
+        XCTAssertEqual(effect.remainingTurns, 2)
+
+        let summary = CommandResultSummary.commandChainCommand(
+            directive: compiled.directive,
+            command: compiled.command,
+            result: result,
+            displayState: state
+        )
+        XCTAssertEqual(summary.id, "command_chain_ew_probe")
+        XCTAssertEqual(summary.divisionId, "blue_ew")
+        XCTAssertTrue(summary.mappingSucceeded)
+        XCTAssertEqual(summary.validationSucceeded, true)
+        XCTAssertTrue(summary.executed)
+    }
+
     func testProbePlaytestSideSelectionActionGateAndSnapshot() {
         let dataLoader = DataLoader()
         let container = AppContainer(
@@ -1364,6 +1406,116 @@ final class WWIIHexV0ProbeTests: XCTestCase {
         )
     }
 
+    private static func modernCommandChainEWProbeState() -> GameState {
+        let blueCoord = HexCoord(q: 0, r: 0)
+        let targetCoord = HexCoord(q: 1, r: 0)
+        let zoneId = FrontZoneId("blue_probe_zone")
+        let targetRegion = RegionId("target_area")
+        let map = modernCommandChainEWProbeMap(
+            blueCoord: blueCoord,
+            targetCoord: targetCoord
+        )
+        let divisions = [
+            Division(
+                id: "blue_ew",
+                name: "Blue EW Team",
+                faction: .blueForce,
+                coord: blueCoord,
+                facing: .east,
+                components: [
+                    DivisionComponent(type: .electronicWarfare, weight: 0.65),
+                    DivisionComponent(type: .uav, weight: 0.20),
+                    DivisionComponent(type: .recon, weight: 0.15)
+                ]
+            ),
+            Division(
+                id: "red_ew_probe_target",
+                name: "Red Sensor Target",
+                faction: .redForce,
+                coord: targetCoord,
+                facing: .west,
+                components: [DivisionComponent(type: .airDefense, weight: 1.0)]
+            )
+        ]
+        let deployment = WarDeploymentState(
+            frontZones: [
+                zoneId: FrontZone(
+                    id: zoneId,
+                    name: "Blue Probe Zone",
+                    faction: .blueForce,
+                    regionIds: [targetRegion],
+                    unitsDepth: ["blue_ew"]
+                )
+            ],
+            hexToFrontZone: [
+                blueCoord: zoneId,
+                targetCoord: zoneId
+            ],
+            regionToFrontZone: [
+                targetRegion: zoneId
+            ]
+        )
+
+        return GameState(
+            scenarioId: "probe_command_chain_ew",
+            turn: 1,
+            maxTurns: 4,
+            activeFaction: .blueForce,
+            phase: .alliedPlayer,
+            map: map,
+            theaterState: .empty,
+            frontLineState: .empty,
+            warDeploymentState: deployment,
+            operationalAwareness: .empty,
+            divisions: divisions,
+            victoryState: .ongoing,
+            selectedUnitSummary: nil,
+            eventLog: []
+        )
+    }
+
+    private static func modernCommandChainEWProbePlan() -> ModernCommandChainPlan {
+        let directive = ModernSubDirective(
+            id: "ew_probe",
+            role: .ewCoordinator,
+            missionType: .electronicWarfare,
+            zoneId: FrontZoneId("blue_probe_zone"),
+            regionId: RegionId("target_area"),
+            priority: 88,
+            rationale: "Probe EW execution bridge."
+        )
+        let constraints = StrategicConstraintEnvelope(
+            issuerId: "probe_national",
+            turn: 1,
+            faction: .blueForce,
+            roeSummary: "Hostile red sensor target inside probe area.",
+            riskTolerance: "limited",
+            priorityObjectives: ["target_area"],
+            prohibitedActions: [],
+            rationale: "Synthetic command-chain EW probe."
+        )
+        let jointPlan = JointCommandPlan(
+            issuerId: "probe_joint",
+            turn: 1,
+            faction: .blueForce,
+            strategicIntent: "Degrade hostile sensors around the target area.",
+            theaterDirectiveIds: [],
+            subDirectives: [directive],
+            rationale: "Route first executable EW sub-directive through Command.electronicWarfare."
+        )
+
+        return ModernCommandChainPlan(
+            issuerId: "probe_chain",
+            turn: 1,
+            faction: .blueForce,
+            strategicConstraints: constraints,
+            jointPlan: jointPlan,
+            chiefOfStaffNotes: [],
+            compiledZoneDirectiveCount: 0,
+            summary: "Synthetic EW bridge probe."
+        )
+    }
+
     private static func modernCommandChainReconProbeMap(
         blueCoord: HexCoord,
         targetCoord: HexCoord
@@ -1455,6 +1607,53 @@ final class WWIIHexV0ProbeTests: XCTestCase {
             hexToRegion: [
                 blueCoord: blueRegion,
                 bufferCoord: blueRegion,
+                targetCoord: targetRegion
+            ],
+            regionEdges: [RegionEdge(from: blueRegion, to: targetRegion)]
+        )
+    }
+
+    private static func modernCommandChainEWProbeMap(
+        blueCoord: HexCoord,
+        targetCoord: HexCoord
+    ) -> MapState {
+        let blueRegion = RegionId("blue_ew_area")
+        let targetRegion = RegionId("target_area")
+        let regions: [RegionId: RegionNode] = [
+            blueRegion: RegionNode(
+                id: blueRegion,
+                name: "Blue EW Area",
+                owner: .blueForce,
+                controller: .blueForce,
+                terrain: .plain,
+                neighbors: [targetRegion],
+                displayHexes: [blueCoord],
+                representativeHex: blueCoord
+            ),
+            targetRegion: RegionNode(
+                id: targetRegion,
+                name: "Target Area",
+                owner: .redForce,
+                controller: .redForce,
+                terrain: .plain,
+                neighbors: [blueRegion],
+                displayHexes: [targetCoord],
+                representativeHex: targetCoord
+            )
+        ]
+
+        return MapState(
+            width: 2,
+            height: 1,
+            tiles: [
+                blueCoord: HexTile(coord: blueCoord, baseTerrain: .plain, controller: .blueForce, regionId: blueRegion),
+                targetCoord: HexTile(coord: targetCoord, baseTerrain: .plain, controller: .redForce, regionId: targetRegion)
+            ],
+            supplySources: [],
+            objectives: [],
+            regions: regions,
+            hexToRegion: [
+                blueCoord: blueRegion,
                 targetCoord: targetRegion
             ],
             regionEdges: [RegionEdge(from: blueRegion, to: targetRegion)]

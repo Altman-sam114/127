@@ -1,6 +1,6 @@
 # 轻量检查与云端验证规范
 
-> 当前规则：默认云端重验证，本机不主动运行测试或检查命令。GitHub Actions 默认执行静态检查、通用 iOS build 和 `WWIIHexV0Probes` simulator probe；该 probe 覆盖灰潮默认剧本数据启动、战略派生层、既有 directive 执行探针、10 个 AI 半回合轻量运行时链路、Playtest 红/蓝新局、Action Gate、主目标摘要、本地快照状态链路、neutral 主目标地面占领到即时胜利阈值的闭环、Modern Mission Recon 经 `AppContainer -> CommandValidator -> RuleEngine / VisibilityRules` 的容器链路、Modern Command Chain 的 ISR Recon Area 受限执行桥经 `ModernSubDirectiveCommandCompiler -> Command.recon -> RuleEngine / VisibilityRules` 的规则链路、Modern Command Chain 的 Fires Fire Mission 受限执行桥经 `ModernSubDirectiveCommandCompiler -> Command.fireMission -> RuleEngine / FireSupportRules` 的规则链路、Observer AI 容器入口自动推进 2 个 AI 半回合、restricted / civilian fire ROE 规则入口，以及 direct attack contact gate。完整 XCTest、Smoke、Stage Regression、Dynamic Theater Regression、Full、真实 App UI 点击 / 截图、真实 App 10-20 回合 observer 长跑和性能验证仍不在默认本机范围内。
+> 当前规则：默认云端重验证，本机不主动运行测试或检查命令。GitHub Actions 默认执行静态检查、通用 iOS build 和 `WWIIHexV0Probes` simulator probe；该 probe 覆盖灰潮默认剧本数据启动、战略派生层、既有 directive 执行探针、10 个 AI 半回合轻量运行时链路、Playtest 红/蓝新局、Action Gate、主目标摘要、本地快照状态链路、neutral 主目标地面占领到即时胜利阈值的闭环、Modern Mission Recon 经 `AppContainer -> CommandValidator -> RuleEngine / VisibilityRules` 的容器链路、Modern Command Chain 的 ISR Recon Area 受限执行桥经 `ModernSubDirectiveCommandCompiler -> Command.recon -> RuleEngine / VisibilityRules` 的规则链路、Modern Command Chain 的 Fires Fire Mission 受限执行桥经 `ModernSubDirectiveCommandCompiler -> Command.fireMission -> RuleEngine / FireSupportRules` 的规则链路、本轮新增 Modern Command Chain 的 EW Electronic Warfare 受限执行桥经 `ModernSubDirectiveCommandCompiler -> Command.electronicWarfare -> RuleEngine / VisibilityRules` 的规则链路、Observer AI 容器入口自动推进 2 个 AI 半回合、restricted / civilian fire ROE 规则入口，以及 direct attack contact gate。完整 XCTest、Smoke、Stage Regression、Dynamic Theater Regression、Full、真实 App UI 点击 / 截图、真实 App 10-20 回合 observer 长跑和性能验证仍不在默认本机范围内。
 
 ## 0. 总原则
 
@@ -33,7 +33,7 @@ git push origin main
 - `ruby -c scripts/check_grey_tide_data.rb` 与 `ruby scripts/check_grey_tide_data.rb`
 - `ruby -c scripts/check_modern_visible_text.rb` 与 `ruby scripts/check_modern_visible_text.rb`
 - 云端 `xcodebuild build`
-- 云端 simulator 上执行 `WWIIHexV0Probes` probe target，其中包含灰潮默认剧本的 10 个 AI 半回合轻量运行时 probe、Playtest 红/蓝新局、Action Gate、主目标摘要、本地快照状态 probe、neutral 主目标地面占领到即时胜利阈值 probe、Modern Mission Recon 容器链路 probe、Modern Command Chain ISR Recon Area 与 Fires Fire Mission 受限执行桥 probe、Observer AI 容器入口自动推进 probe、restricted / civilian fire ROE probe，以及 direct attack contact gate probe
+- 云端 simulator 上执行 `WWIIHexV0Probes` probe target，其中包含灰潮默认剧本的 10 个 AI 半回合轻量运行时 probe、Playtest 红/蓝新局、Action Gate、主目标摘要、本地快照状态 probe、neutral 主目标地面占领到即时胜利阈值 probe、Modern Mission Recon 容器链路 probe、Modern Command Chain ISR Recon Area、Fires Fire Mission 与 EW Electronic Warfare 受限执行桥 probe、Observer AI 容器入口自动推进 probe、restricted / civilian fire ROE probe，以及 direct attack contact gate probe
 
 云端 build 命令：
 
@@ -63,7 +63,7 @@ xcodebuild \
   test
 ```
 
-当前默认云端 workflow 只跑 `WWIIHexV0Probes` 作为轻量运行时 probe。该 probe 可作为默认灰潮数据加载、AI 半回合推进、`end_turn` 规则链路、战略派生层刷新、Playtest 红/蓝新局状态、Action Gate / 主目标摘要、本地快照 envelope 恢复、neutral 主目标地面占领到即时胜利阈值、Modern Command Chain ISR Recon Area 与 Fires Fire Mission 受限执行桥、Observer AI 容器入口自动推进、restricted / civilian fire ROE 规则入口和 direct attack contact gate 的 cloud Probe 证据；它不等于真实 App observer 模式长跑，也不跑完整 `WWIIHexV0Tests`、Smoke、Stage Regression、Dynamic Theater Regression、Full、UI test、截图或性能检查；这些结果统一通过 JUnit `ci.tests` skipped 摘要说明，或不列入默认结果。
+当前默认云端 workflow 只跑 `WWIIHexV0Probes` 作为轻量运行时 probe。该 probe 可作为默认灰潮数据加载、AI 半回合推进、`end_turn` 规则链路、战略派生层刷新、Playtest 红/蓝新局状态、Action Gate / 主目标摘要、本地快照 envelope 恢复、neutral 主目标地面占领到即时胜利阈值、Modern Command Chain ISR Recon Area、Fires Fire Mission 与 EW Electronic Warfare 受限执行桥、Observer AI 容器入口自动推进、restricted / civilian fire ROE 规则入口和 direct attack contact gate 的 cloud Probe 证据；它不等于真实 App observer 模式长跑，也不跑完整 `WWIIHexV0Tests`、Smoke、Stage Regression、Dynamic Theater Regression、Full、UI test、截图或性能检查；这些结果统一通过 JUnit `ci.tests` skipped 摘要说明，或不列入默认结果。
 
 ## 2. Agent C 结果包验收
 
@@ -87,7 +87,7 @@ gh auth login
 - `ci-failure-summary.md`：成功时应写明无失败；失败时应包含失败命令和日志路径。
 - `junit.xml`：至少含静态检查、build、cloud probe、默认 skipped 的完整测试摘要。
 - `xcodebuild.log`：主构建日志。
-- `probe-xctest.log`：`WWIIHexV0Probes` 云端 simulator probe 日志，需核对灰潮 10 个 AI 半回合 probe、Playtest 状态 probe、neutral 主目标地面占领到即时胜利阈值 probe、Modern Command Chain ISR Recon Area 与 Fires Fire Mission 受限执行桥 probe、Observer AI 容器入口 probe、restricted / civilian fire ROE probe 和 direct attack contact gate probe 用例执行并通过。
+- `probe-xctest.log`：`WWIIHexV0Probes` 云端 simulator probe 日志，需核对灰潮 10 个 AI 半回合 probe、Playtest 状态 probe、neutral 主目标地面占领到即时胜利阈值 probe、Modern Command Chain ISR Recon Area、Fires Fire Mission 与 EW Electronic Warfare 受限执行桥 probe、Observer AI 容器入口 probe、restricted / civilian fire ROE probe 和 direct attack contact gate probe 用例执行并通过。
 - `simulator.log`：云端 simulator 发现和启动日志。
 - `grey-tide-data.log` 与 `modern-visible-text.log`：项目静态脚本检查日志。
 - `WWIIHexV0.xcresult`：若 Xcode 成功产出或失败时仍生成，则保留在结果包内。
