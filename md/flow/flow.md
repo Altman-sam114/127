@@ -464,7 +464,7 @@ RootGameView
 - 没有专门 readiness / fuel / signature 字段；`Division` 现在只读派生 readiness、fuel posture 和 signature posture，任务面板、单位详情和 tooltip 会展示这些态势，同时继续显示 logistics 状态、visible contact 数和 fire support ammo 摘要。
 - 任务按钮没有单独的 plan edit / preview / cancel 流程；点击即提交到规则系统。
 - Recon / Fires / EW 的地图 overlay 仍是首版轻量标记；Playtest 面板已有 C2 Overlay 显示开关和只读图例，但未做 tooltip、动画、Reduce Motion 策略或视觉截图验收。
-- 未做本机 UI 点击或模拟器烟测，等待云端 build 和后续人工授权。
+- 云端 build 已随 `03712ab61db5b09cda0e3c09cc36a02149bc7106` / run `28864288680` 复核通过；本机 UI 点击、模拟器烟测、截图和长回合 observer 仍未做，需人工另行授权。
 
 ---
 
