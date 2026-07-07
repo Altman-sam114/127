@@ -1581,7 +1581,7 @@ struct MarshalAgent {
                     state: state
                 )
             } catch {
-                diagnostics.append("Modern command chain validation failed: \(error.localizedDescription). Advisory sub-directives were not executed.")
+                diagnostics.append("Joint command review could not validate the advisory task list; local sector orders continued without advisory tasks.")
             }
             let directiveEnvelope = compiler.compile(
                 theaterEnvelope,
@@ -1605,7 +1605,7 @@ struct MarshalAgent {
                 theaterEnvelope: nil,
                 commandChainPlan: nil,
                 directiveEnvelope: fallback,
-                diagnostics: ["Operational directive decode/compile failed: \(error.localizedDescription). Fallback commander pool used."]
+                diagnostics: ["Operational directive review could not validate the plan; local commander orders were used."]
             )
         }
     }

@@ -487,7 +487,7 @@ final class AppContainer: ObservableObject {
         case "grey_tide_2030":
             return "Grey Tide 2030"
         case "ardennes_v0":
-            return "Compatibility Scenario"
+            return "Training Operation"
         default:
             return scenarioTitle(from: gameState.scenarioId)
         }
@@ -1585,7 +1585,7 @@ final class AppContainer: ObservableObject {
 
     private func visibleAreaName(_ name: String, fallbackPrefix: String) -> String {
         containsCompatibilityAreaToken(name)
-            ? "\(fallbackPrefix) Compatibility Area"
+            ? "\(fallbackPrefix) Area"
             : name
     }
 

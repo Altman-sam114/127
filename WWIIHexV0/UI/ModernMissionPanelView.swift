@@ -180,7 +180,7 @@ struct ModernMissionPanelView: View {
 
     private func visibleAreaName(_ name: String, fallbackPrefix: String) -> String {
         containsCompatibilityAreaToken(name)
-            ? "\(fallbackPrefix) Compatibility Area"
+            ? "\(fallbackPrefix) Area"
             : name
     }
 

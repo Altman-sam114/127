@@ -415,7 +415,7 @@ struct TurnManager {
     private func directiveDiagnostics(for faction: Faction, state: GameState) -> [String] {
         var diagnostics: [String] = []
         if state.warDeploymentState.frontZones.isEmpty {
-            diagnostics.append("ZoneDirective pipeline selected but WarDeploymentState has no command sector data; legacy pipeline was not invoked.")
+            diagnostics.append("No command-sector data is available; local sector planning was skipped.")
         }
 
         for division in state.divisions where division.faction == faction && !division.isDestroyed {

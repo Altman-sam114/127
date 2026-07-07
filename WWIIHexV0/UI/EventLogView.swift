@@ -155,7 +155,7 @@ private enum LogDisplayCategory {
         case .retreat:
             return "Retreat"
         case .reinforcement:
-            return "Reinforce"
+            return "Sustainment"
         case .encirclement:
             return "Encircle"
         case .supply:

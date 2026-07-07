@@ -96,7 +96,7 @@ private extension RetreatMode {
     var tooltipDisplayName: String {
         switch self {
         case .retreatable:
-            return "Retreatable"
+            return "Withdrawal OK"
         case .hold:
             return "Hold"
         }

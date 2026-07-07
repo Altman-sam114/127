@@ -34,7 +34,7 @@ struct CommandPanelView: View {
                 .disabled(!canSetRetreatable)
 
                 Button(action: onResupply) {
-                    Label("Reinforce", systemImage: "cross.circle")
+                    Label("Sustain", systemImage: "shippingbox")
                 }
                 .disabled(!canCommandSelectedUnit)
             }
@@ -87,11 +87,11 @@ struct CommandPanelView: View {
         }
 
         guard let selectedDivision else {
-            return "No active unit selected."
+            return "No active formation selected."
         }
 
         guard selectedDivision.faction == playerFaction else {
-            return "Hostile formation selected. Commands disabled."
+            return "Opposing formation selected. Commands disabled."
         }
 
         guard activeFaction == playerFaction, playerFaction.canCommand(in: phase) else {
@@ -99,9 +99,9 @@ struct CommandPanelView: View {
         }
 
         guard !selectedDivision.hasActed else {
-            return "Selected unit has acted."
+            return "Selected formation has acted."
         }
 
-        return "Move/Attack ready."
+        return "Maneuver / mission ready."
     }
 }

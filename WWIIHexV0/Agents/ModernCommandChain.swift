@@ -548,7 +548,7 @@ struct ModernCommandChainOrchestrator {
             issuerId: summary.marshalId,
             turn: summary.turn,
             faction: summary.faction,
-            roeSummary: "Hostile contacts may be engaged only through validated Command or ZoneDirective pipelines.",
+            roeSummary: "Hostile contacts may be engaged only through validated command channels.",
             riskTolerance: riskTolerance,
             priorityObjectives: priorities,
             prohibitedActions: [

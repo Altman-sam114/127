@@ -164,13 +164,13 @@ struct RegionInspectorView: View {
 
     private func visibleAreaName(_ name: String, fallbackPrefix: String) -> String {
         containsLegacyCompatibilityToken(name)
-            ? "\(fallbackPrefix) Compatibility Area"
+            ? "\(fallbackPrefix) Area"
             : name
     }
 
     private func displayName(for rawValue: String, fallbackPrefix: String) -> String {
         if containsLegacyCompatibilityToken(rawValue) {
-            return "\(fallbackPrefix) Compatibility Area"
+            return "\(fallbackPrefix) Area"
         }
 
         let corridorSuffix = "a" + "x" + "i" + "s"

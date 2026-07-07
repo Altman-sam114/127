@@ -12,38 +12,19 @@ enum CommandIntentAdapterError: Error, Equatable, LocalizedError {
         switch self {
         case .invalidRegionForHex(let hex):
             return "Hex \(hex.q),\(hex.r) does not map to an objective area."
-        case .regionNotFound(let regionId):
-            return "\(Self.objectiveDisplay(regionId)) was not found."
-        case .divisionNotFound(let divisionId):
-            return "\(Self.formationDisplay(divisionId)) was not found."
-        case .divisionHasNoRegion(let divisionId):
-            return "\(Self.formationDisplay(divisionId)) is not inside a mapped objective area."
-        case .destinationRegionHasNoUsableHex(let regionId):
-            return "\(Self.objectiveDisplay(regionId)) has no usable tactical hex."
-        case .targetRegionMismatch(let targetDivisionId, let expected, let actual):
-            return "Target \(Self.formationDisplay(targetDivisionId)) is in \(Self.objectiveDisplay(actual)), not \(Self.objectiveDisplay(expected))."
+        case .regionNotFound:
+            return "Requested objective area was not found."
+        case .divisionNotFound:
+            return "Target formation was not found."
+        case .divisionHasNoRegion:
+            return "Target formation is not inside a mapped objective area."
+        case .destinationRegionHasNoUsableHex:
+            return "Destination objective has no usable tactical hex."
+        case .targetRegionMismatch:
+            return "Target formation is not in the requested objective area."
         }
     }
 
-    private static func objectiveDisplay(_ id: RegionId) -> String {
-        let cleaned = cleanIdentifier(id.rawValue)
-        return cleaned.isEmpty ? "Objective area" : "Objective \(cleaned.capitalized)"
-    }
-
-    private static func formationDisplay(_ id: String) -> String {
-        let cleaned = cleanIdentifier(id)
-        return cleaned.isEmpty ? "Formation" : "Formation \(cleaned.capitalized)"
-    }
-
-    private static func cleanIdentifier(_ rawValue: String) -> String {
-        rawValue
-            .replacingOccurrences(of: "div" + "ision_", with: "")
-            .replacingOccurrences(of: "unit_", with: "")
-            .replacingOccurrences(of: "region_", with: "")
-            .replacingOccurrences(of: "objective_", with: "")
-            .replacingOccurrences(of: "_", with: " ")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-    }
 }
 
 struct CommandIntentAdapter {

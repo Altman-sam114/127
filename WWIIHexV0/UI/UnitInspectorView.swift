@@ -13,7 +13,7 @@ struct UnitInspectorView: View {
             if let division {
                 unitDetails(division)
             } else {
-                Text("No unit selected.")
+                Text("No formation selected.")
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -53,7 +53,7 @@ struct UnitInspectorView: View {
                     Text(commandSectorDisplay(strategicState.frontZoneId))
                 }
 
-                LabeledContent("Deploy") {
+                LabeledContent("Deployment") {
                     Text(strategicState.deploymentRole.displayName)
                 }
 
@@ -137,7 +137,7 @@ struct UnitInspectorView: View {
 
     private func displayName(for rawValue: String, fallbackPrefix: String) -> String {
         if containsLegacyCompatibilityToken(rawValue) {
-            return "\(fallbackPrefix) Compatibility Area"
+            return "\(fallbackPrefix) Area"
         }
 
         let corridorSuffix = "a" + "x" + "i" + "s"
@@ -200,7 +200,7 @@ private extension RetreatMode {
     var displayName: String {
         switch self {
         case .retreatable:
-            return "Retreatable"
+            return "Withdrawal OK"
         case .hold:
             return "Hold"
         }
@@ -211,11 +211,11 @@ private extension UnitDeploymentRole {
     var displayName: String {
         switch self {
         case .frontUnit:
-            return "FRONT"
+            return "Contact Line"
         case .depthUnit:
-            return "DEPTH"
+            return "Reserve"
         case .garrisonUnit:
-            return "SECURITY"
+            return "Security"
         }
     }
 }
