@@ -243,6 +243,54 @@ final class WWIIHexV0ProbeTests: XCTestCase {
         XCTAssertFalse(state.operationalAwareness.sensorCoverage.isEmpty)
     }
 
+    func testProbeModernCommandChainISRReconExecutesViaRuleEngine() throws {
+        let state = Self.modernCommandChainReconProbeState()
+        let plan = Self.modernCommandChainReconProbePlan()
+        let compiled = try XCTUnwrap(
+            ModernSubDirectiveCommandCompiler()
+                .compileFirstExecutableCommand(from: plan, in: state)
+        )
+
+        XCTAssertEqual(compiled.directive.id, "isr_probe")
+        switch compiled.command {
+        case .recon(let divisionId, let target):
+            XCTAssertEqual(divisionId, "blue_isr")
+            XCTAssertEqual(target, HexCoord(q: 1, r: 0))
+        default:
+            XCTFail("Expected command-chain ISR to compile to Command.recon.")
+        }
+
+        let result = RuleEngine().execute(compiled.command, in: state)
+
+        XCTAssertTrue(result.succeeded, result.message)
+        XCTAssertEqual(result.validation, .valid)
+        XCTAssertEqual(result.state.division(id: "blue_isr")?.hasActed, true)
+        XCTAssertTrue(result.state.eventLog.contains { $0.category == .intelligence })
+
+        let visibleContacts = result.state.operationalAwareness.visibleContacts(for: .blueForce)
+        let redContact = try XCTUnwrap(
+            visibleContacts.first {
+                $0.linkedDivisionId == "red_target" ||
+                    $0.lastKnownCoord == HexCoord(q: 1, r: 0)
+            }
+        )
+        XCTAssertEqual(redContact.ownerFaction, .blueForce)
+        XCTAssertEqual(redContact.ageInTurns, 0)
+        XCTAssertTrue([ContactSource.groundRecon, .uav].contains(redContact.source))
+
+        let summary = CommandResultSummary.commandChainCommand(
+            directive: compiled.directive,
+            command: compiled.command,
+            result: result,
+            displayState: state
+        )
+        XCTAssertEqual(summary.id, "command_chain_isr_probe")
+        XCTAssertEqual(summary.divisionId, "blue_isr")
+        XCTAssertTrue(summary.mappingSucceeded)
+        XCTAssertEqual(summary.validationSucceeded, true)
+        XCTAssertTrue(summary.executed)
+    }
+
     func testProbePlaytestSideSelectionActionGateAndSnapshot() {
         let dataLoader = DataLoader()
         let container = AppContainer(
@@ -1034,6 +1082,159 @@ final class WWIIHexV0ProbeTests: XCTestCase {
             victoryState: .ongoing,
             selectedUnitSummary: nil,
             eventLog: []
+        )
+    }
+
+    private static func modernCommandChainReconProbeState() -> GameState {
+        let blueCoord = HexCoord(q: 0, r: 0)
+        let targetCoord = HexCoord(q: 1, r: 0)
+        let zoneId = FrontZoneId("blue_probe_zone")
+        let targetRegion = RegionId("target_area")
+        let map = modernCommandChainReconProbeMap(
+            blueCoord: blueCoord,
+            targetCoord: targetCoord
+        )
+        let divisions = [
+            Division(
+                id: "blue_isr",
+                name: "Blue ISR Team",
+                faction: .blueForce,
+                coord: blueCoord,
+                facing: .east,
+                components: [DivisionComponent(type: .recon, weight: 1.0)]
+            ),
+            Division(
+                id: "red_target",
+                name: "Red Target Element",
+                faction: .redForce,
+                coord: targetCoord,
+                facing: .west,
+                components: [DivisionComponent(type: .lightInfantry, weight: 1.0)]
+            )
+        ]
+        let deployment = WarDeploymentState(
+            frontZones: [
+                zoneId: FrontZone(
+                    id: zoneId,
+                    name: "Blue Probe Zone",
+                    faction: .blueForce,
+                    regionIds: [targetRegion],
+                    unitsDepth: ["blue_isr"]
+                )
+            ],
+            hexToFrontZone: [
+                blueCoord: zoneId,
+                targetCoord: zoneId
+            ],
+            regionToFrontZone: [
+                targetRegion: zoneId
+            ]
+        )
+
+        return GameState(
+            scenarioId: "probe_command_chain_recon",
+            turn: 1,
+            maxTurns: 4,
+            activeFaction: .blueForce,
+            phase: .alliedPlayer,
+            map: map,
+            theaterState: .empty,
+            frontLineState: .empty,
+            warDeploymentState: deployment,
+            operationalAwareness: .empty,
+            divisions: divisions,
+            victoryState: .ongoing,
+            selectedUnitSummary: nil,
+            eventLog: []
+        )
+    }
+
+    private static func modernCommandChainReconProbePlan() -> ModernCommandChainPlan {
+        let directive = ModernSubDirective(
+            id: "isr_probe",
+            role: .isrCoordinator,
+            missionType: .reconArea,
+            zoneId: FrontZoneId("blue_probe_zone"),
+            regionId: RegionId("target_area"),
+            priority: 90,
+            rationale: "Probe ISR recon execution bridge."
+        )
+        let constraints = StrategicConstraintEnvelope(
+            issuerId: "probe_national",
+            turn: 1,
+            faction: .blueForce,
+            roeSummary: "Hostile red target inside probe area.",
+            riskTolerance: "limited",
+            priorityObjectives: ["target_area"],
+            prohibitedActions: [],
+            rationale: "Synthetic command-chain probe."
+        )
+        let jointPlan = JointCommandPlan(
+            issuerId: "probe_joint",
+            turn: 1,
+            faction: .blueForce,
+            strategicIntent: "Confirm target area.",
+            theaterDirectiveIds: [],
+            subDirectives: [directive],
+            rationale: "Route first executable ISR sub-directive through Command.recon."
+        )
+
+        return ModernCommandChainPlan(
+            issuerId: "probe_chain",
+            turn: 1,
+            faction: .blueForce,
+            strategicConstraints: constraints,
+            jointPlan: jointPlan,
+            chiefOfStaffNotes: [],
+            compiledZoneDirectiveCount: 0,
+            summary: "Synthetic ISR recon bridge probe."
+        )
+    }
+
+    private static func modernCommandChainReconProbeMap(
+        blueCoord: HexCoord,
+        targetCoord: HexCoord
+    ) -> MapState {
+        let blueRegion = RegionId("blue_isr_area")
+        let targetRegion = RegionId("target_area")
+        let regions: [RegionId: RegionNode] = [
+            blueRegion: RegionNode(
+                id: blueRegion,
+                name: "Blue ISR Area",
+                owner: .blueForce,
+                controller: .blueForce,
+                terrain: .plain,
+                neighbors: [targetRegion],
+                displayHexes: [blueCoord],
+                representativeHex: blueCoord
+            ),
+            targetRegion: RegionNode(
+                id: targetRegion,
+                name: "Target Area",
+                owner: .redForce,
+                controller: .redForce,
+                terrain: .plain,
+                neighbors: [blueRegion],
+                displayHexes: [targetCoord],
+                representativeHex: targetCoord
+            )
+        ]
+
+        return MapState(
+            width: 2,
+            height: 1,
+            tiles: [
+                blueCoord: HexTile(coord: blueCoord, baseTerrain: .plain, controller: .blueForce, regionId: blueRegion),
+                targetCoord: HexTile(coord: targetCoord, baseTerrain: .plain, controller: .redForce, regionId: targetRegion)
+            ],
+            supplySources: [],
+            objectives: [],
+            regions: regions,
+            hexToRegion: [
+                blueCoord: blueRegion,
+                targetCoord: targetRegion
+            ],
+            regionEdges: [RegionEdge(from: blueRegion, to: targetRegion)]
         )
     }
 

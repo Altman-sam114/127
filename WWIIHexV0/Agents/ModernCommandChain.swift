@@ -223,6 +223,164 @@ struct ModernCommandChainPlan: Codable, Equatable {
     }
 }
 
+struct ModernSubDirectiveCommandCompiler {
+    private let validator = CommandValidator()
+
+    func compileFirstExecutableCommand(
+        from plan: ModernCommandChainPlan,
+        in state: GameState
+    ) -> (directive: ModernSubDirective, command: Command, diagnostics: [String])? {
+        guard plan.faction == state.activeFaction else {
+            return nil
+        }
+
+        for directive in plan.jointPlan.subDirectives
+            where directive.role == .isrCoordinator && directive.missionType == .reconArea {
+            let result = compileReconArea(directive, in: state)
+            if let command = result.command {
+                return (directive, command, result.diagnostics)
+            }
+        }
+        return nil
+    }
+
+    private func compileReconArea(
+        _ directive: ModernSubDirective,
+        in state: GameState
+    ) -> (command: Command?, diagnostics: [String]) {
+        let targetCoords = targetCoordinates(for: directive, in: state)
+        guard !targetCoords.isEmpty else {
+            return (nil, ["Command-chain ISR recon skipped: no valid target area was available."])
+        }
+
+        let candidates = candidateDivisions(for: directive, in: state)
+        guard !candidates.isEmpty else {
+            return (nil, ["Command-chain ISR recon skipped: no available ISR formation was in command range."])
+        }
+
+        for division in candidates {
+            let orderedTargets = targetCoords.sorted {
+                let lhsDistance = division.coord.distance(to: $0)
+                let rhsDistance = division.coord.distance(to: $1)
+                if lhsDistance == rhsDistance {
+                    if $0.q == $1.q {
+                        return $0.r < $1.r
+                    }
+                    return $0.q < $1.q
+                }
+                return lhsDistance < rhsDistance
+            }
+            for target in orderedTargets {
+                let command = Command.recon(divisionId: division.id, target: target)
+                if validator.validate(command, in: state).isValid {
+                    return (command, [])
+                }
+            }
+        }
+
+        return (nil, ["Command-chain ISR recon skipped: no Recon Area command passed validation."])
+    }
+
+    private func candidateDivisions(
+        for directive: ModernSubDirective,
+        in state: GameState
+    ) -> [Division] {
+        let zoneUnitPriority = directive.zoneId
+            .flatMap { state.warDeploymentState.frontZones[$0] }
+            .map { stableUnique($0.unitsDepth + $0.unitsGarrison + $0.unitsFront) } ?? []
+        let zoneRank = Dictionary(uniqueKeysWithValues: zoneUnitPriority.enumerated().map { index, id in
+            (id, index)
+        })
+
+        return state.divisions
+            .filter {
+                $0.faction == state.activeFaction &&
+                    !$0.isDestroyed &&
+                    !$0.isRetreating &&
+                    !$0.hasActed &&
+                    $0.canAct
+            }
+            .filter {
+                guard directive.zoneId != nil else {
+                    return true
+                }
+                return zoneRank[$0.id] != nil
+            }
+            .sorted {
+                let lhsZoneRank = zoneRank[$0.id] ?? Int.max
+                let rhsZoneRank = zoneRank[$1.id] ?? Int.max
+                if lhsZoneRank != rhsZoneRank {
+                    return lhsZoneRank < rhsZoneRank
+                }
+
+                let lhsScore = isrScore($0)
+                let rhsScore = isrScore($1)
+                if lhsScore != rhsScore {
+                    return lhsScore > rhsScore
+                }
+
+                if $0.vision != $1.vision {
+                    return $0.vision > $1.vision
+                }
+
+                return $0.id < $1.id
+            }
+    }
+
+    private func targetCoordinates(
+        for directive: ModernSubDirective,
+        in state: GameState
+    ) -> [HexCoord] {
+        if let contactId = directive.contactId,
+           let contact = state.operationalAwareness.contacts[contactId] {
+            return [contact.lastKnownCoord]
+        }
+
+        if let regionId = directive.regionId,
+           let region = state.map.region(id: regionId) {
+            return stableUnique([region.representativeHex] + region.displayHexes)
+                .filter { state.map.contains($0) }
+        }
+
+        if let zoneId = directive.zoneId,
+           let regionId = state.warDeploymentState.frontZones[zoneId]?.regionIds.first,
+           let region = state.map.region(id: regionId) {
+            return stableUnique([region.representativeHex] + region.displayHexes)
+                .filter { state.map.contains($0) }
+        }
+
+        return []
+    }
+
+    private func isrScore(_ division: Division) -> Double {
+        division.componentWeight(where: { $0 == .recon }) * 100
+            + division.componentWeight(where: \.isUnmannedFamily) * 90
+            + division.componentWeight(where: { $0 == .specialForces }) * 70
+            + division.componentWeight(where: \.isAirDefenseFamily) * 20
+            + Double(division.vision)
+    }
+
+    private func stableUnique(_ values: [HexCoord]) -> [HexCoord] {
+        var seen: Set<HexCoord> = []
+        var result: [HexCoord] = []
+        for value in values where !seen.contains(value) {
+            seen.insert(value)
+            result.append(value)
+        }
+        return result
+    }
+
+    private func stableUnique(_ values: [String]) -> [String] {
+        var seen: Set<String> = []
+        var result: [String] = []
+        for value in values where !seen.contains(value) {
+            seen.insert(value)
+            result.append(value)
+        }
+        return result
+    }
+}
+
 enum ModernCommandChainDecoderError: Error, Equatable, LocalizedError {
     case invalidUTF8
     case malformedJSON(String)

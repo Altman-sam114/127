@@ -261,6 +261,7 @@ struct TurnManager {
                 parsedIntent: parsedIntent,
                 providerSuffix: "MarshalDirective",
                 commandChainReplayItems: replayItems,
+                commandChainPlan: resolution.commandChainPlan,
                 additionalDiagnostics: diagnostics + resolution.diagnostics
             )
         } catch {
@@ -300,6 +301,7 @@ struct TurnManager {
         parsedIntent: String,
         providerSuffix: String,
         commandChainReplayItems: [ModernCommandChainReplayItem] = [],
+        commandChainPlan: ModernCommandChainPlan? = nil,
         additionalDiagnostics: [String]
     ) -> AgentTurnOutcome {
         var nextState = state
@@ -308,6 +310,28 @@ struct TurnManager {
         var errors = additionalDiagnostics
         if envelope.directives.isEmpty {
             errors.append("Commander returned no directives.")
+        }
+
+        if let commandChainPlan,
+           let compiled = ModernSubDirectiveCommandCompiler()
+            .compileFirstExecutableCommand(from: commandChainPlan, in: nextState) {
+            let displayState = nextState
+            let result = commandHandler.execute(compiled.command, in: nextState)
+            nextState = result.state
+            commandResults.append(
+                .commandChainCommand(
+                    directive: compiled.directive,
+                    command: compiled.command,
+                    result: result,
+                    displayState: displayState
+                )
+            )
+            errors.append(contentsOf: compiled.diagnostics)
+            if !result.succeeded {
+                errors.append(
+                    "Command-chain \(compiled.directive.role.displayName) \(compiled.directive.missionType.displayName) rejected: \(result.validation.displayMessage)."
+                )
+            }
         }
 
         for (directiveIndex, directive) in envelope.directives.enumerated() {

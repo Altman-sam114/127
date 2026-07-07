@@ -88,6 +88,26 @@ struct CommandResultSummary: Identifiable, Codable, Equatable {
             errors: result.validation.displayMessages
         )
     }
+
+    static func commandChainCommand(
+        directive: ModernSubDirective,
+        command: Command,
+        result: CommandResult,
+        displayState: GameState
+    ) -> CommandResultSummary {
+        CommandResultSummary(
+            id: "command_chain_\(directive.id)",
+            orderIndex: nil,
+            divisionId: command.actingDivisionId,
+            orderType: nil,
+            commandDisplayName: command.contextualDisplayName(in: displayState),
+            mappingSucceeded: true,
+            validationSucceeded: result.validation.isValid,
+            executed: result.succeeded,
+            message: result.message,
+            errors: result.validation.displayMessages
+        )
+    }
 }
 
 struct ModernCommandChainReplayItem: Identifiable, Codable, Equatable {
