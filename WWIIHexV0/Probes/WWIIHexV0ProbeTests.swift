@@ -309,6 +309,102 @@ final class WWIIHexV0ProbeTests: XCTestCase {
         container.clearLocalSnapshot()
     }
 
+    func testProbeNeutralMainObjectiveOccupationUpdatesVictorySummaryAndImmediateVictory() throws {
+        let dataLoader = DataLoader()
+        var state = StrategicStateBootstrapper().bootstrapIfNeeded(dataLoader.loadInitialGameState())
+        state.activeFaction = .blueForce
+        state.phase = .alliedPlayer
+        state.victoryState = .ongoing
+
+        let targetObjective = try XCTUnwrap(
+            state.map.objectives.first { objective in
+                guard VictoryRules.greyTideMainObjectiveIds.contains(objective.id),
+                      state.map.tile(at: objective.coord)?.controller?.alignment == .neutral,
+                      state.division(at: objective.coord) == nil else {
+                    return false
+                }
+
+                return objective.coord.neighbors.contains { neighbor in
+                    guard let tile = state.map.tile(at: neighbor) else {
+                        return false
+                    }
+                    return tile.isPassable && state.division(at: neighbor) == nil
+                }
+            }
+        )
+        let destination = targetObjective.coord
+        let stagingHex = try XCTUnwrap(
+            destination.neighbors.first { neighbor in
+                guard let tile = state.map.tile(at: neighbor) else {
+                    return false
+                }
+                return tile.isPassable && state.division(at: neighbor) == nil
+            }
+        )
+
+        let initialControl = VictoryRules.greyTideObjectiveControlCounts(in: state)
+        XCTAssertGreaterThan(initialControl.neutral, 0)
+        XCTAssertLessThan(initialControl.blue, 7)
+
+        var presetBlueObjectives = initialControl.blue
+        for objective in state.map.objectives
+            where VictoryRules.greyTideMainObjectiveIds.contains(objective.id)
+                && objective.id != targetObjective.id
+                && presetBlueObjectives < 6 {
+            guard var tile = state.map.tile(at: objective.coord),
+                  tile.controller?.alignment != .blue else {
+                continue
+            }
+            tile.controller = .blueForce
+            state.map.setTile(tile)
+            presetBlueObjectives += 1
+        }
+
+        XCTAssertEqual(VictoryRules.greyTideObjectiveControlCounts(in: state).blue, 6)
+        XCTAssertEqual(state.map.tile(at: destination)?.controller?.alignment, .neutral)
+
+        let divisionIndex = try XCTUnwrap(
+            state.divisions.firstIndex {
+                $0.faction == .blueForce && !$0.isDestroyed && !$0.isRetreating
+            }
+        )
+        let movingDivisionId = state.divisions[divisionIndex].id
+        state.divisions[divisionIndex].coord = stagingHex
+        state.divisions[divisionIndex].hasActed = false
+        state.divisions[divisionIndex].isRetreating = false
+
+        let move = Command.move(divisionId: movingDivisionId, destination: destination)
+        XCTAssertEqual(CommandValidator().validate(move, in: state), .valid)
+
+        let moveResult = RuleEngine().execute(move, in: state)
+
+        XCTAssertTrue(moveResult.succeeded, moveResult.message)
+        XCTAssertEqual(moveResult.state.map.tile(at: destination)?.controller, .blueForce)
+        XCTAssertEqual(moveResult.state.division(id: movingDivisionId)?.coord, destination)
+        XCTAssertEqual(moveResult.state.division(id: movingDivisionId)?.hasActed, true)
+        XCTAssertEqual(moveResult.state.victoryState.winner, .blueForce)
+        XCTAssertEqual(moveResult.state.victoryState.reason, .greyTideBlueKeyNodesSecured)
+
+        let movedControl = VictoryRules.greyTideObjectiveControlCounts(in: moveResult.state)
+        XCTAssertEqual(movedControl.blue, 7)
+        XCTAssertEqual(movedControl.total, 10)
+        XCTAssertLessThan(movedControl.neutral, initialControl.neutral)
+
+        let movedContainer = AppContainer(
+            gameState: moveResult.state,
+            commandHandler: RuleEngine(),
+            dataLoader: dataLoader,
+            generalRegistry: (try? dataLoader.loadGeneralRegistry()) ?? .empty,
+            playerFaction: .blueForce
+        )
+        XCTAssertEqual(
+            movedContainer.playtestObjectiveSummaryText,
+            "Blue \(movedControl.blue)/\(movedControl.total), Red \(movedControl.red), Neutral \(movedControl.neutral)"
+        )
+        XCTAssertEqual(movedContainer.playtestActionGateDetail, "Blue Force victory reached")
+        XCTAssertEqual(movedContainer.playtestObjectiveThresholdText, "Blue Force victory condition reached.")
+    }
+
     func testProbeModernMissionReconUsesAppContainerAndRulesPipeline() throws {
         let dataLoader = DataLoader()
         let container = AppContainer(

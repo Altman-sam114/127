@@ -74,6 +74,9 @@ struct CommandExecutor {
                 in: &state,
                 affectedRegionIds: state.map.region(for: destination).map { [$0] } ?? []
             )
+            if state.scenarioId == "grey_tide_2030" {
+                VictoryRules().updateVictoryState(in: &state)
+            }
         }
 
         state.appendEvent("\(state.divisions[index].operationalDisplayName) moved to \(destination.q),\(destination.r).")
